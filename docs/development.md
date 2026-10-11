@@ -100,7 +100,7 @@ Design ResearchとUpstreamの`--extract-bundle`は通信なしで展開し、`--
    IDは小文字の英数字とハイフンで、用途を識別できる名前にします。
    補助資材が必要な場合は、同じIDの`tools/<installer-id>/`へ配置します。
 2. 各ファイルの`TODO`と仮の名称を実装に基づいて置き換えます。スクリプトへの相対リンクも追加します。
-3. [トップREADME](../README.md)の用途別一覧と実行時の挙動、[docs索引](README.md)へ同じIDで登録します。
+3. [トップREADME](../README.md)のキット一覧、[一括導入ガイド](installation.md)の実行時の挙動、[docs索引](README.md)へ同じIDで登録します。
 4. 実行例、相対リンク、アンカーを確認し、説明とコードを同じ変更でレビューします。
 
 一括導入の対象にも追加する場合は、`install_all.sh`のID・スクリプト・説明・実行引数、
