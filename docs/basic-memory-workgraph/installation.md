@@ -35,8 +35,8 @@ Codex CLI、Python 3、`curl` を使えるLinux / WSL2環境が必要です。
 Gitで取得する場合は次のように実行します。すでにリポジトリがあれば、そのディレクトリへ移動します。
 
 ```bash
-git clone https://github.com/Mak-GIBA/basic-memory-workgraph.git
-cd basic-memory-workgraph
+git clone https://github.com/Mak-GIBA/agent-intelliforge.git
+cd agent-intelliforge
 bash install_basic_memory_workgraph.sh
 ```
 

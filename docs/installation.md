@@ -23,8 +23,8 @@ Design Research 2.5.0とUpstream 2.0.6の組み立てにはPython 3.11以上が�
 ## 導入する
 
 ```bash
-git clone https://github.com/Mak-GIBA/basic-memory-workgraph.git
-cd basic-memory-workgraph
+git clone https://github.com/Mak-GIBA/agent-intelliforge.git
+cd agent-intelliforge
 bash install_all.sh --list
 bash install_all.sh --dry-run
 bash install_all.sh --apply

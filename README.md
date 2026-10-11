@@ -1,6 +1,6 @@
 # Codex環境の導入・運用ツール集
 
-このリポジトリ（`basic-memory-workgraph`）は、Codexでの知識の蓄積、UI/UXの設計・実装支援、
+このリポジトリ（`agent-intelliforge`）は、Codexでの知識の蓄積、UI/UXの設計・実装支援、
 要件・設計文書の整理、GitHubでのタスク管理、技術選定、文書編集、日本語の段落構成・推敲に使うインストーラーと運用ツールをまとめています。
 ECCのスキルを必要なときに読む構成や、作業ディレクトリからHerdrを開く設定も用意しています。
 全ツールを一括導入するか、必要なものを選んで導入できます。すべてを入れる必要はありません。
@@ -47,8 +47,8 @@ HerdrはCodexから独立して使えます。OSへの対応範囲は各ガイ�
 必要なPython・Node.jsのバージョンなどは各導入ガイドに記載しています。
 
 ```bash
-git clone https://github.com/Mak-GIBA/basic-memory-workgraph.git
-cd basic-memory-workgraph
+git clone https://github.com/Mak-GIBA/agent-intelliforge.git
+cd agent-intelliforge
 ```
 
 全9ツールの標準導入は、[一括インストーラー](docs/installation.md)から実行できます。
