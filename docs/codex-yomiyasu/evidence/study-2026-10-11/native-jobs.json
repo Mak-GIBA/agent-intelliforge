@@ -1,0 +1,162 @@
+[
+  {
+    "task": "N2",
+    "arm": "baseline",
+    "repeat": 1
+  },
+  {
+    "task": "N6",
+    "arm": "c",
+    "repeat": 1
+  },
+  {
+    "task": "N2",
+    "arm": "a",
+    "repeat": 1
+  },
+  {
+    "task": "N5",
+    "arm": "baseline",
+    "repeat": 1
+  },
+  {
+    "task": "N7",
+    "arm": "b",
+    "repeat": 1
+  },
+  {
+    "task": "N8",
+    "arm": "b",
+    "repeat": 1
+  },
+  {
+    "task": "N7",
+    "arm": "a",
+    "repeat": 1
+  },
+  {
+    "task": "N4",
+    "arm": "baseline",
+    "repeat": 1
+  },
+  {
+    "task": "N5",
+    "arm": "a",
+    "repeat": 1
+  },
+  {
+    "task": "N7",
+    "arm": "baseline",
+    "repeat": 1
+  },
+  {
+    "task": "N6",
+    "arm": "baseline",
+    "repeat": 1
+  },
+  {
+    "task": "N3",
+    "arm": "baseline",
+    "repeat": 1
+  },
+  {
+    "task": "N3",
+    "arm": "a",
+    "repeat": 1
+  },
+  {
+    "task": "N4",
+    "arm": "b",
+    "repeat": 1
+  },
+  {
+    "task": "N3",
+    "arm": "c",
+    "repeat": 1
+  },
+  {
+    "task": "N8",
+    "arm": "c",
+    "repeat": 1
+  },
+  {
+    "task": "N1",
+    "arm": "baseline",
+    "repeat": 1
+  },
+  {
+    "task": "N1",
+    "arm": "b",
+    "repeat": 1
+  },
+  {
+    "task": "N2",
+    "arm": "c",
+    "repeat": 1
+  },
+  {
+    "task": "N1",
+    "arm": "a",
+    "repeat": 1
+  },
+  {
+    "task": "N6",
+    "arm": "a",
+    "repeat": 1
+  },
+  {
+    "task": "N7",
+    "arm": "c",
+    "repeat": 1
+  },
+  {
+    "task": "N5",
+    "arm": "c",
+    "repeat": 1
+  },
+  {
+    "task": "N4",
+    "arm": "a",
+    "repeat": 1
+  },
+  {
+    "task": "N1",
+    "arm": "c",
+    "repeat": 1
+  },
+  {
+    "task": "N4",
+    "arm": "c",
+    "repeat": 1
+  },
+  {
+    "task": "N3",
+    "arm": "b",
+    "repeat": 1
+  },
+  {
+    "task": "N6",
+    "arm": "b",
+    "repeat": 1
+  },
+  {
+    "task": "N8",
+    "arm": "baseline",
+    "repeat": 1
+  },
+  {
+    "task": "N5",
+    "arm": "b",
+    "repeat": 1
+  },
+  {
+    "task": "N2",
+    "arm": "b",
+    "repeat": 1
+  },
+  {
+    "task": "N8",
+    "arm": "a",
+    "repeat": 1
+  }
+]

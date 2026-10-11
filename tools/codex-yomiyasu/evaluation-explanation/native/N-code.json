@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 4.86,
+  "prompt_sha256": "efa9e56b92e22fe699157db798bf3c4142e6f608fa0947b25bb579209511834a",
+  "output": "```python\ndef add(a,b):\n    return a+b\n```",
+  "usage": {
+    "input_tokens": 15005,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 40,
+    "reasoning_output_tokens": 20
+  },
+  "tools": [],
+  "error": null,
+  "task": "N-code",
+  "expected_explanation_read": false,
+  "explanation_reads": [],
+  "skill_reads": {},
+  "reference_route_pass": true
+}

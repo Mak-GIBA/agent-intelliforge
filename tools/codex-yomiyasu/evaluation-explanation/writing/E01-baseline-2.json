@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 31.58,
+  "prompt_sha256": "3b7a7ed16df381238dbb51d45f98414909a2a5d71926ae2c40f4b0a6f6f5aa52",
+  "output": "並列実行では、CPUとメモリを適切に管理することが重要である。ビルドとテストはどちらもCPUとメモリを消費するため、同時に実行すると資源が競合し、応答が遅くなる場合がある。\n\n安定性の改善に向け、編集は並列のまま進め、ビルドとテストだけをキュー（実行待ちの列）に入れて順番に実行する案がある。この案の効果はまだ測定されていない。",
+  "usage": {
+    "input_tokens": 68410,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1058,
+    "reasoning_output_tokens": 921
+  },
+  "tools": [],
+  "error": null,
+  "task": "E01",
+  "arm": "baseline",
+  "repeat": 2
+}

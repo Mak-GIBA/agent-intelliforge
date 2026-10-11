@@ -1,0 +1,10 @@
+{
+  "mode": "research",
+  "brief": "比較対象は既存の日本語執筆Skill yomiyasu（2.0.0-proposal.1）と、改善案A（実補助Skill連携と点検）、B（A＋執筆前の素材/制作指示分離）、C（A＋下書き後の読者視点レビュー）。ユーザー指定の改善3案と基準案の4条件に限定するためtarget-methods=4の例外を記録する。これは新規アルゴリズムの発明ではなく、既存原則の適用比較。\n必ずdocs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/capture.jsonの実際の最終出力・匿名採点・失敗記録・native_verificationを読んで研究する。モデル生成を呼び直さない。生成は同じgpt-6.1-sol/xhighの12課題×4条件×2回で96試行、94完了、2タイムアウト。完了94出力には重大な意味変更や制作コメント残存の所見がなく、各品質評点>=3。24/24成功の現行とCが同等で、Cの文章品質の優位性は未確認。A/Bは各23完了なのでタイムアウトを言語品質の不合格やCの因果的優位としない。補助SKILL実ファイル読込は8依頼×4条件で測り、現行6/8（1timeout、1未連携）、A5/8（3timeout）、B/C各8/8。Cを欠落なく要件を確認できた実装候補として条件付きで採用するが、Bを劣った手法と結論しない。\nR1=重要情報・否定/因果/主体/確信度/義務の保持、R2=指示者向け説明を成果物へ混ぜない（正当なメール依頼・研究目的・引用を保持）、R3=必要な工程で実際のparagraph-writingとjapanese-direct-writingを読んで一度適用（狭い依頼や誤字・コードには全工程を強制しない）、R4=自然さと段落構成が>=3/4、R5=追加手間と速度は参考値（複数工程を並行したので因果的速度差や課金節約を主張しない）。主指標は完了かつR1/R2/R4を満たす出力率。採用には意味の重大変更0・正例破壊0・必要な連携成立、測定欠落を隠さない。\ndocs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/source-index.jsonとdocs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S1.md～S5.mdは実際に開いたMIT公開スキルの固定原典。tools/codex-yomiyasu/evaluation-v200/以下に基準案と3案の実資材、tools/codex-yomiyasu/evaluation-v200/frozen-sources.jsonにハッシュがある。旧cacheだけは非入力で配布していない。捏造した論文や効果値を追加しない。発想は現行・blader/humanizer・coji/natural-japanese・iKora128/stop-ai-slop-jp等と重なる。数式を飾りで作らず、実スキル参照→段落→留保→読者レビューという擬似コードと3図で工程を説明する。約5候補の標準を4条件へ狭めた理由を記録。\n最大3つの隔離された決定的検査で、捕捉済み出力と評定を再計算し、引用/数値/コードの代表例とSKILL全文読込の証拠を検査する。実験結果は親による実行receiptと結びつけ、完了出力とタイムアウトを別記。既存捕捉の結果を単なる定数へ置換して勝利を作らない。元の文書自体の修正や追加モデル生成・インストール・設定変更はこの研究で行わない。新規6課題の確認とインストーラー反映は親が別に行う。\n保存済み新規6課題のholdoutも両条件6/6成功。採点は同一モデルの自動評価で、品質差未確認。audited summariesのprimary_fractionは取得稿を分母とし全条件100%、delivered_pass_fractionは全試行が分母。選択の完全性条件は保守的な後付け条件として明記。旧研究のprepareは一時領域だけで実行記録・報告が残っておらず、このrunで捕捉済み結果の独立検査と研究報告を完成させる。親は新規生成を繰り返さない。",
+  "allow_network": true,
+  "test_commands": [],
+  "evaluation_purpose": "effectiveness",
+  "report_profile": "proposed-method",
+  "target_methods": 4,
+  "reader_friendly": true
+}

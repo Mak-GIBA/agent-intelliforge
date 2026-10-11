@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 43.41,
+  "prompt_sha256": "ed519cbd0e9f5026b32f62d4c15cc29431e3f9fe7faca15fcc7a4b72d4e9c435",
+  "output": "回答の「正確さ」と、説明の「読みやすさ」を別々に評価する計画です。正確さは、回答が資料の事実に合っているかを指します。読みやすさは、読者が説明の流れを追えるかを指します。\n\n仮の例として、事実は資料どおりでも、結論と理由のつながりが分かりにくい回答が考えられます。反対に、すらすら読めても、資料と違う事実を書いていれば正確ではありません。二つを分けて評価すると、事実の誤りと説明の分かりにくさを区別し、どこを直すべきか判断しやすくなります。\n\n評価はまだ実施しておらず、評価結果の数値や方式の順位はありません。",
+  "usage": {
+    "input_tokens": 68395,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1238,
+    "reasoning_output_tokens": 1034
+  },
+  "tools": [],
+  "error": null,
+  "task": "H01",
+  "arm": "baseline",
+  "repeat": 1
+}

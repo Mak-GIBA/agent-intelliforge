@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 306.46,
+  "prompt_sha256": "e999421e362d243fa6e8a68eb59cd85efda80314fcac6e3e2bfa778d38a1cfd0",
+  "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日または10月22日のうち、ご都合のよい日をお知らせください。\n\n鈴木",
+  "usage": {
+    "input_tokens": 72025,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 358,
+    "reasoning_output_tokens": 310
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "W12-baseline-2",
+  "task": "W12",
+  "repeat": 2,
+  "arm": "baseline"
+}

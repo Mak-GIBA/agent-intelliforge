@@ -1,0 +1,85 @@
+{
+  "status": "ready",
+  "reason": "契約、全8種類の依頼文、監査コード、固定SKILL、原receiptの関連箇所を読んだ。以下は未実行の評価計画であり、監査結果は親の実行まで未確定。",
+  "goal": "復元されたnative入力を32原receiptの入力ハッシュに結び付け、依頼範囲と実読込の対応、とくにCの8/8を検証する。",
+  "domain": "research",
+  "baseline": "固定されたbaseline・a・b・cの各8試行。原記録の経路合格数はbaseline=6、a=5、b=8、c=8であり、再照合の参照値として保持する。",
+  "constraints": [
+    "評価目的はdesign：完了済みnative試行の入力来歴と経路仕様を監査する。新たな手法提案や文章品質の効果検証は行わない。",
+    "比較対象はbaseline・a・b・cの4条件だけ。元の32件に第五条件が存在せず、追加試行も禁止されているため、約5候補という一般目安の例外とする。",
+    "親がプロジェクトルートの隔離コピーでpython3 -B native_provenance_audit.pyを一度だけ実行する。子は検査を実行しない。追加コマンド、再試行、別ハーネス、完成稿の再生成は行わない。",
+    "根拠はdocs/codex-yomiyasu/evidence/study-2026-10-11/の原receiptと復元入力、およびtools/codex-yomiyasu/evaluation-v200/の固定資材。説明文や集計だけで原証拠を代替しない。",
+    "復元文はハッシュに結び付く復元入力として扱い、元の平文ログが保存されていたとは述べない。",
+    "実読込の記録から内部適用回数や文章品質を推論しない。別の主比較96試行・94完了の品質を本監査で再採点せず、Cの品質優位を主張しない。",
+    "timeout、読込不足、監査実行失敗を区別し、欠測を成功や言語品質の欠陥へ置き換えない。",
+    "検査の呼出経路にモデル生成、インストール、設定変更、commit/pushを含めない。verify_native.verifyの一時ファイルだけを隔離環境で許容し、報告書・設定・メモリを変更しない。",
+    "最大1iteration。過去runのunknownは歴史的な入力として扱い、同一runのissueがresolvedになったとは記録しない。",
+    "ネットワーク検索、無関係なGitHub・Basic Memory・インストーラー全体の監査は行わない。"
+  ],
+  "criteria": [
+    {
+      "id": "R1",
+      "title": "Cの8依頼は期待した読込経路に一致するか",
+      "kind": "runtime",
+      "required": true,
+      "acceptance": "指定コマンドが正常終了し、CのN1–N8各原receiptについてcompleted、期待したSKILL集合との一致、各対象SKILLの成功した全文読込記録が1件ずつあることを原toolsから再照合する。N7・N8は読込なしを期待し、C=8/8が支持されること。集計値だけでは合格にしない。"
+    },
+    {
+      "id": "R2",
+      "title": "32件の復元入力は原receiptに結び付くか",
+      "kind": "runtime",
+      "required": true,
+      "acceptance": "provenanceのsource_filesと32原receiptのハッシュが一致し、各reconstructed_promptがnative_tasksのpromptと固定接尾文から復元され、そのUTF-8 SHA256が原prompt_sha256に一致すること。N1–N8×4条件の一意な対応、receipt・task・arm・expected_readsの整合性を保持すること。復元入力という来歴を明示する。"
+    },
+    {
+      "id": "R3",
+      "title": "部分依頼は指定した工程だけに対応するか",
+      "kind": "runtime",
+      "required": true,
+      "acceptance": "全4条件についてN3・N4はparagraph-writingのみ、N5・N6はjapanese-direct-writingのみという期待値を依頼本文と固定SKILLの適用範囲から独立に確認し、原toolsと照合する。AのN6 timeoutは欠測を伴う経路不合格として残し、完成済み試行と混同しない。"
+    },
+    {
+      "id": "R4",
+      "title": "誤字・コード対照で読込を要求していないか",
+      "kind": "runtime",
+      "required": true,
+      "acceptance": "N7の誤字のみ修正とN8のコードのみ修正について、全4条件のexpected_reads=[]が依頼範囲と一致し、原receiptがcompletedかつ対象SKILLの読込記録なしであること。空の読込集合を全文読込成功として数えない。"
+    },
+    {
+      "id": "R5",
+      "title": "原記録の不合格とtimeoutを保持しているか",
+      "kind": "runtime",
+      "required": true,
+      "acceptance": "再照合した経路合格数がbaseline=6/8、a=5/8、b=8/8、c=8/8と一致すること。baseline N1の読込不足とbaseline N2・A N1/N2/N6のtimeoutを個別に保持する。監査自体が失敗・停止・切り詰めとなった場合は未確認として残す。"
+    },
+    {
+      "id": "R6",
+      "title": "全文読込という証拠の意味を正しく限定しているか",
+      "kind": "research",
+      "required": true,
+      "acceptance": "read_receiptsの判定は対象パス、読取コマンド、exit_code=0、出力中の固定SKILL全文に基づくと説明する。full_read_receipts:32は実際に全文を読んだ試行数の測定値として扱わず、32件のreceiptを検証したことと区別する。1件の読込記録は内部適用1回を意味しない。"
+    },
+    {
+      "id": "R7",
+      "title": "指定検査は許可された範囲で完結するか",
+      "kind": "static",
+      "required": true,
+      "acceptance": "native_provenance_audit.pyの呼出経路がnative_tasks、ハッシュ照合、verify_native.verify、read_receiptsに限定され、run_study.main/execute/install_nativeやverify_nativeの保存用CLIを呼ばないこと。一時SKILLコピー以外の永続変更を行わず、検査にモデル呼出・導入・設定変更・commit/pushが含まれないこと。"
+    }
+  ],
+  "test_commands": [
+    {
+      "command": "python3 -B native_provenance_audit.py",
+      "check_ids": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "artifact_paths": []
+    }
+  ],
+  "complexity_baseline": "既存の監査スクリプトとverify_native.verifyをそのまま使い、32原receiptと固定された3種類のSKILLを照合する。新規スクリプト、依存追加、モデル試行、重複した検査呼出は不要。stdoutと終了状態は親の実行receiptで保存する。",
+  "queries": []
+}

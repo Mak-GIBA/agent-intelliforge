@@ -1,0 +1,19 @@
+{
+  "status": "timeout",
+  "elapsed_seconds": 508.78,
+  "prompt_sha256": "b443e15933c528e26eb4428636235ecbaa7cff04c1fe04533041459c95f0a6f2",
+  "output": null,
+  "usage": null,
+  "tools": [],
+  "reads": {},
+  "route_pass": false,
+  "expected_reads": [
+    "yomiyasu",
+    "paragraph-writing",
+    "japanese-direct-writing"
+  ],
+  "job_id": "N2-baseline-1",
+  "task": "N2",
+  "arm": "baseline",
+  "repeat": 1
+}

@@ -1,0 +1,18 @@
+test_apply_all_uses_each_installers_standard_install_mode (test_install_all.BatchInstallerTests.test_apply_all_uses_each_installers_standard_install_mode) ... ok
+test_dangling_workgraph_marker_does_not_trigger_a_fresh_install (test_install_all.BatchInstallerTests.test_dangling_workgraph_marker_does_not_trigger_a_fresh_install) ... ok
+test_default_preview_invokes_nothing_and_preserves_home (test_install_all.BatchInstallerTests.test_default_preview_invokes_nothing_and_preserves_home) ... ok
+test_existing_workgraph_uses_update_and_keeps_its_settings (test_install_all.BatchInstallerTests.test_existing_workgraph_uses_update_and_keeps_its_settings) ... ok
+test_explicit_preview_selects_without_invoking_apply_only_children (test_install_all.BatchInstallerTests.test_explicit_preview_selects_without_invoking_apply_only_children) ... ok
+test_failures_are_reported_and_other_tools_still_run (test_install_all.BatchInstallerTests.test_failures_are_reported_and_other_tools_still_run) ... ok
+test_help_and_list_work_without_repository_payloads (test_install_all.BatchInstallerTests.test_help_and_list_work_without_repository_payloads) ... ok
+test_interrupt_exit_stops_subsequent_installers (test_install_all.BatchInstallerTests.test_interrupt_exit_stops_subsequent_installers) ... ok
+test_invalid_arguments_fail_before_any_child_or_shell_expansion (test_install_all.BatchInstallerTests.test_invalid_arguments_fail_before_any_child_or_shell_expansion) ... ok
+test_missing_late_installer_is_detected_before_any_installation (test_install_all.BatchInstallerTests.test_missing_late_installer_is_detected_before_any_installation) ... ok
+test_repeated_selection_is_deduplicated_and_runs_from_any_directory (test_install_all.BatchInstallerTests.test_repeated_selection_is_deduplicated_and_runs_from_any_directory) ... ok
+test_selected_helper_must_exist_before_any_installation (test_install_all.BatchInstallerTests.test_selected_helper_must_exist_before_any_installation) ... ok
+test_unselected_tools_are_not_required (test_install_all.BatchInstallerTests.test_unselected_tools_are_not_required) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.876s
+
+OK

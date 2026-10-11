@@ -1,0 +1,9 @@
+{
+  "source_path": "native_provenance_audit.py",
+  "source_sha256": "42e04addde5848b40823f6f1905ce9ebecb633ea2db82da0d3440ec7273864b8",
+  "line_start": 31,
+  "line_end": 49,
+  "checked_at": "2026-10-11T13:04:16.897717+00:00",
+  "excerpt": "verified = verify_native.verify(evidence, ROOT / 'tools/codex-yomiyasu/evaluation-v200')\ncounts = {arm: sum(row['route_pass'] for name, row in verified.items() if '-' + arm + '-' in name)\n          for arm in ['baseline', 'a', 'b', 'c']}\nassert counts == {'baseline': 6, 'a': 5, 'b': 8, 'c': 8}\nfull_read_trials = sum(row['full_skill_content_verified'] for row in verified.values())\nnegative_controls = [row for row in verified.values() if not row['expected_reads']]\nassert len(negative_controls) == 8\nassert all(row['status'] == 'completed' and row['route_pass'] and not row['reads']\n           and not row['full_skill_content_verified'] for row in negative_controls)\nassert full_read_trials == 20\nprint(json.dumps({'status': 'verified', 'exact_original_prompt_hashes': len(seen),\n                  'receipts_verified': len(verified),\n                  'trials_with_full_skill_reads': full_read_trials,\n                  'negative_control_trials': len(negative_controls), 'route_passes': counts,\n                  'task_prompts': {key: value['prompt'] for key, value in tasks.items()},\n                  'limits': ['Scope is these eight fixtures in the original isolated environment.',\n                             'Reading is observed; private internal application count is not.',\n                             'Timeout outcomes remain unavailable. No model generation or installation.']},\n                 ensure_ascii=False, indent=2))",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

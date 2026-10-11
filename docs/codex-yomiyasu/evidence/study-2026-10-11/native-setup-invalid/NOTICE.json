@@ -1,0 +1,5 @@
+{
+  "status": "INVALID_SETUP_NOT_COMPARISON_EVIDENCE",
+  "reason": "Manually copied skills lacked the installer manifest; upstream lint/diff could not run. Replaced with real temporary installation.",
+  "preserve": "Original receipts retained, not counted in 32 native trials."
+}

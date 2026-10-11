@@ -1,0 +1,3853 @@
+{
+  "contract_sha256": "5131f1a304337549e1edf26354dace3d33116b61eeb27ca0b3083c61b0170537",
+  "tasks": [
+    {
+      "id": "W01",
+      "input": {
+        "genre": "research",
+        "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+        "text": "ご依頼に沿って、初見の読者にも分かるように比較結果をまとめました。評価条件は同じです。方式AのmAPは0.712でした。方式BのmAPは0.748でした。また、方式Bの推論時間は方式Aの1.6倍でした。方式Bは精度が高い一方で、推論に時間がかかります。なお、学習データ数が少ない場合の性能は未評価です。必要であれば追加実験もできます。"
+      },
+      "expected": {
+        "must_keep": [
+          "0.712",
+          "0.748",
+          "1.6倍",
+          "同じ評価条件",
+          "未評価"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W02",
+      "input": {
+        "genre": "research",
+        "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+        "text": "以下に、読みやすさを重視して実験結果を説明します。対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。あくまで参考情報であり、断定を避ける必要がある点には留意が必要です。"
+      },
+      "expected": {
+        "must_keep": [
+          "4.1%",
+          "4.4%",
+          "0.18",
+          "有意差は確認されなかった",
+          "効果の有無を判断できない"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W03",
+      "input": {
+        "genre": "report",
+        "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+        "text": "技術的な観点から詳しく解説します。現行方式は要求ごとに同じ設定ファイルを読みます。設定の読み取りが重複するため待ち時間が増えます。新方式は起動時に読み込んだ設定を保持します。したがって、要求ごとの読み取りを省けます。新方式では設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。以上のように整理しました。"
+      },
+      "expected": {
+        "must_keep": [
+          "起動時",
+          "要求ごと",
+          "再起動",
+          "運用担当者"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W04",
+      "input": {
+        "genre": "article",
+        "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+        "text": "ご指定の段落構成で記事を作成しました。検索機能は、入力された文字列と文書内の文字列を照合する。表記が異なると同じ意味でも検索結果に含まれないことがある。\n\n必要であれば、意味検索の仕組みや比較表を追加できます。"
+      },
+      "expected": {
+        "must_keep": [
+          "文字列",
+          "表記が異なる",
+          "ことがある"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W05",
+      "input": {
+        "genre": "email",
+        "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+        "text": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤"
+      },
+      "expected": {
+        "must_keep": [
+          "田中様",
+          "ご依頼いただいた比較資料をお送りします",
+          "2ページ",
+          "ご確認ください",
+          "佐藤"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W06",
+      "input": {
+        "genre": "report",
+        "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+        "text": "ご要望を踏まえて仕様を分かりやすくしました。REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。REQ-13：管理者への通知は推奨とする。通知先は未決定である。"
+      },
+      "expected": {
+        "must_keep": [
+          "REQ-12",
+          "90日間",
+          "保存しなければならない",
+          "REQ-13",
+          "推奨",
+          "未決定"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W07",
+      "input": {
+        "genre": "manual",
+        "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+        "text": "初心者にも分かるよう、手順を整理しました。\n\n設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。"
+      },
+      "expected": {
+        "must_keep": [
+          "1. 設定画面を開く。",
+          "2. 保存先を指定する。",
+          "3. 「保存」を押す。",
+          "上書きされる",
+          "別の名前"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W08",
+      "input": {
+        "genre": "research",
+        "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+        "text": "引用文は次のとおりである。\n\n> 「ご依頼に沿って説明します」という定型句が含まれていた。\n\nこの引用は、文章に残った応答表現の例である。[1]\n\n[^note]: 読みやすさを重視して構成しました。"
+      },
+      "expected": {
+        "must_keep": [
+          "> 「ご依頼に沿って説明します」という定型句が含まれていた。",
+          "[1]"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W09",
+      "input": {
+        "genre": "research",
+        "instruction": "素材だけを用い、比較条件と限界を含む3段落程度の技術報告を新規執筆してください。素材に基づく解釈を加えてよい。完成稿だけを返してください。",
+        "text": "同じデータセット・同じバックボーンで検索方式AとBを比較した。mAPはAが0.61、Bが0.65。Bは学習にAの2倍の時間を要した。推論時間は未測定。クラスごとの件数は不均衡で、少数クラスごとの性能は未評価。"
+      },
+      "expected": {
+        "must_keep": [
+          "0.61",
+          "0.65",
+          "2倍",
+          "未測定",
+          "未評価"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W10",
+      "input": {
+        "genre": "report",
+        "instruction": "原稿の意味を変えず、主張・根拠・条件の関係が分かる文章に直してください。結論や提案を新たに足さないでください。",
+        "text": "導入は決定していない。試験運用の結果は良好だった。良好とした根拠の指標と数値は資料に記載されていない。運用担当者の確認が必要である。ご希望であれば結論を強めることもできます。"
+      },
+      "expected": {
+        "must_keep": [
+          "決定していない",
+          "記載されていない",
+          "確認が必要"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W11",
+      "input": {
+        "genre": "manual",
+        "instruction": "文章だけを自然に直してください。数式、コード、手順番号は変更しないでください。",
+        "text": "これから分かりやすく設定を説明します。\n\n1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```"
+      },
+      "expected": {
+        "must_keep": [
+          "max_retry = 3",
+          "場合だけ",
+          "$t=2^k$",
+          "message = \"ご依頼に沿って説明します\""
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    },
+    {
+      "id": "W12",
+      "input": {
+        "genre": "email",
+        "instruction": "下のメールを完成稿にしてください。送信はしないでください。冒頭の制作者への返答は取り除き、宛先への依頼は残してください。",
+        "text": "ご依頼に沿ってメール文面を作成しました。\n\n山田様\n\n打ち合わせの候補日をお送りします。10月20日か10月22日で、ご都合をお知らせください。\n\n鈴木"
+      },
+      "expected": {
+        "must_keep": [
+          "山田様",
+          "10月20日",
+          "10月22日",
+          "ご都合をお知らせください",
+          "鈴木"
+        ],
+        "meaning_errors": [],
+        "requester_residue": [],
+        "minimum_each_quality_score": 3
+      }
+    }
+  ],
+  "trials": [
+    {
+      "task_id": "W01",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "方式Bは方式Aより精度が高い一方、推論に時間がかかります。同じ評価条件で、mAPは方式Aが0.712、方式Bが0.748でした。方式Bの推論時間は方式Aの1.6倍でした。\n\n学習データ数が少ない場合の性能は未評価です。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W01-a-1.json",
+        "receipt_sha256": "d7378ee7116a15ff991259bccdb9821bb855105799f42b223d2dad8c80ac9914",
+        "output_file": "W01-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「方式Bは方式Aより精度が高い一方、推論に時間がかかります」という結論に、同条件のmAPと推論時間の数値が続き、根拠が明確。「性能は未評価です」という限定も保持されている。",
+          "output_file": "W01-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U16.json",
+          "sha256": "a097f9b781f69bbe1b5dbd20a53eee9ca8febe82f6557af26c4abb6202753688",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W01",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "方式Bは方式Aより精度が高い一方、推論に時間がかかります。同じ評価条件で、mAPは方式Aが0.712、方式Bが0.748でした。方式Bの推論時間は方式Aの1.6倍でした。学習データ数が少ない場合の性能は未評価です。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W01-a-2.json",
+        "receipt_sha256": "ad10c3133457ff16e692239c75ece649186c18ff6d98b76d6e5f421d4c93ddaf",
+        "output_file": "W01-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「方式Bは方式Aより精度が高い一方、推論に時間がかかります」を数値と同じ評価条件で裏づけ、末尾の「性能は未評価です」で限界も示す。短い一段落で比較結果を自然に把握できる。",
+          "output_file": "W01-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U17.json",
+          "sha256": "c78b93a4fc7aff4f3aa3742feb857188d5e413e3a79dabc8016c867a9a169a5c",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W01",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "方式Bは方式Aより精度が高い一方、推論に時間がかかります。同じ評価条件で、mAPは方式Aが0.712、方式Bが0.748でした。方式Bの推論時間は方式Aの1.6倍でした。\n\n学習データ数が少ない場合の性能は未評価です。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W01-b-1.json",
+        "receipt_sha256": "0601819fcc359d19f14d78d56f37d4a195b718f5360b7de681fea323a7aafa5c",
+        "output_file": "W01-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「同じ評価条件」で比較の前提を示し、mAPの両数値と「1.6倍」を保持。「性能は未評価です」で評価範囲も明確にし、結論・数値的根拠・制約の順で簡潔に読める。",
+          "output_file": "W01-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U12.json",
+          "sha256": "4ae2d739ed72f78d1e45a7cd45124b78a3af9795eaf17006d2687223a9584706",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W01",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "方式Bは方式Aより精度が高い一方、推論に時間がかかります。同じ評価条件で、mAPは方式Aが0.712、方式Bが0.748でした。方式Bの推論時間は方式Aの1.6倍でした。ただし、学習データ数が少ない場合の性能は未評価です。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W01-b-2.json",
+        "receipt_sha256": "b997da8a11676deab2cd4711d5e9570e52d4ff7176102eb58acb1cb60d1838cb",
+        "output_file": "W01-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「同じ評価条件」、mAPの「0.712」「0.748」、推論時間の「1.6倍」、少量データでの「未評価」を保持。冒頭の精度と時間の関係を数値で裏づけ、評価の限界へ自然につながる。",
+          "output_file": "W01-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U09.json",
+          "sha256": "c6b2ecc4ce638f833caaee944ac72b94ca5a00f13ef3ef44d7def189b7d7c540",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W01",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "同じ評価条件では、方式Bは方式Aより精度が高い一方、推論に時間がかかります。mAPは方式Aが0.712、方式Bが0.748で、方式Bの推論時間は方式Aの1.6倍でした。学習データ数が少ない場合の性能は未評価です。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W01-baseline-1.json",
+        "receipt_sha256": "5d88df49ef2e977b3f0462eb0eefb97a058b3277250c9b940aa61f31f6b211ba",
+        "output_file": "W01-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「同じ評価条件では」で比較の前提を示し、結論に続けてmAPの0.712／0.748と推論時間の「1.6倍」を提示している。「性能は未評価です」も保持され、研究結果と限界を簡潔に読める。",
+          "output_file": "W01-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U14.json",
+          "sha256": "4730b09525ac67d3977e87a7b4d0a6e6e9bc0de97fc69d7d1dc94f41702e5ee0",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W01",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "方式Bは方式Aより精度が高い一方、推論に時間がかかります。同じ評価条件で、mAPは方式Aが0.712、方式Bが0.748でした。方式Bの推論時間は方式Aの1.6倍でした。\n\n学習データ数が少ない場合の性能は未評価です。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W01-baseline-2.json",
+        "receipt_sha256": "cafea317c4e79041696a538e390c53cf1b1acd799464efdc721eb25c6aef1e7d",
+        "output_file": "W01-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「方式Bは方式Aより精度が高い一方、推論に時間がかかります」という結論に、同条件のmAPと推論時間の数値が続き、根拠が明確。「性能は未評価です」という限定も保持されている。",
+          "output_file": "W01-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U16.json",
+          "sha256": "a097f9b781f69bbe1b5dbd20a53eee9ca8febe82f6557af26c4abb6202753688",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W01",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "方式Bは方式Aより精度が高い一方、推論に時間がかかります。同じ評価条件で、mAPは方式Aが0.712、方式Bが0.748でした。方式Bの推論時間は方式Aの1.6倍でした。\n\n学習データ数が少ない場合の性能は未評価です。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W01-c-1.json",
+        "receipt_sha256": "76feb39dda2531701310cad2157a6e36ce046e502be419a0ba6653eca48c8ba7",
+        "output_file": "W01-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「精度が高い一方、推論に時間がかかります」という結論を、同じ評価条件での数値が支えている。別段落の「学習データ数が少ない場合の性能は未評価です」で限界も明確になり、重要情報の脱落や応答表現の混入はない。",
+          "output_file": "W01-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U14.json",
+          "sha256": "4730b09525ac67d3977e87a7b4d0a6e6e9bc0de97fc69d7d1dc94f41702e5ee0",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W01",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "方式Bは方式Aより精度が高い一方、推論に時間がかかります。同じ評価条件で、mAPは方式Aが0.712、方式Bが0.748でした。方式Bの推論時間は方式Aの1.6倍でした。\n\n学習データ数が少ない場合の性能は未評価です。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W01-c-2.json",
+        "receipt_sha256": "2a6e6e74e3deebecabce65a5db9c5e1604ca98124fbd3737d6c4c28f18a9d7a4",
+        "output_file": "W01-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「方式Bの推論時間は方式Aの1.6倍でした」で比較の根拠を示し、「学習データ数が少ない場合の性能は未評価です」を別段落で明示。結論、数値、評価範囲が自然な順序で伝わる。",
+          "output_file": "W01-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U17.json",
+          "sha256": "c78b93a4fc7aff4f3aa3742feb857188d5e413e3a79dabc8016c867a9a169a5c",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W02",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W02-a-1.json",
+        "receipt_sha256": "53151d62024f5d8eeb88f7a71cbbbd5ed1347f35d3be424f883cd3a7c320cd37",
+        "output_file": "W02-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X08",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「4.1%」「4.4%」「p値は0.18」を保持し、検定結果から「効果の有無を判断できません」へ自然につながる。断定を避けるという意味も保たれている。",
+          "output_file": "W02-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X08"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W02",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W02-a-2.json",
+        "receipt_sha256": "12c8e9a6d9d8ed5e668d4ce575713f289434525c966065eecb12b113a021e3f7",
+        "output_file": "W02-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「4.1%」「4.4%」「p値は0.18」を保持し、検定結果から「効果の有無を判断できません」へ自然につながる。断定を避けるという意味も保たれている。",
+          "output_file": "W02-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W02",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": null,
+      "values": {
+        "delivered_pass": 0
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W02-b-1.json",
+        "receipt_sha256": "61291238cb6ce7178fa9af44bbcc382911669de7cf3e999d85259e6cc427b2d6",
+        "output_file": "W02-b-1.json",
+        "status": "timeout",
+        "rating": null,
+        "rating_provenance": null,
+        "quality": null,
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "no completed final outcome; language quality unobserved",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W02",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W02-b-2.json",
+        "receipt_sha256": "66a0af6413c5a35a73080817593c3144b57fe294857155268d4540ae50c7a719",
+        "output_file": "W02-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「4.1%」「4.4%」「p値は0.18」を保持し、結果から解釈へ順序よく進む。「この結果だけでは効果の有無を判断できません」で、断定を避ける趣旨も保たれている。",
+          "output_file": "W02-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U10.json",
+          "sha256": "96945832226c8ddf81904c362a7a12c71d2a2469647800fbbd182689fc025269",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W02",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W02-baseline-1.json",
+        "receipt_sha256": "6c450501f8468eff3dc3729b154332b6717e5134a0165f8ea07f5489832cff02",
+        "output_file": "W02-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X06",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「4.1%」「4.4%」「p値は0.18」を保持し、検定結果から「効果の有無を判断できません」へ自然につながる。断定を避けるという意味も保たれている。",
+          "output_file": "W02-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X06"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W02",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W02-baseline-2.json",
+        "receipt_sha256": "af515f0ec98f3ccfadd8faf249337519642005ce1547467e8dfc837851b194ff",
+        "output_file": "W02-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「対照群の転換率は4.1%、処置群は4.4%」「p値は0.18」で数値を保持。「有意差は確認されませんでした」「この結果だけでは効果の有無を判断できません」で断定できない意味も保ち、結果から限界へ自然に進む。",
+          "output_file": "W02-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U04.json",
+          "sha256": "fe09a2ab0dd58f7d76e63c67387505291320b0154cdc739ec453b0edce8bf2f2",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W02",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W02-c-1.json",
+        "receipt_sha256": "1eca7dbbb8ce5972952dac8eaa0b5f4934902ea3c42edc9cae333f16d27a47d8",
+        "output_file": "W02-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "転換率「4.1%」「4.4%」、p値「0.18」を保持し、数値から検定結果、解釈の限界へ自然に進む。「この結果だけでは効果の有無を判断できません」により、効果を断定できないという留保も保たれている。",
+          "output_file": "W02-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U06.json",
+          "sha256": "eb8db21d6ec4579438fde3c3157b9b5ea88d1c60f008af49cae0ca71e4aae1af",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W02",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W02-c-2.json",
+        "receipt_sha256": "68a9b64da9923fe5664b9bdf179fd4caaeb9bd1913a4d10a11e394fbe63df4c7",
+        "output_file": "W02-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X10",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「検定のp値は0.18で、有意差は確認されませんでした」から判断の限界へ自然につながる。「この結果だけでは効果の有無を判断できません」が断定を避ける趣旨を保持している。",
+          "output_file": "W02-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X10"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W03",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "現行方式は要求ごとに同じ設定ファイルを読むため、設定の読み取りが重複し、待ち時間が増えます。新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\n新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W03-a-1.json",
+        "receipt_sha256": "d4aaf338a32fff45a54e971ba4e1b71ce7d3ea4530cca029b2865f3302205dc5",
+        "output_file": "W03-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「読み取りが重複し、待ち時間が増えます」で因果が明確。「設定変更を反映するには再起動が必要」と運用担当者の役割も保持し、方式の比較と運用条件を自然に段落分けしている。",
+          "output_file": "W03-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U12.json",
+          "sha256": "4ae2d739ed72f78d1e45a7cd45124b78a3af9795eaf17006d2687223a9584706",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W03",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "現行方式は要求ごとに同じ設定ファイルを読みます。設定の読み取りが重複するため、待ち時間が増えます。\n\n新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\n新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W03-a-2.json",
+        "receipt_sha256": "c6eb2531aa7efc269a9d87f7be35f33ee8fbc5206169fead07eedd4139ed12ee",
+        "output_file": "W03-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定の読み取りが重複するため、待ち時間が増えます。」で因果が明確。現行方式の問題、新方式の効果、再起動と担当者の対応を段落ごとに整理し、技術報告に必要な情報を自然な表現で保持している。",
+          "output_file": "W03-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U07.json",
+          "sha256": "75b141dc49f7129fa8edfa0de7747b76c56221d394069db92125a4de8c8ea089",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W03",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "現行方式は要求ごとに同じ設定ファイルを読みます。設定の読み取りが重複するため、待ち時間が増えます。\n\n新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\n新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W03-b-1.json",
+        "receipt_sha256": "36e9b16d315c0ed57c2f437e4a437a148027a89b1c71bc05d506a7fcc7e9ad5c",
+        "output_file": "W03-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定の読み取りが重複するため、待ち時間が増えます。」で因果が明確。現行方式の問題、新方式の効果、再起動と担当者の対応を段落ごとに整理し、技術報告に必要な情報を自然な表現で保持している。",
+          "output_file": "W03-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U07.json",
+          "sha256": "75b141dc49f7129fa8edfa0de7747b76c56221d394069db92125a4de8c8ea089",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W03",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "現行方式では、要求ごとに同じ設定ファイルを読むため、読み取りが重複して待ち時間が増えます。\n\n新方式では、起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\nただし、新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W03-b-2.json",
+        "receipt_sha256": "4296bc6bebcdd0591d133c209d7e6c4c13a34289f2fe6a9d3d2b054fc4390301",
+        "output_file": "W03-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「要求ごとの読み取りを省けます」から「再起動が必要」へ、改善点と運用上の制約が明確につながる。起動時の保持と運用担当者の役割も保たれている。",
+          "output_file": "W03-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U10.json",
+          "sha256": "96945832226c8ddf81904c362a7a12c71d2a2469647800fbbd182689fc025269",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W03",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "現行方式は要求ごとに同じ設定ファイルを読み取ります。設定の読み取りが重複するため、待ち時間が増えます。\n\n新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\n新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W03-baseline-1.json",
+        "receipt_sha256": "4218f9cd39c2372c469cc151cb60d98de9445612268b2275f3aed2d0d1005aab",
+        "output_file": "W03-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。」と仕組みと効果が明確。現行方式の問題、新方式の改善、再起動条件と担当者の役割が順に整理されている。",
+          "output_file": "W03-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U15.json",
+          "sha256": "4ad09e013bedfd377ee9408c3ba6c720f3c40c1d9d3b20c547a78db5a4f7cfb1",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W03",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "現行方式は要求ごとに同じ設定ファイルを読み取るため、読み取りが重複して待ち時間が増えます。\n\n新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\nただし、新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W03-baseline-2.json",
+        "receipt_sha256": "f81aa9e63c686452f4408499f4dc0ad37c337ddeb9ead07c22a24e2649a07bf9",
+        "output_file": "W03-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X05",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「読み取りが重複して待ち時間が増えます」で原因と影響を示し、現行方式・新方式・再起動の条件を順に説明している。運用担当者の役割も保持されている。",
+          "output_file": "W03-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X05"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W03",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "現行方式は要求ごとに同じ設定ファイルを読みます。設定の読み取りが重複するため、待ち時間が増えます。\n\n新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\n新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W03-c-1.json",
+        "receipt_sha256": "053d604efbf4fcb29780eb58ff63952939e99377b4ba08eb443d37f7097cd7f1",
+        "output_file": "W03-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定の読み取りが重複するため、待ち時間が増えます」で原因を示し、現行方式・新方式・運用条件の順に整理。「運用担当者は再起動のタイミングを調整します」まで保持し、報告として必要な効果と運用上の条件が明確。",
+          "output_file": "W03-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U13.json",
+          "sha256": "663c8e17faeddaf3bbfbd7e269baebcea1497f53adcb64ffabb86b0af6d0bdd0",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W03",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "現行方式は要求ごとに同じ設定ファイルを読むため、設定の読み取りが重複し、待ち時間が増えます。新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\n新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W03-c-2.json",
+        "receipt_sha256": "2db80f0aa1bff69b7e76aa34cbf9c3dc1c8a6886052e1c7905aae283c66add02",
+        "output_file": "W03-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。」で仕組みと効果を明確に説明。現行方式との比較を一段落にまとめ、再起動の条件と担当者の対応を次段落に置く構成は読みやすく、重要情報も保持している。",
+          "output_file": "W03-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U07.json",
+          "sha256": "75b141dc49f7129fa8edfa0de7747b76c56221d394069db92125a4de8c8ea089",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W04",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "検索機能は入力された文字列と文書内の文字列を照合する。表記が異なると、同じ意味でも検索結果に含まれないことがある。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W04-a-1.json",
+        "receipt_sha256": "c622117fbc34ced851ea02ac1deb71b9b6cd9e3ae0d3cef7b881300370298e52",
+        "output_file": "W04-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「文字列を照合する」という仕組みから、表記の違いによる検索漏れへ自然につながる。「含まれないことがある」という限定も保持され、記事本文として必要な説明が揃っている。",
+          "output_file": "W04-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U11.json",
+          "sha256": "4dd67e825414adaff05baaafef969e768e1d6eeabfe0aab51e8c1cbd69d0a420",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W04",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "検索機能は入力された文字列と文書内の文字列を照合する。表記が異なると、同じ意味でも検索結果に含まれないことがある。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W04-a-2.json",
+        "receipt_sha256": "811c00bae47ecace07eb065cc76a8bbc6a1184989f3044473bc6cec4062e7cc7",
+        "output_file": "W04-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「入力された文字列と文書内の文字列を照合する」で仕組みを示し、「含まれないことがある」で限界を説明している。表記の違いと可能性の限定を保ち、制作報告や追加対応の申し出も残っていない。",
+          "output_file": "W04-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U14.json",
+          "sha256": "4730b09525ac67d3977e87a7b4d0a6e6e9bc0de97fc69d7d1dc94f41702e5ee0",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W04",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "検索機能は入力された文字列と文書内の文字列を照合する。表記が異なると、意味が同じでも検索結果に含まれないことがある。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W04-b-1.json",
+        "receipt_sha256": "fa02d867cd64b04a70b80e970de21fdc4d7b733aa6627c5cdb9dc027d08a5b28",
+        "output_file": "W04-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「文字列を照合する」から「意味が同じでも検索結果に含まれないことがある」へ、仕組みと限界が自然につながる。可能性の限定も保持され、記事本文として過不足がない。",
+          "output_file": "W04-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U03.json",
+          "sha256": "b9e2572fdd4442c2b78ff1ff7e19f08ed13a488156cf1b55284497fcda4ed775",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W04",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "検索機能は入力された文字列と文書内の文字列を照合する。表記が異なると、同じ意味でも検索結果に含まれないことがある。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W04-b-2.json",
+        "receipt_sha256": "6166745a28d4f2c30917bc3a979bf307e4bfee194e95d646a15a4f7a432421ec",
+        "output_file": "W04-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「入力された文字列と文書内の文字列を照合する」から「表記が異なると、同じ意味でも検索結果に含まれないことがある」へ自然につながる。仕組みと限界を簡潔に説明し、可能性の限定も保持している。",
+          "output_file": "W04-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U13.json",
+          "sha256": "663c8e17faeddaf3bbfbd7e269baebcea1497f53adcb64ffabb86b0af6d0bdd0",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W04",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "検索機能は入力された文字列と文書内の文字列を照合する。表記が異なると、同じ意味でも検索結果に含まれないことがある。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W04-baseline-1.json",
+        "receipt_sha256": "7b9da6f4453d03a8269c261bcd43baaa66801bca8d79ed8fb7de3abeeabff4e7",
+        "output_file": "W04-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「入力された文字列と文書内の文字列を照合する」から「表記が異なると、同じ意味でも検索結果に含まれないことがある」へ自然につながる。仕組みと限界を簡潔に説明し、可能性の限定も保持している。",
+          "output_file": "W04-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U13.json",
+          "sha256": "663c8e17faeddaf3bbfbd7e269baebcea1497f53adcb64ffabb86b0af6d0bdd0",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W04",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "検索機能は入力された文字列と文書内の文字列を照合する。表記が異なると、同じ意味でも検索結果に含まれないことがある。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W04-baseline-2.json",
+        "receipt_sha256": "95d9e86d5bb02fe34678f62ac60f4ff93d49b59227b49975686404ffe603cc5a",
+        "output_file": "W04-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「入力された文字列と文書内の文字列を照合する」に続けて「表記が異なると、同じ意味でも検索結果に含まれないことがある」と説明し、仕組みと限界が自然につながる。条件と可能性を保持し、制作報告や追加対応の申し出も残っていない。",
+          "output_file": "W04-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U08.json",
+          "sha256": "810bf84c4ea88d8b5e9c8c5daae6a94f0eaf3b096fe8921e681fd2e00c7ebfdd",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W04",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "検索機能は入力された文字列と文書内の文字列を照合する。表記が異なると、同じ意味でも検索結果に含まれないことがある。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W04-c-1.json",
+        "receipt_sha256": "6fb43a18f43977bd327f3ee6b4bc121dd0181b64d10606fce1496b72ac0a8aa9",
+        "output_file": "W04-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「表記が異なると、同じ意味でも検索結果に含まれないことがある。」と条件と可能性を保持。文字列照合の仕組みから検索上の限界へ自然につながり、制作報告や追加対応の申し出も残っていない。",
+          "output_file": "W04-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U15.json",
+          "sha256": "4ad09e013bedfd377ee9408c3ba6c720f3c40c1d9d3b20c547a78db5a4f7cfb1",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W04",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "検索機能は入力された文字列と文書内の文字列を照合する。表記が異なると、同じ意味でも検索結果に含まれないことがある。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W04-c-2.json",
+        "receipt_sha256": "8854a4a091d3989a80cf1228112dd0668eab495c3ecfcddcca33967fddad0a69",
+        "output_file": "W04-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「文字列を照合する」で仕組みを説明し、「表記が異なると」「含まれないことがある」で条件と可能性を保持している。説明の順序が明確で、記事として自然。",
+          "output_file": "W04-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U01.json",
+          "sha256": "e74ef6e3e9177e921b2416838398d3e22ee228d99db7e456802595edcfc0132d",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W05",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W05-a-1.json",
+        "receipt_sha256": "cb030352a499a999f9c759bea6ddd716be3866d95826befb3a8f077a19ead096",
+        "output_file": "W05-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X11",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「比較資料をお送りします」から比較条件、費用の記載場所「2ページ」、確認依頼へ順序よく進む。「ご依頼いただいた」「ご確認ください」は受信者に向けた正当なメール内容。",
+          "output_file": "W05-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X11"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W05",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W05-a-2.json",
+        "receipt_sha256": "beb971a7cdec1cc72eabd1a8a099a6fc600facb94cac8fdf43ddb56b20e9dbcc",
+        "output_file": "W05-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「ご依頼いただいた比較資料をお送りします」で送付目的、「費用は資料の2ページ」で確認箇所が明確。宛名・比較条件・署名もそろい、「ご確認ください」は受信者への正当な依頼として自然。",
+          "output_file": "W05-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U12.json",
+          "sha256": "4ae2d739ed72f78d1e45a7cd45124b78a3af9795eaf17006d2687223a9584706",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W05",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W05-b-1.json",
+        "receipt_sha256": "bfcb978073b56ed1cb0f803617e480e461af0610c31ca0518f4b5c98e4dea722",
+        "output_file": "W05-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「費用は資料の2ページに記載しています。ご確認ください」で参照先と受信者への依頼が明確。宛名・送付目的・署名も揃い、メールとして十分である。",
+          "output_file": "W05-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W05",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W05-b-2.json",
+        "receipt_sha256": "454468945fdd9c14005ae3114432eadb24d859e1c69aa5d115faf1c2d41813e8",
+        "output_file": "W05-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「同じ条件で比較しました」「費用は資料の2ページ」で資料の内容と確認箇所が明確。「ご確認ください」は受信者への正当な依頼であり、宛名・署名も含めてメールとして十分に整っている。",
+          "output_file": "W05-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U10.json",
+          "sha256": "96945832226c8ddf81904c362a7a12c71d2a2469647800fbbd182689fc025269",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W05",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W05-baseline-1.json",
+        "receipt_sha256": "67c569f3bfe897e3f033163411bab39e04bf32c05ddad3ce9304a20b22b6ad2e",
+        "output_file": "W05-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「方式Aと方式Bを同じ条件で比較しました」で資料の内容を伝え、「費用は資料の2ページに記載しています」で確認先を示している。宛名・署名も揃い、「ご確認ください」は受信者への自然な依頼である。",
+          "output_file": "W05-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U11.json",
+          "sha256": "4dd67e825414adaff05baaafef969e768e1d6eeabfe0aab51e8c1cbd69d0a420",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W05",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W05-baseline-2.json",
+        "receipt_sha256": "87405e8e31ed96ef93c29041a61201b2827fa328a83dd5b5fc45497c985f885e",
+        "output_file": "W05-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「方式Aと方式Bを同じ条件で比較しました」「費用は資料の2ページに記載しています」で比較条件と参照先が明確。簡潔で自然な送付メールであり、「ご確認ください」も受信者への正当な依頼である。",
+          "output_file": "W05-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U05.json",
+          "sha256": "3b66667ef937281e7bda8447daf948278a3b58578e990187a39668e9670c833f",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W05",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W05-c-1.json",
+        "receipt_sha256": "353acf8cd26db620ed4d32775391c052f85eb55bf5fe7a5902c0b7207a4758a2",
+        "output_file": "W05-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「ご依頼いただいた比較資料をお送りします」から比較条件、費用の掲載箇所、受信者への「ご確認ください」へ進む。宛名と署名も保たれ、送付メールとして必要十分で自然。",
+          "output_file": "W05-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U17.json",
+          "sha256": "c78b93a4fc7aff4f3aa3742feb857188d5e413e3a79dabc8016c867a9a169a5c",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W05",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W05-c-2.json",
+        "receipt_sha256": "c46b68ffa6440d5a3b902b5476261139742c29075c0ed4144298b43186eb76f1",
+        "output_file": "W05-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「費用は資料の2ページに記載しています。ご確認ください。」で参照先と受信者への依頼が明確。宛名・署名・比較条件も保持され、送付メールとして自然で過不足がない。",
+          "output_file": "W05-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U02.json",
+          "sha256": "4f4f95e0a1fa9b4c71c4fcfd176a300c72056e055aa7d042941720af1cea4394",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W06",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W06-a-1.json",
+        "receipt_sha256": "37fc336a79279e47ee5b623e100f005d16dd21ff2512197339340eb15effc55d",
+        "output_file": "W06-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「90日間保存しなければならない」「通知は推奨」「通知先は未決定」で期間・義務・推奨・決定状況を保持。要件ごとの段落に目的も収まり、仕様として明確で自然。",
+          "output_file": "W06-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U03.json",
+          "sha256": "b9e2572fdd4442c2b78ff1ff7e19f08ed13a488156cf1b55284497fcda4ed775",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W06",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W06-a-2.json",
+        "receipt_sha256": "86ca5a069fade77a8a2eab4d9475b9a99b6074f95cd12fb90ab312eb8fe9913c",
+        "output_file": "W06-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「監査ログは90日間保存しなければならない」「管理者への通知は推奨とする」で義務と推奨を区別。調査目的と通知先の未決定も保たれ、要件別の段落が仕様の確認に適している。",
+          "output_file": "W06-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U17.json",
+          "sha256": "c78b93a4fc7aff4f3aa3742feb857188d5e413e3a79dabc8016c867a9a169a5c",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W06",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W06-b-1.json",
+        "receipt_sha256": "91cb6347e5a7a51d6b0a8b16405086bdd14fbb6f3e11f0bcf406d1a4b60394d1",
+        "output_file": "W06-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「REQ-12：監査ログは90日間保存しなければならない。」で期間と義務を保持。REQ-13も推奨・通知先未決定を保ち、要件別の段落で明確に読める。",
+          "output_file": "W06-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U02.json",
+          "sha256": "4f4f95e0a1fa9b4c71c4fcfd176a300c72056e055aa7d042941720af1cea4394",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W06",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W06-b-2.json",
+        "receipt_sha256": "77cd1852981f312415362eaf6cab9177bdbd86a38be7ff3a911d43b04dcbe83f",
+        "output_file": "W06-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「90日間保存しなければならない」「通知は推奨」「通知先は未決定」で期間・義務・推奨・決定状況を保持。要件ごとの段落に目的も収まり、仕様として明確で自然。",
+          "output_file": "W06-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U03.json",
+          "sha256": "b9e2572fdd4442c2b78ff1ff7e19f08ed13a488156cf1b55284497fcda4ed775",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W06",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W06-baseline-1.json",
+        "receipt_sha256": "6223ce3993e28f7198b4d1ecdb39bc130585dfc60768f4882ac1499ca69d7e46",
+        "output_file": "W06-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「90日間保存しなければならない」と「通知は推奨」「通知先は未決定」で、期間・義務・推奨・決定状況を保持している。要件ごとの段落分けが明確で、「障害時の調査に利用する」という目的も残っている。",
+          "output_file": "W06-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U01.json",
+          "sha256": "e74ef6e3e9177e921b2416838398d3e22ee228d99db7e456802595edcfc0132d",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W06",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W06-baseline-2.json",
+        "receipt_sha256": "19b986dd34f1047dbfeaa65d12c83161ecb94664f6221cc8f5e6ca529e7815db",
+        "output_file": "W06-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「90日間保存しなければならない」「通知は推奨」「通知先は未決定」を保持。要件別の段落で保存目的も示され、仕様として明確で自然。",
+          "output_file": "W06-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U18.json",
+          "sha256": "fc7b88dbf51624ee53aa93304fe733133e95d675c78c929d6ce6504ecb9ba093",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W06",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W06-c-1.json",
+        "receipt_sha256": "26491189d4b0ebc2c2f509af657f4dee5f20e17869b2c2c9e877777938db9dc3",
+        "output_file": "W06-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「90日間保存しなければならない」「通知は推奨」「通知先は未決定」を保持。要件別の段落で保存目的も示され、仕様として明確で自然。",
+          "output_file": "W06-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U18.json",
+          "sha256": "fc7b88dbf51624ee53aa93304fe733133e95d675c78c929d6ce6504ecb9ba093",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W06",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W06-c-2.json",
+        "receipt_sha256": "a48a56b2ba01fb211c8654b4580b9c38a66b81c7c3d3aafbc5304a0448d876f5",
+        "output_file": "W06-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「監査ログは90日間保存しなければならない」「管理者への通知は推奨とする」で義務と推奨を保持。「通知先は未決定である」も残り、要件別の段落で仕様と調査用途を明確に読める。",
+          "output_file": "W06-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U13.json",
+          "sha256": "663c8e17faeddaf3bbfbd7e269baebcea1497f53adcb64ffabb86b0af6d0bdd0",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W07",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W07-a-1.json",
+        "receipt_sha256": "455b573cfad3295faf2b8c55feb1db8cf43f1caa07abd67ab293b59061e69e15",
+        "output_file": "W07-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定を変更する前に」に続けて3手順を示し、「上書きされるため…別の名前」で注意事項を説明している。操作順と上書き回避の条件が明確で、制作報告も残っていない。",
+          "output_file": "W07-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U04.json",
+          "sha256": "fe09a2ab0dd58f7d76e63c67387505291320b0154cdc739ec453b0edce8bf2f2",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W07",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W07-a-2.json",
+        "receipt_sha256": "9e91ad85180738aa5204f28b576497985132d74800f0639b514601b7067ddbdb",
+        "output_file": "W07-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定を変更する前に、現在の設定を保存してください」で目的と順序を示し、具体的な手順へつながる。「保存先のファイルは上書きされるため」と対処方法も残り、操作に必要な情報が明確。",
+          "output_file": "W07-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U11.json",
+          "sha256": "4dd67e825414adaff05baaafef969e768e1d6eeabfe0aab51e8c1cbd69d0a420",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W07",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W07-b-1.json",
+        "receipt_sha256": "d5584cf88d44b01963cc6725d84c3b1571956add6354be30eb3ee8e187c77d7d",
+        "output_file": "W07-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定を変更する前に」で保存の時機を示し、操作手順、上書きの注意が続く。「別の名前」という回避方法も明確で、初心者が操作を追える。",
+          "output_file": "W07-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W07",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W07-b-2.json",
+        "receipt_sha256": "9f8c3ebf64a6fecc5f6f7d45616c0d81fb9613a76fc4784c42a35f29f39bee8c",
+        "output_file": "W07-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定を変更する前に」で実施時点を示し、番号付きの操作手順が続く。「上書きされる」「別の名前」の注意も具体的で、操作に必要な内容がそろっている。",
+          "output_file": "W07-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U10.json",
+          "sha256": "96945832226c8ddf81904c362a7a12c71d2a2469647800fbbd182689fc025269",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W07",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W07-baseline-1.json",
+        "receipt_sha256": "93d845ec0b2a3a300572f33c9d093f1ba242aeb3772e746c52016bf3d60b0adf",
+        "output_file": "W07-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定を変更する前に、現在の設定を保存してください」から操作手順、上書きの注意へ進む構成が明確。「既存ファイルを残す場合は別の名前」という条件も保持され、初心者が実行できる。",
+          "output_file": "W07-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U06.json",
+          "sha256": "eb8db21d6ec4579438fde3c3157b9b5ea88d1c60f008af49cae0ca71e4aae1af",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W07",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W07-baseline-2.json",
+        "receipt_sha256": "4f11b62d117237443bfa245e782c31e8ec5c254f10ed6164b43afe9a2dab05f4",
+        "output_file": "W07-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定を変更する前に、現在の設定を保存してください。」から操作手順、上書きと別名保存の注意へ進む構成が明快。操作指示は必要な内容として保持されている。",
+          "output_file": "W07-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U02.json",
+          "sha256": "4f4f95e0a1fa9b4c71c4fcfd176a300c72056e055aa7d042941720af1cea4394",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W07",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W07-c-1.json",
+        "receipt_sha256": "d7d3ba24201e8b7e9206ee5291500b5c78972d4991ca17b2d2c22b86e8e7291a",
+        "output_file": "W07-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定を変更する前に、現在の設定を保存してください。」から番号付きの操作手順へ進む順序が明確。「保存先のファイルは上書きされるため」で注意の理由を示し、別名指定の条件も保持している。操作説明として具体的で自然。",
+          "output_file": "W07-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U07.json",
+          "sha256": "75b141dc49f7129fa8edfa0de7747b76c56221d394069db92125a4de8c8ea089",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W07",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W07-c-2.json",
+        "receipt_sha256": "4057f96fb37c4cb4433805b826519490d28a821fabefa97ba0fadbc42143940b",
+        "output_file": "W07-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X06",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「設定を変更する前に、現在の設定を保存してください」で目的と順序が明確。番号付き手順と「既存ファイルを残す場合は別の名前」の注意も保持している。",
+          "output_file": "W07-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X06"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W08",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": null,
+      "values": {
+        "delivered_pass": 0
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W08-a-1.json",
+        "receipt_sha256": "8342a41cda338c60db673e03d7428021e58d53742b419e3a397dec0e514b7e36",
+        "output_file": "W08-a-1.json",
+        "status": "timeout",
+        "rating": null,
+        "rating_provenance": null,
+        "quality": null,
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "no completed final outcome; language quality unobserved",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W08",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "次の引用は、文章に残った応答表現の例である。[1]\n\n> 「ご依頼に沿って説明します」という定型句が含まれていた。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W08-a-2.json",
+        "receipt_sha256": "16f463a23019e49ca4b60cf4e1fa2745460860202b8ddf4c1d955a315221501e",
+        "output_file": "W08-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「次の引用は、文章に残った応答表現の例である。[1]」が引用の役割を明示し、直後に実例を示している。引用内の「ご依頼に沿って説明します」は正当な研究対象であり、制作指示の混入ではない。",
+          "output_file": "W08-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U16.json",
+          "sha256": "a097f9b781f69bbe1b5dbd20a53eee9ca8febe82f6557af26c4abb6202753688",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W08",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "> 「ご依頼に沿って説明します」という定型句が含まれていた。\n\nこの引用は、文章に残った応答表現の例である。[1]",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W08-b-1.json",
+        "receipt_sha256": "6648c3d85c09b5572b1d235fbe8af510e999ffbc64a61b842abfbd232d785d11",
+        "output_file": "W08-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「この引用は、文章に残った応答表現の例である。[1]」で引用の役割と出典を保持。引用と説明の対応が明快で、引用内の「ご依頼に沿って説明します」は分析対象であり、指示説明の混入ではない。",
+          "output_file": "W08-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U12.json",
+          "sha256": "4ae2d739ed72f78d1e45a7cd45124b78a3af9795eaf17006d2687223a9584706",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W08",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "> 「ご依頼に沿って説明します」という定型句が含まれていた。\n\nこの引用は、文章に残った応答表現の例である。[1]",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W08-b-2.json",
+        "receipt_sha256": "ffbf747db1e034664b3fb03ed7ff18d58b7c8ca8119b8e0ca17022fd9d1e7e1a",
+        "output_file": "W08-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "引用と「この引用は、文章に残った応答表現の例である。[1]」が揃い、研究上の位置づけが明確。導入文の削除による重要情報の欠落はなく、引用内の定型句も正当な内容。",
+          "output_file": "W08-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U18.json",
+          "sha256": "fc7b88dbf51624ee53aa93304fe733133e95d675c78c929d6ce6504ecb9ba093",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W08",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "次の引用は文章に残った応答表現の例である。[1]\n\n> 「ご依頼に沿って説明します」という定型句が含まれていた。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W08-baseline-1.json",
+        "receipt_sha256": "3f1dfc26a64553437f61e9a495e330111886d4cad5b1c238d70a21b4f41f9077",
+        "output_file": "W08-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「次の引用は文章に残った応答表現の例である。[1]」に続いて引用を示し、説明と例の対応が明確。引用内の定型句は研究対象であり、削除された脚注は制作報告なので意味変更には当たらない。",
+          "output_file": "W08-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U05.json",
+          "sha256": "3b66667ef937281e7bda8447daf948278a3b58578e990187a39668e9670c833f",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W08",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "次の引用は、文章に残った応答表現の例である。[1]\n\n> 「ご依頼に沿って説明します」という定型句が含まれていた。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W08-baseline-2.json",
+        "receipt_sha256": "60bfbbfe6c25c6682707f15458a7fed7eb004dc0c34898479ed8ef5587d7abe9",
+        "output_file": "W08-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「次の引用は、文章に残った応答表現の例である。[1]」が引用の役割を明示している。引用文と参照番号を保持し、制作報告の脚注は削除されている。引用内の「ご依頼に沿って説明します」は研究対象として正当な内容である。",
+          "output_file": "W08-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U14.json",
+          "sha256": "4730b09525ac67d3977e87a7b4d0a6e6e9bc0de97fc69d7d1dc94f41702e5ee0",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W08",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "次の引用は、文章に残った応答表現の例である。[1]\n\n> 「ご依頼に沿って説明します」という定型句が含まれていた。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W08-c-1.json",
+        "receipt_sha256": "25bc3a59ff34df1636b17401f3a4ae8ab73b0c1c7ee7971026857d5977044d91",
+        "output_file": "W08-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X12",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「次の引用は、文章に残った応答表現の例である。[1]」で引用の位置づけを先に示している。引用文と参照番号を保持し、引用内の定型句は制作指示の混入に当たらない。",
+          "output_file": "W08-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X12"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W08",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "引用文は次のとおりである。\n\n> 「ご依頼に沿って説明します」という定型句が含まれていた。\n\nこの引用は、文章に残った応答表現の例である。[1]",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W08-c-2.json",
+        "receipt_sha256": "d09b0e4878501afa0fa60d15c252ba5f89ae4d89390ec675ea00b5f6ee468cc3",
+        "output_file": "W08-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「この引用は、文章に残った応答表現の例である。[1]」が引用の位置づけを明示。導入・引用・説明の順序は自然で、引用内の定型句は混入に当たらない。",
+          "output_file": "W08-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U18.json",
+          "sha256": "fc7b88dbf51624ee53aa93304fe733133e95d675c78c929d6ce6504ecb9ba093",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W09",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "同じデータセットと同じバックボーンで検索方式AとBを比較した結果、BのmAPはAを上回った。mAPはAが0.61、Bが0.65で、Bが0.04高かった。この比較条件では、mAPで評価した検索精度はBの方が高い。\n\nBは検索精度が高い一方、学習にはAの2倍の時間を要した。精度と学習時間の両面では、Bが一方的に優れているとはいえない。推論時間は未測定のため、検索時の処理速度は比較できない。\n\n少数クラスでの性能は、今回の評価では判断できない。クラスごとの件数は不均衡であり、少数クラスごとの性能は未評価である。全体のmAPが高いことだけでは、Bが少数クラスでもAを上回るとはいえない。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W09-a-1.json",
+        "receipt_sha256": "8f9ff157cd819ccd5b1ce46b91a2554484844a3093839fc99e7d632e1c7cf365",
+        "output_file": "W09-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 3,
+          "reader_fit": 4,
+          "evidence": "比較条件、mAPの数値、学習時間の「2倍」、推論時間の「未測定」、少数クラスの「未評価」を保持。結果・学習時間・評価限界の段落構成は明確。ただし「BのmAPはAを上回った」と「検索精度はBの方が高い」は重複する。",
+          "output_file": "W09-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U09.json",
+          "sha256": "c6b2ecc4ce638f833caaee944ac72b94ca5a00f13ef3ef44d7def189b7d7c540",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 3,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W09",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "同じデータセットと同じバックボーンで検索方式AとBを比較した結果、方式BのmAPは方式Aより高かった。mAPは方式Aが0.61、方式Bが0.65で、差は0.04だった。\n\n方式BはmAPが高い一方、学習には方式Aの2倍の時間を要した。推論時間は未測定であり、検索時の処理速度については両方式を比較できない。\n\nクラスごとの件数は不均衡で、少数クラスごとの性能は未評価である。そのため、今回のmAPの差から、方式Bが少数クラスでも方式Aを上回るとは判断できない。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W09-a-2.json",
+        "receipt_sha256": "3c7dd7341d80903d55af8e2566a1e290ae5397f9aae2008108aa56ff58ec49cf",
+        "output_file": "W09-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「同じデータセットと同じバックボーン」で比較条件を示し、結果、時間、評価の限界を3段落に整理。「差は0.04」と少数クラスへの留保は素材に基づく妥当な解釈。",
+          "output_file": "W09-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W09",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "同じデータセットと同じバックボーンで検索方式AとBを比較したところ、BのmAPがAを上回った。mAPはAが0.61、Bが0.65で、差は0.04だった。\n\nBはmAPが高い一方、学習にAの2倍の時間を要した。方式を選ぶ際には、検索精度と学習時間の両方を判断材料にする必要がある。推論時間は未測定であり、検索時の処理速度は比較できない。\n\nmAPの差だけでは、少数クラスでもBがAを上回るとは判断できない。クラスごとの件数は不均衡で、少数クラスごとの性能は未評価である。今回の結果から確認できるのは全体のmAPの差であり、クラスごとの優劣は確認できていない。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W09-b-1.json",
+        "receipt_sha256": "28c727f4f8c3d831eef59fb7d07177cd7d706312a8485da8f6f1ca1a04cfc141",
+        "output_file": "W09-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「推論時間は未測定であり、検索時の処理速度は比較できない。」と限界を明示。比較条件・数値・学習時間・少数クラス未評価を3段落で整理し、差0.04と精度・時間の比較も素材に基づく妥当な解釈である。",
+          "output_file": "W09-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U02.json",
+          "sha256": "4f4f95e0a1fa9b4c71c4fcfd176a300c72056e055aa7d042941720af1cea4394",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W09",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "同じデータセットと同じバックボーンで検索方式AとBを比較した結果、mAPはBがAを上回った。AのmAPは0.61、Bは0.65だった。\n\nBはmAPが高い一方、学習にはAの2倍の時間を要した。推論時間は未測定であり、推論時の処理速度については両方式を比較できない。\n\nクラスごとの件数は不均衡で、少数クラスごとの性能は未評価である。このため、mAPの差だけでは、少数クラスでもBがAを上回るとは判断できない。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W09-b-2.json",
+        "receipt_sha256": "817abd9c8139cc3e1ed19a8a858858ec2102fccef558475b58b93df5ac835e3d",
+        "output_file": "W09-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X09",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "比較条件とmAP、学習時間と「推論時間は未測定」、クラス不均衡と「少数クラスごとの性能は未評価」を段落別に整理。少数クラスでの優位を判断できないという解釈も妥当。",
+          "output_file": "W09-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X09"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W09",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "同じデータセットと同じバックボーンを用いた比較では、検索方式BはAより高いmAPを示した。mAPはAが0.61、Bが0.65で、差は0.04だった。\n\nBの高いmAPには、学習時間の増加が伴った。Bは学習にAの2倍の時間を要しており、方式の選択ではmAPと学習時間の両方を考慮する必要がある。推論時間は未測定のため、検索時の速度については優劣を判断できない。\n\n少数クラスでの性能は、今回の結果だけでは判断できない。クラスごとの件数は不均衡で、少数クラスごとの性能は未評価である。そのため、mAPでBが上回ったことから、少数クラスでもBがAより優れているとは結論づけられない。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W09-baseline-1.json",
+        "receipt_sha256": "4af6ac3a778111ceee24e85b23eefef36a06c90b44e253910ba95a77cbd0609b",
+        "output_file": "W09-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「同じデータセットと同じバックボーン」で比較条件を示し、精度・学習時間・評価の限界を段落別に説明している。「差は0.04」と少数クラスについての解釈も素材に基づいている。",
+          "output_file": "W09-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W09",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "同じデータセットと同じバックボーンで検索方式AとBを比較した結果、BのmAPはAを上回った。mAPはAが0.61、Bが0.65で、差は0.04だった。\n\n方式BはmAPが高い一方、学習には方式Aの2倍の時間を要した。推論時間は未測定のため、検索時の処理速度は比較できない。\n\n少数クラスでも方式Bが方式Aを上回るかは、今回の結果からは判断できない。クラスごとの件数には不均衡があり、少数クラスごとの性能は未評価である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W09-baseline-2.json",
+        "receipt_sha256": "67661766d928955317d1f8a78b04664bcb52d492678162499cdb108bb33ed162",
+        "output_file": "W09-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「mAPはAが0.61、Bが0.65で、差は0.04だった」は正確。「推論時間は未測定のため、検索時の処理速度は比較できない」も妥当な解釈。比較条件、学習時間、少数クラスの評価限界が3段落で明確に整理されている。",
+          "output_file": "W09-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U05.json",
+          "sha256": "3b66667ef937281e7bda8447daf948278a3b58578e990187a39668e9670c833f",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W09",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "同じデータセットと同じバックボーンで検索方式AとBを比較した結果、BのmAPはAを上回った。mAPはAが0.61、Bが0.65で、差は0.04だった。\n\nBはmAPが高い一方、学習にはAの2倍の時間を要した。推論時間は未測定であり、検索時の処理速度の差は不明である。\n\nクラスごとの件数は不均衡で、少数クラスごとの性能は未評価である。そのため、今回のmAPの差だけでは、Bが少数クラスでもAを上回るとは判断できない。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W09-c-1.json",
+        "receipt_sha256": "e6a48730d4669313cd8d7b57b70c2653945e3062da72af1efe9cf248f3af4e02",
+        "output_file": "W09-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「推論時間は未測定であり、検索時の処理速度の差は不明である。」と限界を明示。比較条件、mAP、学習時間を保持し、少数クラスへの一般化を控える解釈も素材に基づいている。",
+          "output_file": "W09-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U15.json",
+          "sha256": "4ad09e013bedfd377ee9408c3ba6c720f3c40c1d9d3b20c547a78db5a4f7cfb1",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W09",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "検索方式Bは、今回の比較で方式Aより高いmAPを示した。同じデータセットと同じバックボーンを用いた評価で、mAPはAが0.61、Bが0.65となり、差は0.04だった。\n\nBはmAPが高い一方、学習にAの2倍の時間を要した。検索性能の差に加え、学習時間の増加も比較上の違いとなる。推論時間は未測定であり、検索時の速度は比較できない。\n\n少数クラスでの優劣は、今回の結果からは判断できない。クラスごとの件数は不均衡で、少数クラスごとの性能は未評価である。そのため、BのmAPが高いことだけでは、少数クラスでもAを上回るとは言えない。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W09-c-2.json",
+        "receipt_sha256": "419f03bbb65e596dc9a62bca3d679d1171c1131d474fad83bb42f21fcf4b8d9f",
+        "output_file": "W09-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 3,
+          "reader_fit": 4,
+          "evidence": "比較条件とmAP、学習時間、未評価の限界を3段落で整理。「差は0.04」「少数クラスでもAを上回るとは言えない」は素材に沿う解釈。ただし「学習時間の増加も比較上の違いとなる」は直前の説明と重複し、やや冗長。",
+          "output_file": "W09-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U04.json",
+          "sha256": "fe09a2ab0dd58f7d76e63c67387505291320b0154cdc739ec453b0edce8bf2f2",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 3,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W10",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "導入は決定していない。試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。運用担当者の確認が必要である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W10-a-1.json",
+        "receipt_sha256": "18647975286862caab5dd04ea54a890a838a2258ba6c044438ad56e0fcf5e58e",
+        "output_file": "W10-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「良好だったが、その判断の根拠となる指標と数値は資料に記載されていない」で評価と根拠不足の関係が明確。「導入は決定していない」と確認の必要性も保持している。",
+          "output_file": "W10-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W10",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "導入は決定していない。試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。運用担当者の確認が必要である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W10-a-2.json",
+        "receipt_sha256": "16207f961c2ee8a2f9ebb30519c124cd708b13cb044c11023a86ed04f149fc4a",
+        "output_file": "W10-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。」と結果と根拠の不足を結び付けている。導入未決定と確認の必要性も保持し、新たな結論を加えていない。",
+          "output_file": "W10-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U15.json",
+          "sha256": "4ad09e013bedfd377ee9408c3ba6c720f3c40c1d9d3b20c547a78db5a4f7cfb1",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W10",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "導入は決定していない。試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。運用担当者の確認が必要である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W10-b-1.json",
+        "receipt_sha256": "a55eb5c66fde6e4150ecc163983347158bdcd43557b4a2f4d59ec0aa2fbc98ac",
+        "output_file": "W10-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「試験運用の結果は良好だったが」で評価と根拠不足の関係が明確。「導入は決定していない」「運用担当者の確認が必要である」も保持され、報告として過不足がない。追加対応の申し出は適切に除かれている。",
+          "output_file": "W10-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U06.json",
+          "sha256": "eb8db21d6ec4579438fde3c3157b9b5ea88d1c60f008af49cae0ca71e4aae1af",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W10",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "導入は決定していない。試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。運用担当者の確認が必要である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W10-b-2.json",
+        "receipt_sha256": "6d2a1320b5e18648d236a7d2f4fc2afe163aa96a3f916d160b322f7aaba293ea",
+        "output_file": "W10-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「良好だったが、その判断の根拠となる指標と数値は資料に記載されていない」で評価と根拠の不足を関連づけ、未決定と確認の必要性も保持している。",
+          "output_file": "W10-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W10",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "導入は決定していない。試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。運用担当者の確認が必要である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W10-baseline-1.json",
+        "receipt_sha256": "bd1c2e201755128438c843ba4be44f81e05aa452519dd31e6c90ecf0cf5633be",
+        "output_file": "W10-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「良好だったが、その判断の根拠となる指標と数値は資料に記載されていない」で評価と根拠不足の関係が明確。「導入は決定していない」「運用担当者の確認が必要である」も保持し、新たな結論や提案は加えていない。",
+          "output_file": "W10-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U04.json",
+          "sha256": "fe09a2ab0dd58f7d76e63c67387505291320b0154cdc739ec453b0edce8bf2f2",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W10",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "導入は決定していない。試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。運用担当者の確認が必要である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W10-baseline-2.json",
+        "receipt_sha256": "af7ff28563eb236db0ed746aeadbbeb239639b1644bf243ebaf6b0e417df9721",
+        "output_file": "W10-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X07",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「良好だったが、その判断の根拠となる指標と数値は資料に記載されていない」で評価と根拠の不足を関連づけ、未決定と確認の必要性も保持している。",
+          "output_file": "W10-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X07"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W10",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "導入は決定していない。試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。運用担当者の確認が必要である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W10-c-1.json",
+        "receipt_sha256": "6c7cbc481151420e371fa401996f9ecbaf133b59b8d5e902c8556c7d2ac353a9",
+        "output_file": "W10-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「良好だったが、その判断の根拠となる指標と数値は資料に記載されていない」で結果と根拠不足の関係が明確。「導入は決定していない」「確認が必要」も保持され、報告として簡潔で自然。",
+          "output_file": "W10-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U08.json",
+          "sha256": "810bf84c4ea88d8b5e9c8c5daae6a94f0eaf3b096fe8921e681fd2e00c7ebfdd",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W10",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "導入は決定していない。試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。運用担当者の確認が必要である。",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W10-c-2.json",
+        "receipt_sha256": "d21c287c9a1b3280640aee6371f7298935cd53c50fd3946e8a661ed12a9ed00e",
+        "output_file": "W10-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「試験運用の結果は良好だったが」で評価と根拠不足の関係が明確。「導入は決定していない」「運用担当者の確認が必要である」も保持され、報告として過不足がない。追加対応の申し出は適切に除かれている。",
+          "output_file": "W10-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U06.json",
+          "sha256": "eb8db21d6ec4579438fde3c3157b9b5ea88d1c60f008af49cae0ca71e4aae1af",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W11",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W11-a-1.json",
+        "receipt_sha256": "033f23f2b5124a84031d72632759b9aedcb634c76cab41535e057c0b84d35d73",
+        "output_file": "W11-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「max_retry = 3」「接続に失敗した場合だけ再試行する」、数式、手順番号、コードを保持。設定・再試行条件・待機時間の順が明確。コード内の「ご依頼に沿って説明します」は保護対象であり、制作報告の混入ではない。",
+          "output_file": "W11-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U09.json",
+          "sha256": "c6b2ecc4ce638f833caaee944ac72b94ca5a00f13ef3ef44d7def189b7d7c540",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W11",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W11-a-2.json",
+        "receipt_sha256": "dbc64f900514cda099c644f4b157f3331eadb2527f1d51b39f0050da9a0ff083",
+        "output_file": "W11-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「接続に失敗した場合だけ再試行する」の限定と、手順番号・数式・コードを保持している。コード内の「ご依頼に沿って説明します」は正当なコード内容である。",
+          "output_file": "W11-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W11",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W11-b-1.json",
+        "receipt_sha256": "0c094f9dda70e452e94ddafcda935005bc900b4add0e7e33d32b60ab758c72f9",
+        "output_file": "W11-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X03",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「接続に失敗した場合だけ再試行する」の限定と「待機時間は$t=2^k$で計算する」の内容を保持している。手順・式・コードを区切った構成で読みやすく、コード内の文言も正当な内容として残されている。",
+          "output_file": "W11-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U01.json",
+          "sha256": "e74ef6e3e9177e921b2416838398d3e22ee228d99db7e456802595edcfc0132d",
+          "local_id": "X03"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W11",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W11-b-2.json",
+        "receipt_sha256": "a7b2944d90dec01ca022456ffad0b5a949451158e17f5e1ae03958b225c30074",
+        "output_file": "W11-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「接続に失敗した場合だけ再試行する」で条件を保持し、設定・再試行条件・待機時間の順に読み取れる。手順番号、数式、コードも不変。コード内の「ご依頼に沿って説明します」は保持対象であり、指示説明の混入ではない。",
+          "output_file": "W11-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U08.json",
+          "sha256": "810bf84c4ea88d8b5e9c8c5daae6a94f0eaf3b096fe8921e681fd2e00c7ebfdd",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W11",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W11-baseline-1.json",
+        "receipt_sha256": "454981a141cceb4db0b73697b3ddeded851295b945b0906ca19117a38aa55957",
+        "output_file": "W11-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「接続に失敗した場合だけ再試行する。」で条件の限定を保持し、設定手順から待機時間の計算へ簡潔に続く。数式・コード・手順番号は変更されておらず、コード内の定型句も正当な内容として保持されている。",
+          "output_file": "W11-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U05.json",
+          "sha256": "3b66667ef937281e7bda8447daf948278a3b58578e990187a39668e9670c833f",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W11",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W11-baseline-2.json",
+        "receipt_sha256": "c3ca7db493a4e635de7d8839ca2b5ebebd5f21ec7303a279ddd37e51e7698217",
+        "output_file": "W11-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「接続に失敗した場合だけ再試行する」で条件が明確。番号付き手順と待機時間の説明は簡潔で、数式・コードも保持されている。コード内の「ご依頼に沿って説明します」は正当な保持対象である。",
+          "output_file": "W11-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U11.json",
+          "sha256": "4dd67e825414adaff05baaafef969e768e1d6eeabfe0aab51e8c1cbd69d0a420",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W11",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W11-c-1.json",
+        "receipt_sha256": "28f7c907f974548aa5af1bc5e374ea6d8793d3ae8d63848e179fa00ffbc9d19f",
+        "output_file": "W11-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X02",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「接続に失敗した場合だけ再試行する」で限定条件を保持し、設定手順から待機時間の式へ進む構成も明快。数式・コード・手順番号は変更されておらず、コード内の「ご依頼に沿って説明します」は混入した制作説明に当たらない。",
+          "output_file": "W11-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U01.json",
+          "sha256": "e74ef6e3e9177e921b2416838398d3e22ee228d99db7e456802595edcfc0132d",
+          "local_id": "X02"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W11",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W11-c-2.json",
+        "receipt_sha256": "a6cf6866af710a8c294f9c7fddfc316cb07859e12633fda1710ad14e42d158fe",
+        "output_file": "W11-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X10",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「接続に失敗した場合だけ」で再試行の限定を保持し、手順番号・数式・コードも変更していない。コード内の「ご依頼に沿って説明します」は保持対象であり、制作説明の混入ではない。",
+          "output_file": "W11-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X10"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W12",
+      "candidate_id": "a",
+      "trial_id": "1",
+      "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日か10月22日で、ご都合をお知らせください。\n\n鈴木",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W12-a-1.json",
+        "receipt_sha256": "e7b92e1bc34349f14976e91063742fbac04c7e3a20021ddf034a6da2d2c2cd1f",
+        "output_file": "W12-a-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X04",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「山田様」、候補日「10月20日か10月22日」、依頼「ご都合をお知らせください」、署名「鈴木」を保持。宛名・用件・署名の構成が明確で、丁寧なメールとしてそのまま使える。",
+          "output_file": "W12-a-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U03.json",
+          "sha256": "b9e2572fdd4442c2b78ff1ff7e19f08ed13a488156cf1b55284497fcda4ed775",
+          "local_id": "X04"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W12",
+      "candidate_id": "a",
+      "trial_id": "2",
+      "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日または10月22日のご都合をお知らせください。\n\n鈴木",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W12-a-2.json",
+        "receipt_sha256": "3d94613a6b1c673b70e60a876d9f9aa1f82d935985fc2723ca9c1a5040b4f0e7",
+        "output_file": "W12-a-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X12",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「10月20日または10月22日のご都合をお知らせください」で候補日と返信依頼を簡潔に示す。宛名・署名を保持し、制作者への返答も除かれている。",
+          "output_file": "W12-a-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X12"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W12",
+      "candidate_id": "b",
+      "trial_id": "1",
+      "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日か10月22日で、ご都合をお知らせください。\n\n鈴木",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W12-b-1.json",
+        "receipt_sha256": "187e976a6637a5b7cd053efcb38bfa18c80e8fc40687421f0582a2e2acaab5bf",
+        "output_file": "W12-b-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X11",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「10月20日か10月22日で、ご都合をお知らせください」で候補日と受信者への依頼が明確。制作報告を除き、宛名と署名を備えた自然なメールになっている。",
+          "output_file": "W12-b-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X11"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W12",
+      "candidate_id": "b",
+      "trial_id": "2",
+      "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日か10月22日で、ご都合をお知らせください。\n\n鈴木",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W12-b-2.json",
+        "receipt_sha256": "edab56452f8a2c11e7551fad35aff457480aed2f0d96919f8f49e4ffbb45331c",
+        "output_file": "W12-b-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X01",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「10月20日か10月22日で、ご都合をお知らせください」が候補日と受信者への依頼を明示。宛名・署名も保持され、簡潔で自然なメールになっている。",
+          "output_file": "W12-b-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/U16.json",
+          "sha256": "a097f9b781f69bbe1b5dbd20a53eee9ca8febe82f6557af26c4abb6202753688",
+          "local_id": "X01"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W12",
+      "candidate_id": "baseline",
+      "trial_id": "1",
+      "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日か10月22日で、ご都合をお知らせください。\n\n鈴木",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W12-baseline-1.json",
+        "receipt_sha256": "6fa1bdce41f63029fe500eb40629b7434a82099c0450b5f2b2f5206881db03e6",
+        "output_file": "W12-baseline-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X09",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「10月20日か10月22日で、ご都合をお知らせください」で候補日と受信者への依頼が明確。制作報告を除き、宛名と署名を備えた自然なメールになっている。",
+          "output_file": "W12-baseline-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X09"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W12",
+      "candidate_id": "baseline",
+      "trial_id": "2",
+      "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日または10月22日のうち、ご都合のよい日をお知らせください。\n\n鈴木",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W12-baseline-2.json",
+        "receipt_sha256": "f48a06c5ed7866df4c447545676dd995be43f4402a342bbec57b7bf4d26681ad",
+        "output_file": "W12-baseline-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X05",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「10月20日または10月22日のうち、ご都合のよい日をお知らせください」で候補と返信依頼が明確。宛名・署名を保持し、制作者への返答は残っていない。",
+          "output_file": "W12-baseline-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X05"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W12",
+      "candidate_id": "c",
+      "trial_id": "1",
+      "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日か10月22日で、ご都合をお知らせください。\n\n鈴木",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W12-c-1.json",
+        "receipt_sha256": "5aa563871a29881ecbdcbc50c5caf87840f42ce838ed83100610b40c072a66ca",
+        "output_file": "W12-c-1.json",
+        "status": "completed",
+        "rating": {
+          "id": "X07",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 3,
+          "reader_fit": 4,
+          "evidence": "「10月20日か10月22日で、ご都合をお知らせください」は接続がややぎこちないが、候補日と返信依頼は伝わる。宛名・署名もそろい、そのまま送れる内容。",
+          "output_file": "W12-c-1.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B02.json",
+          "sha256": "fb450671c45b583416210b2468b1dc3d8c031592cd78a5d114e3def84cfe654b",
+          "local_id": "X07"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 3,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    },
+    {
+      "task_id": "W12",
+      "candidate_id": "c",
+      "trial_id": "2",
+      "output": "山田様\n\n打ち合わせの候補日をお送りします。10月20日か10月22日で、ご都合をお知らせください。\n\n鈴木",
+      "values": {
+        "delivered_pass": 1
+      },
+      "grading_evidence": {
+        "receipt_file": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/W12-c-2.json",
+        "receipt_sha256": "e1547ff99617efc733b948c4318fe568de97d60019aa60a4f87903ccb535dc92",
+        "output_file": "W12-c-2.json",
+        "status": "completed",
+        "rating": {
+          "id": "X08",
+          "meaning_errors": [],
+          "requester_residue": [],
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4,
+          "evidence": "「10月20日か10月22日で、ご都合をお知らせください」で候補日と受信者への依頼が明確。制作報告を除き、宛名と署名を備えた自然なメールになっている。",
+          "output_file": "W12-c-2.json"
+        },
+        "rating_provenance": {
+          "path": "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/B04.json",
+          "sha256": "e80d56fe38169996c487647c6a4bf7c45603d70e5e1a0d51563e341bc16b7217",
+          "local_id": "X08"
+        },
+        "quality": {
+          "paragraph": 4,
+          "naturalness": 4,
+          "reader_fit": 4
+        },
+        "formula": "completed AND meaning_errors=[] AND requester_residue=[] AND each quality score>=3",
+        "reason": "conjunction satisfied",
+        "prompt_text_independently_verified": null
+      }
+    }
+  ]
+}

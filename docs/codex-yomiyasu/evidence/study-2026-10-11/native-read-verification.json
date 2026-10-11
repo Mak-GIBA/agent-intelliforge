@@ -1,0 +1,602 @@
+{
+  "N1-a-1.json": {
+    "status": "timeout",
+    "route_pass": false,
+    "prompt_verified": true,
+    "expected_reads": [
+      "yomiyasu",
+      "paragraph-writing",
+      "japanese-direct-writing"
+    ],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N1-b-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "yomiyasu",
+      "paragraph-writing",
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "yomiyasu": [
+        {
+          "command": "/bin/bash -lc 'cat .agents/skills/yomiyasu/SKILL.md .agents/skills/yomiyasu/upstream/SKILL.upstream.md .agents/skills/yomiyasu/references/reader-contract.md .agents/skills/yomiyasu/references/workflow.md'",
+          "exit_code": 0,
+          "content_sha256": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0"
+        }
+      ],
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat .agents/skills/paragraph-writing/SKILL.md .agents/skills/japanese-direct-writing/SKILL.md .agents/skills/yomiyasu/references/audience.md .agents/skills/yomiyasu/references/naturalness.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ],
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat .agents/skills/paragraph-writing/SKILL.md .agents/skills/japanese-direct-writing/SKILL.md .agents/skills/yomiyasu/references/audience.md .agents/skills/yomiyasu/references/naturalness.md'",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N1-baseline-1.json": {
+    "status": "completed",
+    "route_pass": false,
+    "prompt_verified": true,
+    "expected_reads": [
+      "yomiyasu",
+      "paragraph-writing",
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "yomiyasu": [
+        {
+          "command": "/bin/bash -lc 'cat .agents/skills/yomiyasu/SKILL.md .agents/skills/yomiyasu/upstream/SKILL.upstream.md .agents/skills/yomiyasu/references/paragraphs.md .agents/skills/yomiyasu/references/audience.md .agents/skills/yomiyasu/references/directness.md'",
+          "exit_code": 0,
+          "content_sha256": "154c88e9d3617b3aba71742103a8ba10a91454a436f557cb3cfe329256c190cb"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N1-c-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "yomiyasu",
+      "paragraph-writing",
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "yomiyasu": [
+        {
+          "command": "/bin/bash -lc 'cat .agents/skills/yomiyasu/SKILL.md .agents/skills/yomiyasu/upstream/SKILL.upstream.md .agents/skills/yomiyasu/references/workflow.md'",
+          "exit_code": 0,
+          "content_sha256": "bb14880a10d1b9029ab900d093d2a5912e0789377a39542d2b2beb6ca6b8046d"
+        }
+      ],
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat .agents/skills/paragraph-writing/SKILL.md .agents/skills/japanese-direct-writing/SKILL.md .agents/skills/yomiyasu/references/audience.md .agents/skills/yomiyasu/references/naturalness.md .agents/skills/yomiyasu/references/reader-review.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ],
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat .agents/skills/paragraph-writing/SKILL.md .agents/skills/japanese-direct-writing/SKILL.md .agents/skills/yomiyasu/references/audience.md .agents/skills/yomiyasu/references/naturalness.md .agents/skills/yomiyasu/references/reader-review.md'",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N2-a-1.json": {
+    "status": "timeout",
+    "route_pass": false,
+    "prompt_verified": true,
+    "expected_reads": [
+      "yomiyasu",
+      "paragraph-writing",
+      "japanese-direct-writing"
+    ],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N2-b-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "yomiyasu",
+      "paragraph-writing",
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "yomiyasu": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/yomiyasu/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0"
+        }
+      ],
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ],
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/japanese-direct-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N2-baseline-1.json": {
+    "status": "timeout",
+    "route_pass": false,
+    "prompt_verified": true,
+    "expected_reads": [
+      "yomiyasu",
+      "paragraph-writing",
+      "japanese-direct-writing"
+    ],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N2-c-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "yomiyasu",
+      "paragraph-writing",
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "yomiyasu": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/yomiyasu/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "bb14880a10d1b9029ab900d093d2a5912e0789377a39542d2b2beb6ca6b8046d"
+        }
+      ],
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc \"cat '<workspace>/.agents/skills/paragraph-writing/SKILL.md'\"",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ],
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc \"cat '<workspace>/.agents/skills/japanese-direct-writing/SKILL.md'\"",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N3-a-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "paragraph-writing"
+    ],
+    "reads": {
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N3-b-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "paragraph-writing"
+    ],
+    "reads": {
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N3-baseline-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "paragraph-writing"
+    ],
+    "reads": {
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "4708c7510abded07f78ccb0ac8fb1b16d6655bfcf14bec2d4b07d7f7d2ca251d"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N3-c-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "paragraph-writing"
+    ],
+    "reads": {
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N4-a-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "paragraph-writing"
+    ],
+    "reads": {
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N4-b-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "paragraph-writing"
+    ],
+    "reads": {
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N4-baseline-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "paragraph-writing"
+    ],
+    "reads": {
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "4708c7510abded07f78ccb0ac8fb1b16d6655bfcf14bec2d4b07d7f7d2ca251d"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N4-c-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "paragraph-writing"
+    ],
+    "reads": {
+      "paragraph-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/paragraph-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N5-a-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/japanese-direct-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N5-b-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/japanese-direct-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N5-baseline-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/japanese-direct-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "c50c7eb7bb7b889f0435148bf45a02d7d8c10bf75b98ac47f3e0144a3513be70"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N5-c-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/japanese-direct-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N6-a-1.json": {
+    "status": "timeout",
+    "route_pass": false,
+    "prompt_verified": true,
+    "expected_reads": [
+      "japanese-direct-writing"
+    ],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N6-b-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/japanese-direct-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N6-baseline-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/japanese-direct-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "c50c7eb7bb7b889f0435148bf45a02d7d8c10bf75b98ac47f3e0144a3513be70"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N6-c-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [
+      "japanese-direct-writing"
+    ],
+    "reads": {
+      "japanese-direct-writing": [
+        {
+          "command": "/bin/bash -lc 'cat <workspace>/.agents/skills/japanese-direct-writing/SKILL.md'",
+          "exit_code": 0,
+          "content_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374"
+        }
+      ]
+    },
+    "full_skill_content_verified": true,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N7-a-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N7-b-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N7-baseline-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N7-c-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N8-a-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N8-b-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N8-baseline-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  },
+  "N8-c-1.json": {
+    "status": "completed",
+    "route_pass": true,
+    "prompt_verified": true,
+    "expected_reads": [],
+    "reads": {},
+    "full_skill_content_verified": false,
+    "verification_method": "Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.",
+    "internal_application_count": "not observable"
+  }
+}

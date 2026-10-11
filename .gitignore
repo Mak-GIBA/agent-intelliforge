@@ -7,3 +7,6 @@ __pycache__/
 # Keep research results and receipts; omit verbose model execution streams.
 /docs/design-research/*/runs/*/*/stdout.log
 /docs/design-research/*/runs/*/*/stderr.log
+/docs/codex-yomiyasu/evidence/*/locations.private.json
+/docs/codex-yomiyasu/evidence/*/*.private.json
+/tools/codex-yomiyasu/evaluation-explanation/locations.private.json

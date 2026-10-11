@@ -1,0 +1,57 @@
+{
+  "status": "reviewed",
+  "reason": "R5の合格数と個別の失敗記録を、元receipt・監査コード・今回の成功receiptで確認した。参照形式だけを修正し、判定を保持した。",
+  "issues": [],
+  "checks": [
+    {
+      "check_id": "R5",
+      "result": "pass",
+      "reason": "再照合結果はbaseline=6/8、a=5/8、b=8/8、c=8/8。baseline N1はcompletedだが、期待する3種類のうちyomiyasuだけが読込認定され、route_pass=falseを保持している。baseline N2とa N1/N2/N6はそれぞれstatus=timeout、route_pass=false、output=nullを保持している。今回の親所有監査は指定コマンドでexit_code=0、timed_out=false、truncated=false。timeoutの文章品質と内部適用回数は未確認のままとする。",
+      "evidence_ids": [
+        "EV-00001",
+        "EV-00012",
+        "R5-SOURCE-COUNTS",
+        "R5-CODE-READS",
+        "R5-CODE-VERIFY",
+        "R5-CODE-COUNTS"
+      ]
+    }
+  ],
+  "code_evidence": [
+    {
+      "id": "R5-CODE-READS",
+      "path": "tools/codex-yomiyasu/evals/run_study.py",
+      "line_start": 183,
+      "line_end": 195,
+      "description": "対象SKILLへの読取コマンド、固定全文の出力への包含、exit_code=0を要求して読込を認定する。"
+    },
+    {
+      "id": "R5-CODE-VERIFY",
+      "path": "tools/codex-yomiyasu/evals/verify_native.py",
+      "line_start": 31,
+      "line_end": 43,
+      "description": "completed・期待読込集合一致・各読込1件を合格条件とし、保存済みroute_passとの不一致を拒否する。各receiptの元statusを結果に保持し、全32件を要求する。"
+    },
+    {
+      "id": "R5-CODE-COUNTS",
+      "path": "native_provenance_audit.py",
+      "line_start": 31,
+      "line_end": 40,
+      "description": "再検証した経路合格数を集計し、baseline=6、a=5、b=8、c=8への一致をassertする。timeout結果が取得不能であるという限界も出力する。"
+    }
+  ],
+  "dossier_json": "",
+  "sources": [
+    {
+      "id": "R5-SOURCE-COUNTS",
+      "title": "今回の監査stdoutの経路合格数",
+      "url": "",
+      "path": "runs/20261011T121313Z-b1fc407e/001-checks/001/stdout.log",
+      "locator": "$.route_passes",
+      "read_level": "relevant_sections"
+    }
+  ],
+  "reference_implementations": [],
+  "complexity_ok": true,
+  "complexity_reason": "既存監査の成功receiptと原記録の関連箇所を読むだけでR5を確認した。検査の再実行、追加ハーネス、依存追加、ファイル変更は行っていない。"
+}

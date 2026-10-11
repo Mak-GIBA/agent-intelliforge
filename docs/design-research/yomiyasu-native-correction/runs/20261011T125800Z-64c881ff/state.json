@@ -1,0 +1,1510 @@
+{
+  "schema_version": 1,
+  "version": "2.5.0",
+  "run_id": "20261011T125800Z-64c881ff",
+  "role_contract_version": 1,
+  "execution_contract_version": 2,
+  "status": "reviewed",
+  "phase": "reviewed",
+  "iteration": 1,
+  "created_at": "2026-10-11T12:58:00.190754+00:00",
+  "config": {
+    "mode": "audit",
+    "project": "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e",
+    "brief": "修正したnative_provenance_audit.pyが元32試行を誤った成功に変えず照合できるか、という1つの境界だけをauditする。plannerのcriteriaは必須runtimeの1件だけにする。別の研究・インストーラー全体・文章品質評価は不要。既存コマンド python3 -B native_provenance_audit.py を親が1回実行し、以下の同一照合処理の受入条件を独立に確認する: 32元receiptの保存hashとSHAに結び付いた復元入力、native_tasksの依頼と期待読込集合、成功した実ファイル読取と固定SKILL全文、C8/8およびbaseline6/A5/B8、部分依頼の範囲、8件の誤字/コード対照は全文読込に含めないこと。修正前の補助コードはfull_read_receipts=32という誤解を生む表示だった。修正後はreceipts_verified=32、trials_with_full_skill_reads=20、negative_control_trials=8を実際の検証結果から集計し、対照の空readをassertする。元のtimeout4件とbaseline読込不足を保持し、内部適用回数・人間評価・文章品質の優位差は不明のまま。検査コードがモデル・外部送信・導入・設定変更を行わないことをコードで確認する。全8種類の実際の復元依頼と該当コード/receiptを読む。元の平文ログではなくハッシュに対応した復元入力であることを保持する。チェックのevidence_idsには登録済みEV IDまたはこの応答のcode_evidenceのIDだけを使う。sourcesのIDはevidence_idsへ入れない。SOURCE.pathは研究workspace相対であり、プロジェクトの別フォルダを../../で参照しない。参照はコードならproject相対code_evidence、実行結果なら親のEV記録。前の実行の完了判定を継承せず、今回の実行receiptに基づき検証する。max1iteration、ネットなし、モデルによる完成稿再生成なし。",
+    "slug": "yomiyasu-native-correction",
+    "max_iterations": 1,
+    "phase_timeout": 1800,
+    "model": "gpt-6.1-sol",
+    "allow_network": false,
+    "test_commands": [
+      "python3 -B native_provenance_audit.py"
+    ],
+    "test_env_file": "",
+    "start_command": "",
+    "url": "",
+    "reference_urls": [],
+    "reader_friendly": true,
+    "requested_mode": "audit",
+    "report_profile": "comparison",
+    "target_methods": 5,
+    "evaluation_purpose": "auto"
+  },
+  "evidence": {
+    "EV-00001": {
+      "id": "EV-00001",
+      "kind": "test",
+      "description": "Actual execution: python3 -B native_provenance_audit.py",
+      "path": "runs/20261011T125800Z-64c881ff/001-checks/001/receipt.json",
+      "sha256": "12f852df50b9ad9a551ef3294d7c937362301ddedd7b64a8f0bc890a52edf11a",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:00:26.282887+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "command": "python3 -B native_provenance_audit.py",
+      "check_ids": [
+        "R1"
+      ],
+      "experiment_id": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "truncated": false
+    },
+    "EV-00002": {
+      "id": "EV-00002",
+      "kind": "code",
+      "description": "source_files・receiptのSHA、復元依頼と固定suffix、元prompt SHA、期待読込集合、32件の重複・欠落を照合する。",
+      "path": "runs/20261011T125800Z-64c881ff/001-code/R1_CE-R1-PROVENANCE.json",
+      "sha256": "c366a21d5d9d428ce16594b5a54d1f001745a4beb5fdc2fc89a9fbc3e7b1f136",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.897562+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "source_path": "native_provenance_audit.py"
+    },
+    "EV-00003": {
+      "id": "EV-00003",
+      "kind": "code",
+      "description": "route件数をassertし、全文読込20件と空readの対照8件を分けて集計する。対照のcompleted・route成功・全文読込falseもassertする。",
+      "path": "runs/20261011T125800Z-64c881ff/001-code/R1_CE-R1-COUNTS.json",
+      "sha256": "aa244ab80b7f1ddd0aa6bace023a59609778158830685285ab5ac2f01e80e3c4",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.898249+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "source_path": "native_provenance_audit.py"
+    },
+    "EV-00004": {
+      "id": "EV-00004",
+      "kind": "code",
+      "description": "該当armのSKILLを一時ディレクトリへコピーし、元toolsから読込を再計算する。routeにはcompleted・期待集合一致・各スキル1回を要求する。全文読込判定はbool(reads)であり、全期待スキルの読込成功とは異なる。",
+      "path": "runs/20261011T125800Z-64c881ff/001-code/R1_CE-R1-VERIFY.json",
+      "sha256": "48fe883f13b8e63be08d5aa78957b94620fd840d910c512d9a7e1fc8b801b255",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.898994+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "source_path": "tools/codex-yomiyasu/evals/verify_native.py"
+    },
+    "EV-00005": {
+      "id": "EV-00005",
+      "kind": "code",
+      "description": "8種類の依頼原文と、全体・段落のみ・予防線のみ・誤字／コード対照の期待読込集合を定義する。",
+      "path": "runs/20261011T125800Z-64c881ff/001-code/R1_CE-R1-TASKS.json",
+      "sha256": "39ed897125edfe412baa2790458ff9b08252670619f083b607705ad2243dfbe5",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.899753+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "source_path": "tools/codex-yomiyasu/evals/run_study.py"
+    },
+    "EV-00006": {
+      "id": "EV-00006",
+      "kind": "code",
+      "description": "実ファイル読取コマンド、exit_code=0、固定SKILL全文のtool出力内一致を要求して読込を認定する。保存済みreadsの集計だけには依存しない。",
+      "path": "runs/20261011T125800Z-64c881ff/001-code/R1_CE-R1-READS.json",
+      "sha256": "91b4b47a8cbb4dfb05bc00eeeacbd3425e67b017e4f502a6cf08f66445779784",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.900428+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "source_path": "tools/codex-yomiyasu/evals/run_study.py"
+    },
+    "EV-00007": {
+      "id": "EV-00007",
+      "kind": "code",
+      "description": "import時の処理は標準ライブラリ読込、ローカルパス・定数・Lockの初期化。照合経路から呼ぶshaはSHA-256計算のみ。",
+      "path": "runs/20261011T125800Z-64c881ff/001-code/R1_CE-R1-IMPORTS.json",
+      "sha256": "0537e105c3024d068977514bc69d1474913630c2be3ff265d2bf3e6741e78bae",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.901079+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "source_path": "tools/codex-yomiyasu/evals/run_study.py"
+    },
+    "EV-00008": {
+      "id": "EV-00008",
+      "kind": "code",
+      "description": "モデル実行を含む研究mainは直接実行時だけ起動し、今回のimport経路では起動しない。",
+      "path": "runs/20261011T125800Z-64c881ff/001-code/R1_CE-R1-GUARD.json",
+      "sha256": "9f324f2a27b01171e1f83cd83bedb005cdaee4648d3b1584b3adcb78ad2188db",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.901734+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "source_path": "tools/codex-yomiyasu/evals/run_study.py"
+    },
+    "EV-00009": {
+      "id": "EV-00009",
+      "kind": "source",
+      "description": "今回の親実行stdout",
+      "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stdout.log",
+      "sha256": "ff0b7f7c0408369a041eed3b80578dd6c91eb3ee0275dd3c0f6588412cc92955",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.902004+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4"
+    },
+    "EV-00010": {
+      "id": "EV-00010",
+      "kind": "source",
+      "description": "今回の親実行stderr",
+      "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stderr.log",
+      "sha256": "c5e644659eda5941656959f6a85eaed95dac139486e1becfc14e64d2d1121682",
+      "iteration": 1,
+      "recorded_at": "2026-10-11T13:04:16.902155+00:00",
+      "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4"
+    }
+  },
+  "sources": {
+    "R1_1_S-R1-PARENT-RECEIPT": {
+      "source": {
+        "id": "R1_1_S-R1-PARENT-RECEIPT",
+        "title": "今回の親実行receipt",
+        "url": "",
+        "path": "runs/20261011T125800Z-64c881ff/001-checks/001/receipt.json",
+        "locator": "$.command, $.check_ids, $.source_fingerprint.files, $.exit_code, $.timed_out, $.truncated, $.outputs",
+        "read_level": "full_text"
+      },
+      "status": "local",
+      "reason": "Actual local artifact with hash",
+      "evidence_id": "EV-00001"
+    },
+    "R1_1_S-R1-PARENT-STDOUT": {
+      "source": {
+        "id": "R1_1_S-R1-PARENT-STDOUT",
+        "title": "今回の親実行stdout",
+        "url": "",
+        "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stdout.log",
+        "locator": "$.status, $.exact_original_prompt_hashes, $.receipts_verified, $.trials_with_full_skill_reads, $.negative_control_trials, $.route_passes, $.task_prompts, $.limits",
+        "read_level": "full_text"
+      },
+      "status": "local",
+      "reason": "Actual local artifact with hash",
+      "evidence_id": "EV-00009"
+    },
+    "R1_1_S-R1-PARENT-STDERR": {
+      "source": {
+        "id": "R1_1_S-R1-PARENT-STDERR",
+        "title": "今回の親実行stderr",
+        "url": "",
+        "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stderr.log",
+        "locator": "line 1: PATH aliases作成拒否のWARNING。親receiptの終了コードは0。",
+        "read_level": "full_text"
+      },
+      "status": "local",
+      "reason": "Actual local artifact with hash",
+      "evidence_id": "EV-00010"
+    }
+  },
+  "plateau": 0,
+  "expected_source": {
+    "head": "",
+    "files": {
+      "brief.txt": "928af2af15779cf94a9f57fa05a4cebcaffcf4113a6262143e77bee30ce7b5aa:436",
+      "native_provenance_audit.py": "42e04addde5848b40823f6f1905ce9ebecb633ea2db82da0d3440ec7273864b8:436",
+      "tools/codex-yomiyasu/evals/run_study.py": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47:436",
+      "tools/codex-yomiyasu/evals/verify_native.py": "925c3526507390666521dd5df2a7027e9b8b4ab890cf5f92550d31c7fc4111e3:436",
+      "tools/codex-yomiyasu/evaluation-v200/frozen-sources.json": "0fbbbf8b39a023ba38a399d4374ad66401238b84b7a7773ba7699cc3a786406a:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/SKILL.md": "bb14880a10d1b9029ab900d093d2a5912e0789377a39542d2b2beb6ca6b8046d:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/reader-review.md": "a9b76ce9de5d31609e59faba86ae01c191118c471d883a8c95ce0ebc23e50ab8:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/reader-contract.md": "bf6bf5099914465f0792104ac15d68d290e4c287eafe41072ec26ccbe2018505:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/SKILL.md": "062e0ed73a7a44247f3a0369c050bcd649684586f350839946df8b260f503c28:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/SKILL.md": "154c88e9d3617b3aba71742103a8ba10a91454a436f557cb3cfe329256c190cb:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/SKILL.md": "4708c7510abded07f78ccb0ac8fb1b16d6655bfcf14bec2d4b07d7f7d2ca251d:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/audience.md": "1f000982ca4640463fda8a4835b06101556378f99367321bb7c30393514f2720:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SKILL.md": "c50c7eb7bb7b889f0435148bf45a02d7d8c10bf75b98ac47f3e0144a3513be70:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native-prompt-provenance.json": "63787e45a986a33b30af61214a82ff5ac5459325d639f223c7920d35f5acd4b1:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/contract.json": "3157b997c673efd5c17e4efd056b3fc540b8976a1b2e6c8954fce428deac6d99:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-c-1.json": "23332a662ca8efdd8a8e640f359cc66d5f9f8934f84f87c14608cca9bb34ba79:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-a-1.json": "cffa82481dfe4b6b5a4f83660f45137cf9ce40db5589300ed908133f09b6142d:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-a-1.json": "5d0726eb3e32adea5e2f25a42b56bef338611a157cfea0ec12e7b06675318852:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-a-1.json": "07fa8ffe6a09a4eb59578e989a31a9a49facd72ccca76e5b49c9ced484b77a9d:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-b-1.json": "df32426d661b645aedd10aa1bb54cec624e5d1abb78114362c6dcea1953793bd:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-c-1.json": "9e55477dbb606654fd63ac7213b1ff30e15333fa339d27a2ae81a09dab7bce8b:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-a-1.json": "22a2e1f5d75816742bcdbcfcef3bd6d6d208f828fae381bf902d43e77f2e60b7:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-baseline-1.json": "4851cd24abca797503c655af8eae6ec3ad6e79827e824fb0032c2704bc40e8d3:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-c-1.json": "fa51474ddb65bcf5fd4a3fe0ae89f3266cb5de6d1224ea46f6b8637cf21347d1:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-a-1.json": "53f2b5107c2885d2af353e1ab9409ca74e8bd97b343e7c6dad00176e41eab632:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-b-1.json": "6005dc0732f32a5086554703aa6e1cd3ce1be0ec4e2814619d8631cf0f180d17:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-baseline-1.json": "b29a9f092f3cb58897bef5da59a896395a45bf84bae09ce4e4eaac483d802dad:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-b-1.json": "772b5f3de2dc2bb42cb04fffc40d069679133339c4e1c82d1cddd62efe4654ae:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-baseline-1.json": "19691334855109a837ac94c22990d59518dffe9596a709d2c5fc5575c05c90e8:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-a-1.json": "5e714a1cc0fa694180186ba08a9f9fb56a67d107cba1f368e4cee79cda37cf8c:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-b-1.json": "b4cf089bb34bce4b5c1bf7ffc5de53121b09ea8bead16132bed2d1fb578d2962:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-c-1.json": "36326711d1e71f14b14c5a745be29d87c63b1b10ac1a24efb6ddd22cc454e25a:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-baseline-1.json": "3f3de19abcd4626239f84d397d857210a070af209bd4c54c6bfca0f172244a3a:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-baseline-1.json": "ec0e4a9556df26459e67ae48e1b7cf656f485619b8d52ad3a8809a393550efc2:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-baseline-1.json": "8a165e1ea718bb5e6141912ae9c737b9a6dbd02ddff2958d861a1beb45e1a3db:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-baseline-1.json": "b2aaf11bd721f90c45c08ad982557b9326154a8da372ec95ea1352a228cf769c:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-b-1.json": "b2b064211bb6be9121f6fc6dc8552bf7d67b2a22ef48c492d71c0357bd4a07f2:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-c-1.json": "ce51f49eebbbf64ae0cd20ab241bb0989695381a45d978c9ac6314922631d2f5:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-c-1.json": "c892d4289139ea2152ccf3b28497993e303df1d41c5a3a8ca94ea95c0ff45372:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-baseline-1.json": "3d41f11655600e0819d8b6299cb880d9da7ae5acc50613d3f4be55188fb81cde:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-b-1.json": "c9d91d76bf86cc6f925aa6bda9af8782f186ed0d0b4051b8c45d71afbcc16305:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-c-1.json": "cffc81fd74e51d4b4713d77c8f6723cdd786476c527971b1ad0a1b325a494303:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-a-1.json": "8883022e7de3aa54735080e23d2ffdec080cdb14315c334673314b3898aa206e:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-c-1.json": "f5f8dab7fce17e0e4985e1674b2f161b9d05719aa9f4dfe1a8bee332bbaf37de:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-b-1.json": "3948c42c3ba646ee29e1f9b42f5882c46d1d679a5dc498d9ff73a3bd8dce58d2:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-a-1.json": "38e0bfb58bbf88489400487e6b412eb646e66ecf7d207182e69e4bdc384dca41:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-b-1.json": "e23d53344b6e95daa4a02019ebc6ad1e1ad9383fd1569ab8feaeb424678e5321:436"
+    }
+  },
+  "original_source": {
+    "head": "",
+    "files": {
+      "brief.txt": "928af2af15779cf94a9f57fa05a4cebcaffcf4113a6262143e77bee30ce7b5aa:436",
+      "native_provenance_audit.py": "42e04addde5848b40823f6f1905ce9ebecb633ea2db82da0d3440ec7273864b8:436",
+      "tools/codex-yomiyasu/evals/run_study.py": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47:436",
+      "tools/codex-yomiyasu/evals/verify_native.py": "925c3526507390666521dd5df2a7027e9b8b4ab890cf5f92550d31c7fc4111e3:436",
+      "tools/codex-yomiyasu/evaluation-v200/frozen-sources.json": "0fbbbf8b39a023ba38a399d4374ad66401238b84b7a7773ba7699cc3a786406a:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/SKILL.md": "bb14880a10d1b9029ab900d093d2a5912e0789377a39542d2b2beb6ca6b8046d:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/reader-review.md": "a9b76ce9de5d31609e59faba86ae01c191118c471d883a8c95ce0ebc23e50ab8:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+      "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/reader-contract.md": "bf6bf5099914465f0792104ac15d68d290e4c287eafe41072ec26ccbe2018505:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+      "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/SKILL.md": "062e0ed73a7a44247f3a0369c050bcd649684586f350839946df8b260f503c28:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+      "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/SKILL.md": "154c88e9d3617b3aba71742103a8ba10a91454a436f557cb3cfe329256c190cb:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/SKILL.md": "4708c7510abded07f78ccb0ac8fb1b16d6655bfcf14bec2d4b07d7f7d2ca251d:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/audience.md": "1f000982ca4640463fda8a4835b06101556378f99367321bb7c30393514f2720:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+      "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SKILL.md": "c50c7eb7bb7b889f0435148bf45a02d7d8c10bf75b98ac47f3e0144a3513be70:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native-prompt-provenance.json": "63787e45a986a33b30af61214a82ff5ac5459325d639f223c7920d35f5acd4b1:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/contract.json": "3157b997c673efd5c17e4efd056b3fc540b8976a1b2e6c8954fce428deac6d99:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-c-1.json": "23332a662ca8efdd8a8e640f359cc66d5f9f8934f84f87c14608cca9bb34ba79:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-a-1.json": "cffa82481dfe4b6b5a4f83660f45137cf9ce40db5589300ed908133f09b6142d:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-a-1.json": "5d0726eb3e32adea5e2f25a42b56bef338611a157cfea0ec12e7b06675318852:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-a-1.json": "07fa8ffe6a09a4eb59578e989a31a9a49facd72ccca76e5b49c9ced484b77a9d:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-b-1.json": "df32426d661b645aedd10aa1bb54cec624e5d1abb78114362c6dcea1953793bd:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-c-1.json": "9e55477dbb606654fd63ac7213b1ff30e15333fa339d27a2ae81a09dab7bce8b:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-a-1.json": "22a2e1f5d75816742bcdbcfcef3bd6d6d208f828fae381bf902d43e77f2e60b7:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-baseline-1.json": "4851cd24abca797503c655af8eae6ec3ad6e79827e824fb0032c2704bc40e8d3:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-c-1.json": "fa51474ddb65bcf5fd4a3fe0ae89f3266cb5de6d1224ea46f6b8637cf21347d1:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-a-1.json": "53f2b5107c2885d2af353e1ab9409ca74e8bd97b343e7c6dad00176e41eab632:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-b-1.json": "6005dc0732f32a5086554703aa6e1cd3ce1be0ec4e2814619d8631cf0f180d17:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-baseline-1.json": "b29a9f092f3cb58897bef5da59a896395a45bf84bae09ce4e4eaac483d802dad:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-b-1.json": "772b5f3de2dc2bb42cb04fffc40d069679133339c4e1c82d1cddd62efe4654ae:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-baseline-1.json": "19691334855109a837ac94c22990d59518dffe9596a709d2c5fc5575c05c90e8:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-a-1.json": "5e714a1cc0fa694180186ba08a9f9fb56a67d107cba1f368e4cee79cda37cf8c:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-b-1.json": "b4cf089bb34bce4b5c1bf7ffc5de53121b09ea8bead16132bed2d1fb578d2962:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-c-1.json": "36326711d1e71f14b14c5a745be29d87c63b1b10ac1a24efb6ddd22cc454e25a:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-baseline-1.json": "3f3de19abcd4626239f84d397d857210a070af209bd4c54c6bfca0f172244a3a:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-baseline-1.json": "ec0e4a9556df26459e67ae48e1b7cf656f485619b8d52ad3a8809a393550efc2:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-baseline-1.json": "8a165e1ea718bb5e6141912ae9c737b9a6dbd02ddff2958d861a1beb45e1a3db:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-baseline-1.json": "b2aaf11bd721f90c45c08ad982557b9326154a8da372ec95ea1352a228cf769c:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-b-1.json": "b2b064211bb6be9121f6fc6dc8552bf7d67b2a22ef48c492d71c0357bd4a07f2:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-c-1.json": "ce51f49eebbbf64ae0cd20ab241bb0989695381a45d978c9ac6314922631d2f5:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-c-1.json": "c892d4289139ea2152ccf3b28497993e303df1d41c5a3a8ca94ea95c0ff45372:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-baseline-1.json": "3d41f11655600e0819d8b6299cb880d9da7ae5acc50613d3f4be55188fb81cde:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-b-1.json": "c9d91d76bf86cc6f925aa6bda9af8782f186ed0d0b4051b8c45d71afbcc16305:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-c-1.json": "cffc81fd74e51d4b4713d77c8f6723cdd786476c527971b1ad0a1b325a494303:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-a-1.json": "8883022e7de3aa54735080e23d2ffdec080cdb14315c334673314b3898aa206e:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-c-1.json": "f5f8dab7fce17e0e4985e1674b2f161b9d05719aa9f4dfe1a8bee332bbaf37de:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-b-1.json": "3948c42c3ba646ee29e1f9b42f5882c46d1d679a5dc498d9ff73a3bd8dce58d2:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-a-1.json": "38e0bfb58bbf88489400487e6b412eb646e66ecf7d207182e69e4bdc384dca41:436",
+      "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-b-1.json": "e23d53344b6e95daa4a02019ebc6ad1e1ad9383fd1569ab8feaeb424678e5321:436"
+    }
+  },
+  "test_env_hash": "",
+  "workspace": "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e/docs/design-research/yomiyasu-native-correction",
+  "preflight": {
+    "status": "ready",
+    "scope": "Executable/dependency layout only; commands are not executed"
+  },
+  "units": {
+    "001-planner": {
+      "id": "001-planner",
+      "question": "planner",
+      "role": "planner",
+      "required": true,
+      "dependencies": [],
+      "input": {
+        "role": "planner",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ready",
+                "blocked"
+              ]
+            },
+            "reason": {
+              "type": "string"
+            },
+            "goal": {
+              "type": "string"
+            },
+            "domain": {
+              "type": "string",
+              "enum": [
+                "research",
+                "backend"
+              ]
+            },
+            "baseline": {
+              "type": "string"
+            },
+            "constraints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "criteria": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "runtime",
+                      "research",
+                      "static"
+                    ]
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "acceptance": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "kind",
+                  "required",
+                  "acceptance"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "test_commands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string"
+                  },
+                  "check_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "artifact_paths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "command",
+                  "check_ids",
+                  "artifact_paths"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "complexity_baseline": {
+              "type": "string"
+            },
+            "queries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "all",
+                      "arxiv",
+                      "semantic-scholar",
+                      "crossref"
+                    ]
+                  },
+                  "query": {
+                    "type": "string"
+                  },
+                  "limit": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "provider",
+                  "query",
+                  "limit"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "goal",
+            "domain",
+            "baseline",
+            "constraints",
+            "criteria",
+            "test_commands",
+            "complexity_baseline",
+            "queries"
+          ],
+          "additionalProperties": false
+        },
+        "input": {
+          "run_id": "20261011T125800Z-64c881ff",
+          "iteration": 1,
+          "project": "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e",
+          "workspace": "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e/docs/design-research/yomiyasu-native-correction",
+          "config": {
+            "mode": "audit",
+            "brief": "修正したnative_provenance_audit.pyが元32試行を誤った成功に変えず照合できるか、という1つの境界だけをauditする。plannerのcriteriaは必須runtimeの1件だけにする。別の研究・インストーラー全体・文章品質評価は不要。既存コマンド python3 -B native_provenance_audit.py を親が1回実行し、以下の同一照合処理の受入条件を独立に確認する: 32元receiptの保存hashとSHAに結び付いた復元入力、native_tasksの依頼と期待読込集合、成功した実ファイル読取と固定SKILL全文、C8/8およびbaseline6/A5/B8、部分依頼の範囲、8件の誤字/コード対照は全文読込に含めないこと。修正前の補助コードはfull_read_receipts=32という誤解を生む表示だった。修正後はreceipts_verified=32、trials_with_full_skill_reads=20、negative_control_trials=8を実際の検証結果から集計し、対照の空readをassertする。元のtimeout4件とbaseline読込不足を保持し、内部適用回数・人間評価・文章品質の優位差は不明のまま。検査コードがモデル・外部送信・導入・設定変更を行わないことをコードで確認する。全8種類の実際の復元依頼と該当コード/receiptを読む。元の平文ログではなくハッシュに対応した復元入力であることを保持する。チェックのevidence_idsには登録済みEV IDまたはこの応答のcode_evidenceのIDだけを使う。sourcesのIDはevidence_idsへ入れない。SOURCE.pathは研究workspace相対であり、プロジェクトの別フォルダを../../で参照しない。参照はコードならproject相対code_evidence、実行結果なら親のEV記録。前の実行の完了判定を継承せず、今回の実行receiptに基づき検証する。max1iteration、ネットなし、モデルによる完成稿再生成なし。",
+            "allow_network": false,
+            "test_commands": [
+              "python3 -B native_provenance_audit.py"
+            ],
+            "evaluation_purpose": "auto",
+            "report_profile": "comparison",
+            "target_methods": 5,
+            "reader_friendly": true
+          }
+        },
+        "source": {
+          "head": "",
+          "files": {
+            "brief.txt": "928af2af15779cf94a9f57fa05a4cebcaffcf4113a6262143e77bee30ce7b5aa:436",
+            "native_provenance_audit.py": "42e04addde5848b40823f6f1905ce9ebecb633ea2db82da0d3440ec7273864b8:436",
+            "tools/codex-yomiyasu/evals/run_study.py": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47:436",
+            "tools/codex-yomiyasu/evals/verify_native.py": "925c3526507390666521dd5df2a7027e9b8b4ab890cf5f92550d31c7fc4111e3:436",
+            "tools/codex-yomiyasu/evaluation-v200/frozen-sources.json": "0fbbbf8b39a023ba38a399d4374ad66401238b84b7a7773ba7699cc3a786406a:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/SKILL.md": "bb14880a10d1b9029ab900d093d2a5912e0789377a39542d2b2beb6ca6b8046d:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/reader-review.md": "a9b76ce9de5d31609e59faba86ae01c191118c471d883a8c95ce0ebc23e50ab8:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/reader-contract.md": "bf6bf5099914465f0792104ac15d68d290e4c287eafe41072ec26ccbe2018505:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/SKILL.md": "062e0ed73a7a44247f3a0369c050bcd649684586f350839946df8b260f503c28:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/SKILL.md": "154c88e9d3617b3aba71742103a8ba10a91454a436f557cb3cfe329256c190cb:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/SKILL.md": "4708c7510abded07f78ccb0ac8fb1b16d6655bfcf14bec2d4b07d7f7d2ca251d:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/audience.md": "1f000982ca4640463fda8a4835b06101556378f99367321bb7c30393514f2720:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SKILL.md": "c50c7eb7bb7b889f0435148bf45a02d7d8c10bf75b98ac47f3e0144a3513be70:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native-prompt-provenance.json": "63787e45a986a33b30af61214a82ff5ac5459325d639f223c7920d35f5acd4b1:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/contract.json": "3157b997c673efd5c17e4efd056b3fc540b8976a1b2e6c8954fce428deac6d99:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-c-1.json": "23332a662ca8efdd8a8e640f359cc66d5f9f8934f84f87c14608cca9bb34ba79:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-a-1.json": "cffa82481dfe4b6b5a4f83660f45137cf9ce40db5589300ed908133f09b6142d:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-a-1.json": "5d0726eb3e32adea5e2f25a42b56bef338611a157cfea0ec12e7b06675318852:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-a-1.json": "07fa8ffe6a09a4eb59578e989a31a9a49facd72ccca76e5b49c9ced484b77a9d:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-b-1.json": "df32426d661b645aedd10aa1bb54cec624e5d1abb78114362c6dcea1953793bd:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-c-1.json": "9e55477dbb606654fd63ac7213b1ff30e15333fa339d27a2ae81a09dab7bce8b:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-a-1.json": "22a2e1f5d75816742bcdbcfcef3bd6d6d208f828fae381bf902d43e77f2e60b7:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-baseline-1.json": "4851cd24abca797503c655af8eae6ec3ad6e79827e824fb0032c2704bc40e8d3:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-c-1.json": "fa51474ddb65bcf5fd4a3fe0ae89f3266cb5de6d1224ea46f6b8637cf21347d1:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-a-1.json": "53f2b5107c2885d2af353e1ab9409ca74e8bd97b343e7c6dad00176e41eab632:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-b-1.json": "6005dc0732f32a5086554703aa6e1cd3ce1be0ec4e2814619d8631cf0f180d17:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-baseline-1.json": "b29a9f092f3cb58897bef5da59a896395a45bf84bae09ce4e4eaac483d802dad:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-b-1.json": "772b5f3de2dc2bb42cb04fffc40d069679133339c4e1c82d1cddd62efe4654ae:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-baseline-1.json": "19691334855109a837ac94c22990d59518dffe9596a709d2c5fc5575c05c90e8:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-a-1.json": "5e714a1cc0fa694180186ba08a9f9fb56a67d107cba1f368e4cee79cda37cf8c:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-b-1.json": "b4cf089bb34bce4b5c1bf7ffc5de53121b09ea8bead16132bed2d1fb578d2962:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-c-1.json": "36326711d1e71f14b14c5a745be29d87c63b1b10ac1a24efb6ddd22cc454e25a:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-baseline-1.json": "3f3de19abcd4626239f84d397d857210a070af209bd4c54c6bfca0f172244a3a:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-baseline-1.json": "ec0e4a9556df26459e67ae48e1b7cf656f485619b8d52ad3a8809a393550efc2:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-baseline-1.json": "8a165e1ea718bb5e6141912ae9c737b9a6dbd02ddff2958d861a1beb45e1a3db:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-baseline-1.json": "b2aaf11bd721f90c45c08ad982557b9326154a8da372ec95ea1352a228cf769c:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-b-1.json": "b2b064211bb6be9121f6fc6dc8552bf7d67b2a22ef48c492d71c0357bd4a07f2:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-c-1.json": "ce51f49eebbbf64ae0cd20ab241bb0989695381a45d978c9ac6314922631d2f5:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-c-1.json": "c892d4289139ea2152ccf3b28497993e303df1d41c5a3a8ca94ea95c0ff45372:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-baseline-1.json": "3d41f11655600e0819d8b6299cb880d9da7ae5acc50613d3f4be55188fb81cde:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-b-1.json": "c9d91d76bf86cc6f925aa6bda9af8782f186ed0d0b4051b8c45d71afbcc16305:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-c-1.json": "cffc81fd74e51d4b4713d77c8f6723cdd786476c527971b1ad0a1b325a494303:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-a-1.json": "8883022e7de3aa54735080e23d2ffdec080cdb14315c334673314b3898aa206e:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-c-1.json": "f5f8dab7fce17e0e4985e1674b2f161b9d05719aa9f4dfe1a8bee332bbaf37de:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-b-1.json": "3948c42c3ba646ee29e1f9b42f5882c46d1d679a5dc498d9ff73a3bd8dce58d2:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-a-1.json": "38e0bfb58bbf88489400487e6b412eb646e66ecf7d207182e69e4bdc384dca41:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-b-1.json": "e23d53344b6e95daa4a02019ebc6ad1e1ad9383fd1569ab8feaeb424678e5321:436"
+          }
+        }
+      },
+      "input_sha256": "6f9797873556bb1d94d1ba49f88b0a07112063ed0280e0ece0750973cc7f56be",
+      "source_sha256": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "config_sha256": "625c0d79ba3dd588746f5d3ceb2d4a8209d6047afac333405e16b6abcc0c3dae",
+      "status": "complete",
+      "result": {
+        "status": "ready",
+        "reason": "保存済み32試行の照合処理に限定したbackend audit。指定契約、復元依頼8種類、該当コードと元receiptを読んだ。確認コマンドは未実行。",
+        "goal": "修正したnative_provenance_audit.pyが、元32試行の失敗と読込不足を保持し、receipt照合件数を全文読込成功件数と混同せず再集計できるか確認する。",
+        "domain": "backend",
+        "baseline": "既存のN1〜N8×baseline/a/b/cの32receiptを固定基準とする。旧表示full_read_receipts=32は全文読込成功の測定として扱わない。",
+        "constraints": [
+          "必須runtime criterionは1件。単一処理のauditであり、5候補比較、別研究、インストーラー全体、文章品質評価を追加しない。",
+          "親がプロジェクト直下で既存コマンドを1回だけ実行する。max1iteration、ネットなし、モデル呼出し・完成稿再生成・導入・外部送信・設定変更なし。",
+          "元receipt、復元入力、固定ソースを変更しない。復元入力はSHAに結び付いた証拠であり、保存済み原文ログとは記述しない。",
+          "実行経路の確認対象はnative_provenance_audit.py、verify_native.verify、run_study.native_tasks/read_receipts/sha。検証用SKILLコピーは一時ディレクトリ内に限る。",
+          "今回の親実行receiptと元receiptの実際のtool出力を証拠とする。過去の完了判定、集計表示、説明例だけでは受入を満たさない。",
+          "timeout、assert失敗、非ゼロ終了、出力欠落を成功へ置き換えない。内部適用回数、人間評価、文章品質の優位差は不明のまま保持する。"
+        ],
+        "criteria": [
+          {
+            "id": "R1",
+            "title": "必須：元32試行の照合が失敗と読込範囲を保持する",
+            "kind": "runtime",
+            "required": true,
+            "acceptance": "親の今回の実行が終了コード0となり、元証拠から独立に確認した結果とstdoutが一致すること。期待値はreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}。native-prompt-provenance.jsonの保存receipt SHAとsource_files SHA、重複・欠落のない32件の集合、native_tasks由来の復元依頼＋固定suffix、そのUTF-8 SHAと元prompt_sha256、期待読込集合を照合する。N1/N2は3スキル、N3/N4はparagraph-writingのみ、N5/N6はjapanese-direct-writingのみ、N7/N8は空集合を期待する。読込は実際のファイル読取コマンド、exit_code=0、tool出力中の該当armの固定SKILL全文に基づき再計算し、route成功にはcompleted・期待集合一致・各スキル1回を要求する。8対照はcompleted、route成功、reads空、全文読込判定falseをassertし、全文読込20件へ加算しない。N1-a、N2-a、N2-baseline、N6-aのtimeout4件とN1-baselineの補助スキル読込不足を保持する。コードの実行経路にモデル呼出し、外部送信、導入、ユーザー設定変更がないことも同じ照合処理の受入条件として確認する。"
+          }
+        ],
+        "test_commands": [
+          {
+            "command": "python3 -B native_provenance_audit.py",
+            "check_ids": [
+              "R1"
+            ],
+            "artifact_paths": []
+          }
+        ],
+        "complexity_baseline": "32件の既存JSON、復元入力、ローカル固定SKILLを標準ライブラリで読み、SHA照合とtool出力の全文照合を行う。stdoutは親の実行receiptで保存し、追加の結果ファイルを生成しない。性能比較は対象外。",
+        "queries": []
+      },
+      "result_sha256": "64dbff25999d689df83526307dcb9e9b3548b890882897617ac61d22c5ebc4be"
+    },
+    "001-review-R1": {
+      "id": "001-review-R1",
+      "question": "親の今回の実行が終了コード0となり、元証拠から独立に確認した結果とstdoutが一致すること。期待値はreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}。native-prompt-provenance.jsonの保存receipt SHAとsource_files SHA、重複・欠落のない32件の集合、native_tasks由来の復元依頼＋固定suffix、そのUTF-8 SHAと元prompt_sha256、期待読込集合を照合する。N1/N2は3スキル、N3/N4はparagraph-writingのみ、N5/N6はjapanese-direct-writingのみ、N7/N8は空集合を期待する。読込は実際のファイル読取コマンド、exit_code=0、tool出力中の該当armの固定SKILL全文に基づき再計算し、route成功にはcompleted・期待集合一致・各スキル1回を要求する。8対照はcompleted、route成功、reads空、全文読込判定falseをassertし、全文読込20件へ加算しない。N1-a、N2-a、N2-baseline、N6-aのtimeout4件とN1-baselineの補助スキル読込不足を保持する。コードの実行経路にモデル呼出し、外部送信、導入、ユーザー設定変更がないことも同じ照合処理の受入条件として確認する。",
+      "role": "reviewer-check",
+      "required": true,
+      "dependencies": [
+        "planner"
+      ],
+      "input": {
+        "role": "reviewer-check",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "reviewed",
+                "blocked"
+              ]
+            },
+            "reason": {
+              "type": "string"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "severity": {
+                    "type": "string",
+                    "enum": [
+                      "Critical",
+                      "High",
+                      "Medium",
+                      "Low"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "open",
+                      "unverified",
+                      "resolved"
+                    ]
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string"
+                  },
+                  "expected": {
+                    "type": "string"
+                  },
+                  "actual": {
+                    "type": "string"
+                  },
+                  "why": {
+                    "type": "string"
+                  },
+                  "improvement": {
+                    "type": "string"
+                  },
+                  "root_cause": {
+                    "type": "string"
+                  },
+                  "check_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "evidence_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "severity",
+                  "status",
+                  "target",
+                  "action",
+                  "expected",
+                  "actual",
+                  "why",
+                  "improvement",
+                  "root_cause",
+                  "check_ids",
+                  "evidence_ids"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "check_id": {
+                    "type": "string"
+                  },
+                  "result": {
+                    "type": "string",
+                    "enum": [
+                      "pass",
+                      "fail",
+                      "unknown",
+                      "not_applicable"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "evidence_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "check_id",
+                  "result",
+                  "reason",
+                  "evidence_ids"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "code_evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "line_start": {
+                    "type": "integer"
+                  },
+                  "line_end": {
+                    "type": "integer"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "path",
+                  "line_start",
+                  "line_end",
+                  "description"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "dossier_json": {
+              "type": "string"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "path": {
+                    "type": "string"
+                  },
+                  "locator": {
+                    "type": "string"
+                  },
+                  "read_level": {
+                    "type": "string",
+                    "enum": [
+                      "metadata",
+                      "abstract",
+                      "relevant_sections",
+                      "full_text"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "url",
+                  "path",
+                  "locator",
+                  "read_level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "reference_implementations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "strength": {
+                    "type": "string"
+                  },
+                  "application": {
+                    "type": "string"
+                  },
+                  "limitations": {
+                    "type": "string"
+                  },
+                  "source_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "url",
+                  "strength",
+                  "application",
+                  "limitations",
+                  "source_ids"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "complexity_ok": {
+              "type": "boolean"
+            },
+            "complexity_reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "reason",
+            "issues",
+            "checks",
+            "code_evidence",
+            "dossier_json",
+            "sources",
+            "reference_implementations",
+            "complexity_ok",
+            "complexity_reason"
+          ],
+          "additionalProperties": false
+        },
+        "input": {
+          "run_id": "20261011T125800Z-64c881ff",
+          "iteration": 1,
+          "project": "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e",
+          "workspace": "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e/docs/design-research/yomiyasu-native-correction",
+          "config": {
+            "mode": "audit",
+            "brief": "修正したnative_provenance_audit.pyが元32試行を誤った成功に変えず照合できるか、という1つの境界だけをauditする。plannerのcriteriaは必須runtimeの1件だけにする。別の研究・インストーラー全体・文章品質評価は不要。既存コマンド python3 -B native_provenance_audit.py を親が1回実行し、以下の同一照合処理の受入条件を独立に確認する: 32元receiptの保存hashとSHAに結び付いた復元入力、native_tasksの依頼と期待読込集合、成功した実ファイル読取と固定SKILL全文、C8/8およびbaseline6/A5/B8、部分依頼の範囲、8件の誤字/コード対照は全文読込に含めないこと。修正前の補助コードはfull_read_receipts=32という誤解を生む表示だった。修正後はreceipts_verified=32、trials_with_full_skill_reads=20、negative_control_trials=8を実際の検証結果から集計し、対照の空readをassertする。元のtimeout4件とbaseline読込不足を保持し、内部適用回数・人間評価・文章品質の優位差は不明のまま。検査コードがモデル・外部送信・導入・設定変更を行わないことをコードで確認する。全8種類の実際の復元依頼と該当コード/receiptを読む。元の平文ログではなくハッシュに対応した復元入力であることを保持する。チェックのevidence_idsには登録済みEV IDまたはこの応答のcode_evidenceのIDだけを使う。sourcesのIDはevidence_idsへ入れない。SOURCE.pathは研究workspace相対であり、プロジェクトの別フォルダを../../で参照しない。参照はコードならproject相対code_evidence、実行結果なら親のEV記録。前の実行の完了判定を継承せず、今回の実行receiptに基づき検証する。max1iteration、ネットなし、モデルによる完成稿再生成なし。",
+            "allow_network": false,
+            "test_commands": [
+              "python3 -B native_provenance_audit.py"
+            ],
+            "evaluation_purpose": "auto",
+            "report_profile": "comparison",
+            "target_methods": 5,
+            "reader_friendly": true
+          },
+          "available_project_input_files": [
+            "brief.txt",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/contract.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native-prompt-provenance.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-a-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-b-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-baseline-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-c-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-a-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-b-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-baseline-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-c-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-a-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-b-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-baseline-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-c-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-a-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-b-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-baseline-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-c-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-a-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-b-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-baseline-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-c-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-a-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-b-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-baseline-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-c-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-a-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-b-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-baseline-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-c-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-a-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-b-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-baseline-1.json",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-c-1.json",
+            "native_provenance_audit.py",
+            "tools/codex-yomiyasu/evals/run_study.py",
+            "tools/codex-yomiyasu/evals/verify_native.py",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SOURCE.json",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/UPSTREAM.json",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/AGENTS_APPEND.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/audience.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/directness.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/naturalness.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/paragraphs.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/review.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/sources.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/workflow.md",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/scripts/check.py",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SOURCE.json",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/UPSTREAM.json",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/AGENTS_APPEND.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/audience.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/directness.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/naturalness.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/paragraphs.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/reader-contract.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/review.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/sources.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/workflow.md",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/scripts/check.py",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SOURCE.json",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/UPSTREAM.json",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/AGENTS_APPEND.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/audience.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/directness.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/paragraphs.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/review.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/sources.md",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/scripts/check.py",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SOURCE.json",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/SKILL.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/UPSTREAM.json",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/AGENTS_APPEND.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/audience.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/directness.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/naturalness.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/paragraphs.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/reader-review.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/review.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/sources.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/workflow.md",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/scripts/check.py",
+            "tools/codex-yomiyasu/evaluation-v200/frozen-sources.json"
+          ],
+          "plan": {
+            "status": "ready",
+            "reason": "保存済み32試行の照合処理に限定したbackend audit。指定契約、復元依頼8種類、該当コードと元receiptを読んだ。確認コマンドは未実行。",
+            "goal": "修正したnative_provenance_audit.pyが、元32試行の失敗と読込不足を保持し、receipt照合件数を全文読込成功件数と混同せず再集計できるか確認する。",
+            "domain": "backend",
+            "baseline": "既存のN1〜N8×baseline/a/b/cの32receiptを固定基準とする。旧表示full_read_receipts=32は全文読込成功の測定として扱わない。",
+            "constraints": [
+              "必須runtime criterionは1件。単一処理のauditであり、5候補比較、別研究、インストーラー全体、文章品質評価を追加しない。",
+              "親がプロジェクト直下で既存コマンドを1回だけ実行する。max1iteration、ネットなし、モデル呼出し・完成稿再生成・導入・外部送信・設定変更なし。",
+              "元receipt、復元入力、固定ソースを変更しない。復元入力はSHAに結び付いた証拠であり、保存済み原文ログとは記述しない。",
+              "実行経路の確認対象はnative_provenance_audit.py、verify_native.verify、run_study.native_tasks/read_receipts/sha。検証用SKILLコピーは一時ディレクトリ内に限る。",
+              "今回の親実行receiptと元receiptの実際のtool出力を証拠とする。過去の完了判定、集計表示、説明例だけでは受入を満たさない。",
+              "timeout、assert失敗、非ゼロ終了、出力欠落を成功へ置き換えない。内部適用回数、人間評価、文章品質の優位差は不明のまま保持する。"
+            ],
+            "criteria": [
+              {
+                "id": "R1",
+                "title": "必須：元32試行の照合が失敗と読込範囲を保持する",
+                "kind": "runtime",
+                "required": true,
+                "acceptance": "親の今回の実行が終了コード0となり、元証拠から独立に確認した結果とstdoutが一致すること。期待値はreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}。native-prompt-provenance.jsonの保存receipt SHAとsource_files SHA、重複・欠落のない32件の集合、native_tasks由来の復元依頼＋固定suffix、そのUTF-8 SHAと元prompt_sha256、期待読込集合を照合する。N1/N2は3スキル、N3/N4はparagraph-writingのみ、N5/N6はjapanese-direct-writingのみ、N7/N8は空集合を期待する。読込は実際のファイル読取コマンド、exit_code=0、tool出力中の該当armの固定SKILL全文に基づき再計算し、route成功にはcompleted・期待集合一致・各スキル1回を要求する。8対照はcompleted、route成功、reads空、全文読込判定falseをassertし、全文読込20件へ加算しない。N1-a、N2-a、N2-baseline、N6-aのtimeout4件とN1-baselineの補助スキル読込不足を保持する。コードの実行経路にモデル呼出し、外部送信、導入、ユーザー設定変更がないことも同じ照合処理の受入条件として確認する。"
+              }
+            ],
+            "test_commands": [
+              {
+                "command": "python3 -B native_provenance_audit.py",
+                "check_ids": [
+                  "R1"
+                ],
+                "artifact_paths": []
+              }
+            ],
+            "complexity_baseline": "32件の既存JSON、復元入力、ローカル固定SKILLを標準ライブラリで読み、SHA照合とtool出力の全文照合を行う。stdoutは親の実行receiptで保存し、追加の結果ファイルを生成しない。性能比較は対象外。",
+            "queries": []
+          },
+          "evidence": {
+            "EV-00001": {
+              "id": "EV-00001",
+              "kind": "test",
+              "description": "Actual execution: python3 -B native_provenance_audit.py",
+              "path": "runs/20261011T125800Z-64c881ff/001-checks/001/receipt.json",
+              "sha256": "12f852df50b9ad9a551ef3294d7c937362301ddedd7b64a8f0bc890a52edf11a",
+              "iteration": 1,
+              "recorded_at": "2026-10-11T13:00:26.282887+00:00",
+              "source_fingerprint": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+              "command": "python3 -B native_provenance_audit.py",
+              "check_ids": [
+                "R1"
+              ],
+              "experiment_id": null,
+              "exit_code": 0,
+              "timed_out": false,
+              "truncated": false
+            }
+          },
+          "sources": {},
+          "unit_task": {
+            "criterion_ids": [
+              "R1"
+            ],
+            "question": "親の今回の実行が終了コード0となり、元証拠から独立に確認した結果とstdoutが一致すること。期待値はreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}。native-prompt-provenance.jsonの保存receipt SHAとsource_files SHA、重複・欠落のない32件の集合、native_tasks由来の復元依頼＋固定suffix、そのUTF-8 SHAと元prompt_sha256、期待読込集合を照合する。N1/N2は3スキル、N3/N4はparagraph-writingのみ、N5/N6はjapanese-direct-writingのみ、N7/N8は空集合を期待する。読込は実際のファイル読取コマンド、exit_code=0、tool出力中の該当armの固定SKILL全文に基づき再計算し、route成功にはcompleted・期待集合一致・各スキル1回を要求する。8対照はcompleted、route成功、reads空、全文読込判定falseをassertし、全文読込20件へ加算しない。N1-a、N2-a、N2-baseline、N6-aのtimeout4件とN1-baselineの補助スキル読込不足を保持する。コードの実行経路にモデル呼出し、外部送信、導入、ユーザー設定変更がないことも同じ照合処理の受入条件として確認する。"
+          }
+        },
+        "source": {
+          "head": "",
+          "files": {
+            "brief.txt": "928af2af15779cf94a9f57fa05a4cebcaffcf4113a6262143e77bee30ce7b5aa:436",
+            "native_provenance_audit.py": "42e04addde5848b40823f6f1905ce9ebecb633ea2db82da0d3440ec7273864b8:436",
+            "tools/codex-yomiyasu/evals/run_study.py": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47:436",
+            "tools/codex-yomiyasu/evals/verify_native.py": "925c3526507390666521dd5df2a7027e9b8b4ab890cf5f92550d31c7fc4111e3:436",
+            "tools/codex-yomiyasu/evaluation-v200/frozen-sources.json": "0fbbbf8b39a023ba38a399d4374ad66401238b84b7a7773ba7699cc3a786406a:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/SKILL.md": "bb14880a10d1b9029ab900d093d2a5912e0789377a39542d2b2beb6ca6b8046d:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/reader-review.md": "a9b76ce9de5d31609e59faba86ae01c191118c471d883a8c95ce0ebc23e50ab8:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+            "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/reader-contract.md": "bf6bf5099914465f0792104ac15d68d290e4c287eafe41072ec26ccbe2018505:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+            "tools/codex-yomiyasu/evaluation-v200/b/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/SKILL.md": "062e0ed73a7a44247f3a0369c050bcd649684586f350839946df8b260f503c28:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+            "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/SKILL.md": "154c88e9d3617b3aba71742103a8ba10a91454a436f557cb3cfe329256c190cb:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/SKILL.md": "4708c7510abded07f78ccb0ac8fb1b16d6655bfcf14bec2d4b07d7f7d2ca251d:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/audience.md": "1f000982ca4640463fda8a4835b06101556378f99367321bb7c30393514f2720:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4:436",
+            "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SKILL.md": "c50c7eb7bb7b889f0435148bf45a02d7d8c10bf75b98ac47f3e0144a3513be70:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native-prompt-provenance.json": "63787e45a986a33b30af61214a82ff5ac5459325d639f223c7920d35f5acd4b1:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/contract.json": "3157b997c673efd5c17e4efd056b3fc540b8976a1b2e6c8954fce428deac6d99:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-c-1.json": "23332a662ca8efdd8a8e640f359cc66d5f9f8934f84f87c14608cca9bb34ba79:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-a-1.json": "cffa82481dfe4b6b5a4f83660f45137cf9ce40db5589300ed908133f09b6142d:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-a-1.json": "5d0726eb3e32adea5e2f25a42b56bef338611a157cfea0ec12e7b06675318852:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-a-1.json": "07fa8ffe6a09a4eb59578e989a31a9a49facd72ccca76e5b49c9ced484b77a9d:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-b-1.json": "df32426d661b645aedd10aa1bb54cec624e5d1abb78114362c6dcea1953793bd:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-c-1.json": "9e55477dbb606654fd63ac7213b1ff30e15333fa339d27a2ae81a09dab7bce8b:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-a-1.json": "22a2e1f5d75816742bcdbcfcef3bd6d6d208f828fae381bf902d43e77f2e60b7:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-baseline-1.json": "4851cd24abca797503c655af8eae6ec3ad6e79827e824fb0032c2704bc40e8d3:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-c-1.json": "fa51474ddb65bcf5fd4a3fe0ae89f3266cb5de6d1224ea46f6b8637cf21347d1:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-a-1.json": "53f2b5107c2885d2af353e1ab9409ca74e8bd97b343e7c6dad00176e41eab632:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-b-1.json": "6005dc0732f32a5086554703aa6e1cd3ce1be0ec4e2814619d8631cf0f180d17:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-baseline-1.json": "b29a9f092f3cb58897bef5da59a896395a45bf84bae09ce4e4eaac483d802dad:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-b-1.json": "772b5f3de2dc2bb42cb04fffc40d069679133339c4e1c82d1cddd62efe4654ae:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-baseline-1.json": "19691334855109a837ac94c22990d59518dffe9596a709d2c5fc5575c05c90e8:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-a-1.json": "5e714a1cc0fa694180186ba08a9f9fb56a67d107cba1f368e4cee79cda37cf8c:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-b-1.json": "b4cf089bb34bce4b5c1bf7ffc5de53121b09ea8bead16132bed2d1fb578d2962:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-c-1.json": "36326711d1e71f14b14c5a745be29d87c63b1b10ac1a24efb6ddd22cc454e25a:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-baseline-1.json": "3f3de19abcd4626239f84d397d857210a070af209bd4c54c6bfca0f172244a3a:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N2-baseline-1.json": "ec0e4a9556df26459e67ae48e1b7cf656f485619b8d52ad3a8809a393550efc2:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-baseline-1.json": "8a165e1ea718bb5e6141912ae9c737b9a6dbd02ddff2958d861a1beb45e1a3db:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N1-baseline-1.json": "b2aaf11bd721f90c45c08ad982557b9326154a8da372ec95ea1352a228cf769c:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N6-b-1.json": "b2b064211bb6be9121f6fc6dc8552bf7d67b2a22ef48c492d71c0357bd4a07f2:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-c-1.json": "ce51f49eebbbf64ae0cd20ab241bb0989695381a45d978c9ac6314922631d2f5:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-c-1.json": "c892d4289139ea2152ccf3b28497993e303df1d41c5a3a8ca94ea95c0ff45372:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-baseline-1.json": "3d41f11655600e0819d8b6299cb880d9da7ae5acc50613d3f4be55188fb81cde:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N8-b-1.json": "c9d91d76bf86cc6f925aa6bda9af8782f186ed0d0b4051b8c45d71afbcc16305:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N3-c-1.json": "cffc81fd74e51d4b4713d77c8f6723cdd786476c527971b1ad0a1b325a494303:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-a-1.json": "8883022e7de3aa54735080e23d2ffdec080cdb14315c334673314b3898aa206e:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N7-c-1.json": "f5f8dab7fce17e0e4985e1674b2f161b9d05719aa9f4dfe1a8bee332bbaf37de:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N4-b-1.json": "3948c42c3ba646ee29e1f9b42f5882c46d1d679a5dc498d9ff73a3bd8dce58d2:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-a-1.json": "38e0bfb58bbf88489400487e6b412eb646e66ecf7d207182e69e4bdc384dca41:436",
+            "docs/codex-yomiyasu/evidence/study-2026-10-11/native/N5-b-1.json": "e23d53344b6e95daa4a02019ebc6ad1e1ad9383fd1569ab8feaeb424678e5321:436"
+          }
+        }
+      },
+      "input_sha256": "aa3c9c705cf99046779a9212381c8867e2be565424712e32eee14981d651d245",
+      "source_sha256": "8d2c9491a36a0577ebb359dc40a4ae63015f5ecdd0886788653a1f6e03813ee4",
+      "config_sha256": "625c0d79ba3dd588746f5d3ceb2d4a8209d6047afac333405e16b6abcc0c3dae",
+      "status": "complete",
+      "result": {
+        "status": "reviewed",
+        "reason": "R1を元コード、32件の元receipt、今回の親実行記録から独立に照合した。受入条件を満たす。対象チェックの再実行やファイル変更は行っていない。",
+        "issues": [],
+        "checks": [
+          {
+            "check_id": "R1",
+            "result": "pass",
+            "reason": "今回のEV-00001は指定コマンドでexit_code=0、timeout・truncationなし。receipt・stdout・stderrの実SHAが保存値と一致した。provenanceのsource_files 2件と元receipt 32件のSHAが一致し、N1〜N8×4armの集合に重複・欠落はない。8種類の復元依頼はnative_tasksと固定suffixに一致し、32件すべてでUTF-8 SHAが元prompt_sha256に一致した。期待読込集合はN1/N2が3スキル、N3/N4がparagraph-writingのみ、N5/N6がjapanese-direct-writingのみ、N7/N8が空集合。元toolsの実catコマンド、exit_code=0、該当armの固定SKILL全文を照合し、各読込1回とcompletedを要求してrouteを再判定した結果、stdoutのreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}と一致した。20件は少なくとも1スキルの全文読込が確認された試行数であり、yomiyasuのみを読んだN1-baselineを含む。そのrouteは失敗のまま。8対照はcompleted、route成功、tools・reads空で全文読込判定falseとなり、20件へ加算されない。N1-a、N2-a、N2-baseline、N6-aのtimeoutと出力欠落も保持されている。実行経路はローカル読取、SHA・全文照合、一時ディレクトリ内のSKILLコピー、stdout出力に限定され、モデル呼出し・外部送信・導入・ユーザー設定変更はない。内部適用回数、人間評価、文章品質の優位差は未確認のまま。",
+            "evidence_ids": [
+              "EV-00001",
+              "EV-00002",
+              "EV-00003",
+              "EV-00004",
+              "EV-00005",
+              "EV-00006",
+              "EV-00007",
+              "EV-00008"
+            ]
+          }
+        ],
+        "code_evidence": [],
+        "dossier_json": "",
+        "sources": [
+          {
+            "id": "R1_1_S-R1-PARENT-RECEIPT",
+            "title": "今回の親実行receipt",
+            "url": "",
+            "path": "runs/20261011T125800Z-64c881ff/001-checks/001/receipt.json",
+            "locator": "$.command, $.check_ids, $.source_fingerprint.files, $.exit_code, $.timed_out, $.truncated, $.outputs",
+            "read_level": "full_text"
+          },
+          {
+            "id": "R1_1_S-R1-PARENT-STDOUT",
+            "title": "今回の親実行stdout",
+            "url": "",
+            "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stdout.log",
+            "locator": "$.status, $.exact_original_prompt_hashes, $.receipts_verified, $.trials_with_full_skill_reads, $.negative_control_trials, $.route_passes, $.task_prompts, $.limits",
+            "read_level": "full_text"
+          },
+          {
+            "id": "R1_1_S-R1-PARENT-STDERR",
+            "title": "今回の親実行stderr",
+            "url": "",
+            "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stderr.log",
+            "locator": "line 1: PATH aliases作成拒否のWARNING。親receiptの終了コードは0。",
+            "read_level": "full_text"
+          }
+        ],
+        "reference_implementations": [],
+        "complexity_ok": true,
+        "complexity_reason": "固定32件のJSON、復元入力、固定SKILLを標準ライブラリで照合する限定的な処理。追加依存やモデル実行はなく、書込は検証用の一時SKILLコピーに限られる。性能優位は評価していない。"
+      },
+      "result_sha256": "9ef3d3ef9be7d7c44cbe4c2872be79fcc7bdca6e5f722b7c5b0b70f8d2c0b01f"
+    }
+  },
+  "unit_inputs": {
+    "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e/docs/design-research/yomiyasu-native-correction/runs/20261011T125800Z-64c881ff/001-planner-1602be/inputs/config.json": "522c42e4db2d49c2909e3bbdcaa3ca6b4d1b5e0edf2bf961bbdaa002d1eadf2f",
+    "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e/docs/design-research/yomiyasu-native-correction/runs/20261011T125800Z-64c881ff/001-reviewer-check-5b46eb/inputs/config.json": "522c42e4db2d49c2909e3bbdcaa3ca6b4d1b5e0edf2bf961bbdaa002d1eadf2f",
+    "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e/docs/design-research/yomiyasu-native-correction/runs/20261011T125800Z-64c881ff/001-reviewer-check-5b46eb/inputs/available_project_input_files.json": "51ff2712b63e91ffc599f181a1a5e47e0e7df5b4e521eed8fc762d24f190ec1e",
+    "/home/hirano/.cache/codex/yomiyasu-native-correction-b1fc407e/docs/design-research/yomiyasu-native-correction/runs/20261011T125800Z-64c881ff/001-reviewer-check-5b46eb/inputs/plan.json": "d5fb21a95c5130c34bd49dd43abc04c4e4990a0bd1b36421a0a7269968c3f847"
+  },
+  "roles": [
+    {
+      "role": "planner",
+      "iteration": 1,
+      "path": "runs/20261011T125800Z-64c881ff/001-planner-1602be/result.json",
+      "diagnostics": "runs/20261011T125800Z-64c881ff/001-planner-1602be",
+      "receipt": "runs/20261011T125800Z-64c881ff/001-planner-1602be/receipt.json",
+      "timed_out": false
+    },
+    {
+      "role": "reviewer-check",
+      "iteration": 1,
+      "path": "runs/20261011T125800Z-64c881ff/001-reviewer-check-5b46eb/result.json",
+      "diagnostics": "runs/20261011T125800Z-64c881ff/001-reviewer-check-5b46eb",
+      "receipt": "runs/20261011T125800Z-64c881ff/001-reviewer-check-5b46eb/receipt.json",
+      "timed_out": false
+    }
+  ],
+  "plan": {
+    "status": "ready",
+    "reason": "保存済み32試行の照合処理に限定したbackend audit。指定契約、復元依頼8種類、該当コードと元receiptを読んだ。確認コマンドは未実行。",
+    "goal": "修正したnative_provenance_audit.pyが、元32試行の失敗と読込不足を保持し、receipt照合件数を全文読込成功件数と混同せず再集計できるか確認する。",
+    "domain": "backend",
+    "baseline": "既存のN1〜N8×baseline/a/b/cの32receiptを固定基準とする。旧表示full_read_receipts=32は全文読込成功の測定として扱わない。",
+    "constraints": [
+      "必須runtime criterionは1件。単一処理のauditであり、5候補比較、別研究、インストーラー全体、文章品質評価を追加しない。",
+      "親がプロジェクト直下で既存コマンドを1回だけ実行する。max1iteration、ネットなし、モデル呼出し・完成稿再生成・導入・外部送信・設定変更なし。",
+      "元receipt、復元入力、固定ソースを変更しない。復元入力はSHAに結び付いた証拠であり、保存済み原文ログとは記述しない。",
+      "実行経路の確認対象はnative_provenance_audit.py、verify_native.verify、run_study.native_tasks/read_receipts/sha。検証用SKILLコピーは一時ディレクトリ内に限る。",
+      "今回の親実行receiptと元receiptの実際のtool出力を証拠とする。過去の完了判定、集計表示、説明例だけでは受入を満たさない。",
+      "timeout、assert失敗、非ゼロ終了、出力欠落を成功へ置き換えない。内部適用回数、人間評価、文章品質の優位差は不明のまま保持する。"
+    ],
+    "criteria": [
+      {
+        "id": "R1",
+        "title": "必須：元32試行の照合が失敗と読込範囲を保持する",
+        "kind": "runtime",
+        "required": true,
+        "acceptance": "親の今回の実行が終了コード0となり、元証拠から独立に確認した結果とstdoutが一致すること。期待値はreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}。native-prompt-provenance.jsonの保存receipt SHAとsource_files SHA、重複・欠落のない32件の集合、native_tasks由来の復元依頼＋固定suffix、そのUTF-8 SHAと元prompt_sha256、期待読込集合を照合する。N1/N2は3スキル、N3/N4はparagraph-writingのみ、N5/N6はjapanese-direct-writingのみ、N7/N8は空集合を期待する。読込は実際のファイル読取コマンド、exit_code=0、tool出力中の該当armの固定SKILL全文に基づき再計算し、route成功にはcompleted・期待集合一致・各スキル1回を要求する。8対照はcompleted、route成功、reads空、全文読込判定falseをassertし、全文読込20件へ加算しない。N1-a、N2-a、N2-baseline、N6-aのtimeout4件とN1-baselineの補助スキル読込不足を保持する。コードの実行経路にモデル呼出し、外部送信、導入、ユーザー設定変更がないことも同じ照合処理の受入条件として確認する。"
+      }
+    ],
+    "test_commands": [
+      {
+        "command": "python3 -B native_provenance_audit.py",
+        "check_ids": [
+          "R1"
+        ],
+        "artifact_paths": []
+      }
+    ],
+    "complexity_baseline": "32件の既存JSON、復元入力、ローカル固定SKILLを標準ライブラリで読み、SHA照合とtool出力の全文照合を行う。stdoutは親の実行receiptで保存し、追加の結果ファイルを生成しない。性能比較は対象外。",
+    "queries": []
+  },
+  "plan_validated": true,
+  "discovery": [],
+  "producer_checkpoints": {
+    "1": {}
+  },
+  "execution_units": {
+    "001-execute-c43da676134312848c686550": {
+      "status": "complete",
+      "evidence_id": "EV-00001",
+      "receipt_sha256": "12f852df50b9ad9a551ef3294d7c937362301ddedd7b64a8f0bc890a52edf11a",
+      "record_sha256": "dadfdc662900d255651b1cb66c47c13c0e20dee8bfb0830d51c76ef6246fa3aa"
+    }
+  },
+  "executions": [
+    "EV-00001"
+  ],
+  "review": {
+    "status": "reviewed",
+    "reason": "Scoped independent checks complete",
+    "checks": [
+      {
+        "check_id": "R1",
+        "result": "pass",
+        "reason": "今回のEV-00001は指定コマンドでexit_code=0、timeout・truncationなし。receipt・stdout・stderrの実SHAが保存値と一致した。provenanceのsource_files 2件と元receipt 32件のSHAが一致し、N1〜N8×4armの集合に重複・欠落はない。8種類の復元依頼はnative_tasksと固定suffixに一致し、32件すべてでUTF-8 SHAが元prompt_sha256に一致した。期待読込集合はN1/N2が3スキル、N3/N4がparagraph-writingのみ、N5/N6がjapanese-direct-writingのみ、N7/N8が空集合。元toolsの実catコマンド、exit_code=0、該当armの固定SKILL全文を照合し、各読込1回とcompletedを要求してrouteを再判定した結果、stdoutのreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}と一致した。20件は少なくとも1スキルの全文読込が確認された試行数であり、yomiyasuのみを読んだN1-baselineを含む。そのrouteは失敗のまま。8対照はcompleted、route成功、tools・reads空で全文読込判定falseとなり、20件へ加算されない。N1-a、N2-a、N2-baseline、N6-aのtimeoutと出力欠落も保持されている。実行経路はローカル読取、SHA・全文照合、一時ディレクトリ内のSKILLコピー、stdout出力に限定され、モデル呼出し・外部送信・導入・ユーザー設定変更はない。内部適用回数、人間評価、文章品質の優位差は未確認のまま。",
+        "evidence_ids": [
+          "EV-00001",
+          "EV-00002",
+          "EV-00003",
+          "EV-00004",
+          "EV-00005",
+          "EV-00006",
+          "EV-00007",
+          "EV-00008"
+        ]
+      }
+    ],
+    "issues": [],
+    "code_evidence": [],
+    "sources": [
+      {
+        "id": "R1_1_S-R1-PARENT-RECEIPT",
+        "title": "今回の親実行receipt",
+        "url": "",
+        "path": "runs/20261011T125800Z-64c881ff/001-checks/001/receipt.json",
+        "locator": "$.command, $.check_ids, $.source_fingerprint.files, $.exit_code, $.timed_out, $.truncated, $.outputs",
+        "read_level": "full_text"
+      },
+      {
+        "id": "R1_1_S-R1-PARENT-STDOUT",
+        "title": "今回の親実行stdout",
+        "url": "",
+        "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stdout.log",
+        "locator": "$.status, $.exact_original_prompt_hashes, $.receipts_verified, $.trials_with_full_skill_reads, $.negative_control_trials, $.route_passes, $.task_prompts, $.limits",
+        "read_level": "full_text"
+      },
+      {
+        "id": "R1_1_S-R1-PARENT-STDERR",
+        "title": "今回の親実行stderr",
+        "url": "",
+        "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stderr.log",
+        "locator": "line 1: PATH aliases作成拒否のWARNING。親receiptの終了コードは0。",
+        "read_level": "full_text"
+      }
+    ],
+    "reference_implementations": [],
+    "dossier_json": "",
+    "complexity_ok": true,
+    "complexity_reason": "See scoped independent reviews; 固定32件のJSON、復元入力、固定SKILLを標準ライブラリで照合する限定的な処理。追加依存やモデル実行はなく、書込は検証用の一時SKILLコピーに限られる。性能優位は評価していない。"
+  },
+  "history": [
+    {
+      "iteration": 1,
+      "review": {
+        "status": "reviewed",
+        "reason": "Scoped independent checks complete",
+        "checks": [
+          {
+            "check_id": "R1",
+            "result": "pass",
+            "reason": "今回のEV-00001は指定コマンドでexit_code=0、timeout・truncationなし。receipt・stdout・stderrの実SHAが保存値と一致した。provenanceのsource_files 2件と元receipt 32件のSHAが一致し、N1〜N8×4armの集合に重複・欠落はない。8種類の復元依頼はnative_tasksと固定suffixに一致し、32件すべてでUTF-8 SHAが元prompt_sha256に一致した。期待読込集合はN1/N2が3スキル、N3/N4がparagraph-writingのみ、N5/N6がjapanese-direct-writingのみ、N7/N8が空集合。元toolsの実catコマンド、exit_code=0、該当armの固定SKILL全文を照合し、各読込1回とcompletedを要求してrouteを再判定した結果、stdoutのreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}と一致した。20件は少なくとも1スキルの全文読込が確認された試行数であり、yomiyasuのみを読んだN1-baselineを含む。そのrouteは失敗のまま。8対照はcompleted、route成功、tools・reads空で全文読込判定falseとなり、20件へ加算されない。N1-a、N2-a、N2-baseline、N6-aのtimeoutと出力欠落も保持されている。実行経路はローカル読取、SHA・全文照合、一時ディレクトリ内のSKILLコピー、stdout出力に限定され、モデル呼出し・外部送信・導入・ユーザー設定変更はない。内部適用回数、人間評価、文章品質の優位差は未確認のまま。",
+            "evidence_ids": [
+              "EV-00001",
+              "EV-00002",
+              "EV-00003",
+              "EV-00004",
+              "EV-00005",
+              "EV-00006",
+              "EV-00007",
+              "EV-00008"
+            ]
+          }
+        ],
+        "issues": [],
+        "code_evidence": [],
+        "sources": [
+          {
+            "id": "R1_1_S-R1-PARENT-RECEIPT",
+            "title": "今回の親実行receipt",
+            "url": "",
+            "path": "runs/20261011T125800Z-64c881ff/001-checks/001/receipt.json",
+            "locator": "$.command, $.check_ids, $.source_fingerprint.files, $.exit_code, $.timed_out, $.truncated, $.outputs",
+            "read_level": "full_text"
+          },
+          {
+            "id": "R1_1_S-R1-PARENT-STDOUT",
+            "title": "今回の親実行stdout",
+            "url": "",
+            "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stdout.log",
+            "locator": "$.status, $.exact_original_prompt_hashes, $.receipts_verified, $.trials_with_full_skill_reads, $.negative_control_trials, $.route_passes, $.task_prompts, $.limits",
+            "read_level": "full_text"
+          },
+          {
+            "id": "R1_1_S-R1-PARENT-STDERR",
+            "title": "今回の親実行stderr",
+            "url": "",
+            "path": "runs/20261011T125800Z-64c881ff/001-checks/001/stderr.log",
+            "locator": "line 1: PATH aliases作成拒否のWARNING。親receiptの終了コードは0。",
+            "read_level": "full_text"
+          }
+        ],
+        "reference_implementations": [],
+        "dossier_json": "",
+        "complexity_ok": true,
+        "complexity_reason": "See scoped independent reviews; 固定32件のJSON、復元入力、固定SKILLを標準ライブラリで照合する限定的な処理。追加依存やモデル実行はなく、書込は検証用の一時SKILLコピーに限られる。性能優位は評価していない。"
+      }
+    }
+  ],
+  "reason": "Required evidence, reporting and independent review complete",
+  "updated_at": "2026-10-11T13:04:16.956177+00:00"
+}

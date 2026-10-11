@@ -1,0 +1,482 @@
+[
+  {
+    "task": "W04",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W11",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W11",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W06",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W06",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W05",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W07",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W09",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W06",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W06",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W04",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W12",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W02",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W11",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W05",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W07",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W09",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W10",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W09",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W12",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W02",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W12",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W02",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W12",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W07",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W02",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W10",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W09",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W05",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W08",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W09",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W11",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W07",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W10",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W10",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W02",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W09",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W02",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W08",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W11",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W07",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W05",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W12",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W10",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W12",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W12",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W10",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W03",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W03",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W03",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W07",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W03",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W10",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W11",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W04",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W08",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W02",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W09",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W01",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W11",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W03",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W07",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W02",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W05",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W04",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W11",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W07",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W05",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W03",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W01",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W05",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W08",
+    "repeat": 1,
+    "arm": "b"
+  },
+  {
+    "task": "W06",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W04",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W03",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W04",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W04",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W01",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W01",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W08",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W03",
+    "repeat": 1,
+    "arm": "baseline"
+  },
+  {
+    "task": "W09",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W10",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W04",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W12",
+    "repeat": 2,
+    "arm": "b"
+  },
+  {
+    "task": "W01",
+    "repeat": 1,
+    "arm": "a"
+  },
+  {
+    "task": "W01",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W08",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W06",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W01",
+    "repeat": 2,
+    "arm": "a"
+  },
+  {
+    "task": "W01",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W05",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W06",
+    "repeat": 1,
+    "arm": "c"
+  },
+  {
+    "task": "W08",
+    "repeat": 2,
+    "arm": "c"
+  },
+  {
+    "task": "W06",
+    "repeat": 2,
+    "arm": "baseline"
+  },
+  {
+    "task": "W08",
+    "repeat": 2,
+    "arm": "b"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "source_path": "tools/codex-yomiyasu/evals/explanation_study.py",
+  "source_sha256": "8f21af298b4b3fa57048f49ccbea786f9a5ca5a453109de9f8b4ece6450d548d",
+  "line_start": 80,
+  "line_end": 83,
+  "checked_at": "2026-10-11T14:02:37.919149+00:00",
+  "excerpt": "def verify_inputs(root, contract):\n    for rel, expected in contract['files'].items():\n        if base.sha((root/rel).read_bytes()) != expected:\n            raise ValueError('Frozen input changed: '+rel)",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

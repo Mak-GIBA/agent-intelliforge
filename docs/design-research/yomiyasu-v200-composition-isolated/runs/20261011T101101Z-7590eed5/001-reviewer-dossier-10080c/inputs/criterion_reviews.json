@@ -1,0 +1,174 @@
+[
+  {
+    "checks": [
+      {
+        "check_id": "P1",
+        "result": "pass",
+        "reason": "W01～W12×4条件×trial_id=1,2の96記録を原receiptとoutput_fileで対応する原評定に照合。各条件24試行を分母とする同時成立率はbaseline=24/24=100%、a=23/24=95.8333%、b=23/24=95.8333%、c=24/24=100%。完成稿・採点済み稿を分母とする品質合格率は順に24/24、23/23、23/23、24/24で全条件100%。94完成稿は意味誤り・制作説明残存の評定が空で、3品質項目が各3以上。W08-a-1とW02-b-1はtimeout、output・rating・qualityがnull、delivered_pass=0のまま保持されている。baselineとの差はa/b=-1/24、c=0で、全候補が改善閾値+1/24未達。Cは観測指標上同等であり、timeout由来の差は文章品質の因果的優位を示さない。現runの親監査receiptはexit_code=0、timed_out=false、truncated=falseで成果物に結合。元prompt本文の欠落、同一モデル自動評定、採点文脈量の不均一、timeout原因不明は残る。検査の再実行はしていない。",
+        "evidence_ids": [
+          "EV-00007",
+          "EV-00008",
+          "EV-00009"
+        ]
+      }
+    ],
+    "issues": [],
+    "complexity_ok": true,
+    "complexity_reason": "P1の集計は固定96記録の対応照合と共通閾値の論理積で足り、欠測補完や候補別の重み付けを必要としない。候補工程の内部適用回数や計算量・速度差は、この検証では未測定。"
+  },
+  {
+    "checks": [
+      {
+        "check_id": "R1",
+        "result": "pass",
+        "reason": "保存済み共通入力との照合範囲で合格。採用候補Cの全24稿を読み、原receiptのcompletedと対応する原評定のmeaning_errors=[]を確認した。重大な意味変更は観測されなかった。指定6課題は全条件の取得稿も照合し、W01のmAP・時間比・同条件・未評価、W02の転換率・p値・有意差未確認・判断不能、W06の90日保存義務・通知推奨・未決定、W10の導入未決定・根拠未記載・運用担当者の確認必要を保持していた。W08は引用文・参照番号と引用の役割、W11は手順番号・数式・コード・失敗時だけの再試行条件を保持していた。文字列検査に加えて文意と保存済み評定の根拠を読んだ。親監査EV-00009/EV-00013は現runでexit_code=0、timeout/truncationなし。W08-a-1とW02-b-1はtimeoutで完成稿・評定がなく、意味保持は未観測のまま扱う。同一モデルの自動評定、小規模固定課題、元prompt本文の欠落による生成時入力の独立確認不能は残る。一般的な意味保持保証やCの品質優位は導かない。",
+        "evidence_ids": [
+          "EV-00007",
+          "EV-00008",
+          "EV-00009",
+          "EV-00011",
+          "EV-00013"
+        ]
+      }
+    ],
+    "issues": [],
+    "complexity_ok": true,
+    "complexity_reason": "R1の確認は既存入力・完成稿・評定・receiptの限定照合で完結し、追加実装や依存関係を必要としない。候補工程の計算量や因果的な時間差はこの確認では測定していない。"
+  },
+  {
+    "checks": [
+      {
+        "check_id": "R2",
+        "result": "pass",
+        "reason": "採用候補Cの主比較24稿と補足holdout6稿はcompletedで、依頼者への応答・制作報告・自己評価・追加対応の申し出・編集TODOの残存および正例破壊は0件。W05/W12の宛先への依頼、W08の引用と[1]、W11のコードを保持している。W08の制作方針脚注は除去し、H4の引用を保持しながら編集TODOを除去している。H6では研究目的・未測定事項を含む脚注[^a]を保持し、制作報告の脚注[^b]だけを除去している。対応する原評定もrequester_residue=[]。親の両監査receiptは終了コード0、timeout・truncationなし。stderrにはPATH補助生成の警告がある。比較条件AのW08-1とBのW02-1はtimeoutで本文未観測のため、残存・破壊の有無はunknownのまま。判定は保存済み課題の範囲に限り、元prompt本文との対応や一般的な有効性は未確認。",
+        "evidence_ids": [
+          "EV-00007",
+          "EV-00008",
+          "EV-00009",
+          "EV-00011",
+          "EV-00012",
+          "EV-00013"
+        ]
+      }
+    ],
+    "issues": [],
+    "complexity_ok": true,
+    "complexity_reason": "R2の境界確認は既存の仕上げ検査と読者レビューに収まり、Cの追加レビューは一度、必要箇所の改稿は最大一回に制限されている。この範囲で過剰な反復はない。内部適用回数や実際の追加費用・速度差は未測定。"
+  },
+  {
+    "checks": [
+      {
+        "check_id": "R3",
+        "result": "unknown",
+        "reason": "同一runの親audit-native receiptはexit_code=0、timed_out=false、truncated=falseで、対応成果物がある。32原receiptのstatus・expected_reads・成功コマンドを確認し、補助SKILLの実tool出力と固定条文を照合した。保存メタデータ基準ではbaseline=6/8、A=5/8、B/C=8/8。baseline N1は完了未連携、baseline N2とA N1/N2/N6はtimeoutであり、原因と途中行動は不明。N3/N4は段落入口、N5/N6は留保入口のみ、N7/N8は全候補ともtools=[]の読込不要対照である。manifest欠落の準備試行は32件から除外されている。元prompt本文がなく依頼範囲の独立照合はできないため、Cの8/8をR3の確定passにはしない。全文読込から内部で一度適用したことは推論せず、内部適用回数はunknownのままとする。",
+        "evidence_ids": [
+          "EV-00015",
+          "EV-00016"
+        ]
+      }
+    ],
+    "issues": [
+      {
+        "id": "R3_R3-01",
+        "title": "元prompt本文がなく経路意図を独立照合できない",
+        "severity": "High",
+        "status": "open",
+        "target": "32native記録の元promptとexpected_readsの対応",
+        "action": "元prompt本文を来歴付きで提示し、保存hash、expected_reads、実tool出力との対応を親が照合する。",
+        "expected": "元promptから必要な入口を確認したうえで、採用候補の全8経路成立を判定できる。",
+        "actual": "原receiptにはprompt_sha256とexpected_readsがあるが本文はない。親成果物はoriginal_prompt_text_available=false、各記録のoriginal_prompt_text_verified=null、audit_status=full_reads_checked_route_intent_conditional_on_saved_metadataと記録している。",
+        "why": "成功した全文読込と保存hashだけでは、構成のみ・留保のみ・読込不要の依頼を正しく区別したことまで確認できない。",
+        "improvement": "元promptを入手できるまでR3とCの経路条件をunknownに保ち、条件付き実装候補という判断を維持する。",
+        "root_cause": "提供された研究入力に元prompt本文が収録されておらず、hashと経路メタデータによる確認に限られる。",
+        "check_ids": [
+          "R3"
+        ],
+        "evidence_ids": [
+          "EV-00015",
+          "EV-00016"
+        ]
+      }
+    ],
+    "complexity_ok": true,
+    "complexity_reason": "R3の固定設計は同一タスクの再読と再帰呼出しを避け、局所依頼には必要な入口だけを使う。親成果物に重複全文読込や不要なSKILL読込の記録はない。ただし元promptに対する経路適合、内部適用回数、追加工程の実時間は未確認。"
+  },
+  {
+    "checks": [
+      {
+        "check_id": "R4",
+        "result": "pass",
+        "reason": "親audit-writingはexit_code=0、timed_out=false、truncated=falseで成功し、対応する成果物を保存している。stdoutは空、stderrにはPATH alias作成不可の警告が残る。94完成稿の評定はoutput_fileで結合され、採点ファイルと単位内local_idが保持されている。X番号を全体IDとして扱っていない。完成・採点済み稿数はbaseline/A/B/C=24/23/23/24、各稿のparagraph・naturalness・reader_fitはすべて3以上。paragraphとreader_fitは各条件の全稿4点、平均4。naturalnessはbaselineが4点24稿・平均4、Aが4点22稿と3点1稿・平均3.9565217391304346、Bが4点23稿・平均4、Cが4点22稿と3点2稿・平均3.9166666666666665。3点稿W09-a-1、W09-c-2、W12-c-1には実出力と、説明の重複・冗長さ・接続のぎこちなさという原評定の根拠が保存されている。生成timeoutのW08-a-1とW02-b-1は出力・品質ともnullのままで、完成稿の品質不合格に置換されていない。旧採点B01/B03のtimeout、最大4稿への単位縮小、B05～B08の実行有無不明も保持されている。同じW12本文にも自然さ3点と4点が付いており、同一モデル評定・天井効果・採点文脈量の不均一を踏まえて品質改善は未確認とされている。人間評価と元prompt本文の独立照合は未確認。",
+        "evidence_ids": [
+          "EV-00007",
+          "EV-00008",
+          "EV-00009"
+        ]
+      }
+    ],
+    "issues": [],
+    "complexity_ok": true,
+    "complexity_reason": "R4の確認は既存の実出力・評定・成功receiptの参照で完結する。Cの追加工程も原条文ではレビュー一度・必要箇所の改稿最大一回に限定される。ただし、実際の内部適用回数や追加負担は未測定で、品質改善によって追加工程の有効性が実証されたとは判断しない。"
+  },
+  {
+    "checks": [
+      {
+        "check_id": "E1",
+        "result": "pass",
+        "reason": "親の3検査はexit_code=0、timed_out=false、truncated=falseで、receipt・成果物・stdout/stderrのハッシュも登録値と一致する。保存コードは主比較96試行、holdout12試行、native32試行について出力・status・task・arm・repeat・receipt hashと対応評定を照合し、不一致をinvalid_auditと非ゼロ終了で残す。確認した原記録との不一致はなかった。paired成果物は最終出力と評定根拠を保持し、親receiptのartifact hashと凍結contract hash 5131f1a304337549e1edf26354dace3d33116b61eeb27ca0b3083c61b0170537へ結び付いている。生成2件、native4件、旧採点2件のtimeout、baselineの未連携、未保存B05～B08を保持している。元prompt本文の独立確認はunknownであり、故障注入時の実行結果は未確認。検査は再実行していない。",
+        "evidence_ids": [
+          "EV-00006",
+          "EV-00007",
+          "EV-00008",
+          "EV-00009",
+          "EV-00012",
+          "EV-00013",
+          "EV-00015",
+          "EV-00016"
+        ]
+      }
+    ],
+    "issues": [],
+    "complexity_ok": true,
+    "complexity_reason": "E1の照合は3件の保存済み決定的検査と原記録の読取りで完結している。追加実験やモデル生成は不要。内部適用回数や因果的時間差の妥当性は、この単位では評価していない。"
+  },
+  {
+    "checks": [
+      {
+        "check_id": "R5",
+        "result": "pass",
+        "reason": "全試行／完了稿の参考平均elapsedはbaseline 33.23／33.23秒、A 83.09／62.01秒、B 62.48／41.76秒、C 22.80／22.80秒で、保存結果と一致する。各条件の全試行は24件、完了稿は24／23／23／24件。elapsedは96件、usageは94件で観測され、W08-a-1とW02-b-1のtimeoutではusage=null。報告token合計も観測されたreceiptの範囲に限定されている。旧採点B01/B03のtimeout、採点単位縮小、B05～B08のreceipt欠落を保持し、並行工程から因果的速度差・課金節約・内部適用回数を導いていない。親audit-writingはexit_code=0、timed_out=false、truncated=false。stdoutは空、stderrにはPATH補助バイナリ作成の警告が残る。内部適用回数と工程別負荷は未測定のままである。",
+        "evidence_ids": [
+          "EV-00008",
+          "EV-00009"
+        ]
+      }
+    ],
+    "issues": [],
+    "complexity_ok": true,
+    "complexity_reason": "追加手間を設計上の工程として説明し、実測負荷と区別している。Bは執筆前整理を追加し、Cはレビュー一度と条件付き改稿最大一回を追加する。漸近計算量、内部適用回数、工程別時間、因果的速度差、課金差は未測定として保持されている。"
+  },
+  {
+    "checks": [
+      {
+        "check_id": "L1",
+        "result": "pass",
+        "reason": "実資材は、baselineの既存段落設計・留保点検・読者向け全文確認、Aの実補助SKILL読込、Bの執筆前四区分、Cの下書き後レビューと最大一回の局所改稿という説明を支持する。S1の情報保持と改稿後点検、S3の文脈判断・構造／読みやすさレビュー、S5の執筆前設計と誤検知保護との対応が示され、S2/S4の一律規則は意味保持を優先して限定されている。4条件限定は指定された基準案と改善3案および保存資材の範囲による。原典は設計根拠として扱われ、効果測定と区別されている。親の3監査は同一runでexit_code=0、timeout・出力切詰めなし。保存結果ではbaseline/Cは各24/24、A/Bは各23/24で、A/Bの未取得稿の品質はnull。W09-c-2の自然さ3と対応するbaselineの4も保持されている。Cの選択は安全条件と後付け完全性条件に基づくprovisionalで、元prompt欠落によるK_ROUTE/K_PROTOCOLのunknownを維持する。Cの品質優位やBの品質劣位を結論していない。L1の適合は、採択や品質改善の認定を意味しない。",
+        "evidence_ids": [
+          "EV-00001",
+          "EV-00002",
+          "EV-00003",
+          "EV-00004",
+          "EV-00005",
+          "EV-00008",
+          "EV-00009",
+          "EV-00013",
+          "EV-00015",
+          "EV-00016"
+        ]
+      }
+    ],
+    "issues": [],
+    "complexity_ok": true,
+    "complexity_reason": "追加工程は実参照、Bの執筆前整理、Cのレビュー一度と条件付き局所改稿最大一回として具体化されている。再読・重複工程・再帰呼出しを避け、局所依頼の例外も保持する。これは設計上の工程上限であり、内部適用回数、計算量、因果的速度差、課金節約の測定ではない。追加手間に見合う品質改善や最適性は未確認のままである。"
+  }
+]

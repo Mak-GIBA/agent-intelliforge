@@ -1,0 +1,15 @@
+--- installed/scripts/evaluation_contract.py
++++ temporary/scripts/evaluation_contract.py
+@@ -242,7 +242,11 @@
+         if isinstance(value, dict) and "contract_sha256" in value:
+             if value["contract_sha256"] != state["evaluation_contract_sha256"]:
+                 raise Blocked("Exported paired result differs from the frozen contract")
+-            paths.append(record["path"])
++            # Contract-linked diagnostics and supplementary data are not paired
++            # primary results. A partial paired schema still goes to measure()
++            # and fails validation; explicitly declared results keep its gates.
++            if "tasks" in value or "trials" in value:
++                paths.append(record["path"])
+     if not paths:
+         return None
+     summary = measure({"evaluation_result": {

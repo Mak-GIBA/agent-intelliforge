@@ -1,0 +1,9 @@
+{
+  "source_path": "tools/codex-yomiyasu/evals/run_study.py",
+  "source_sha256": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47",
+  "line_start": 344,
+  "line_end": 344,
+  "checked_at": "2026-10-11T13:04:16.901273+00:00",
+  "excerpt": "if __name__=='__main__':main()",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

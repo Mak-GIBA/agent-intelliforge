@@ -1,0 +1,56 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 30.19,
+  "prompt_sha256": "44125acf531b08823e77b22005bd8b83261d1b91e155acc5d82ba3996d94e0c2",
+  "usage": {
+    "input_tokens": 17764,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1005,
+    "reasoning_output_tokens": 595
+  },
+  "tools": [],
+  "error": null,
+  "ratings": [
+    {
+      "id": "X01",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「監査ログは90日間保存しなければならない」「管理者への通知は推奨とする」で義務と推奨を区別。調査目的と通知先の未決定も保たれ、要件別の段落が仕様の確認に適している。",
+      "output_file": "W06-a-2.json"
+    },
+    {
+      "id": "X02",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「方式Bは方式Aより精度が高い一方、推論に時間がかかります」を数値と同じ評価条件で裏づけ、末尾の「性能は未評価です」で限界も示す。短い一段落で比較結果を自然に把握できる。",
+      "output_file": "W01-a-2.json"
+    },
+    {
+      "id": "X03",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「方式Bの推論時間は方式Aの1.6倍でした」で比較の根拠を示し、「学習データ数が少ない場合の性能は未評価です」を別段落で明示。結論、数値、評価範囲が自然な順序で伝わる。",
+      "output_file": "W01-c-2.json"
+    },
+    {
+      "id": "X04",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「ご依頼いただいた比較資料をお送りします」から比較条件、費用の掲載箇所、受信者への「ご確認ください」へ進む。宛名と署名も保たれ、送付メールとして必要十分で自然。",
+      "output_file": "W05-c-1.json"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "source_path": "tools/codex-yomiyasu/evaluation-v200/a/assets/japanese-direct-writing/SKILL.md",
+  "source_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374",
+  "line_start": 1,
+  "line_end": 8,
+  "checked_at": "2026-10-11T12:40:48.963370+00:00",
+  "excerpt": "---\nname: japanese-direct-writing\ndescription: 過剰な留意書き・予防線・婉曲表現だけを減らす依頼、または明示的な $japanese-direct-writing で使う。通常の日本語文書全体の作成・推敲には yomiyasu を入口にする。必要な条件と不確実性は保持する。\n---\n\n# japanese-direct-writing\n\n本文の対象を直接述べ、依頼への返答や編集の自己説明を本文に加えない。yomiyasuの工程として読まれた場合や、同時に選択された場合は同じ下書きの留保を一度だけ点検し、全体を別工程で再執筆しない。",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

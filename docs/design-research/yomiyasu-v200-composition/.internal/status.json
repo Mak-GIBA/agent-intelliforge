@@ -1,0 +1,11 @@
+{
+  "run_id": "20261011T100101Z-37a0fac8",
+  "status": "blocked",
+  "phase": "planner",
+  "iteration": 1,
+  "reason": "Source changed outside a declared fix; start a fresh audit/run. install_codex_yomiyasu.sh, tools/codex-yomiyasu/evals/STUDY_V200.md",
+  "updated_at": "2026-10-11T10:08:08.172012+00:00",
+  "domain": "unknown",
+  "source_head": "68b1d7862a4b248fe4b1d046523f2daf76fc2aa4",
+  "state_path": "runs/20261011T100101Z-37a0fac8/state.json"
+}

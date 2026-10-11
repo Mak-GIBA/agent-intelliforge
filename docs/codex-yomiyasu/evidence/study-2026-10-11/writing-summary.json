@@ -1,0 +1,85 @@
+{
+  "phase": "writing",
+  "conditions": {
+    "baseline": {
+      "trials": 24,
+      "completed": 24,
+      "graded": 24,
+      "primary_passes": 24,
+      "primary_fraction": 1.0,
+      "delivered_pass_fraction": 1.0,
+      "meaning_error_outputs": 0,
+      "requester_residue_outputs": 0,
+      "quality_mean": 4.0,
+      "mean_elapsed_seconds": 33.22625,
+      "mean_completed_elapsed_seconds": 33.22625,
+      "mean_reported_total_tokens": 71405.45833333333,
+      "native_trials": 8,
+      "native_route_passes": 6,
+      "native_completion_failures": 1
+    },
+    "a": {
+      "trials": 24,
+      "completed": 23,
+      "graded": 23,
+      "primary_passes": 23,
+      "primary_fraction": 1.0,
+      "delivered_pass_fraction": 0.9583333333333334,
+      "meaning_error_outputs": 0,
+      "requester_residue_outputs": 0,
+      "quality_mean": 3.9855072463768115,
+      "mean_elapsed_seconds": 83.08749999999999,
+      "mean_completed_elapsed_seconds": 62.01391304347826,
+      "mean_reported_total_tokens": 73050.47826086957,
+      "native_trials": 8,
+      "native_route_passes": 5,
+      "native_completion_failures": 3
+    },
+    "b": {
+      "trials": 24,
+      "completed": 23,
+      "graded": 23,
+      "primary_passes": 23,
+      "primary_fraction": 1.0,
+      "delivered_pass_fraction": 0.9583333333333334,
+      "meaning_error_outputs": 0,
+      "requester_residue_outputs": 0,
+      "quality_mean": 4.0,
+      "mean_elapsed_seconds": 62.478750000000005,
+      "mean_completed_elapsed_seconds": 41.762173913043476,
+      "mean_reported_total_tokens": 73118.60869565218,
+      "native_trials": 8,
+      "native_route_passes": 8,
+      "native_completion_failures": 0
+    },
+    "c": {
+      "trials": 24,
+      "completed": 24,
+      "graded": 24,
+      "primary_passes": 24,
+      "primary_fraction": 1.0,
+      "delivered_pass_fraction": 1.0,
+      "meaning_error_outputs": 0,
+      "requester_residue_outputs": 0,
+      "quality_mean": 3.9722222222222223,
+      "mean_elapsed_seconds": 22.797083333333333,
+      "mean_completed_elapsed_seconds": 22.797083333333333,
+      "mean_reported_total_tokens": 73046.95833333333,
+      "native_trials": 8,
+      "native_route_passes": 8,
+      "native_completion_failures": 0
+    }
+  },
+  "eligible": [
+    "c"
+  ],
+  "selected": "c",
+  "selection_policy": "The implementation gate requires all 24 outputs available and graded and all eight native routes passing. This completeness condition is stricter than contract.json's completed-output quality metric and selection text; it is a conservative adoption condition, not evidence of linguistic superiority.",
+  "ratings_complete": true,
+  "generation_complete": false,
+  "unavailable_outputs": [
+    "W02-b-1.json",
+    "W08-a-1.json"
+  ],
+  "limitations": "Small fixed synthetic sample and same-model automatic grading. Each phase used two workers and phases overlapped (up to six requests); elapsed times are not a controlled speed comparison. No authorship detection or population inference. Operational failures are not semantic-quality failures."
+}

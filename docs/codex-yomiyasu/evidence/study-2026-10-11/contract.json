@@ -1,0 +1,251 @@
+{
+  "schema": 1,
+  "created": "2026-10-11T04:47:44.959057+00:00",
+  "model": "gpt-6.1-sol",
+  "effort": "xhigh",
+  "cli_version": "codex-cli 0.162.1",
+  "seed": 20261011,
+  "arms": [
+    "baseline",
+    "a",
+    "b",
+    "c"
+  ],
+  "tasks": [
+    {
+      "id": "W01",
+      "genre": "research",
+      "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+      "input": "ご依頼に沿って、初見の読者にも分かるように比較結果をまとめました。評価条件は同じです。方式AのmAPは0.712でした。方式BのmAPは0.748でした。また、方式Bの推論時間は方式Aの1.6倍でした。方式Bは精度が高い一方で、推論に時間がかかります。なお、学習データ数が少ない場合の性能は未評価です。必要であれば追加実験もできます。",
+      "must_keep": [
+        "0.712",
+        "0.748",
+        "1.6倍",
+        "同じ評価条件",
+        "未評価"
+      ]
+    },
+    {
+      "id": "W02",
+      "genre": "research",
+      "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+      "input": "以下に、読みやすさを重視して実験結果を説明します。対照群の転換率は4.1%、処置群は4.4%でした。検定のp値は0.18で、有意差は確認されませんでした。この結果だけでは効果の有無を判断できません。あくまで参考情報であり、断定を避ける必要がある点には留意が必要です。",
+      "must_keep": [
+        "4.1%",
+        "4.4%",
+        "0.18",
+        "有意差は確認されなかった",
+        "効果の有無を判断できない"
+      ]
+    },
+    {
+      "id": "W03",
+      "genre": "report",
+      "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+      "input": "技術的な観点から詳しく解説します。現行方式は要求ごとに同じ設定ファイルを読みます。設定の読み取りが重複するため待ち時間が増えます。新方式は起動時に読み込んだ設定を保持します。したがって、要求ごとの読み取りを省けます。新方式では設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。以上のように整理しました。",
+      "must_keep": [
+        "起動時",
+        "要求ごと",
+        "再起動",
+        "運用担当者"
+      ]
+    },
+    {
+      "id": "W04",
+      "genre": "article",
+      "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+      "input": "ご指定の段落構成で記事を作成しました。検索機能は、入力された文字列と文書内の文字列を照合する。表記が異なると同じ意味でも検索結果に含まれないことがある。\n\n必要であれば、意味検索の仕組みや比較表を追加できます。",
+      "must_keep": [
+        "文字列",
+        "表記が異なる",
+        "ことがある"
+      ]
+    },
+    {
+      "id": "W05",
+      "genre": "email",
+      "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+      "input": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+      "must_keep": [
+        "田中様",
+        "ご依頼いただいた比較資料をお送りします",
+        "2ページ",
+        "ご確認ください",
+        "佐藤"
+      ]
+    },
+    {
+      "id": "W06",
+      "genre": "report",
+      "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+      "input": "ご要望を踏まえて仕様を分かりやすくしました。REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。REQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+      "must_keep": [
+        "REQ-12",
+        "90日間",
+        "保存しなければならない",
+        "REQ-13",
+        "推奨",
+        "未決定"
+      ]
+    },
+    {
+      "id": "W07",
+      "genre": "manual",
+      "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+      "input": "初心者にも分かるよう、手順を整理しました。\n\n設定を変更する前に、現在の設定を保存してください。\n\n1. 設定画面を開く。\n2. 保存先を指定する。\n3. 「保存」を押す。\n\n保存先のファイルは上書きされるため、既存ファイルを残す場合は別の名前を指定してください。",
+      "must_keep": [
+        "1. 設定画面を開く。",
+        "2. 保存先を指定する。",
+        "3. 「保存」を押す。",
+        "上書きされる",
+        "別の名前"
+      ]
+    },
+    {
+      "id": "W08",
+      "genre": "research",
+      "instruction": "次の原稿を、意味・重要情報を保って完成稿へ推敲してください。変更不要ならそのまま返してください。",
+      "input": "引用文は次のとおりである。\n\n> 「ご依頼に沿って説明します」という定型句が含まれていた。\n\nこの引用は、文章に残った応答表現の例である。[1]\n\n[^note]: 読みやすさを重視して構成しました。",
+      "must_keep": [
+        "> 「ご依頼に沿って説明します」という定型句が含まれていた。",
+        "[1]"
+      ]
+    },
+    {
+      "id": "W09",
+      "genre": "research",
+      "instruction": "素材だけを用い、比較条件と限界を含む3段落程度の技術報告を新規執筆してください。素材に基づく解釈を加えてよい。完成稿だけを返してください。",
+      "input": "同じデータセット・同じバックボーンで検索方式AとBを比較した。mAPはAが0.61、Bが0.65。Bは学習にAの2倍の時間を要した。推論時間は未測定。クラスごとの件数は不均衡で、少数クラスごとの性能は未評価。",
+      "must_keep": [
+        "0.61",
+        "0.65",
+        "2倍",
+        "未測定",
+        "未評価"
+      ]
+    },
+    {
+      "id": "W10",
+      "genre": "report",
+      "instruction": "原稿の意味を変えず、主張・根拠・条件の関係が分かる文章に直してください。結論や提案を新たに足さないでください。",
+      "input": "導入は決定していない。試験運用の結果は良好だった。良好とした根拠の指標と数値は資料に記載されていない。運用担当者の確認が必要である。ご希望であれば結論を強めることもできます。",
+      "must_keep": [
+        "決定していない",
+        "記載されていない",
+        "確認が必要"
+      ]
+    },
+    {
+      "id": "W11",
+      "genre": "manual",
+      "instruction": "文章だけを自然に直してください。数式、コード、手順番号は変更しないでください。",
+      "input": "これから分かりやすく設定を説明します。\n\n1. `max_retry = 3`を設定する。\n2. 接続に失敗した場合だけ再試行する。\n\n待機時間は$t=2^k$で計算する。\n\n```python\nmessage = \"ご依頼に沿って説明します\"\n```",
+      "must_keep": [
+        "max_retry = 3",
+        "場合だけ",
+        "$t=2^k$",
+        "message = \"ご依頼に沿って説明します\""
+      ]
+    },
+    {
+      "id": "W12",
+      "genre": "email",
+      "instruction": "下のメールを完成稿にしてください。送信はしないでください。冒頭の制作者への返答は取り除き、宛先への依頼は残してください。",
+      "input": "ご依頼に沿ってメール文面を作成しました。\n\n山田様\n\n打ち合わせの候補日をお送りします。10月20日か10月22日で、ご都合をお知らせください。\n\n鈴木",
+      "must_keep": [
+        "山田様",
+        "10月20日",
+        "10月22日",
+        "ご都合をお知らせください",
+        "鈴木"
+      ]
+    }
+  ],
+  "repeats": 2,
+  "primary_metric": "Fraction of completed outputs with no meaning errors or requester residue and all three quality scores >=3/4",
+  "selection": "Zero critical meaning errors and zero positive-control destruction; select highest primary pass fraction, then lower requester residue, then quality mean, then lower latency/tokens. Native route must pass. No superiority claim for a tie.",
+  "grader": "Anonymous separate sessions of the same model; automatic review, not human evaluation",
+  "isolation": "Ignore user config/rules, disable AGENTS through project_doc_max_bytes=0, disable existing skill paths per CLI invocation; project-scoped study skills only in native trials",
+  "temperature": "Not controlled by the CLI",
+  "source_hashes": {
+    "baseline_version": "2.0.0-proposal.1",
+    "files": {
+      "a/assets/SKILL.md": "062e0ed73a7a44247f3a0369c050bcd649684586f350839946df8b260f503c28",
+      "a/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374",
+      "a/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4",
+      "a/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c",
+      "a/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4",
+      "a/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+      "a/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+      "a/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+      "a/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+      "a/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c",
+      "a/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a",
+      "a/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e",
+      "a/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a",
+      "a/assets/scripts/__pycache__/check.cpython-312.pyc": "5e142bb793262645327d64c55d4f277f4beef8a68c7b57d524aeaeb9336ac7a7",
+      "a/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584",
+      "b/assets/SKILL.md": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0",
+      "b/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374",
+      "b/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4",
+      "b/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c",
+      "b/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4",
+      "b/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+      "b/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+      "b/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+      "b/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+      "b/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c",
+      "b/assets/references/reader-contract.md": "bf6bf5099914465f0792104ac15d68d290e4c287eafe41072ec26ccbe2018505",
+      "b/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a",
+      "b/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e",
+      "b/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a",
+      "b/assets/scripts/__pycache__/check.cpython-312.pyc": "5e142bb793262645327d64c55d4f277f4beef8a68c7b57d524aeaeb9336ac7a7",
+      "b/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584",
+      "baseline/assets/SKILL.md": "154c88e9d3617b3aba71742103a8ba10a91454a436f557cb3cfe329256c190cb",
+      "baseline/assets/japanese-direct-writing/SKILL.md": "c50c7eb7bb7b889f0435148bf45a02d7d8c10bf75b98ac47f3e0144a3513be70",
+      "baseline/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4",
+      "baseline/assets/paragraph-writing/SKILL.md": "4708c7510abded07f78ccb0ac8fb1b16d6655bfcf14bec2d4b07d7f7d2ca251d",
+      "baseline/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4",
+      "baseline/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+      "baseline/assets/references/audience.md": "1f000982ca4640463fda8a4835b06101556378f99367321bb7c30393514f2720",
+      "baseline/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+      "baseline/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c",
+      "baseline/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a",
+      "baseline/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e",
+      "baseline/assets/scripts/__pycache__/check.cpython-312.pyc": "5e142bb793262645327d64c55d4f277f4beef8a68c7b57d524aeaeb9336ac7a7",
+      "baseline/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584",
+      "c/assets/SKILL.md": "bb14880a10d1b9029ab900d093d2a5912e0789377a39542d2b2beb6ca6b8046d",
+      "c/assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374",
+      "c/assets/japanese-direct-writing/SOURCE.json": "b7d5fa1b2bb9d76f8207607c6c730829af3dfe5b889a6a35bcaf64b2c68d6bf4",
+      "c/assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c",
+      "c/assets/paragraph-writing/UPSTREAM.json": "205f0b76885e85a5aa4f0708cf86f66e90eb535982102b0561a22537bd2637b4",
+      "c/assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+      "c/assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+      "c/assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+      "c/assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+      "c/assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c",
+      "c/assets/references/reader-review.md": "a9b76ce9de5d31609e59faba86ae01c191118c471d883a8c95ce0ebc23e50ab8",
+      "c/assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a",
+      "c/assets/references/sources.md": "d2f96c1cc3dec0e9460e69a2f79809cf40c80108b96f3a52ba839225eac9c77e",
+      "c/assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a",
+      "c/assets/scripts/__pycache__/check.cpython-312.pyc": "5e142bb793262645327d64c55d4f277f4beef8a68c7b57d524aeaeb9336ac7a7",
+      "c/assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584"
+    }
+  },
+  "upstream_hashes": {
+    "LICENSE": "79d802f15bc8caf67f1a83c1bdbe214ccb41a0a0275f9046b329b89c65ee1fca",
+    "README.md": "d301ec5bad7a47ce61ca95804b4f04a9fc17e0ab9536061d2d2de0bb03ff716a",
+    "SKILL.upstream.md": "651818c2f5b97f0114b9a568bc5e672b5d190226cec2e403acc03450d8b958ac",
+    "UNICODE-LICENSE.txt": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+    "assets/algo-artis.png": "57c7c204d43d0e2873e3b61221db3ac4ba75a7ce29271a6deaeb3bd09f26fdec",
+    "references/domains/business.md": "b9970281b5005bbbc998d5de9b9e6b2bc1bb83976b3862c0556425a142f4352c",
+    "references/domains/essay.md": "8c0dc2afe132299ad111d4e3bc004d75da6291dc4857328717dc63ba5c9c6740",
+    "references/domains/tech.md": "255b1bcbf42a0c7ea7f42c7293cd964e541d70f6f5079ebcbffc332ce6b7b0dd",
+    "references/gemini-syntax.md": "9d1dc107a2e389d5bfc2db9e826d0fdcb69be5115d07afd4586d6b0cf5b87879",
+    "references/slop-catalog.md": "402fff215d7171f021bd418075832dc4a3867801ccb4c3a5ecdab60eb0241897",
+    "scripts/markdown_visibility.py": "7e6f739114bc28b132aa8e2bcfb51c7de7f441c12a54431c7248b5353a9966bb",
+    "scripts/yomiyasu_diff.py": "090868e2ab0d2b7eb9dadb014a80c7a5865b5082f250d05fea8ce4483730c312",
+    "scripts/yomiyasu_lint.py": "a5a253fbe5db7cde021e7c34b1e203472ff164f60a3886c85d5f69b140dcf230"
+  },
+  "timeouts": "480 seconds per generation/review job; no automatic retries or replay of completed receipts"
+}

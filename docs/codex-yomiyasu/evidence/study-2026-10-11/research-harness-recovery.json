@@ -1,0 +1,52 @@
+{
+  "run_id": "20261011T101101Z-7590eed5",
+  "reason": "Invalid paired result artifact: 'tasks'",
+  "recovery": "Temporary harness copy selects paired results for checkpoint; measure validation unchanged. Completed command receipts and all study inputs stay immutable.",
+  "installed_script_sha256": "e447d73efac888e1b984eee1a14bb0d9fdc05dfcda4c83f4e88a764f9672e1af",
+  "temporary_script_sha256": "341f30ba6b014438ef2adcd50040c77e2e5787068668343a4d1dcda9b793d9a4",
+  "temporary_harness": "/home/hirano/.cache/codex/yomiyasu-harness-recovery-7590eed5",
+  "regression_checks": {
+    "primary_tasks": 12,
+    "paired_trials": 24,
+    "all_original_attempts": 96,
+    "diagnostic_exports_excluded": 4,
+    "declared_malformed_primary_rejected": true
+  },
+  "metrics": [
+    {
+      "id": "delivered_pass",
+      "criterion_id": "P1",
+      "primary": true,
+      "kind": "scalar",
+      "unit": "fraction",
+      "direction": "higher",
+      "aggregation": "mean",
+      "acceptance_delta": 0.041666666666666664,
+      "grading": "親のproducer-assetsが各実receiptの最終出力、status、対応する匿名評定と根拠を保存し、completedかつmeaning_errors=[]かつrequester_residue=[]かつparagraph/naturalness/reader_fit各>=3ならvalues.delivered_pass=1、その他は0と計算する。timeoutは実output=null、品質未観測、運用未完了として値0を付ける。完成稿に評定欠落またはreceipt不一致がある場合は検査不成立とし、合格値を作らない。grading_evidenceに原出力receiptのpath/hash、評定output_file、各検査値、計算理由を保持する。新しい計算コードは実行前に親が確認する。全24試行の平均を計算し、1/24は標本で観測可能な最小の正差を表す。差0は同等。timeoutだけに由来する差を文章品質の因果的改善としない。安全条件と後付けの完全性条件は別に評価する。",
+      "outcome_scope": "final_outcome",
+      "comparisons": [
+        {
+          "candidate_id": "a",
+          "baseline": 1.0,
+          "candidate": 0.9583333333333334,
+          "delta": -0.04166666666666663,
+          "meets_threshold": false
+        },
+        {
+          "candidate_id": "b",
+          "baseline": 1.0,
+          "candidate": 0.9583333333333334,
+          "delta": -0.04166666666666663,
+          "meets_threshold": false
+        },
+        {
+          "candidate_id": "c",
+          "baseline": 1.0,
+          "candidate": 1.0,
+          "delta": 0.0,
+          "meets_threshold": false
+        }
+      ]
+    }
+  ]
+}

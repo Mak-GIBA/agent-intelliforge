@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 18.54,
+  "prompt_sha256": "da90e59eeba00ca927b17f2363b41a681b4336c77dc47020b304816881176112",
+  "output": "管理者向けの設定変更手順\n\n1. `enabled = false`にする。\n2. 設定を保存する。\n\n再起動は不要。ただし、設定の変更は既存の接続には反映されない。既存の接続を切断するかどうかは管理者が判断する。",
+  "usage": {
+    "input_tokens": 72204,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 584,
+    "reasoning_output_tokens": 507
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "H5-c-1",
+  "task": "H5",
+  "arm": "c",
+  "repeat": 1
+}

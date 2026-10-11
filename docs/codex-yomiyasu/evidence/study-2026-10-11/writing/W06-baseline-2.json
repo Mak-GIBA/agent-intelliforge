@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 14.45,
+  "prompt_sha256": "20878625e2c1f88b126e0e3731bd840998e68cebfeaa5e673453639c76828ca3",
+  "output": "REQ-12：監査ログは90日間保存しなければならない。障害時の調査に利用する。\n\nREQ-13：管理者への通知は推奨とする。通知先は未決定である。",
+  "usage": {
+    "input_tokens": 70178,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 399,
+    "reasoning_output_tokens": 340
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "W06-baseline-2",
+  "task": "W06",
+  "repeat": 2,
+  "arm": "baseline"
+}

@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 54.54,
+  "prompt_sha256": "cf6f0f7397e214a935d781eda01c4421f347ea40620a731f98175f69e5ec3243",
+  "output": "{\n  \"ratings\": [\n    {\n      \"id\": \"O029\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"変更前の内容と日時の記録、誤変更時の復元、変更権限の限定が具体的に示されている。履歴と復旧の関係が明確で、権限の話への段落分けも自然。事故防止を保証しない条件も保持している。\"\n    },\n    {\n      \"id\": \"O030\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"記録した履歴を復元に使う流れが簡潔で分かりやすい。変更と閲覧の権限を区別し、事故防止の非保証も明示している。抽象語への置き換えや機械的な反復がなく、二段落で必要な操作と限界を説明できている。\"\n    },\n    {\n      \"id\": \"O031\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"許可された100ファイル中2ファイルの例で対象範囲を比較し、検知漏れから更新されない索引が残るまでを説明している。全件再計算の説明も素材から導ける処理の展開。速度の未測定と導入の未決定を保持し、末段の測定提案も方式判断に役立つ。\"\n    },\n    {\n      \"id\": \"O032\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"到着集中から同時実行数の増加、メモリ不足の可能性までの関係が明確。キューと上限2の仕組み、待ち時間との関係、処理ごとの使用量による限界を順に説明している。未試験・上限の未検証・導入未決定を保持し、提案を実測済みの効果として扱っていない。\"\n    }\n  ]\n}",
+  "usage": {
+    "input_tokens": 16636,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1751,
+    "reasoning_output_tokens": 986
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O029",
+    "O030",
+    "O031",
+    "O032"
+  ],
+  "ratings": [
+    {
+      "id": "O029",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "変更前の内容と日時の記録、誤変更時の復元、変更権限の限定が具体的に示されている。履歴と復旧の関係が明確で、権限の話への段落分けも自然。事故防止を保証しない条件も保持している。"
+    },
+    {
+      "id": "O030",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "記録した履歴を復元に使う流れが簡潔で分かりやすい。変更と閲覧の権限を区別し、事故防止の非保証も明示している。抽象語への置き換えや機械的な反復がなく、二段落で必要な操作と限界を説明できている。"
+    },
+    {
+      "id": "O031",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "許可された100ファイル中2ファイルの例で対象範囲を比較し、検知漏れから更新されない索引が残るまでを説明している。全件再計算の説明も素材から導ける処理の展開。速度の未測定と導入の未決定を保持し、末段の測定提案も方式判断に役立つ。"
+    },
+    {
+      "id": "O032",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "到着集中から同時実行数の増加、メモリ不足の可能性までの関係が明確。キューと上限2の仕組み、待ち時間との関係、処理ごとの使用量による限界を順に説明している。未試験・上限の未検証・導入未決定を保持し、提案を実測済みの効果として扱っていない。"
+    }
+  ]
+}

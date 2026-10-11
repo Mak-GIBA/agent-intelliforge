@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 9.83,
+  "prompt_sha256": "0d18c40306ade1bb43de5bb40783c6008bdfcbfe978eaca5be006a6d826e22bf",
+  "output": "田中様\n\nご依頼いただいた比較資料をお送りします。方式Aと方式Bを同じ条件で比較しました。費用は資料の2ページに記載しています。ご確認ください。\n\n佐藤",
+  "usage": {
+    "input_tokens": 72175,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 234,
+    "reasoning_output_tokens": 182
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "W05-c-1",
+  "task": "W05",
+  "repeat": 1,
+  "arm": "c"
+}

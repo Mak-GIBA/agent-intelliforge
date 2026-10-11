@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 23.91,
+  "prompt_sha256": "06192705f85e0cee27ef9c877699c8b8b7844d735e61a16549592b1fa8deedf5",
+  "output": "現行方式では、要求ごとに同じ設定ファイルを読むため、読み取りが重複して待ち時間が増えます。\n\n新方式では、起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。\n\nただし、新方式で設定変更を反映するには再起動が必要です。運用担当者は再起動のタイミングを調整します。",
+  "usage": {
+    "input_tokens": 74142,
+    "cached_input_tokens": 14720,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 803,
+    "reasoning_output_tokens": 700
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "W03-b-2",
+  "task": "W03",
+  "repeat": 2,
+  "arm": "b"
+}

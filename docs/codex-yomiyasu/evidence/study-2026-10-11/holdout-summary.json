@@ -1,0 +1,46 @@
+{
+  "phase": "holdout",
+  "conditions": {
+    "baseline": {
+      "trials": 6,
+      "completed": 6,
+      "graded": 6,
+      "primary_passes": 6,
+      "primary_fraction": 1.0,
+      "delivered_pass_fraction": 1.0,
+      "meaning_error_outputs": 0,
+      "requester_residue_outputs": 0,
+      "quality_mean": 4.0,
+      "mean_elapsed_seconds": 19.45,
+      "mean_completed_elapsed_seconds": 19.45,
+      "mean_reported_total_tokens": 70822.5,
+      "native_trials": 8,
+      "native_route_passes": 6,
+      "native_completion_failures": 1
+    },
+    "c": {
+      "trials": 6,
+      "completed": 6,
+      "graded": 6,
+      "primary_passes": 6,
+      "primary_fraction": 1.0,
+      "delivered_pass_fraction": 1.0,
+      "meaning_error_outputs": 0,
+      "requester_residue_outputs": 0,
+      "quality_mean": 4.0,
+      "mean_elapsed_seconds": 16.88,
+      "mean_completed_elapsed_seconds": 16.88,
+      "mean_reported_total_tokens": 72745,
+      "native_trials": 8,
+      "native_route_passes": 8,
+      "native_completion_failures": 0
+    }
+  },
+  "eligible": [],
+  "selected": null,
+  "selection_policy": "The implementation gate requires all 24 outputs available and graded and all eight native routes passing. This completeness condition is stricter than contract.json's completed-output quality metric and selection text; it is a conservative adoption condition, not evidence of linguistic superiority.",
+  "ratings_complete": true,
+  "generation_complete": true,
+  "unavailable_outputs": [],
+  "limitations": "Small fixed synthetic sample and same-model automatic grading. Each phase used two workers and phases overlapped (up to six requests); elapsed times are not a controlled speed comparison. No authorship detection or population inference. Operational failures are not semantic-quality failures."
+}

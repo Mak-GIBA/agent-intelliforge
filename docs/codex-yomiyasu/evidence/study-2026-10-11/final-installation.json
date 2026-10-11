@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "installer_version": "2.0.0-proposal.2",
+  "checks": [
+    "standalone embedded CLI installation with spaces and custom skills directory",
+    "all 3 managed skill bodies equal measured C assets",
+    "doctor READY_FILES for all 3",
+    "idempotent normal rerun",
+    "main-only explicit mode with local fallback resources",
+    "forced refresh preserves explicit mode and upstream bytes",
+    "actual installed upstream snapshot unchanged"
+  ],
+  "upstream_tag": "v1.1.1",
+  "upstream_commit": "373356eb874af5184962c88e925ea7eb58450318",
+  "network": false,
+  "real_user_settings_or_skills_changed": false
+}

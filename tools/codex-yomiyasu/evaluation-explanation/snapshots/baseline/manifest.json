@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0-proposal.2",
+  "files": {
+    "assets/SKILL.md": "bb14880a10d1b9029ab900d093d2a5912e0789377a39542d2b2beb6ca6b8046d",
+    "assets/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374",
+    "assets/japanese-direct-writing/SOURCE.json": "e57b42d89b72bdffdc72200bb314a0185833446952185255168ec68f4df643a1",
+    "assets/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c",
+    "assets/paragraph-writing/UPSTREAM.json": "1da8befb81d22152e3d1e9bb9852fad8a2234aaf60e6ca5d7fb4683fd28f49e0",
+    "assets/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+    "assets/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+    "assets/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+    "assets/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+    "assets/references/paragraphs.md": "2cee7dd1acbc8035217d8e22ab48df81442e53a6e5b96aaa966cf21bdc287a2c",
+    "assets/references/reader-review.md": "a9b76ce9de5d31609e59faba86ae01c191118c471d883a8c95ce0ebc23e50ab8",
+    "assets/references/review.md": "d4885e82ddf17128d5577f1baff47d12fb8ce854234c39c3531c830b8580f37a",
+    "assets/references/sources.md": "7683e03c9ec214b884b7057daf0f2ad2ebb07be59ee1a072e02c0790285b1735",
+    "assets/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a",
+    "assets/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584",
+    "build_installer.py": "80db1c871b2b5f70956caf8cbd5246f81c52dbbca96e4a2c9b9a9ee7b0597775",
+    "installer.py": "1743a6875525c6b01a9f276ae481712cc7ee5b1d07c5faf06a9559f633ee484d"
+  }
+}

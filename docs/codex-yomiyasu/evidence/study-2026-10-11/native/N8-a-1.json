@@ -1,0 +1,22 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 5.5,
+  "prompt_sha256": "3da152cf74e06d3849f019344be046e2f24ab8ba4dcbe0bd21d06469a925e696",
+  "output": "```python\ndef add(a, b):\n    return a + b\n```",
+  "usage": {
+    "input_tokens": 15085,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 55,
+    "reasoning_output_tokens": 33
+  },
+  "tools": [],
+  "error": null,
+  "reads": {},
+  "route_pass": true,
+  "expected_reads": [],
+  "job_id": "N8-a-1",
+  "task": "N8",
+  "arm": "a",
+  "repeat": 1
+}

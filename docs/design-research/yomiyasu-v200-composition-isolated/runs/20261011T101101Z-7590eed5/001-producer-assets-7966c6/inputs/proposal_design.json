@@ -1,0 +1,250 @@
+{
+  "question": "yomiyasu 2.0.0-proposal.1に対し、改善案a/b/cは意味・成果物境界・文章品質を守り、必要な補助スキル連携を成立させるか。Cを条件付き実装候補とする判断は保存済み原記録で支持されるか。",
+  "candidates": [
+    {
+      "id": "baseline",
+      "name": "現行 yomiyasu 2.0.0-proposal.1",
+      "baseline": true,
+      "summary": "読者・範囲確認→段落設計→本文執筆→自然さ・留保点検→仕上げ検査。通常工程の補助SKILL実読込は必須にしていない。",
+      "mechanism_locator": "tools/codex-yomiyasu/evaluation-v200/baseline/assets/SKILL.md, lines 16–72",
+      "hard_constraints": [
+        {
+          "constraint_id": "K_SAFE",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "原出力監査待ち"
+        },
+        {
+          "constraint_id": "K_QUALITY",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "評定照合待ち"
+        },
+        {
+          "constraint_id": "K_ROUTE",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "native原tool出力監査待ち"
+        },
+        {
+          "constraint_id": "K_PROTOCOL",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "親receipt待ち"
+        }
+      ]
+    },
+    {
+      "id": "a",
+      "name": "改善案A：実補助Skill連携と点検",
+      "baseline": false,
+      "summary": "現行工程の必要箇所でparagraph-writingとjapanese-direct-writingの実SKILLを読み、同じ下書きに各工程を一度適用する設計。代替参照と局所依頼の例外を持つ。",
+      "mechanism_locator": "tools/codex-yomiyasu/evaluation-v200/a/assets/SKILL.md, lines 26/50/72; assets/references/workflow.md, lines 3–9",
+      "hard_constraints": [
+        {
+          "constraint_id": "K_SAFE",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "原出力監査待ち"
+        },
+        {
+          "constraint_id": "K_QUALITY",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "評定照合待ち"
+        },
+        {
+          "constraint_id": "K_ROUTE",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "native原tool出力監査待ち"
+        },
+        {
+          "constraint_id": "K_PROTOCOL",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "親receipt待ち"
+        }
+      ]
+    },
+    {
+      "id": "b",
+      "name": "改善案B：A＋素材／制作指示分離",
+      "baseline": false,
+      "summary": "Aに、執筆前の四区分整理を加える。本文情報、制作指示、引用として保護する情報、不明情報を分け、混在文から必要な事実を保持する。分類メモは提出しない。",
+      "mechanism_locator": "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md, line 24; assets/references/reader-contract.md, lines 3–10",
+      "hard_constraints": [
+        {
+          "constraint_id": "K_SAFE",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "原出力監査待ち"
+        },
+        {
+          "constraint_id": "K_QUALITY",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "評定照合待ち"
+        },
+        {
+          "constraint_id": "K_ROUTE",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "native原tool出力監査待ち"
+        },
+        {
+          "constraint_id": "K_PROTOCOL",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "親receipt待ち"
+        }
+      ]
+    },
+    {
+      "id": "c",
+      "name": "改善案C：A＋読者視点レビュー",
+      "baseline": false,
+      "summary": "Aに、下書き後の読者視点レビューを一度加える。制作説明、意味変化、段落、定型表現を点検し、問題箇所だけ最大一回改稿する。問題がなければそのまま提出する。",
+      "mechanism_locator": "tools/codex-yomiyasu/evaluation-v200/c/assets/SKILL.md, line 68; assets/references/reader-review.md, lines 3–7",
+      "hard_constraints": [
+        {
+          "constraint_id": "K_SAFE",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "原出力監査待ち"
+        },
+        {
+          "constraint_id": "K_QUALITY",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "評定照合待ち"
+        },
+        {
+          "constraint_id": "K_ROUTE",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "native原tool出力監査待ち"
+        },
+        {
+          "constraint_id": "K_PROTOCOL",
+          "result": "unknown",
+          "claim_ids": [],
+          "reason": "親receipt待ち"
+        }
+      ]
+    }
+  ],
+  "experiments": [
+    {
+      "id": "audit-writing",
+      "hypothesis": "保存済み原出力と評定から、品質と運用完了を分離した共通比較を再構成できる。",
+      "candidate_ids": [
+        "baseline",
+        "a",
+        "b",
+        "c"
+      ],
+      "controls": [
+        "W01～W12、trial_id=1,2、候補別24試行を固定",
+        "元gpt-6.1-sol/xhigh、CLI 0.162.1の保存結果のみ使用。温度未制御、生成上限480秒、実elapsedを保持",
+        "capture.jsonのsummaries/auditを測定根拠として使わず、原receiptと保存評定に照合",
+        "task/arm/repeatとoutput_fileで結合し、単位内X番号を全体IDにしない"
+      ],
+      "metrics": [
+        "delivered_pass_fraction：completedかつmeaning_errors=[]、requester_residue=[]、品質各>=3の件数/24",
+        "completedかつ採点済み稿を分母とする品質合格率",
+        "品質各項目の平均・分布・3点稿の根拠",
+        "completed/timeout/評定欠落と参考elapsed/usage"
+      ],
+      "acceptance": "全96試行の来歴・hash・status・出力・評定を照合できること。timeoutのdelivered_passは0、意味・品質はnull。完成稿の評定欠落や不一致は検査失敗として保持する。候補差0や負の差も有効な結果。1/24は観測可能な最小正差であり、timeout由来の差を言語品質改善としない。",
+      "status": "planned",
+      "implementation_status": "未実装。後続producer-assetsが検査資材を作り、親が確認して隔離実行する。",
+      "planned_entrypoint": "experiments/audit_capture.py --mode writing",
+      "input_paths": [
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/capture.json",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-grades/",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/writing-smaller-review-units.json",
+        "tools/codex-yomiyasu/evaluation-v200/frozen-sources.json"
+      ],
+      "artifact_paths": [
+        "experiments/artifacts/writing-paired.json",
+        "experiments/artifacts/writing-audit.json"
+      ],
+      "artifacts": []
+    },
+    {
+      "id": "audit-protected-holdout",
+      "hypothesis": "保存済み出力は保護対象と成果物境界を両立しているが、代表例の字面検査だけでは意味保持全体を証明できない。",
+      "candidate_ids": [
+        "baseline",
+        "a",
+        "b",
+        "c"
+      ],
+      "controls": [
+        "主比較の保護対象検査は全4候補、holdoutはbaseline/cのみ",
+        "保存済みH1～H6の12試行を主比較の96試行へ加えない",
+        "W01/W02/W06/W10の数値・否定・条件・義務と、W05/W08/W11/W12の正例を元入力・実出力・評定根拠で照合"
+      ],
+      "metrics": [
+        "重大意味変更・制作説明残存・正例破壊の記録",
+        "引用・参照・コード・数式・手順・数値の保護チェック",
+        "holdout候補別の完了数・品質合格数・欠測"
+      ],
+      "acceptance": "採用候補の安全違反0を要求する。H4の引用、H6の研究目的・脚注、宛先への依頼は残し、制作注記だけを除く。文字列一致は保護対象の検査に限定し、意味判断は保存評定の根拠と不確実性を保持する。未取得稿を合格へ補完しない。",
+      "status": "planned",
+      "implementation_status": "未実装。後続producer-assetsが検査資材を作り、親が確認して隔離実行する。",
+      "planned_entrypoint": "experiments/audit_capture.py --mode protected-holdout",
+      "input_paths": [
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/capture.json",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/writing/",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/holdout/",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/holdout-grades/"
+      ],
+      "artifact_paths": [
+        "experiments/artifacts/protected-examples.json",
+        "experiments/artifacts/holdout-paired.json"
+      ],
+      "artifacts": []
+    },
+    {
+      "id": "audit-native",
+      "hypothesis": "成功した実コマンドのtool出力から必要な固定SKILL全文読込と適切な経路を確認できるが、内部適用回数は確認できない。",
+      "candidate_ids": [
+        "baseline",
+        "a",
+        "b",
+        "c"
+      ],
+      "controls": [
+        "N1～N8×4候補の32記録を固定",
+        "元prompt来歴、expected_reads、コマンドexit/status、aggregated_outputと各候補の固定SKILL内容を照合",
+        "誤字・コードのnegative controlではexpected_reads=[]を許し、全文未読を連携失敗と数えない",
+        "native-setup-invalidは比較から除外し、NOTICEと失敗receiptを保持"
+      ],
+      "metrics": [
+        "候補別route_pass件数/8",
+        "必要SKILL別の成功全文読込証拠",
+        "timeoutとcompleted未連携の別記",
+        "不要な全工程読込と内部適用回数の観測限界"
+      ],
+      "acceptance": "名前への言及やverificationの真偽値だけを証拠にしない。成功コマンドの実tool出力に対応する固定SKILL全文が含まれることを確認する。採用候補は全8経路成立。元promptや実tool出力の欠落・不一致は失敗またはunknownとして残す。",
+      "status": "planned",
+      "implementation_status": "未実装。後続producer-assetsが検査資材を作り、親が確認して隔離実行する。",
+      "planned_entrypoint": "experiments/audit_capture.py --mode native",
+      "input_paths": [
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/capture.json",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/native/",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/native-jobs.json",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/native-read-verification.json",
+        "docs/codex-yomiyasu/evidence/study-2026-10-11/native-setup-invalid/NOTICE.json",
+        "tools/codex-yomiyasu/evaluation-v200/"
+      ],
+      "artifact_paths": [
+        "experiments/artifacts/native-audit.json"
+      ],
+      "artifacts": []
+    }
+  ]
+}

@@ -36,7 +36,7 @@ bash install_all.sh --only yomiyasu --apply
 ```
 
 paragraph-writingまたはjapanese-direct-writing単独の導入には通信が不要です。一括導入スクリプトの`yomiyasu` IDは3スキルを導入します。
-1.3.0から2.0.0-proposal.1へ移行する場合は、次の更新を使います。入口と補助スキルを更新し、yomiyasuの上流原本を最新安定版から取得します。既存の発動モードは保持します。
+1.3.0、2.0.0-proposal.1、proposal.2から2.0.0-proposal.3へ移行する場合は、次の更新を使います。入口と補助スキルを更新し、yomiyasuの上流原本を最新安定版から取得します。既存の発動モードは保持します。
 
 ```bash
 bash install_codex_yomiyasu.sh --update --apply
@@ -56,7 +56,7 @@ paragraph-writingまたはjapanese-direct-writing単独の更新確認・更新�
 既存の管理ファイルに編集や欠落がある場合は、`--force`を付けても停止します。
 更新前の資材はバックアップに残します。
 
-上流を更新せず、このリポジトリの入口・運用設定と補助スキルを更新する場合は`--force --apply`を使います。ただし上流の必須ファイルが欠ける旧導入は、まず`--update --apply`で整えてください。2.0.0-proposal.1では`upstream/UNICODE-LICENSE.txt`も必須です。
+上流を更新せず、このリポジトリの入口・運用設定と補助スキルを更新する場合は`--force --apply`を使います。ただし上流の必須ファイルが欠ける旧導入は、まず`--update --apply`で整えてください。2.0系列では`upstream/UNICODE-LICENSE.txt`も必須です。
 既存の各Skillの発動モードは保持します。新規の補助スキルは管理済みyomiyasuのモードを継承し、全て新規なら`auto`にします。
 `--mode`を指定すると選択したSkillへ適用します。既存設定を変更するときは、次のように明示します。
 
@@ -77,7 +77,7 @@ bash install_codex_yomiyasu.sh --check-update --upstream-ref v1.1.1
 bash install_codex_yomiyasu.sh --update --upstream-ref v1.1.1 --apply
 ```
 
-`--upstream-only`は`--update`と併用し、yomiyasuの上流原本だけを更新します。独自ルールとその版、補助2スキルは保持します。`--upstream-ref`は更新または更新確認で、取得対象を安定版Releaseのtagに固定します。独自ルールの版を指定するオプションではありません。
+`--upstream-only`は`--update`と併用し、yomiyasuの上流原本だけを更新します。独自ルールとその版、説明用の`references/explanation.md`、補助2スキルは保持します。`--upstream-ref`は更新または更新確認で、取得対象を安定版Releaseのtagに固定します。独自ルールの版を指定するオプションではありません。
 
 ## 解除と検査
 
@@ -98,6 +98,7 @@ bash install_codex_yomiyasu.sh --extract /tmp/yomiyasu-review
 `--project PATH`で競合診断の対象プロジェクトを指定できます。
 
 自己テストは一時環境と模擬の上流応答を使います。実際の配布元への通信やモデルの文章品質は検証しません。
+比較研究のモデル実行は`evals/run_study.py`や`evals/explanation_study.py`の明示実行専用で、インストール時には動きません。補助2スキルは同梱版を導入し、上流yomiyasuの最新安定版取得とは別に管理します。
 `--extract`は3スキルの資材を未使用または空のディレクトリへ展開します。インストールは行いません。`--self-test`と`--extract`は`--only`と併用できません。
 yomiyasuの原本を通信なしで配置するには`--source-dir PATH --apply`を使います。ローカルGit checkout、管理済み導入のsnapshot、旧v1.0.4固定版のフラット原本を受け付け、形式に応じてファイルを検査します。
-`--source-dir`は補助スキル単独の導入、`--update`、`--upstream-ref`と併用できません。
+`--source-dir`はyomiyasuを含む導入・更新で使います。`--upstream-ref`と併用できません。

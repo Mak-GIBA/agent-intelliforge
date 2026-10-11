@@ -1,0 +1,22 @@
+{
+  "started_at": "2026-10-11T11:27:59.872338+00:00",
+  "timed_out": false,
+  "truncated": false,
+  "exit_code": 0,
+  "finished_at": "2026-10-11T11:42:01.319249+00:00",
+  "duration_seconds": 841.447,
+  "role": "producer-method",
+  "iteration": 1,
+  "configured_timeout_seconds": 1800,
+  "outputs": {
+    "stdout": {
+      "path": "runs/20261011T101101Z-7590eed5/001-producer-method-e69284/stdout.log",
+      "sha256": "e68d1e206e60f6f970fc9138007ae881627f382a0702ea6ec4b943fd5dc76c16"
+    },
+    "stderr": {
+      "path": "runs/20261011T101101Z-7590eed5/001-producer-method-e69284/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "scope": "Model role execution only; not a task-effect measurement"
+}

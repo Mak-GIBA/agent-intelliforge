@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 75.81,
+  "prompt_sha256": "a904342ccf7a1f9d58a9186fd8d67dc0fe02d87c54577c8f8dd633e018de21b9",
+  "output": "同じデータセットと同じバックボーンを用いた比較では、検索方式BはAより高いmAPを示した。mAPはAが0.61、Bが0.65で、差は0.04だった。\n\nBの高いmAPには、学習時間の増加が伴った。Bは学習にAの2倍の時間を要しており、方式の選択ではmAPと学習時間の両方を考慮する必要がある。推論時間は未測定のため、検索時の速度については優劣を判断できない。\n\n少数クラスでの性能は、今回の結果だけでは判断できない。クラスごとの件数は不均衡で、少数クラスごとの性能は未評価である。そのため、mAPでBが上回ったことから、少数クラスでもBがAより優れているとは結論づけられない。",
+  "usage": {
+    "input_tokens": 70212,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1254,
+    "reasoning_output_tokens": 1034
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "W09-baseline-1",
+  "task": "W09",
+  "repeat": 1,
+  "arm": "baseline"
+}

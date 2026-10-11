@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 59.58,
+  "prompt_sha256": "a980db661cbd80f13af927a48a77e5ee92e4f32f7a9bd5dcf4474914b5681412",
+  "output": "{\n  \"ratings\": [\n    {\n      \"id\": \"O033\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"空欄の検査、空欄がある場合の送信停止とメッセージ表示、事実性を検査しない範囲が簡潔に伝わる。制作説明や不要な留保もない。\"\n    },\n    {\n      \"id\": \"O034\",\n      \"specificity\": 4,\n      \"causal_clarity\": 2,\n      \"reader_understanding\": 3,\n      \"naturalness\": 4,\n      \"information_efficiency\": 3,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"方式名を伏せる目的と提示順を変える目的、影響が残る可能性、未実施であることは明確。ただし、評価観点の定義に続く「この2つを別々に評価します」は反復であり、観点を分ける意味の説明が不足している。\"\n    },\n    {\n      \"id\": \"O035\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 3,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"資源の競合と応答の遅れの関係、編集を並列に保つ処理案、効果が未測定であることが明確。冒頭の「適切に管理することが重要」は、続く具体的な説明に比べて情報量が少なく、省いても理解できる。\"\n    },\n    {\n      \"id\": \"O036\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"応答の保存と再利用によって再取得を省く仕組み、情報が古くなる条件、有効期限切れに再取得する処理が順に説明されている。用語の説明もあり、素材にない数値や効果の断定はない。\"\n    }\n  ]\n}",
+  "usage": {
+    "input_tokens": 16370,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1929,
+    "reasoning_output_tokens": 1241
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O033",
+    "O034",
+    "O035",
+    "O036"
+  ],
+  "ratings": [
+    {
+      "id": "O033",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "空欄の検査、空欄がある場合の送信停止とメッセージ表示、事実性を検査しない範囲が簡潔に伝わる。制作説明や不要な留保もない。"
+    },
+    {
+      "id": "O034",
+      "specificity": 4,
+      "causal_clarity": 2,
+      "reader_understanding": 3,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "方式名を伏せる目的と提示順を変える目的、影響が残る可能性、未実施であることは明確。ただし、評価観点の定義に続く「この2つを別々に評価します」は反復であり、観点を分ける意味の説明が不足している。"
+    },
+    {
+      "id": "O035",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "資源の競合と応答の遅れの関係、編集を並列に保つ処理案、効果が未測定であることが明確。冒頭の「適切に管理することが重要」は、続く具体的な説明に比べて情報量が少なく、省いても理解できる。"
+    },
+    {
+      "id": "O036",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "応答の保存と再利用によって再取得を省く仕組み、情報が古くなる条件、有効期限切れに再取得する処理が順に説明されている。用語の説明もあり、素材にない数値や効果の断定はない。"
+    }
+  ]
+}

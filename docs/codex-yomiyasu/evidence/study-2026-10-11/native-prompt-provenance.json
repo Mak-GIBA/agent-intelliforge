@@ -1,0 +1,363 @@
+{
+  "schema": 1,
+  "provenance": "Exact UTF-8 prompts reconstructed using the existing native_tasks() and original prompt suffix. Every byte string SHA256 matches the original receipt; no model calls or installations. This is reconstructed, hash-bound input evidence rather than a claim of having kept an original plaintext transcript.",
+  "source_files": {
+    "tools/codex-yomiyasu/evals/run_study.py": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47",
+    "tools/codex-yomiyasu/evals/verify_native.py": "925c3526507390666521dd5df2a7027e9b8b4ab890cf5f92550d31c7fc4111e3"
+  },
+  "trials": [
+    {
+      "receipt": "native/N1-a-1.json",
+      "receipt_sha256": "cffa82481dfe4b6b5a4f83660f45137cf9ce40db5589300ed908133f09b6142d",
+      "task": "N1",
+      "arm": "a",
+      "original_prompt_sha256": "7ca769e41daeac8b0275b33726a41df60da708611316d8a0f9349097f6868b12",
+      "reconstructed_prompt": "$yomiyasu 新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "yomiyasu",
+        "paragraph-writing",
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N1-b-1.json",
+      "receipt_sha256": "6005dc0732f32a5086554703aa6e1cd3ce1be0ec4e2814619d8631cf0f180d17",
+      "task": "N1",
+      "arm": "b",
+      "original_prompt_sha256": "7ca769e41daeac8b0275b33726a41df60da708611316d8a0f9349097f6868b12",
+      "reconstructed_prompt": "$yomiyasu 新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "yomiyasu",
+        "paragraph-writing",
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N1-baseline-1.json",
+      "receipt_sha256": "b2aaf11bd721f90c45c08ad982557b9326154a8da372ec95ea1352a228cf769c",
+      "task": "N1",
+      "arm": "baseline",
+      "original_prompt_sha256": "7ca769e41daeac8b0275b33726a41df60da708611316d8a0f9349097f6868b12",
+      "reconstructed_prompt": "$yomiyasu 新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "yomiyasu",
+        "paragraph-writing",
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N1-c-1.json",
+      "receipt_sha256": "fa51474ddb65bcf5fd4a3fe0ae89f3266cb5de6d1224ea46f6b8637cf21347d1",
+      "task": "N1",
+      "arm": "c",
+      "original_prompt_sha256": "7ca769e41daeac8b0275b33726a41df60da708611316d8a0f9349097f6868b12",
+      "reconstructed_prompt": "$yomiyasu 新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "yomiyasu",
+        "paragraph-writing",
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N2-a-1.json",
+      "receipt_sha256": "07fa8ffe6a09a4eb59578e989a31a9a49facd72ccca76e5b49c9ced484b77a9d",
+      "task": "N2",
+      "arm": "a",
+      "original_prompt_sha256": "b443e15933c528e26eb4428636235ecbaa7cff04c1fe04533041459c95f0a6f2",
+      "reconstructed_prompt": "新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "yomiyasu",
+        "paragraph-writing",
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N2-b-1.json",
+      "receipt_sha256": "b4cf089bb34bce4b5c1bf7ffc5de53121b09ea8bead16132bed2d1fb578d2962",
+      "task": "N2",
+      "arm": "b",
+      "original_prompt_sha256": "b443e15933c528e26eb4428636235ecbaa7cff04c1fe04533041459c95f0a6f2",
+      "reconstructed_prompt": "新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "yomiyasu",
+        "paragraph-writing",
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N2-baseline-1.json",
+      "receipt_sha256": "ec0e4a9556df26459e67ae48e1b7cf656f485619b8d52ad3a8809a393550efc2",
+      "task": "N2",
+      "arm": "baseline",
+      "original_prompt_sha256": "b443e15933c528e26eb4428636235ecbaa7cff04c1fe04533041459c95f0a6f2",
+      "reconstructed_prompt": "新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "yomiyasu",
+        "paragraph-writing",
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N2-c-1.json",
+      "receipt_sha256": "23332a662ca8efdd8a8e640f359cc66d5f9f8934f84f87c14608cca9bb34ba79",
+      "task": "N2",
+      "arm": "c",
+      "original_prompt_sha256": "b443e15933c528e26eb4428636235ecbaa7cff04c1fe04533041459c95f0a6f2",
+      "reconstructed_prompt": "新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "yomiyasu",
+        "paragraph-writing",
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N3-a-1.json",
+      "receipt_sha256": "22a2e1f5d75816742bcdbcfcef3bd6d6d208f828fae381bf902d43e77f2e60b7",
+      "task": "N3",
+      "arm": "a",
+      "original_prompt_sha256": "4b0f5ebb4e90ec904bcc489b6c023d275085ccb1f092a1049924b992fbdc7328",
+      "reconstructed_prompt": "$paragraph-writing 次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "paragraph-writing"
+      ]
+    },
+    {
+      "receipt": "native/N3-b-1.json",
+      "receipt_sha256": "df32426d661b645aedd10aa1bb54cec624e5d1abb78114362c6dcea1953793bd",
+      "task": "N3",
+      "arm": "b",
+      "original_prompt_sha256": "4b0f5ebb4e90ec904bcc489b6c023d275085ccb1f092a1049924b992fbdc7328",
+      "reconstructed_prompt": "$paragraph-writing 次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "paragraph-writing"
+      ]
+    },
+    {
+      "receipt": "native/N3-baseline-1.json",
+      "receipt_sha256": "b29a9f092f3cb58897bef5da59a896395a45bf84bae09ce4e4eaac483d802dad",
+      "task": "N3",
+      "arm": "baseline",
+      "original_prompt_sha256": "4b0f5ebb4e90ec904bcc489b6c023d275085ccb1f092a1049924b992fbdc7328",
+      "reconstructed_prompt": "$paragraph-writing 次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "paragraph-writing"
+      ]
+    },
+    {
+      "receipt": "native/N3-c-1.json",
+      "receipt_sha256": "cffc81fd74e51d4b4713d77c8f6723cdd786476c527971b1ad0a1b325a494303",
+      "task": "N3",
+      "arm": "c",
+      "original_prompt_sha256": "4b0f5ebb4e90ec904bcc489b6c023d275085ccb1f092a1049924b992fbdc7328",
+      "reconstructed_prompt": "$paragraph-writing 次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "paragraph-writing"
+      ]
+    },
+    {
+      "receipt": "native/N4-a-1.json",
+      "receipt_sha256": "5e714a1cc0fa694180186ba08a9f9fb56a67d107cba1f368e4cee79cda37cf8c",
+      "task": "N4",
+      "arm": "a",
+      "original_prompt_sha256": "fbca347d990c4d285c616b1df6c1fcc3f09a3a6276864d5ad1e589c05799c3a4",
+      "reconstructed_prompt": "次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "paragraph-writing"
+      ]
+    },
+    {
+      "receipt": "native/N4-b-1.json",
+      "receipt_sha256": "3948c42c3ba646ee29e1f9b42f5882c46d1d679a5dc498d9ff73a3bd8dce58d2",
+      "task": "N4",
+      "arm": "b",
+      "original_prompt_sha256": "fbca347d990c4d285c616b1df6c1fcc3f09a3a6276864d5ad1e589c05799c3a4",
+      "reconstructed_prompt": "次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "paragraph-writing"
+      ]
+    },
+    {
+      "receipt": "native/N4-baseline-1.json",
+      "receipt_sha256": "19691334855109a837ac94c22990d59518dffe9596a709d2c5fc5575c05c90e8",
+      "task": "N4",
+      "arm": "baseline",
+      "original_prompt_sha256": "fbca347d990c4d285c616b1df6c1fcc3f09a3a6276864d5ad1e589c05799c3a4",
+      "reconstructed_prompt": "次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "paragraph-writing"
+      ]
+    },
+    {
+      "receipt": "native/N4-c-1.json",
+      "receipt_sha256": "36326711d1e71f14b14c5a745be29d87c63b1b10ac1a24efb6ddd22cc454e25a",
+      "task": "N4",
+      "arm": "c",
+      "original_prompt_sha256": "fbca347d990c4d285c616b1df6c1fcc3f09a3a6276864d5ad1e589c05799c3a4",
+      "reconstructed_prompt": "次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "paragraph-writing"
+      ]
+    },
+    {
+      "receipt": "native/N5-a-1.json",
+      "receipt_sha256": "38e0bfb58bbf88489400487e6b412eb646e66ecf7d207182e69e4bdc384dca41",
+      "task": "N5",
+      "arm": "a",
+      "original_prompt_sha256": "328b0c95513827c16c607dc236b017dae9586f8f60ff69a9817bb826fc12dc9f",
+      "reconstructed_prompt": "$japanese-direct-writing 次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N5-b-1.json",
+      "receipt_sha256": "e23d53344b6e95daa4a02019ebc6ad1e1ad9383fd1569ab8feaeb424678e5321",
+      "task": "N5",
+      "arm": "b",
+      "original_prompt_sha256": "328b0c95513827c16c607dc236b017dae9586f8f60ff69a9817bb826fc12dc9f",
+      "reconstructed_prompt": "$japanese-direct-writing 次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N5-baseline-1.json",
+      "receipt_sha256": "4851cd24abca797503c655af8eae6ec3ad6e79827e824fb0032c2704bc40e8d3",
+      "task": "N5",
+      "arm": "baseline",
+      "original_prompt_sha256": "328b0c95513827c16c607dc236b017dae9586f8f60ff69a9817bb826fc12dc9f",
+      "reconstructed_prompt": "$japanese-direct-writing 次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N5-c-1.json",
+      "receipt_sha256": "c892d4289139ea2152ccf3b28497993e303df1d41c5a3a8ca94ea95c0ff45372",
+      "task": "N5",
+      "arm": "c",
+      "original_prompt_sha256": "328b0c95513827c16c607dc236b017dae9586f8f60ff69a9817bb826fc12dc9f",
+      "reconstructed_prompt": "$japanese-direct-writing 次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N6-a-1.json",
+      "receipt_sha256": "5d0726eb3e32adea5e2f25a42b56bef338611a157cfea0ec12e7b06675318852",
+      "task": "N6",
+      "arm": "a",
+      "original_prompt_sha256": "2f74fe5baff11866cf696365afd16a46910b3840de452ac8ea5308c5f9091590",
+      "reconstructed_prompt": "次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N6-b-1.json",
+      "receipt_sha256": "b2b064211bb6be9121f6fc6dc8552bf7d67b2a22ef48c492d71c0357bd4a07f2",
+      "task": "N6",
+      "arm": "b",
+      "original_prompt_sha256": "2f74fe5baff11866cf696365afd16a46910b3840de452ac8ea5308c5f9091590",
+      "reconstructed_prompt": "次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N6-baseline-1.json",
+      "receipt_sha256": "3f3de19abcd4626239f84d397d857210a070af209bd4c54c6bfca0f172244a3a",
+      "task": "N6",
+      "arm": "baseline",
+      "original_prompt_sha256": "2f74fe5baff11866cf696365afd16a46910b3840de452ac8ea5308c5f9091590",
+      "reconstructed_prompt": "次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N6-c-1.json",
+      "receipt_sha256": "9e55477dbb606654fd63ac7213b1ff30e15333fa339d27a2ae81a09dab7bce8b",
+      "task": "N6",
+      "arm": "c",
+      "original_prompt_sha256": "2f74fe5baff11866cf696365afd16a46910b3840de452ac8ea5308c5f9091590",
+      "reconstructed_prompt": "次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": [
+        "japanese-direct-writing"
+      ]
+    },
+    {
+      "receipt": "native/N7-a-1.json",
+      "receipt_sha256": "8883022e7de3aa54735080e23d2ffdec080cdb14315c334673314b3898aa206e",
+      "task": "N7",
+      "arm": "a",
+      "original_prompt_sha256": "9732b4526e14ad0dc4dc0971b05fb9dc62015fe986cb26e3fffdc29f85b6163d",
+      "reconstructed_prompt": "「設定を保存しましした」の誤字だけ直してください。他は変更しないでください。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": []
+    },
+    {
+      "receipt": "native/N7-b-1.json",
+      "receipt_sha256": "772b5f3de2dc2bb42cb04fffc40d069679133339c4e1c82d1cddd62efe4654ae",
+      "task": "N7",
+      "arm": "b",
+      "original_prompt_sha256": "9732b4526e14ad0dc4dc0971b05fb9dc62015fe986cb26e3fffdc29f85b6163d",
+      "reconstructed_prompt": "「設定を保存しましした」の誤字だけ直してください。他は変更しないでください。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": []
+    },
+    {
+      "receipt": "native/N7-baseline-1.json",
+      "receipt_sha256": "3d41f11655600e0819d8b6299cb880d9da7ae5acc50613d3f4be55188fb81cde",
+      "task": "N7",
+      "arm": "baseline",
+      "original_prompt_sha256": "9732b4526e14ad0dc4dc0971b05fb9dc62015fe986cb26e3fffdc29f85b6163d",
+      "reconstructed_prompt": "「設定を保存しましした」の誤字だけ直してください。他は変更しないでください。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": []
+    },
+    {
+      "receipt": "native/N7-c-1.json",
+      "receipt_sha256": "f5f8dab7fce17e0e4985e1674b2f161b9d05719aa9f4dfe1a8bee332bbaf37de",
+      "task": "N7",
+      "arm": "c",
+      "original_prompt_sha256": "9732b4526e14ad0dc4dc0971b05fb9dc62015fe986cb26e3fffdc29f85b6163d",
+      "reconstructed_prompt": "「設定を保存しましした」の誤字だけ直してください。他は変更しないでください。\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": []
+    },
+    {
+      "receipt": "native/N8-a-1.json",
+      "receipt_sha256": "53f2b5107c2885d2af353e1ab9409ca74e8bd97b343e7c6dad00176e41eab632",
+      "task": "N8",
+      "arm": "a",
+      "original_prompt_sha256": "3da152cf74e06d3849f019344be046e2f24ab8ba4dcbe0bd21d06469a925e696",
+      "reconstructed_prompt": "次のコードだけを、aとbの和を返す形に直してください。説明文は不要です。\ndef add(a, b):\n    return a - b\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": []
+    },
+    {
+      "receipt": "native/N8-b-1.json",
+      "receipt_sha256": "c9d91d76bf86cc6f925aa6bda9af8782f186ed0d0b4051b8c45d71afbcc16305",
+      "task": "N8",
+      "arm": "b",
+      "original_prompt_sha256": "3da152cf74e06d3849f019344be046e2f24ab8ba4dcbe0bd21d06469a925e696",
+      "reconstructed_prompt": "次のコードだけを、aとbの和を返す形に直してください。説明文は不要です。\ndef add(a, b):\n    return a - b\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": []
+    },
+    {
+      "receipt": "native/N8-baseline-1.json",
+      "receipt_sha256": "8a165e1ea718bb5e6141912ae9c737b9a6dbd02ddff2958d861a1beb45e1a3db",
+      "task": "N8",
+      "arm": "baseline",
+      "original_prompt_sha256": "3da152cf74e06d3849f019344be046e2f24ab8ba4dcbe0bd21d06469a925e696",
+      "reconstructed_prompt": "次のコードだけを、aとbの和を返す形に直してください。説明文は不要です。\ndef add(a, b):\n    return a - b\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": []
+    },
+    {
+      "receipt": "native/N8-c-1.json",
+      "receipt_sha256": "ce51f49eebbbf64ae0cd20ab241bb0989695381a45d978c9ac6314922631d2f5",
+      "task": "N8",
+      "arm": "c",
+      "original_prompt_sha256": "3da152cf74e06d3849f019344be046e2f24ab8ba4dcbe0bd21d06469a925e696",
+      "reconstructed_prompt": "次のコードだけを、aとbの和を返す形に直してください。説明文は不要です。\ndef add(a, b):\n    return a - b\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。",
+      "expected_reads": []
+    }
+  ],
+  "internal_application_count": "not observable"
+}

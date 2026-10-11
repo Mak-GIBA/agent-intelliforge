@@ -11,7 +11,7 @@ import zlib
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT.parents[1]/'install_codex_yomiyasu.sh'
 HEADER = '''#!/usr/bin/env bash
-# yomiyasu Japanese writing integration 2.0.0-proposal.1 — standalone.
+# yomiyasu Japanese writing integration 2.0.0-proposal.3 — standalone.
 # Default: dry-run. --update --apply migrates an owned 1.3.0 installation.
 # --update --upstream-only --apply refreshes upstream without changing local rules.
 # Python 3.10+; no npm/pip/sudo/hooks/AGENTS.md edits. Save to a file before running.

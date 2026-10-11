@@ -1,0 +1,56 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 28.36,
+  "prompt_sha256": "9837e0ea59a9a063ff95143f2a19894e80c64b2b84a6c0cf11fe5763e4703683",
+  "usage": {
+    "input_tokens": 17847,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1035,
+    "reasoning_output_tokens": 516
+  },
+  "tools": [],
+  "error": null,
+  "ratings": [
+    {
+      "id": "X01",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「新方式は起動時に読み込んだ設定を保持するため、要求ごとの読み取りを省けます。」と仕組みと効果が明確。現行方式の問題、新方式の改善、再起動条件と担当者の役割が順に整理されている。",
+      "output_file": "W03-baseline-1.json"
+    },
+    {
+      "id": "X02",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「推論時間は未測定であり、検索時の処理速度の差は不明である。」と限界を明示。比較条件、mAP、学習時間を保持し、少数クラスへの一般化を控える解釈も素材に基づいている。",
+      "output_file": "W09-c-1.json"
+    },
+    {
+      "id": "X03",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「試験運用の結果は良好だったが、その判断の根拠となる指標と数値は資料に記載されていない。」と結果と根拠の不足を結び付けている。導入未決定と確認の必要性も保持し、新たな結論を加えていない。",
+      "output_file": "W10-a-2.json"
+    },
+    {
+      "id": "X04",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「表記が異なると、同じ意味でも検索結果に含まれないことがある。」と条件と可能性を保持。文字列照合の仕組みから検索上の限界へ自然につながり、制作報告や追加対応の申し出も残っていない。",
+      "output_file": "W04-c-1.json"
+    }
+  ]
+}

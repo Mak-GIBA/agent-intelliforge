@@ -1,0 +1,9 @@
+{
+  "source_path": "native_provenance_audit.py",
+  "source_sha256": "7a373f34d518dab71dd1f5c0f46d798bf07ac9fac66f49fdd804b7e403ce7288",
+  "line_start": 31,
+  "line_end": 36,
+  "checked_at": "2026-10-11T12:43:13.940805+00:00",
+  "excerpt": "verified = verify_native.verify(evidence, ROOT / 'tools/codex-yomiyasu/evaluation-v200')\ncounts = {arm: sum(row['route_pass'] for name, row in verified.items() if '-' + arm + '-' in name)\n          for arm in ['baseline', 'a', 'b', 'c']}\nassert counts == {'baseline': 6, 'a': 5, 'b': 8, 'c': 8}\nprint(json.dumps({'status': 'verified', 'exact_original_prompt_hashes': 32,\n                  'full_read_receipts': 32, 'route_passes': counts,",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

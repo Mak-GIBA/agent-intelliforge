@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 24.97,
+  "prompt_sha256": "552f766b1f29b1e6b446a457b347c10f2eebca69b560ce65c06e04380cc438cd",
+  "output": "入力時に必須項目が空欄でないかを確認します。空欄がある場合は送信を止め、該当欄にメッセージを表示します。ただし、入力内容が事実かどうかは確認しません。",
+  "usage": {
+    "input_tokens": 68388,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 676,
+    "reasoning_output_tokens": 610
+  },
+  "tools": [],
+  "error": null,
+  "task": "E11",
+  "arm": "baseline",
+  "repeat": 1
+}

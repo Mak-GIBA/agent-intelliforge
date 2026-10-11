@@ -1,0 +1,66 @@
+{
+  "status": "reviewed",
+  "reason": "R1のみを保存済み共通入力、実際の完成稿、原生成・採点receipt、現runの親監査成果物で確認した。検査の再実行や編集は行っていない。",
+  "issues": [],
+  "checks": [
+    {
+      "check_id": "R1",
+      "result": "pass",
+      "reason": "保存済み共通入力との照合範囲で合格。採用候補Cの全24稿を読み、原receiptのcompletedと対応する原評定のmeaning_errors=[]を確認した。重大な意味変更は観測されなかった。指定6課題は全条件の取得稿も照合し、W01のmAP・時間比・同条件・未評価、W02の転換率・p値・有意差未確認・判断不能、W06の90日保存義務・通知推奨・未決定、W10の導入未決定・根拠未記載・運用担当者の確認必要を保持していた。W08は引用文・参照番号と引用の役割、W11は手順番号・数式・コード・失敗時だけの再試行条件を保持していた。文字列検査に加えて文意と保存済み評定の根拠を読んだ。親監査EV-00009/EV-00013は現runでexit_code=0、timeout/truncationなし。W08-a-1とW02-b-1はtimeoutで完成稿・評定がなく、意味保持は未観測のまま扱う。同一モデルの自動評定、小規模固定課題、元prompt本文の欠落による生成時入力の独立確認不能は残る。一般的な意味保持保証やCの品質優位は導かない。",
+      "evidence_ids": [
+        "EV-00007",
+        "EV-00008",
+        "EV-00009",
+        "EV-00011",
+        "EV-00013"
+      ]
+    }
+  ],
+  "code_evidence": [],
+  "dossier_json": "",
+  "sources": [
+    {
+      "id": "S6",
+      "title": "主比較の保存済み最終出力と評定：writing-paired.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-paired.json",
+      "locator": "tasks; trials[*].output, values.delivered_pass, grading_evidence",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "S7",
+      "title": "保護対象の保存済み最終出力：protected-examples.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/artifacts/experiments/artifacts/protected-examples.json",
+      "locator": "examples[*].common_input, output, literal_probes, specified_step_numbers, specific_production_note_removed; literal_findings",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "S10",
+      "title": "主比較の原receiptと採点履歴：writing-audit.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-audit.json",
+      "locator": "records[*].receipt, grading_evidence; grading_history; execution_notes_original.deviations; limitations; audit_status",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "baseline_S_PARENT_WRITING",
+      "title": "親の主比較監査実行receipt",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/receipt.json",
+      "locator": "experiment_id, command, check_ids, started_at, finished_at, exit_code, timed_out, truncated, artifacts",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "baseline_S_PARENT_PROTECTED",
+      "title": "親の保護対象・holdout監査実行receipt",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/receipt.json",
+      "locator": "experiment_id, command, check_ids, started_at, finished_at, exit_code, timed_out, truncated, artifacts",
+      "read_level": "relevant_sections"
+    }
+  ],
+  "reference_implementations": [],
+  "complexity_ok": true,
+  "complexity_reason": "R1の確認は既存入力・完成稿・評定・receiptの限定照合で完結し、追加実装や依存関係を必要としない。候補工程の計算量や因果的な時間差はこの確認では測定していない。"
+}

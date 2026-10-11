@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 22.21,
+  "prompt_sha256": "97dd1a26dd0f9ff7a9a17ef8c519e4f971b137ebfc1565dc2a5d06453499de0f",
+  "output": "次の引用は文章に残った応答表現の例である。[1]\n\n> 「ご依頼に沿って説明します」という定型句が含まれていた。",
+  "usage": {
+    "input_tokens": 70177,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 546,
+    "reasoning_output_tokens": 501
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "W08-baseline-1",
+  "task": "W08",
+  "repeat": 1,
+  "arm": "baseline"
+}

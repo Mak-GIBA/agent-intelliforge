@@ -1,0 +1,9 @@
+{
+  "source_path": "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/SKILL.md",
+  "source_sha256": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c",
+  "line_start": 8,
+  "line_end": 8,
+  "checked_at": "2026-10-11T12:02:51.966268+00:00",
+  "excerpt": "原文の意味・情報量・確信度を保ち、以下の原則で構成だけを整える。構成メモや指示者への説明を本文へ混ぜない。診断だけなら書き換えない。yomiyasuの工程として読まれた場合や、同時に選択された場合は構成の点検を一度だけ行い、再帰的に呼び合わない。",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 16.08,
+  "prompt_sha256": "4898edbbca8dbfac6b49854473599837c660ce29c3c7262c41991432b252e2cf",
+  "output": "佐藤さん\n\n明日の打ち合わせを14時から15時に変更できますか。\n難しければ、予定どおり14時でお願いします。\n\n田中",
+  "usage": {
+    "input_tokens": 69040,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 335,
+    "reasoning_output_tokens": 293
+  },
+  "tools": [],
+  "error": null,
+  "task": "E07",
+  "arm": "baseline",
+  "repeat": 2
+}

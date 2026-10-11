@@ -1,0 +1,35 @@
+{
+  "writing": {
+    "trials": 96,
+    "statuses": {
+      "completed": 94,
+      "timeout": 2
+    },
+    "prompts_verified": 96,
+    "ratings_complete": true,
+    "summary_sha256": "b4f099fd483a2bf889b79617f1aa129b0dcbec5d3e1a3be634689154306ed08a"
+  },
+  "holdout": {
+    "trials": 12,
+    "statuses": {
+      "completed": 12
+    },
+    "prompts_verified": 12,
+    "ratings_complete": true,
+    "summary_sha256": "e56c239191eba26a9a3d4a2855869803a64af14b001b78cb03a403ad8a9e09ac"
+  },
+  "native": {
+    "trials": 32,
+    "routes_passed": 27
+  },
+  "final_assets": {
+    "candidate": "c",
+    "identical_files": 12,
+    "metadata_updates": {
+      "paragraph-writing/UPSTREAM.json": "Release revision and actual unchanged SKILL body digest",
+      "references/sources.md": "Appended source attribution; excluded from generation guides",
+      "japanese-direct-writing/SOURCE.json": "Release revision and actual unchanged SKILL body digest"
+    }
+  },
+  "contract_sha256": "3157b997c673efd5c17e4efd056b3fc540b8976a1b2e6c8954fce428deac6d99"
+}

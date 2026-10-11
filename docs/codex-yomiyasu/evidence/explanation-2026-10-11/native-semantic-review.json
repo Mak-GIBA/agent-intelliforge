@@ -1,0 +1,7 @@
+{
+  "trial": "N-depth",
+  "static_compare_exit_code": 1,
+  "static_status": "REVIEW_REQUIRED",
+  "meaning_preservation_verified": false,
+  "parent_review": "The original material and final output retain per-request file reads, proposed startup loading into memory, unchanged retained values after file edits, restart-based reload, and unmeasured time. The output explains these relations without a measured performance claim. Static additions and marker counts remain review candidates; the successful native route is only a full-file loading check, not automatic semantic certification."
+}

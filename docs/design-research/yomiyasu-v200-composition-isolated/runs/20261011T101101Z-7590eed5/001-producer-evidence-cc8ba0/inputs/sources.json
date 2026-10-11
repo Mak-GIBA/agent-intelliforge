@@ -1,0 +1,327 @@
+{
+  "S1": {
+    "source": {
+      "id": "S1",
+      "title": "Humanizer: remove AI writing patterns",
+      "url": "https://github.com/blader/humanizer/blob/d4b81278e6604e237bf32f0f7ce5c217aee94269/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S1.md",
+      "locator": "SKILL.md, How to work / What to return, lines 32–53",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00001"
+  },
+  "S2": {
+    "source": {
+      "id": "S2",
+      "title": "Stop Slop",
+      "url": "https://github.com/hardikpandya/stop-slop/blob/8da1f030185bdfe8471220585162991eaeb970e9/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S2.md",
+      "locator": "SKILL.md, Core Rules / Quick Checks, lines 13–46",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00002"
+  },
+  "S3": {
+    "source": {
+      "id": "S3",
+      "title": "natural-japanese",
+      "url": "https://github.com/coji/natural-japanese/blob/01802de30fffcd6f5dcc74edb298fc3a6df5ca19/skills/natural-japanese/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S3.md",
+      "locator": "SKILL.md, 検査(2) — 判断台帳と二つのレビュー, lines 86–109",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00003"
+  },
+  "S4": {
+    "source": {
+      "id": "S4",
+      "title": "Stop AI Slop(日本語版)",
+      "url": "https://github.com/iKora128/stop-ai-slop-jp/blob/926392e2713841d689e4b3bf7347e89cf4665c0d/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S4.md",
+      "locator": "SKILL.md, コアルール A/B, lines 29–43",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00004"
+  },
+  "S5": {
+    "source": {
+      "id": "S5",
+      "title": "deslop-ja: 日本語のAI臭を消す",
+      "url": "https://github.com/nakashimatakaya/deslop-ja/blob/3fda6f7316b4d0d14e0660ec14bf21d2f8fc6978/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S5.md",
+      "locator": "SKILL.md, 工程 lines 18–27; モード lines 79–93; 誤検知に注意する項目 lines 101–108",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00005"
+  },
+  "S6": {
+    "source": {
+      "id": "S6",
+      "title": "主比較の保存済み最終出力と評定：writing-paired.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-paired.json",
+      "locator": "tasks; trials[*].output, values.delivered_pass, grading_evidence",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00007"
+  },
+  "S7": {
+    "source": {
+      "id": "S7",
+      "title": "保護対象の保存済み最終出力：protected-examples.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/artifacts/experiments/artifacts/protected-examples.json",
+      "locator": "examples[*].common_input, output, literal_probes, specified_step_numbers, specific_production_note_removed; literal_findings",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00011"
+  },
+  "S8": {
+    "source": {
+      "id": "S8",
+      "title": "補足holdoutの保存済み最終出力と評定：holdout-paired.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/artifacts/experiments/artifacts/holdout-paired.json",
+      "locator": "holdout_task_manifest; paired_outputs[*].output, receipt, grading_evidence; not_a_primary_evaluation_export",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00012"
+  },
+  "S9": {
+    "source": {
+      "id": "S9",
+      "title": "nativeの保存済み実tool出力：native-audit.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/artifacts/experiments/artifacts/native-audit.json",
+      "locator": "records[*].receipt.tools, full_read_evidence, route_pass_recalculated, original_prompt_text_verified; excluded_setup; excluded_historical_caches; original_prompt_text_available; audit_status",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00015"
+  },
+  "S10": {
+    "source": {
+      "id": "S10",
+      "title": "主比較の原receiptと採点履歴：writing-audit.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-audit.json",
+      "locator": "records[*].receipt, grading_evidence; grading_history; execution_notes_original.deviations; limitations; audit_status",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00008"
+  },
+  "baseline_S_MECHANISM": {
+    "source": {
+      "id": "baseline_S_MECHANISM",
+      "title": "baseline固定SKILLの工程条文：N1実tool出力",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/artifacts/experiments/artifacts/native-audit.json",
+      "locator": "records[task_id=N1,candidate_id=baseline].receipt.tools[1].aggregated_output, embedded baseline SKILL.md lines 16–72",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00015"
+  },
+  "baseline_S_PARENT_WRITING": {
+    "source": {
+      "id": "baseline_S_PARENT_WRITING",
+      "title": "親の主比較監査実行receipt",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/receipt.json",
+      "locator": "experiment_id, command, check_ids, started_at, finished_at, exit_code, timed_out, truncated, artifacts",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00009"
+  },
+  "baseline_S_PARENT_PROTECTED": {
+    "source": {
+      "id": "baseline_S_PARENT_PROTECTED",
+      "title": "親の保護対象・holdout監査実行receipt",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/receipt.json",
+      "locator": "experiment_id, command, check_ids, started_at, finished_at, exit_code, timed_out, truncated, artifacts",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00013"
+  },
+  "baseline_S_PARENT_NATIVE": {
+    "source": {
+      "id": "baseline_S_PARENT_NATIVE",
+      "title": "親のnative監査実行receipt",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/receipt.json",
+      "locator": "experiment_id, command, check_ids, started_at, finished_at, exit_code, timed_out, truncated, artifacts",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00016"
+  },
+  "a_S_MECHANISM": {
+    "source": {
+      "id": "a_S_MECHANISM",
+      "title": "Aの工程条文：比較除外された準備receipt内の原tool出力",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/artifacts/experiments/artifacts/native-audit.json",
+      "locator": "excluded_setup.receipt.tools[1].aggregated_output, embedded a SKILL.md lines 20–26/46–50/72–74; embedded references/workflow.md lines 3–9",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00015"
+  },
+  "a_S_AUXILIARY": {
+    "source": {
+      "id": "a_S_AUXILIARY",
+      "title": "Aの補助SKILL条文：N3/N5の成功した原tool出力",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/artifacts/experiments/artifacts/native-audit.json",
+      "locator": "records[task_id=N3,candidate_id=a].receipt.tools[0].aggregated_output, paragraph-writing SKILL.md lines 1–8 and final paragraph; records[task_id=N5,candidate_id=a].receipt.tools[0].aggregated_output, japanese-direct-writing SKILL.md lines 1–8 and final paragraph",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00015"
+  },
+  "a_S_REFERENCE_COST": {
+    "source": {
+      "id": "a_S_REFERENCE_COST",
+      "title": "Aとbaselineの参考elapsed/usage：親監査の実成果物",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-audit.json",
+      "locator": "recalculated.a.reference_time_and_usage; recalculated.baseline.reference_time_and_usage; records[candidate_id=a/baseline].receipt.elapsed_seconds, usage",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00008"
+  },
+  "a_S_CONTRACT": {
+    "source": {
+      "id": "a_S_CONTRACT",
+      "title": "候補Aの比較に用いた凍結評価contract",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-producer-evidence-0b112f/inputs/evaluation_contract.json",
+      "locator": "dataset; controls[5–6]; metrics[0].acceptance_delta, grading; limitations",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00017"
+  },
+  "b_S_MECHANISM": {
+    "source": {
+      "id": "b_S_MECHANISM",
+      "title": "Bの四区分整理とAの既存保護条文：保存済み原tool出力",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/artifacts/experiments/artifacts/native-audit.json",
+      "locator": "records[5].receipt.tools[0].aggregated_output lines 20–28; records[5].receipt.tools[3].aggregated_output lines 3–10; excluded_setup.receipt.tools[1].aggregated_output, embedded a SKILL.md lines 16–22",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00015"
+  },
+  "b_S_WRITING": {
+    "source": {
+      "id": "b_S_WRITING",
+      "title": "Bの24試行の最終出力と対応評定",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-paired.json",
+      "locator": "trials[candidate_id=b].output, values.delivered_pass, grading_evidence; W02-b-1 timeout and null rating",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00007"
+  },
+  "b_S_PROTECTED": {
+    "source": {
+      "id": "b_S_PROTECTED",
+      "title": "Bの数値・義務・引用・コード・メール依頼の保護記録",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/artifacts/experiments/artifacts/protected-examples.json",
+      "locator": "examples[candidate_id=b].common_input, literal_probes, specified_step_numbers, step_numbers_retained, specific_production_note_removed; examples[18].output; limitations",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00011"
+  },
+  "b_S_NATIVE": {
+    "source": {
+      "id": "b_S_NATIVE",
+      "title": "Bの必要読込・局所経路・負対照と比較条件の原記録",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/artifacts/experiments/artifacts/native-audit.json",
+      "locator": "records[candidate_id=b|a|baseline].receipt.status, expected_reads_from_saved_metadata, full_read_evidence, route_pass_recalculated, negative_control, unexpected_skill_file_commands, internal_application_count; records[1].receipt.tools[1].aggregated_output lines 1–69; records[9,17].receipt.tools[0].aggregated_output; original_prompt_text_available; limitations",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00015"
+  },
+  "b_S_COST_HISTORY": {
+    "source": {
+      "id": "b_S_COST_HISTORY",
+      "title": "Bと基準案・Aの原receipt、評定差、参考費用、失敗履歴",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-audit.json",
+      "locator": "records[candidate_id=b|a|baseline].receipt.status/elapsed_seconds/usage, values.delivered_pass, grading_evidence.quality; W09-a-1.output/rating; grading_history timeout receipts and scheduled_original_units_without_saved_receipt; execution_notes_original.deviations; recalculated.b/a/baseline; limitations",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00008"
+  },
+  "b_S_HOLDOUT": {
+    "source": {
+      "id": "b_S_HOLDOUT",
+      "title": "補足holdoutの保存記録におけるBの欠測",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/artifacts/experiments/artifacts/holdout-paired.json",
+      "locator": "scope; paired_outputs[*].task_id, candidate_id, receipt.status; not_a_primary_evaluation_export",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00012"
+  },
+  "b_S_CONTRACT": {
+    "source": {
+      "id": "b_S_CONTRACT",
+      "title": "Bの比較に適用する凍結評価contract",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-producer-evidence-534850/inputs/evaluation_contract.json",
+      "locator": "dataset; controls; metrics[0].acceptance_delta/grading; limitations",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00018"
+  }
+}

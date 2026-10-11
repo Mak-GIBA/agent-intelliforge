@@ -1,0 +1,39 @@
+{
+  "checked_on": "2026-10-11",
+  "skills": [
+    {
+      "name": "japanese-tech-writing",
+      "url": "https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d/8f2d57610a73efc97d743c9b0b0ecb1002e09fa4",
+      "revision": "8f2d57610a73efc97d743c9b0b0ecb1002e09fa4",
+      "raw_url": "https://gist.githubusercontent.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d/raw/ea7ea5626ef5ac0afc1d38e9c536f3ae6f48ea5d/SKILL.md",
+      "sha256": "ad350e0e6f5630fd94d8ab98a6aee194053b0096fdc944c23e271d6dfa09ee68",
+      "bytes": 23678
+    },
+    {
+      "name": "cognitive-rhythm-writing",
+      "url": "https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432/a3b1e26beced71d582e13314fb6f5b179b023c76",
+      "revision": "a3b1e26beced71d582e13314fb6f5b179b023c76",
+      "raw_url": "https://gist.githubusercontent.com/k16shikano/eb2929f13ed19c97188393d297be8432/raw/6b60201952443293dbc5ac306125439ed1977101/SKILL.md",
+      "sha256": "65486e64f33ce2ab03c5db198b1f92e2838e71abfb1a80085d1b405340c11437",
+      "bytes": 17010
+    },
+    {
+      "name": "natural-japanese",
+      "url": "https://github.com/coji/natural-japanese/blob/9a78a42964096da509b8f3e011f0085a5f080151/skills/natural-japanese/SKILL.md",
+      "revision": "9a78a42964096da509b8f3e011f0085a5f080151",
+      "raw_url": "https://raw.githubusercontent.com/coji/natural-japanese/9a78a42964096da509b8f3e011f0085a5f080151/skills/natural-japanese/SKILL.md",
+      "sha256": "0f662a6ab4955b9146a138a38b73a619b27fa1448ef71e27fcc57f67d3ad0267",
+      "bytes": 19976
+    }
+  ],
+  "additional_sources": [
+    "https://developers.google.com/tech-writing/one/audience",
+    "https://developers.google.com/tech-writing/two/sample-code",
+    "https://writingcenter.fas.harvard.edu/anatomy-body-paragraph",
+    "https://aclanthology.org/2020.acl-main.442/"
+  ],
+  "failed_access": [
+    "https://developers.google.com/tech-writing/one/basics"
+  ],
+  "policy": "Author primary documents; no copied full skills or inferred tools"
+}

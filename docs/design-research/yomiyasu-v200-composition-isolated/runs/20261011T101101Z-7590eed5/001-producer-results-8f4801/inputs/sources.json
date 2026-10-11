@@ -1,0 +1,67 @@
+{
+  "S1": {
+    "source": {
+      "id": "S1",
+      "title": "Humanizer: remove AI writing patterns",
+      "url": "https://github.com/blader/humanizer/blob/d4b81278e6604e237bf32f0f7ce5c217aee94269/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S1.md",
+      "locator": "SKILL.md, How to work / What to return, lines 32–53",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00001"
+  },
+  "S2": {
+    "source": {
+      "id": "S2",
+      "title": "Stop Slop",
+      "url": "https://github.com/hardikpandya/stop-slop/blob/8da1f030185bdfe8471220585162991eaeb970e9/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S2.md",
+      "locator": "SKILL.md, Core Rules / Quick Checks, lines 13–46",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00002"
+  },
+  "S3": {
+    "source": {
+      "id": "S3",
+      "title": "natural-japanese",
+      "url": "https://github.com/coji/natural-japanese/blob/01802de30fffcd6f5dcc74edb298fc3a6df5ca19/skills/natural-japanese/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S3.md",
+      "locator": "SKILL.md, 検査(2) — 判断台帳と二つのレビュー, lines 86–109",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00003"
+  },
+  "S4": {
+    "source": {
+      "id": "S4",
+      "title": "Stop AI Slop(日本語版)",
+      "url": "https://github.com/iKora128/stop-ai-slop-jp/blob/926392e2713841d689e4b3bf7347e89cf4665c0d/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S4.md",
+      "locator": "SKILL.md, コアルール A/B, lines 29–43",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00004"
+  },
+  "S5": {
+    "source": {
+      "id": "S5",
+      "title": "deslop-ja: 日本語のAI臭を消す",
+      "url": "https://github.com/nakashimatakaya/deslop-ja/blob/3fda6f7316b4d0d14e0660ec14bf21d2f8fc6978/SKILL.md",
+      "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S5.md",
+      "locator": "SKILL.md, 工程 lines 18–27; モード lines 79–93; 誤検知に注意する項目 lines 101–108",
+      "read_level": "relevant_sections"
+    },
+    "status": "local",
+    "reason": "Actual local artifact with hash",
+    "evidence_id": "EV-00005"
+  }
+}

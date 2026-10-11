@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 268.25,
+  "prompt_sha256": "960baa99aefda4a48a36668dcbe5262a901b19fb3e7fcdce3813df139f5b2096",
+  "output": "同じデータセットと同じバックボーンで検索方式AとBを比較した結果、mAPはBがAを上回った。AのmAPは0.61、Bは0.65だった。\n\nBはmAPが高い一方、学習にはAの2倍の時間を要した。推論時間は未測定であり、推論時の処理速度については両方式を比較できない。\n\nクラスごとの件数は不均衡で、少数クラスごとの性能は未評価である。このため、mAPの差だけでは、少数クラスでもBがAを上回るとは判断できない。",
+  "usage": {
+    "input_tokens": 74127,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1695,
+    "reasoning_output_tokens": 1539
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "W09-b-2",
+  "task": "W09",
+  "repeat": 2,
+  "arm": "b"
+}

@@ -29,7 +29,7 @@ import uuid
 import zipfile
 import zlib
 
-VERSION = '2.0.0-proposal.1'
+VERSION = '2.0.0-proposal.3'
 REPO = 'nanaism/yomiyasu'
 BASE_REPO_COMMIT = 'f0efd23a53c1c1cd028775aa415cc3f34ca5661a'
 COMPONENTS = ('yomiyasu', 'paragraph-writing', 'japanese-direct-writing')
@@ -730,13 +730,17 @@ def extract(destination: Path) -> dict:
 
 
 def self_test() -> int:
-    module = types.ModuleType('proposal_tests')
-    module.I = sys.modules[__name__]
-    module.A = assets()
-    sys.modules[module.__name__] = module
-    exec(compile(module.A['tests/test_installer.py'].decode('utf-8'), 'test_installer.py', 'exec'), module.__dict__)
+    bundle = assets()
+    suite = unittest.TestSuite()
+    for path in sorted(k for k in bundle if k.startswith('tests/test_') and k.endswith('.py')):
+        module = types.ModuleType('proposal_tests_'+Path(path).stem)
+        module.I = sys.modules[__name__]
+        module.A = bundle
+        module.__file__ = str(Path(__file__).resolve().parent/path)
+        sys.modules[module.__name__] = module
+        exec(compile(bundle[path].decode('utf-8'), path, 'exec'), module.__dict__)
+        suite.addTests(unittest.defaultTestLoader.loadTestsFromModule(module))
     print('Offline tests: simulated upstream, no Codex model invocation.', flush=True)
-    suite = unittest.defaultTestLoader.loadTestsFromModule(module)
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     return 0 if result.wasSuccessful() else 1
 

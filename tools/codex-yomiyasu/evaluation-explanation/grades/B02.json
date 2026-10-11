@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 49.0,
+  "prompt_sha256": "8786778b7e0bc9ccd39edf51ba3582716b02149da63da86dd538aa7d1adfbb0b",
+  "output": "{\"ratings\":[{\"id\":\"O005\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"15時への変更依頼と、難しければ14時にする条件が明確。同僚宛てのメールとして自然で、不要な説明もない。\"},{\"id\":\"O006\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"応答の改善、原因未調査、測定値なし、継続性不明を簡潔かつ正確に保持している。\"},{\"id\":\"O007\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"数値と各留保を保持し、結果と解釈を段落で分けている。入力への文書追加も明確。ただし、検索が差の原因か『確認していない』と『結論づけられない』を重ねる部分はやや冗長。\"},{\"id\":\"O008\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"空欄の確認、送信停止、該当欄への表示という処理が明確。事実性を確認しない制限も保持し、制作説明や不要な留保を除いている。\"}]}",
+  "usage": {
+    "input_tokens": 15829,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1488,
+    "reasoning_output_tokens": 1034
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O005",
+    "O006",
+    "O007",
+    "O008"
+  ],
+  "ratings": [
+    {
+      "id": "O005",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "15時への変更依頼と、難しければ14時にする条件が明確。同僚宛てのメールとして自然で、不要な説明もない。"
+    },
+    {
+      "id": "O006",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "応答の改善、原因未調査、測定値なし、継続性不明を簡潔かつ正確に保持している。"
+    },
+    {
+      "id": "O007",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "数値と各留保を保持し、結果と解釈を段落で分けている。入力への文書追加も明確。ただし、検索が差の原因か『確認していない』と『結論づけられない』を重ねる部分はやや冗長。"
+    },
+    {
+      "id": "O008",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "空欄の確認、送信停止、該当欄への表示という処理が明確。事実性を確認しない制限も保持し、制作説明や不要な留保を除いている。"
+    }
+  ]
+}

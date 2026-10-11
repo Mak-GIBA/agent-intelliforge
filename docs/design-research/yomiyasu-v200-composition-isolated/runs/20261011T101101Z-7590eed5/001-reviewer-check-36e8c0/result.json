@@ -1,0 +1,89 @@
+{
+  "status": "reviewed",
+  "reason": "L1のみを原典・固定資材・同一runの実行記録と照合した。再実行や編集は行っていない。",
+  "issues": [],
+  "checks": [
+    {
+      "check_id": "L1",
+      "result": "pass",
+      "reason": "実資材は、baselineの既存段落設計・留保点検・読者向け全文確認、Aの実補助SKILL読込、Bの執筆前四区分、Cの下書き後レビューと最大一回の局所改稿という説明を支持する。S1の情報保持と改稿後点検、S3の文脈判断・構造／読みやすさレビュー、S5の執筆前設計と誤検知保護との対応が示され、S2/S4の一律規則は意味保持を優先して限定されている。4条件限定は指定された基準案と改善3案および保存資材の範囲による。原典は設計根拠として扱われ、効果測定と区別されている。親の3監査は同一runでexit_code=0、timeout・出力切詰めなし。保存結果ではbaseline/Cは各24/24、A/Bは各23/24で、A/Bの未取得稿の品質はnull。W09-c-2の自然さ3と対応するbaselineの4も保持されている。Cの選択は安全条件と後付け完全性条件に基づくprovisionalで、元prompt欠落によるK_ROUTE/K_PROTOCOLのunknownを維持する。Cの品質優位やBの品質劣位を結論していない。L1の適合は、採択や品質改善の認定を意味しない。",
+      "evidence_ids": [
+        "EV-00001",
+        "EV-00002",
+        "EV-00003",
+        "EV-00004",
+        "EV-00005",
+        "EV-00008",
+        "EV-00009",
+        "EV-00013",
+        "EV-00015",
+        "EV-00016"
+      ]
+    }
+  ],
+  "code_evidence": [
+    {
+      "id": "L1-CODE-BASELINE",
+      "path": "tools/codex-yomiyasu/evaluation-v200/baseline/assets/SKILL.md",
+      "line_start": 16,
+      "line_end": 72,
+      "description": "基準案に意味・成果物境界の保護、段落設計、留保点検、読者向け全文確認と修正上限が既にある。"
+    },
+    {
+      "id": "L1-CODE-A-READ",
+      "path": "tools/codex-yomiyasu/evaluation-v200/a/assets/SKILL.md",
+      "line_start": 26,
+      "line_end": 50,
+      "description": "必要な段落・留保工程で補助SKILL実ファイルを読み、未導入の場合に同梱参照を代替とする。"
+    },
+    {
+      "id": "L1-CODE-A-WORKFLOW",
+      "path": "tools/codex-yomiyasu/evaluation-v200/a/assets/references/workflow.md",
+      "line_start": 3,
+      "line_end": 9,
+      "description": "実読込、配置解決、同一タスクでの再読不要、各工程一度、局所依頼と誤字・コードの例外を規定する。"
+    },
+    {
+      "id": "L1-CODE-B-ENTRY",
+      "path": "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md",
+      "line_start": 22,
+      "line_end": 28,
+      "description": "既存の情報保護とAの実読込を維持し、執筆前の四区分整理を追加する。"
+    },
+    {
+      "id": "L1-CODE-B-CONTRACT",
+      "path": "tools/codex-yomiyasu/evaluation-v200/b/assets/references/reader-contract.md",
+      "line_start": 3,
+      "line_end": 10,
+      "description": "本文情報・制作指示・保護する引用・不明情報を分け、混在文の事実と意味を保持する。"
+    },
+    {
+      "id": "L1-CODE-C-ENTRY",
+      "path": "tools/codex-yomiyasu/evaluation-v200/c/assets/SKILL.md",
+      "line_start": 64,
+      "line_end": 74,
+      "description": "既存の全文確認・修正上限・実補助SKILL連携に、提出前レビュー一度と条件付き局所改稿を追加する。"
+    },
+    {
+      "id": "L1-CODE-C-REVIEW",
+      "path": "tools/codex-yomiyasu/evaluation-v200/c/assets/references/reader-review.md",
+      "line_start": 3,
+      "line_end": 7,
+      "description": "成果物境界、意味、段落、定型表現を順に確認し、正当な依頼・研究目的・引用を保護する。問題がある箇所だけ最大一回改稿する。"
+    }
+  ],
+  "dossier_json": "",
+  "sources": [
+    {
+      "id": "L1_S_DESIGN_PASSAGES",
+      "title": "L1対象の候補機構・原典対応・条件付き選択の説明",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-reviewer-check-36e8c0/inputs/proposal_design.json",
+      "locator": "decoded dossier_json: claims C1–C5 and c_C_PRECEDENT; method_ideas.baseline, sources[id=S1..S5], candidates[id=a,b,c].mechanistic_explanation/transfer_mapping/prior_art_difference/resource_tradeoff, comparison_plan, selection, notes; decision; reader_guide.comparison_exception",
+      "read_level": "relevant_sections"
+    }
+  ],
+  "reference_implementations": [],
+  "complexity_ok": true,
+  "complexity_reason": "追加工程は実参照、Bの執筆前整理、Cのレビュー一度と条件付き局所改稿最大一回として具体化されている。再読・重複工程・再帰呼出しを避け、局所依頼の例外も保持する。これは設計上の工程上限であり、内部適用回数、計算量、因果的速度差、課金節約の測定ではない。追加手間に見合う品質改善や最適性は未確認のままである。"
+}

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1210" height="2203" viewBox="0 0 1210 2203" role="img" aria-labelledby="title desc">
+<title id="title">追加レビューの四項目と改稿条件</title>
+<desc id="desc">下書きと素材から、制作説明、情報と意味、段落と根拠、定型表現を順に確認し、問題リストを作る。空なら同じ稿を提出し、問題があれば一回の局所改稿と意味照合を行う。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7" fill="#333"/></marker></defs>
+<rect width="1210" height="2203" fill="white"/>
+<g font-family="Noto Sans CJK JP, Meiryo, sans-serif" fill="#161616">
+<text x="605.0" y="35" text-anchor="middle" font-size="20" font-weight="bold">追加レビューの四項目と改稿条件</text>
+<text x="605.0" y="75" text-anchor="middle" font-size="13">概念図：実線は処理の流れ、破線はフィードバック。性能の実測図ではありません。</text>
+<path d="M425.0,194 V257.0 H425.0 V316" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="387.5" y="227.0" width="75.0" height="20" fill="white"/>
+<text x="425.0" y="240.0" font-size="12" text-anchor="middle">d、x、r、P</text>
+<path d="M425.0,434 V497.0 H425.0 V556" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="361.5" y="467.0" width="127.0" height="20" fill="white"/>
+<text x="425.0" y="480.0" font-size="12" text-anchor="middle">同じ稿と境界の指摘</text>
+<path d="M425.0,674 V737.0 H425.0 V796" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="361.5" y="707.0" width="127.0" height="20" fill="white"/>
+<text x="425.0" y="720.0" font-size="12" text-anchor="middle">同じ稿と意味の指摘</text>
+<path d="M425.0,895 V958.0 H425.0 V1017" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="361.5" y="928.0" width="127.0" height="20" fill="white"/>
+<text x="425.0" y="941.0" font-size="12" text-anchor="middle">同じ稿と段落の指摘</text>
+<path d="M425.0,1135 V1198.0 H425.0 V1257" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="361.5" y="1168.0" width="127.0" height="20" fill="white"/>
+<text x="425.0" y="1181.0" font-size="12" text-anchor="middle">四項目の位置と理由</text>
+<path d="M425.0,1356 V1381 H880 V1934 H425.0 V1958" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="885" y="1646.0" width="127.0" height="20" fill="white"/>
+<text x="890" y="1659.0" font-size="12" text-anchor="start">Fが空：同じdを提出</text>
+<path d="M425.0,1356 V1419.0 H425.0 V1478" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="351.75" y="1389.0" width="146.5" height="20" fill="white"/>
+<text x="425.0" y="1402.0" font-size="12" text-anchor="middle">Fが空でない：該当箇所</text>
+<path d="M425.0,1596 V1659.0 H425.0 V1718" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="368.0" y="1629.0" width="114.0" height="20" fill="white"/>
+<text x="425.0" y="1642.0" font-size="12" text-anchor="middle">改稿した稿、x、P</text>
+<path d="M425.0,1836 V1899.0 H425.0 V1958" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="384.25" y="1869.0" width="81.5" height="20" fill="white"/>
+<text x="425.0" y="1882.0" font-size="12" text-anchor="middle">照合後の稿y</text>
+<rect x="270.0" y="99" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="284.0" y="121" font-size="12">共通・維持　D0</text>
+<text x="284.0" y="146" font-size="17" font-weight="bold">下書きと判断材料</text>
+<text x="284.0" y="170" font-size="13">d、x、r、P</text>
+<rect x="270.0" y="320" width="310" height="114" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="284.0" y="342" font-size="12">提案法・追加　M5</text>
+<text x="284.0" y="367" font-size="17" font-weight="bold">制作説明を確認</text>
+<text x="284.0" y="391" font-size="13">応答・制作報告・自己評価・申し出。正当な</text>
+<text x="284.0" y="410" font-size="13">依頼と引用を保護</text>
+<rect x="270.0" y="560" width="310" height="114" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="284.0" y="582" font-size="12">提案法・追加　M5</text>
+<text x="284.0" y="607" font-size="17" font-weight="bold">情報と意味を確認</text>
+<text x="284.0" y="631" font-size="13">脱落・創作、否定・条件・主体・確信度の変</text>
+<text x="284.0" y="650" font-size="13">化</text>
+<rect x="270.0" y="800" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="284.0" y="822" font-size="12">提案法・追加　M5</text>
+<text x="284.0" y="847" font-size="17" font-weight="bold">段落と根拠を確認</text>
+<text x="284.0" y="871" font-size="13">論点と材料の対応。元にない因果を足さない</text>
+<rect x="270.0" y="1021" width="310" height="114" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="284.0" y="1043" font-size="12">提案法・追加　M5</text>
+<text x="284.0" y="1068" font-size="17" font-weight="bold">定型表現を確認</text>
+<text x="284.0" y="1092" font-size="13">定型対比・意義の水増し・抽象語・反復を文</text>
+<text x="284.0" y="1111" font-size="13">脈で判断</text>
+<rect x="270.0" y="1261" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="284.0" y="1283" font-size="12">提案法・追加　M5</text>
+<text x="284.0" y="1308" font-size="17" font-weight="bold">修正位置と理由を整理</text>
+<text x="284.0" y="1332" font-size="13">Fは有限リスト。問題がなければ空</text>
+<rect x="270.0" y="1482" width="310" height="114" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="284.0" y="1504" font-size="12">提案法・追加　M6</text>
+<text x="284.0" y="1529" font-size="17" font-weight="bold">問題箇所を最大一回改稿</text>
+<text x="284.0" y="1553" font-size="13">該当箇所だけを修正し、創作や反復改稿を避</text>
+<text x="284.0" y="1572" font-size="13">ける</text>
+<rect x="270.0" y="1722" width="310" height="114" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="284.0" y="1744" font-size="12">提案法・追加　M6</text>
+<text x="284.0" y="1769" font-size="17" font-weight="bold">素材と保護対象を照合</text>
+<text x="284.0" y="1793" font-size="13">改稿後の意味を確認。重要な未解決点は本文</text>
+<text x="284.0" y="1812" font-size="13">外へ</text>
+<rect x="270.0" y="1962" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="284.0" y="1984" font-size="12">共通・維持　D8</text>
+<text x="284.0" y="2009" font-size="17" font-weight="bold">完成稿y</text>
+<text x="284.0" y="2033" font-size="13">レビューのメモを本文に出さない</text>
+</g>
+</svg>

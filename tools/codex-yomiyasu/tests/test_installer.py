@@ -121,6 +121,25 @@ class InstallerTests(Isolated):
                 self.assertEqual(v, after[k], k)
         self.assertEqual(json.loads(after[I.MANIFEST])['version'], '1.3.0')
         self.assertEqual(json.loads(after[I.MANIFEST])['upstream_commit'], '2'*40)
+    def test_new_explanation_survives_prior_release_migration_and_upstream_refresh(self):
+        previous = {k: v for k, v in A.items() if k != 'references/explanation.md'}
+        with mock.patch.object(I, 'VERSION', '2.0.0-proposal.2'), mock.patch.object(I, 'assets', return_value=previous):
+            self.install(mode='explicit')
+        self.assertNotIn('references/explanation.md', self.snapshot())
+        self.install(update=True)
+        before = self.snapshot()
+        self.assertEqual(before['references/explanation.md'], A['references/explanation.md'])
+        self.assertEqual(json.loads(before[I.MANIFEST])['version'], I.VERSION)
+        meta, upstream, _ = fixture(2)
+        self.resolve_mock.return_value = meta; self.fetch_mock.return_value = upstream
+        self.install(('yomiyasu',), update=True, upstream_only=True)
+        after = self.snapshot()
+        for key in ('SKILL.md', 'references/explanation.md', 'references/review.md', 'agents/openai.yaml'):
+            self.assertEqual(before[key], after[key], key)
+        self.assertEqual(json.loads(after[I.MANIFEST])['version'], I.VERSION)
+        self.assertEqual(json.loads(after[I.MANIFEST])['mode'], 'explicit')
+        self.assertEqual(json.loads(after[I.MANIFEST])['upstream_commit'], '2'*40)
+
     def test_upstream_only_does_not_touch_companions(self):
         self.install(); before = self.snapshot('paragraph-writing')
         self.install(('yomiyasu',), update=True, upstream_only=True)

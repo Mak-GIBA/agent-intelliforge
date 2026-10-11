@@ -1,0 +1,136 @@
+{
+  "status": "reviewed",
+  "reason": "R1のみを原ソース、Cの8件の原receipt、親の現在の実行記録から確認した。検査の再実行や変更は行っていない。",
+  "issues": [],
+  "checks": [
+    {
+      "check_id": "R1",
+      "result": "pass",
+      "reason": "EV-00001は指定コマンドのexit_code=0、timed_out=false、truncated=falseを記録している。CのN1–N8はすべてcompleted。原toolsと固定SKILL全文を照合すると、N1はtools[0]でyomiyasu、tools[2]でparagraph-writingとjapanese-direct-writingを各1回読み込んでいる。N2はtools[0]・[3]・[6]で同じ3種類を各1回読み込んでいる。N3・N4はtools[0]でparagraph-writingのみ、N5・N6はtools[0]でjapanese-direct-writingのみを各1回読み込み、対象読取はすべてexit_code=0で全文を含む。N7・N8はexpected_reads=[]、tools=[]で期待どおり。各集合はnative_tasks()の期待値と一致し、集計値だけに依存せずC=8/8を支持する。N1の補助compareの引数エラー、N2の上流資料の誤パスによる読取失敗、監査stderrのPATH警告は残っているが、対象SKILLの成功した全文読込を否定しない。stdoutのfull_read_receipts=32を全文読込件数とは解釈しない。内部適用回数と文章品質はこの判定から分からない。",
+      "evidence_ids": [
+        "EV-00001"
+      ]
+    }
+  ],
+  "code_evidence": [
+    {
+      "id": "CODE-R1-TASKS",
+      "path": "tools/codex-yomiyasu/evals/run_study.py",
+      "line_start": 168,
+      "line_end": 181,
+      "description": "全8種類の依頼文と期待SKILL集合。N1・N2は3種類、N3・N4は段落用、N5・N6は留保用、N7・N8は空集合。"
+    },
+    {
+      "id": "CODE-R1-READS",
+      "path": "tools/codex-yomiyasu/evals/run_study.py",
+      "line_start": 183,
+      "line_end": 195,
+      "description": "対象SKILLの読取コマンド、固定全文の出力への包含、exit_code=0を要求して読込記録を認定する。"
+    },
+    {
+      "id": "CODE-R1-VERIFY",
+      "path": "tools/codex-yomiyasu/evals/verify_native.py",
+      "line_start": 14,
+      "line_end": 40,
+      "description": "固定SKILLを使って原toolsを照合し、completed、期待集合一致、各対象1件を要求する。空読込の対照を全文読込とは区別する。"
+    },
+    {
+      "id": "CODE-R1-AUDIT",
+      "path": "native_provenance_audit.py",
+      "line_start": 31,
+      "line_end": 40,
+      "description": "既存verify()の結果を集計しC=8を要求する。stdoutのfull_read_receipts=32は固定値で、全文読込のあるreceipt件数を数えた値ではない。"
+    },
+    {
+      "id": "CODE-R1-YOMI",
+      "path": "tools/codex-yomiyasu/evaluation-v200/c/assets/SKILL.md",
+      "line_start": 1,
+      "line_end": 76,
+      "description": "Cの固定yomiyasu全文。N1 tools[0]およびN2 tools[0]の実出力に全文が含まれる。"
+    },
+    {
+      "id": "CODE-R1-PARA",
+      "path": "tools/codex-yomiyasu/evaluation-v200/c/assets/paragraph-writing/SKILL.md",
+      "line_start": 1,
+      "line_end": 46,
+      "description": "Cの固定paragraph-writing全文。N1 tools[2]、N2 tools[3]、N3・N4 tools[0]の実出力に全文が含まれる。"
+    },
+    {
+      "id": "CODE-R1-DIRECT",
+      "path": "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SKILL.md",
+      "line_start": 1,
+      "line_end": 23,
+      "description": "Cの固定japanese-direct-writing全文。N1 tools[2]、N2 tools[6]、N5・N6 tools[0]の実出力に全文が含まれる。"
+    }
+  ],
+  "dossier_json": "",
+  "sources": [
+    {
+      "id": "SRC-R1-C-N1",
+      "title": "C・N1の原native receipt",
+      "url": "",
+      "path": "../../codex-yomiyasu/evidence/study-2026-10-11/native/N1-c-1.json",
+      "locator": "/status; /expected_reads; /tools全件のcommand・exit_code・status; /tools/0/aggregated_outputの先頭76行; /tools/2/aggregated_outputの先頭69行; /tools/7/aggregated_output",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "SRC-R1-C-N2",
+      "title": "C・N2の原native receipt",
+      "url": "",
+      "path": "../../codex-yomiyasu/evidence/study-2026-10-11/native/N2-c-1.json",
+      "locator": "/status; /expected_reads; /tools全件のcommand・exit_code・status; /tools/0/aggregated_output全文; /tools/3/aggregated_output全文; /tools/6/aggregated_output全文; /tools/9/exit_code; /tools/9/status",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "SRC-R1-C-N3",
+      "title": "C・N3の原native receipt",
+      "url": "",
+      "path": "../../codex-yomiyasu/evidence/study-2026-10-11/native/N3-c-1.json",
+      "locator": "/status; /expected_reads; /tools全件のcommand・exit_code・status; /tools/0/aggregated_output全文",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "SRC-R1-C-N4",
+      "title": "C・N4の原native receipt",
+      "url": "",
+      "path": "../../codex-yomiyasu/evidence/study-2026-10-11/native/N4-c-1.json",
+      "locator": "/status; /expected_reads; /tools全件のcommand・exit_code・status; /tools/0/aggregated_output全文",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "SRC-R1-C-N5",
+      "title": "C・N5の原native receipt",
+      "url": "",
+      "path": "../../codex-yomiyasu/evidence/study-2026-10-11/native/N5-c-1.json",
+      "locator": "/status; /expected_reads; /tools全件のcommand・exit_code・status; /tools/0/aggregated_output全文",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "SRC-R1-C-N6",
+      "title": "C・N6の原native receipt",
+      "url": "",
+      "path": "../../codex-yomiyasu/evidence/study-2026-10-11/native/N6-c-1.json",
+      "locator": "/status; /expected_reads; /tools全件のcommand・exit_code・status; /tools/0/aggregated_output全文",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "SRC-R1-C-N7",
+      "title": "C・N7の原native receipt",
+      "url": "",
+      "path": "../../codex-yomiyasu/evidence/study-2026-10-11/native/N7-c-1.json",
+      "locator": "/status; /expected_reads; /tools; /reads",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "SRC-R1-C-N8",
+      "title": "C・N8の原native receipt",
+      "url": "",
+      "path": "../../codex-yomiyasu/evidence/study-2026-10-11/native/N8-c-1.json",
+      "locator": "/status; /expected_reads; /tools; /reads",
+      "read_level": "relevant_sections"
+    }
+  ],
+  "reference_implementations": [],
+  "complexity_ok": true,
+  "complexity_reason": "既存の監査コードとverify()、固定SKILL、Cの8原receipt、親の1回の実行記録でR1を判断できる。追加検査、依存追加、モデル試行、設定変更は不要。"
+}

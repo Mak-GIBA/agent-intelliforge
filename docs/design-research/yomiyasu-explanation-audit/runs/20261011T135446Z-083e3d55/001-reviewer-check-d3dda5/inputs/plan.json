@@ -1,0 +1,36 @@
+{
+  "status": "ready",
+  "reason": "既存契約、検証コード、報告書を読んでQ1のみの監査計画を固定した。検証コマンドは未実行であり、監査の合否は未判定。",
+  "goal": "保存済み比較記録の整合性を実照合し、docs/explanation-results.mdに重大な過大主張がないことを確認する。",
+  "domain": "backend",
+  "baseline": "初期比較はbaseline（旧版proposal.2）とimprovedの12課題×各2回＝48稿。追試はbaseline・improved・revisedの未使用6課題×各1回＝18稿。報告値は初期主指標差−0.0185、改善目安+0.25未達。これらは今回の実照合前の記載値として扱う。",
+  "constraints": [
+    "必須基準はruntimeのQ1だけとし、文章品質の優越を受入条件にしない。未改善も有効な結果とする。",
+    "既存記録の監査に限定するため、約5候補の新規比較、追加基準、追加実験、再生成、再採点を行わない。",
+    "ネットワーク利用、一次資料の再調査、別ハーネス、インストール、ソース・報告書・設定の変更、メモリ書込、コミット、デプロイを行わない。",
+    "指定コマンドは親が隔離環境でプロジェクトルートから実行し、その終了コード・stdout・stderrを保存する。plannerは実行しない。",
+    "検証コードは報告書本文を検査しないため、親が本文を独立に読み、照合済み記録と突き合わせる。これはQ1内の判定とする。",
+    "既存summary.jsonは照合対象であり、単独では実測証拠にしない。実出力・採点・読込receiptと今回の実行結果を根拠にし、失敗・欠損・不確実性を保持する。",
+    "ネイティブ契約はN-depthで説明資料の全文読込あり、N-mailとN-codeではなし。読込証拠を内部での適用や文章品質の優越の証明にしない。"
+  ],
+  "criteria": [
+    {
+      "id": "Q1",
+      "title": "保存記録の実照合が成功し、報告の主張が証拠の範囲に収まるか",
+      "kind": "runtime",
+      "required": true,
+      "acceptance": "指定コマンドが終了コード0で完了し、入力ハッシュ、生成・匿名採点プロンプト、採点の妥当性、再集計と保存集計の一致を確認する。返却値は初期writing_prompts_verified=48・ratings_complete=true、holdout.writing_prompts_verified=18・holdout.ratings_complete=true、current_assets_verified=16、native_receipts_verified=3を満たす。ネイティブの全文読込証拠と経路判定が保存receipt・契約に一致する。ratings_completeだけでは全生成成功を保証しないため、照合済み集計のcompletedとratedも初期48・追試18という報告に一致することを確認する。さらにdocs/explanation-results.mdを独立に読み、初期主指標差−0.0185、事前目安+0.25未達、追試6課題各条件1回、初期案と調整版の同点、人間評価未実施が正確に記載され、追試・例示・読込・インストーラー検査を一般的な品質優越へ読み替える重大な過大主張がない場合にのみ受け入れる。照合失敗や必要証拠の欠損は受入不可とし、そのまま記録する。"
+    }
+  ],
+  "test_commands": [
+    {
+      "command": "python3 -B tools/codex-yomiyasu/evals/verify_explanation.py --out tools/codex-yomiyasu/evaluation-explanation",
+      "check_ids": [
+        "Q1"
+      ],
+      "artifact_paths": []
+    }
+  ],
+  "complexity_baseline": "既存の読取専用検証コマンド1回と報告書の独立照合。指定コマンドはJSONを標準出力へ返し、新規ファイルを生成しないためartifact_pathsは空とする。新規依存・生成コスト・性能測定は追加しない。",
+  "queries": []
+}

@@ -1,0 +1,498 @@
+[
+  {
+    "id": "F1",
+    "kind": "architecture",
+    "title": "Cの入力から完成稿まで",
+    "caption": "通常の文章作業はAの実連携と共通仕上げの後にCの追加レビューへ進む。局所依頼は範囲に応じた入口で完結する工程説明。",
+    "alt_text": "素材と依頼から範囲と保護対象を決め、段落Skill、留保Skill、既存仕上げ、追加読者レビューへ進む。問題がなければ提出し、あれば局所改稿を最大一回行う。局所依頼には別の経路がある。",
+    "explanation": "矢印は同じ素材・保護対象・下書きの受渡しを表す。段落と留保の変更はAから継承し、読者レビューと条件付き改稿がCの追加部分になる。局所経路は不要な全体工程を避けるために示す。工程図から実行回数や効果差を測定したとは判断できない。",
+    "component_ids": [
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5",
+      "M6"
+    ],
+    "nodes": [
+      {
+        "id": "A0",
+        "label": "素材・原稿と依頼",
+        "detail": "x、q、読者と媒体の提供文脈",
+        "component_id": "",
+        "lane": "shared",
+        "change": "unchanged"
+      },
+      {
+        "id": "A1",
+        "label": "M1 範囲と保護対象",
+        "detail": "r、Pを確認し、通常工程と局所入口を選ぶ",
+        "component_id": "M1",
+        "lane": "shared",
+        "change": "unchanged"
+      },
+      {
+        "id": "A2",
+        "label": "M2 実段落Skillと下書き",
+        "detail": "必要な実SKILLを読み、論点と材料を対応づける",
+        "component_id": "M2",
+        "lane": "proposal",
+        "change": "modified"
+      },
+      {
+        "id": "A3",
+        "label": "M3 自然さと実留保Skill",
+        "detail": "同じ稿で条件・否定・確信度を保持する",
+        "component_id": "M3",
+        "lane": "proposal",
+        "change": "modified"
+      },
+      {
+        "id": "A4",
+        "label": "M4 既存の仕上げ",
+        "detail": "共通の検査・全文確認と既存修正上限",
+        "component_id": "M4",
+        "lane": "shared",
+        "change": "unchanged"
+      },
+      {
+        "id": "A5",
+        "label": "M5 追加読者レビュー",
+        "detail": "四項目を順に一度確認してFを作る",
+        "component_id": "M5",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "A6",
+        "label": "M6 条件付き局所改稿",
+        "detail": "問題箇所だけ最大一回直し、素材と照合",
+        "component_id": "M6",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "A7",
+        "label": "完成稿の提出",
+        "detail": "y。制作メモと未解決点の報告は本文外",
+        "component_id": "",
+        "lane": "shared",
+        "change": "unchanged"
+      },
+      {
+        "id": "A8",
+        "label": "M1 指定範囲の入口",
+        "detail": "構成・留保のみは必要入口、誤字・コードは局所作業",
+        "component_id": "M1",
+        "lane": "shared",
+        "change": "unchanged"
+      }
+    ],
+    "edges": [
+      {
+        "from": "A0",
+        "to": "A1",
+        "label": "x、q、提供文脈",
+        "kind": "flow"
+      },
+      {
+        "from": "A1",
+        "to": "A2",
+        "label": "通常作業：x、q、r、P",
+        "kind": "flow"
+      },
+      {
+        "from": "A2",
+        "to": "A3",
+        "label": "同じ下書きと保護対象",
+        "kind": "flow"
+      },
+      {
+        "from": "A3",
+        "to": "A4",
+        "label": "整えた下書き、x、r、P",
+        "kind": "flow"
+      },
+      {
+        "from": "A4",
+        "to": "A5",
+        "label": "仕上げ後のd、x、r、P",
+        "kind": "flow"
+      },
+      {
+        "from": "A5",
+        "to": "A6",
+        "label": "Fが空でない：dと修正箇所",
+        "kind": "flow"
+      },
+      {
+        "from": "A5",
+        "to": "A7",
+        "label": "Fが空：dをそのままyへ",
+        "kind": "flow"
+      },
+      {
+        "from": "A6",
+        "to": "A7",
+        "label": "照合後の完成稿y",
+        "kind": "flow"
+      },
+      {
+        "from": "A1",
+        "to": "A8",
+        "label": "局所依頼：指定範囲とP",
+        "kind": "flow"
+      },
+      {
+        "from": "A8",
+        "to": "A7",
+        "label": "範囲内の成果物y",
+        "kind": "flow"
+      }
+    ]
+  },
+  {
+    "id": "F2",
+    "kind": "module_detail",
+    "title": "追加レビューの四項目と改稿条件",
+    "caption": "M5の点検順序と、問題がある場合だけM6へ進む判断を展開する。分類器や独立評価モデルを表す図ではない。",
+    "alt_text": "下書きと素材から、制作説明、情報と意味、段落と根拠、定型表現を順に確認し、問題リストを作る。空なら同じ稿を提出し、問題があれば一回の局所改稿と意味照合を行う。",
+    "explanation": "四項目を順に読むことで、表現の修正より先に成果物境界と意味を確認する。引用・宛先への依頼などは各段階で文脈に照らして保護する。問題リストから提出へ直接進む矢印は、問題のない稿を保持する条件を示す。循環を描かず、追加改稿の上限を表す。",
+    "component_ids": [
+      "M5",
+      "M6"
+    ],
+    "nodes": [
+      {
+        "id": "D0",
+        "label": "下書きと判断材料",
+        "detail": "d、x、r、P",
+        "component_id": "",
+        "lane": "shared",
+        "change": "unchanged"
+      },
+      {
+        "id": "D1",
+        "label": "制作説明を確認",
+        "detail": "応答・制作報告・自己評価・申し出。正当な依頼と引用を保護",
+        "component_id": "M5",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "D2",
+        "label": "情報と意味を確認",
+        "detail": "脱落・創作、否定・条件・主体・確信度の変化",
+        "component_id": "M5",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "D3",
+        "label": "段落と根拠を確認",
+        "detail": "論点と材料の対応。元にない因果を足さない",
+        "component_id": "M5",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "D4",
+        "label": "定型表現を確認",
+        "detail": "定型対比・意義の水増し・抽象語・反復を文脈で判断",
+        "component_id": "M5",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "D5",
+        "label": "修正位置と理由を整理",
+        "detail": "Fは有限リスト。問題がなければ空",
+        "component_id": "M5",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "D6",
+        "label": "問題箇所を最大一回改稿",
+        "detail": "該当箇所だけを修正し、創作や反復改稿を避ける",
+        "component_id": "M6",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "D7",
+        "label": "素材と保護対象を照合",
+        "detail": "改稿後の意味を確認。重要な未解決点は本文外へ",
+        "component_id": "M6",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "D8",
+        "label": "完成稿y",
+        "detail": "レビューのメモを本文に出さない",
+        "component_id": "",
+        "lane": "shared",
+        "change": "unchanged"
+      }
+    ],
+    "edges": [
+      {
+        "from": "D0",
+        "to": "D1",
+        "label": "d、x、r、P",
+        "kind": "flow"
+      },
+      {
+        "from": "D1",
+        "to": "D2",
+        "label": "同じ稿と境界の指摘",
+        "kind": "flow"
+      },
+      {
+        "from": "D2",
+        "to": "D3",
+        "label": "同じ稿と意味の指摘",
+        "kind": "flow"
+      },
+      {
+        "from": "D3",
+        "to": "D4",
+        "label": "同じ稿と段落の指摘",
+        "kind": "flow"
+      },
+      {
+        "from": "D4",
+        "to": "D5",
+        "label": "四項目の位置と理由",
+        "kind": "flow"
+      },
+      {
+        "from": "D5",
+        "to": "D8",
+        "label": "Fが空：同じdを提出",
+        "kind": "flow"
+      },
+      {
+        "from": "D5",
+        "to": "D6",
+        "label": "Fが空でない：該当箇所",
+        "kind": "flow"
+      },
+      {
+        "from": "D6",
+        "to": "D7",
+        "label": "改稿した稿、x、P",
+        "kind": "flow"
+      },
+      {
+        "from": "D7",
+        "to": "D8",
+        "label": "照合後の稿y",
+        "kind": "flow"
+      }
+    ]
+  },
+  {
+    "id": "F3",
+    "kind": "baseline_comparison",
+    "title": "基準案とCの共通工程・変更・追加",
+    "caption": "通常の文章作業を左右の経路で比較する。基準案の既存全文確認を残し、A由来の参照変更とC固有の追加を区別する。",
+    "alt_text": "両案は同じ入力から範囲確認、段落・執筆、自然さ・留保、仕上げへ進む。Cは段落と留保で実補助Skillを読み、共通仕上げの後に追加レビューと条件付き局所改稿を行う。",
+    "explanation": "unchangedは範囲確認、共通仕上げ、提出境界。modifiedは同梱参照から実補助SKILLへの変更。addedはCの四項目レビューと対応する局所改稿である。基準案の仕上げにも読者を意識した全文確認と上限付き修正があり、図はレビュー自体の新規性や品質の優位を表さない。",
+    "component_ids": [
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5",
+      "M6"
+    ],
+    "nodes": [
+      {
+        "id": "B0",
+        "label": "同じ素材と依頼",
+        "detail": "x、q、読者と媒体の文脈",
+        "component_id": "",
+        "lane": "shared",
+        "change": "unchanged"
+      },
+      {
+        "id": "B1",
+        "label": "基準案：範囲・保護対象",
+        "detail": "読者、作業範囲、重要情報を確認",
+        "component_id": "M1",
+        "lane": "baseline",
+        "change": "unchanged"
+      },
+      {
+        "id": "B2",
+        "label": "基準案：段落と下書き",
+        "detail": "同梱paragraphs.mdを参照して執筆",
+        "component_id": "",
+        "lane": "baseline",
+        "change": "unchanged"
+      },
+      {
+        "id": "B3",
+        "label": "基準案：自然さと留保",
+        "detail": "同梱directness.md。必要な確信度を保持",
+        "component_id": "",
+        "lane": "baseline",
+        "change": "unchanged"
+      },
+      {
+        "id": "B4",
+        "label": "基準案：既存の仕上げ",
+        "detail": "検査、読者を意識した全文確認、上限付き修正",
+        "component_id": "M4",
+        "lane": "baseline",
+        "change": "unchanged"
+      },
+      {
+        "id": "B5",
+        "label": "基準案：完成稿",
+        "detail": "制作メモを本文へ混ぜず提出",
+        "component_id": "",
+        "lane": "baseline",
+        "change": "unchanged"
+      },
+      {
+        "id": "C1",
+        "label": "C：範囲・保護対象",
+        "detail": "基準案と共通の確認と局所依頼の扱い",
+        "component_id": "M1",
+        "lane": "proposal",
+        "change": "unchanged"
+      },
+      {
+        "id": "C2",
+        "label": "C：実段落Skillと下書き",
+        "detail": "A由来の実paragraph-writing参照。共有下書き",
+        "component_id": "M2",
+        "lane": "proposal",
+        "change": "modified"
+      },
+      {
+        "id": "C3",
+        "label": "C：自然さと実留保Skill",
+        "detail": "A由来の実japanese-direct-writing参照",
+        "component_id": "M3",
+        "lane": "proposal",
+        "change": "modified"
+      },
+      {
+        "id": "C4",
+        "label": "C：既存の仕上げ",
+        "detail": "基準案と共通の検査、全文確認、修正上限",
+        "component_id": "M4",
+        "lane": "proposal",
+        "change": "unchanged"
+      },
+      {
+        "id": "C5",
+        "label": "C：追加読者レビュー",
+        "detail": "境界、意味、段落、定型表現を順に一度確認",
+        "component_id": "M5",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "C6",
+        "label": "C：条件付き局所改稿",
+        "detail": "問題箇所だけ最大一回。素材と照合",
+        "component_id": "M6",
+        "lane": "proposal",
+        "change": "added"
+      },
+      {
+        "id": "C7",
+        "label": "C：完成稿",
+        "detail": "問題がなければ同じ稿。制作メモは本文外",
+        "component_id": "",
+        "lane": "proposal",
+        "change": "unchanged"
+      }
+    ],
+    "edges": [
+      {
+        "from": "B0",
+        "to": "B1",
+        "label": "基準案へ同じxとq",
+        "kind": "flow"
+      },
+      {
+        "from": "B0",
+        "to": "C1",
+        "label": "Cへ同じxとq",
+        "kind": "flow"
+      },
+      {
+        "from": "B1",
+        "to": "B2",
+        "label": "素材、読者、保護対象",
+        "kind": "flow"
+      },
+      {
+        "from": "B2",
+        "to": "B3",
+        "label": "共通の下書き",
+        "kind": "flow"
+      },
+      {
+        "from": "B3",
+        "to": "B4",
+        "label": "整えた稿と素材",
+        "kind": "flow"
+      },
+      {
+        "from": "B4",
+        "to": "B5",
+        "label": "既存確認後の完成稿",
+        "kind": "flow"
+      },
+      {
+        "from": "C1",
+        "to": "C2",
+        "label": "素材、読者、保護対象",
+        "kind": "flow"
+      },
+      {
+        "from": "C2",
+        "to": "C3",
+        "label": "共通の下書き",
+        "kind": "flow"
+      },
+      {
+        "from": "C3",
+        "to": "C4",
+        "label": "整えた稿と素材",
+        "kind": "flow"
+      },
+      {
+        "from": "C4",
+        "to": "C5",
+        "label": "d、x、r、P",
+        "kind": "flow"
+      },
+      {
+        "from": "C5",
+        "to": "C6",
+        "label": "Fが空でない：問題箇所",
+        "kind": "flow"
+      },
+      {
+        "from": "C5",
+        "to": "C7",
+        "label": "Fが空：同じ稿を提出",
+        "kind": "flow"
+      },
+      {
+        "from": "C6",
+        "to": "C7",
+        "label": "照合後の完成稿y",
+        "kind": "flow"
+      }
+    ]
+  }
+]

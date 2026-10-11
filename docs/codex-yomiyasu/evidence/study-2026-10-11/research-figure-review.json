@@ -1,0 +1,49 @@
+{
+  "run_id": "20261011T101101Z-7590eed5",
+  "design_sha256": "13d43cfc10043e8e39f3fdd19be4c9d995ffe04bccbdfce4e9677b934341ed81",
+  "browser": "Installed Chromium via Playwright; fresh context with JavaScript disabled and HTTP blocked.",
+  "method": "Rendered the three actual immutable preview SVGs and inspected all three PNGs at original resolution.",
+  "status": "visually_inspected_with_routing_limitation",
+  "figures": [
+    {
+      "id": "F1",
+      "svg_path": "runs/20261011T101101Z-7590eed5/method-preview/13d43cfc10043e8e39f3fdd19be4c9d995ffe04bccbdfce4e9677b934341ed81/figures/13d43cfc10043e8e39f3fdd19be4c9d995ffe04bccbdfce4e9677b934341ed81/F1.svg",
+      "svg_sha256": "1077d076c6ce05bdfd7ca7de5ee521d2e8aad626ae6a2865cdd0b72034be36dd",
+      "png_sha256": "915bb125cb939928fd47a060d3dc9c7708a655c87f8f4511172217b5828a7250",
+      "text_and_node_clipping_observed": false,
+      "branch_routing_finding": "The no-issue bypass is present in graph definitions, captions, and alt text, but same-column long edges/labels overlap the main path in the SVG. Read the text/pseudocode for that condition; this image alone does not show it clearly."
+    },
+    {
+      "id": "F2",
+      "svg_path": "runs/20261011T101101Z-7590eed5/method-preview/13d43cfc10043e8e39f3fdd19be4c9d995ffe04bccbdfce4e9677b934341ed81/figures/13d43cfc10043e8e39f3fdd19be4c9d995ffe04bccbdfce4e9677b934341ed81/F2.svg",
+      "svg_sha256": "63e0319eddd24f06335a2f386074a327cf95a1a6a21989142d4f7ab6d0e8230a",
+      "png_sha256": "3d35956d6ade2595191d7e42c5afa5caee029578b522a7b5d90bcc1a2f47a557",
+      "text_and_node_clipping_observed": false,
+      "branch_routing_finding": "The no-issue bypass is present in graph definitions, captions, and alt text, but same-column long edges/labels overlap the main path in the SVG. Read the text/pseudocode for that condition; this image alone does not show it clearly."
+    },
+    {
+      "id": "F3",
+      "svg_path": "runs/20261011T101101Z-7590eed5/method-preview/13d43cfc10043e8e39f3fdd19be4c9d995ffe04bccbdfce4e9677b934341ed81/figures/13d43cfc10043e8e39f3fdd19be4c9d995ffe04bccbdfce4e9677b934341ed81/F3.svg",
+      "svg_sha256": "8ee0ce9e4afd16521868f0bfc823d30a8a1715b29636d4999f5042bbe4fd8656",
+      "png_sha256": "c9f7d61d4f378f54f35d5b2e959b2a4276d836c3de874f0c0b070874b524a4c3",
+      "text_and_node_clipping_observed": false,
+      "branch_routing_finding": "The no-issue bypass is present in graph definitions, captions, and alt text, but same-column long edges/labels overlap the main path in the SVG. Read the text/pseudocode for that condition; this image alone does not show it clearly."
+    }
+  ],
+  "semantic_change": false,
+  "canonical_files_edited": false,
+  "scope": "Visual inspection does not grade writing quality, execution count, or scientific effects. All graph definitions retain the conditional no-change branch.",
+  "supplemental_rendering": {
+    "directory": "research-figures",
+    "status": "visually_inspected",
+    "same_node_text_and_graph_topology": true,
+    "no_issue_bypass_visible": true,
+    "text_or_node_clipping_observed": false,
+    "original_canonical_files_edited": false,
+    "figures": {
+      "F1": "09499fabae6bb6fd48ac4e0d40cf55a892c7745b4a14c5429c13680ac5dde0f7",
+      "F2": "f003c3800832ea5ecd7d7c684c45d51b853658330938e7fcc5765c84634530d3",
+      "F3": "43b4ec68c7f585238eb062375474c5183b607cc2f9c05c717286fcac70975339"
+    }
+  }
+}

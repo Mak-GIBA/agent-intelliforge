@@ -1,0 +1,9 @@
+{
+  "source_path": "tools/codex-yomiyasu/evals/verify_native.py",
+  "source_sha256": "925c3526507390666521dd5df2a7027e9b8b4ab890cf5f92550d31c7fc4111e3",
+  "line_start": 31,
+  "line_end": 40,
+  "checked_at": "2026-10-11T12:43:13.940167+00:00",
+  "excerpt": "            reads=study.read_receipts(row['tools'],skills)\n            passed=(row['status']=='completed' and set(reads)==set(task['expected'])\n                    and all(len(entries)==1 for entries in reads.values()))\n            if passed!=row['route_pass']:\n                raise ValueError('Saved route result mismatch: '+receipt.name)\n            results[receipt.name]={'status':row['status'],'route_pass':passed,\n                'prompt_verified':True,'expected_reads':task['expected'],'reads':reads,\n                'full_skill_content_verified':bool(reads),\n                'verification_method':'Successful actual read command must contain the complete frozen SKILL text in its tool output. Empty reads are legitimate for negative controls and are not full reads.',\n                'internal_application_count':'not observable'}",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

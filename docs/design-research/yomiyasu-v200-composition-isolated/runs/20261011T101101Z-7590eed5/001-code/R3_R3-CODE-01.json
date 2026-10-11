@@ -1,0 +1,9 @@
+{
+  "source_path": "tools/codex-yomiyasu/evaluation-v200/c/assets/references/workflow.md",
+  "source_sha256": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a",
+  "line_start": 3,
+  "line_end": 9,
+  "checked_at": "2026-10-11T12:02:51.965260+00:00",
+  "excerpt": "通常の日本語文書はyomiyasuを入口にする。構成を扱う工程ではparagraph-writing、留保を扱う工程ではjapanese-direct-writingのSKILL.mdを実際に読んで適用する。名前への言及や、この入口の要約を読むだけでは連携済みとしない。\n\n参照は現在のyomiyasuディレクトリを基準に、`../paragraph-writing/SKILL.md` と `../japanese-direct-writing/SKILL.md` を探す。兄弟ディレクトリにない場合は環境のスキル一覧に同名が一つだけあればその実ファイルを使う。候補が複数で配置を特定できない、または未導入の場合は、段落は `references/paragraphs.md`、留保は `references/directness.md` を代替として読む。代替を使った場合だけ、連携できなかった点を完成稿の外で短く伝える。自動インストールやユーザー設定変更はしない。\n\n同じタスクで読んだスキルは再読不要。同じ下書きを使い、段落工程と留保工程を各一度扱う。複数のスキルが既に選ばれていても、同じ工程を重ねたり、互いを再帰的に呼んだりしない。\n\n複数段落の新規執筆・再構成では段落スキルを使う。通常の完成稿では留保スキルを使い、不要な予防線と必要な確信度を区別する。段落構成だけの依頼はparagraph-writing、留保だけの依頼はjapanese-direct-writingで完結できる。誤字一字の修正、コードだけの変更、単純な事実照会にはこの全体工程を持ち込まない。本文全体の書き直しを局所修正に追加しない。",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

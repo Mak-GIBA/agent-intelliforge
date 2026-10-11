@@ -1,0 +1,56 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 29.59,
+  "prompt_sha256": "792be3c59c49d8bdbf2634586f8369eb4b5fa13dd70ce913ba5b0e05dcf758b3",
+  "usage": {
+    "input_tokens": 15884,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1066,
+    "reasoning_output_tokens": 638
+  },
+  "tools": [],
+  "error": null,
+  "ratings": [
+    {
+      "id": "X01",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「設定を変更する前に、現在の設定を保存してください」から操作手順、上書きの注意へ進む構成が明確。「既存ファイルを残す場合は別の名前」という条件も保持され、初心者が実行できる。",
+      "output_file": "W07-baseline-1.json"
+    },
+    {
+      "id": "X02",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「試験運用の結果は良好だったが」で評価と根拠不足の関係が明確。「導入は決定していない」「運用担当者の確認が必要である」も保持され、報告として過不足がない。追加対応の申し出は適切に除かれている。",
+      "output_file": "W10-b-1.json"
+    },
+    {
+      "id": "X03",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「試験運用の結果は良好だったが」で評価と根拠不足の関係が明確。「導入は決定していない」「運用担当者の確認が必要である」も保持され、報告として過不足がない。追加対応の申し出は適切に除かれている。",
+      "output_file": "W10-c-2.json"
+    },
+    {
+      "id": "X04",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "転換率「4.1%」「4.4%」、p値「0.18」を保持し、数値から検定結果、解釈の限界へ自然に進む。「この結果だけでは効果の有無を判断できません」により、効果を断定できないという留保も保たれている。",
+      "output_file": "W02-c-1.json"
+    }
+  ]
+}

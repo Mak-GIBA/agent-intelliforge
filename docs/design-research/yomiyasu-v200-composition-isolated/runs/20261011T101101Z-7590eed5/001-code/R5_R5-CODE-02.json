@@ -1,0 +1,9 @@
+{
+  "source_path": "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md",
+  "source_sha256": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0",
+  "line_start": 24,
+  "line_end": 24,
+  "checked_at": "2026-10-11T12:16:49.663786+00:00",
+  "excerpt": "執筆前に `references/reader-contract.md` を読み、素材と制作指示を四区分で整理する。分類メモは完成稿に出さない。",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

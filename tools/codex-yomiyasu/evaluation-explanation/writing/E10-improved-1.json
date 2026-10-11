@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 32.84,
+  "prompt_sha256": "ba27ba5823ac6e01686eca2f90f8e9e864834f0f3e67a47bdbe0caab42387b92",
+  "output": "方式Aと方式Bを同じ200件で評価した。方式Bでは、検索で取得した文書を入力に加える。ただし、取得文書に正解につながる情報が含まれない場合もある。\n\n評価の結果、正答率は方式Aが92%、方式Bが95%で、BがAを3パーセントポイント上回った。差の検定は未実施であり、統計的に有意な差かどうかは確認していない。\n\nこの結果だけでは、正答率の差を検索文書の追加による効果と結論づけることはできない。今回の差が検索の追加によるものかは確認していないためである。他の課題への一般化も未検証であり、別の課題でも同様の差が得られるかは分からない。採用は未決定である。",
+  "usage": {
+    "input_tokens": 69774,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 975,
+    "reasoning_output_tokens": 764
+  },
+  "tools": [],
+  "error": null,
+  "task": "E10",
+  "arm": "improved",
+  "repeat": 1
+}

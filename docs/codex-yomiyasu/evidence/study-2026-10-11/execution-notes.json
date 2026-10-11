@@ -1,0 +1,200 @@
+{
+  "study_date": "2026-10-11",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "xhigh",
+  "codex_cli": "0.162.1",
+  "generation_timeout_seconds": 480,
+  "harness_phase_timeout_seconds": 1800,
+  "workers_per_phase": 2,
+  "maximum_overlapping_requests": 6,
+  "automatic_retry": false,
+  "completed_generation_reused": true,
+  "deviations": [
+    {
+      "stage": "environment preparation",
+      "observed": "Attempt to disable 1164 cached plugin SKILL files exceeded argv size before model submission.",
+      "resolution": "Used actual local user/admin scope plus --ignore-user-config/--ignore-rules and per-trial disabling; no production settings changes."
+    },
+    {
+      "stage": "native preparation",
+      "observed": "Manually copied SKILL files lacked the required installer manifest.",
+      "resolution": "Excluded setup trials, retained native-setup-invalid evidence, and used the actual installer for 32 native comparison trials. Only CLI-disabled global paths were excluded from the test conflict scan; production conflict checks remain intact."
+    },
+    {
+      "stage": "source freeze",
+      "observed": "Original frozen-source manifest includes four generated Python cache files.",
+      "resolution": "Preserved original contract; cache was not an instruction input or shipped asset. Future builds exclude cache and hash verification excludes those historical cache paths."
+    },
+    {
+      "stage": "generation",
+      "observed": "Writing W08-a-1 and W02-b-1 timed out; native N2-baseline-1, N2-a-1, N6-a-1, N1-a-1 timed out.",
+      "resolution": "Kept original failure receipts without replay. Controller continued only other pending jobs. Causes cannot be recovered from older receipts that did not retain partial diagnostics."
+    },
+    {
+      "stage": "anonymous grading",
+      "observed": "12-output units B01 and B03 timed out.",
+      "resolution": "Kept completed ratings and failed units. Previously unrated outputs were assigned to separate units of at most four outputs, yielding 94 rated completed outputs. Rating context size was not uniform."
+    },
+    {
+      "stage": "timing interpretation",
+      "observed": "Generation, native trial and grading phases overlapped, with two workers each.",
+      "resolution": "Do not infer causal speed or token-cost advantages from elapsed-time reference values."
+    },
+    {
+      "stage": "metric denominator and selection",
+      "observed": "The frozen harness capture's primary_fraction used all attempted trials rather than the completed-output denominator named by contract.json. The implementation selection gate additionally requires all 24 outputs available and rated.",
+      "resolution": "Final summaries separate completed-output primary_fraction (100% in all conditions) from delivered_pass_fraction. Preserve the original contract and harness capture. Report complete availability as a conservative additional adoption condition, not predeclared linguistic superiority."
+    },
+    {
+      "stage": "implementation input reuse",
+      "observed": "On execution, the working tree already contained candidate assets and saved writing/native/holdout outcomes. Current runtime configuration and those original receipts use gpt-6.1-sol/xhigh.",
+      "resolution": "Preserved the shared changes and original failures. Verified 108 generation prompt hashes, completed-output ratings, 32 native routes, frozen upstream hashes, and final C runtime bodies without replaying generation. The current configuration recheck supersedes the earlier planning assumption."
+    },
+    {
+      "stage": "research source isolation",
+      "observed": "Research run 20261011T100101Z-37a0fac8 blocked because the parent rebuilt install_codex_yomiyasu.sh and edited STUDY_V200.md while its project source fingerprint was frozen.",
+      "resolution": "Retained the blocked run. Started run 20261011T101101Z-7590eed5 in an isolated fixed-input project; the writing/native/holdout trials were unchanged."
+    },
+    {
+      "stage": "research runtime schema recovery",
+      "observed": "All three deterministic research audits exited zero, then the automatic primary-result checkpoint interpreted contract-linked diagnostic JSON as paired task results and blocked with missing tasks.",
+      "resolution": "Preserved exported artifacts and completed execution receipts. A temporary copy of the harness selects tasks/trials exports for the automatic checkpoint while keeping explicit primary-result validation, contract, hashes and limits unchanged. Confirmed 12 tasks, 24 paired repetitions, all 96 attempts, and rejection of a malformed explicitly declared primary artifact. Resumed the same frozen run; installed harness and PC skills were not changed. See research-harness-recovery.json and .patch."
+    },
+    {
+      "stage": "isolated research independent review",
+      "observed": "All 19 first-iteration units completed. R3 remained unknown because the isolated project omitted the prompt builder and original plain-text inputs. Original source repository had reconstructible SHA-bound inputs.",
+      "resolution": "Preserved the complete first-iteration records and the R3 finding. Added exact source/provenance only after those units completed, preserving the prior state. Original research blocked on source change before another experiment; do not call it research_complete."
+    },
+    {
+      "stage": "native input provenance audit",
+      "observed": "Run 20261011T121313Z-b1fc407e executed one actual python3 -B native_provenance_audit.py check, exit zero. R1/C routes, R2/32 prompt hashes and R3/partial requests passed. R4 found a misleading full_read_receipts=32 diagnostic label, despite correct empty-read classification in verify_native.py. R5 exhausted its one format repair and blocked on a source alias used as an unregistered evidence ID. R6 and R7 were not executed.",
+      "resolution": "Preserved the blocked report, independent findings, unsuccessful role outputs and original diagnostic source. No extra role repair, timeout increase or model regeneration. Corrected the parent diagnostic to derive full-read trial count, assert all eight negative controls are excluded, and executed the corrected repo-local verifier once. This passes deterministic checks, not the unfinished independent-review workflow."
+    },
+    {
+      "stage": "figure readability review",
+      "observed": "Original generated diagrams contained long branch edges crossing boxes/labels.",
+      "resolution": "Preserved canonical report/graphs. Supplementary SVGs from identical final graph definitions route long edges outside boxes; all three rendered in Chromium and were visually inspected. See research-figure-review.json and research-figures/provenance.json."
+    },
+    {
+      "stage": "corrected native diagnostic independent verification",
+      "observed": "A fresh fixed-input audit executed the corrected local verification once and completed its independent review with R1 pass and no issues.",
+      "resolution": "Archived run 20261011T125800Z-64c881ff unchanged. Verified exact input provenance, appropriate routing and full-read counts, all original failure receipts, negative controls, and no model/install/settings side effects in the verification command. Prior blocked runs remain blocked; prose superiority and internal application counts remain unmeasured."
+    }
+  ],
+  "offline_validation": {
+    "source_self_test": 148,
+    "standalone_self_test": 148,
+    "batch_installer_tests": 13,
+    "skills_format_valid": 3,
+    "standalone_matches_source": true,
+    "bash_syntax_valid": true,
+    "isolated_final_installation": "final-installation.json",
+    "python310_tomllib_absence_simulated": true,
+    "standalone_rebuilt_after_protocol_doc_edit": true
+  },
+  "scope": {
+    "updated_installed_PC_skills": false,
+    "changed_user_settings": false,
+    "committed_or_pushed": false
+  },
+  "native_reverification": {
+    "script": "tools/codex-yomiyasu/evals/verify_native.py",
+    "receipts": 32,
+    "pass_routes": 27,
+    "c_pass_routes": 8,
+    "checks": [
+      "original prompt hash",
+      "expected route",
+      "successful read command",
+      "full frozen SKILL text in actual output",
+      "one full read per applicable skill"
+    ],
+    "internal_application_count": "not observable"
+  },
+  "research_runs": [
+    {
+      "run_id": "20261011T101101Z-7590eed5",
+      "outcome": "blocked",
+      "phase": "producer-design",
+      "iteration": 2,
+      "first_iteration_units_complete": 19,
+      "archive": "docs/design-research/yomiyasu-v200-composition-isolated",
+      "source_identity": "Original isolated project retained in archived state; report copied without rewriting."
+    },
+    {
+      "run_id": "20261011T121313Z-b1fc407e",
+      "outcome": "blocked",
+      "phase": "review-R5",
+      "required_unit_statuses": {
+        "planner": "complete",
+        "R1": "pass",
+        "R2": "pass",
+        "R3": "pass",
+        "R4": "fail",
+        "R5": "format failed",
+        "R6": "not executed",
+        "R7": "not executed"
+      },
+      "archive": "docs/design-research/yomiyasu-native-prompt-proof",
+      "actual_launch_argv": [
+        "bash",
+        "/home/hirano/.cache/codex/yomiyasu-harness-recovery-7590eed5/scripts/gan-harness.sh",
+        "audit",
+        "--project",
+        "/home/hirano/.cache/codex/yomiyasu-native-proof-7590eed5",
+        "--slug",
+        "yomiyasu-native-prompt-proof",
+        "--brief",
+        "[full original brief retained in archived state.config.brief]",
+        "--reader-friendly",
+        "--model",
+        "gpt-6.1-sol",
+        "--max-iterations",
+        "1",
+        "--test-command",
+        "python3 -B native_provenance_audit.py"
+      ],
+      "brief_abbreviated": true
+    },
+    {
+      "run_id": "20261011T125800Z-64c881ff",
+      "outcome": "reviewed",
+      "phase": "reviewed",
+      "iteration": 1,
+      "checks": [
+        {
+          "check_id": "R1",
+          "result": "pass",
+          "reason": "今回のEV-00001は指定コマンドでexit_code=0、timeout・truncationなし。receipt・stdout・stderrの実SHAが保存値と一致した。provenanceのsource_files 2件と元receipt 32件のSHAが一致し、N1〜N8×4armの集合に重複・欠落はない。8種類の復元依頼はnative_tasksと固定suffixに一致し、32件すべてでUTF-8 SHAが元prompt_sha256に一致した。期待読込集合はN1/N2が3スキル、N3/N4がparagraph-writingのみ、N5/N6がjapanese-direct-writingのみ、N7/N8が空集合。元toolsの実catコマンド、exit_code=0、該当armの固定SKILL全文を照合し、各読込1回とcompletedを要求してrouteを再判定した結果、stdoutのreceipts_verified=32、exact_original_prompt_hashes=32、trials_with_full_skill_reads=20、negative_control_trials=8、route_passes={baseline:6,a:5,b:8,c:8}と一致した。20件は少なくとも1スキルの全文読込が確認された試行数であり、yomiyasuのみを読んだN1-baselineを含む。そのrouteは失敗のまま。8対照はcompleted、route成功、tools・reads空で全文読込判定falseとなり、20件へ加算されない。N1-a、N2-a、N2-baseline、N6-aのtimeoutと出力欠落も保持されている。実行経路はローカル読取、SHA・全文照合、一時ディレクトリ内のSKILLコピー、stdout出力に限定され、モデル呼出し・外部送信・導入・ユーザー設定変更はない。内部適用回数、人間評価、文章品質の優位差は未確認のまま。",
+          "evidence_ids": [
+            "EV-00001",
+            "EV-00002",
+            "EV-00003",
+            "EV-00004",
+            "EV-00005",
+            "EV-00006",
+            "EV-00007",
+            "EV-00008"
+          ]
+        }
+      ],
+      "issues": [],
+      "archive": "docs/design-research/yomiyasu-native-correction",
+      "actual_launch": "native-correction-launch.json",
+      "parent_check_executions": 1,
+      "review_scope": "Fresh bounded audit of corrected prompt/read verification and failure preservation; not a replay of prose generation or a research_complete status for stopped prior runs."
+    }
+  ],
+  "post_review_native_check": {
+    "receipt": "post-review-native-audit.json",
+    "exit_code": 0,
+    "receipts_verified": 32,
+    "trials_with_full_skill_reads": 20,
+    "negative_control_trials": 8,
+    "internal_application_count": "not observable",
+    "formal_harness_completion": false,
+    "independent_audit_run": "20261011T125800Z-64c881ff",
+    "independent_audit_outcome": "reviewed",
+    "independent_audit_check": "pass"
+  }
+}

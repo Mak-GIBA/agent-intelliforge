@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 12.79,
+  "prompt_sha256": "e505a530e455e06878ec8faf9843f5cbbb72e1df7d89f025b3fd02ed317136cf",
+  "output": "鈴木さん\n\n資料を金曜までに送ってもらえますか。難しければ、いつ送れそうか教えてください。\n\n伊藤",
+  "usage": {
+    "input_tokens": 69044,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 271,
+    "reasoning_output_tokens": 230
+  },
+  "tools": [],
+  "error": null,
+  "task": "H05",
+  "arm": "baseline",
+  "repeat": 1
+}

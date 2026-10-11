@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 35.47,
+  "prompt_sha256": "0b1e69e7f01fcf23018db66bc097c73b012491b7f341bd27766e26ca6872e233",
+  "output": "新しい方式では、処理の完了を待たずに、受付時にジョブIDが返されます。受け付けた処理は待ち行列（キュー）に入り、順番に進みます。\n\n処理の状態を確認するには、返されたジョブIDを照会画面に入力してください。「受付済み」は処理の成功を意味しません。完了までにかかる時間は不明です。",
+  "usage": {
+    "input_tokens": 68414,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1107,
+    "reasoning_output_tokens": 999
+  },
+  "tools": [],
+  "error": null,
+  "task": "E03",
+  "arm": "baseline",
+  "repeat": 2
+}

@@ -1,0 +1,46 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 36.91,
+  "prompt_sha256": "68a8cf61086b7ea68d6c78451cf7e044b3ebb31f41ea4957f50e5c86b3549372",
+  "usage": {
+    "input_tokens": 15853,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1387,
+    "reasoning_output_tokens": 970
+  },
+  "tools": [],
+  "error": null,
+  "ratings": [
+    {
+      "id": "X01",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 3,
+      "reader_fit": 4,
+      "evidence": "比較条件、mAPの数値、学習時間の「2倍」、推論時間の「未測定」、少数クラスの「未評価」を保持。結果・学習時間・評価限界の段落構成は明確。ただし「BのmAPはAを上回った」と「検索精度はBの方が高い」は重複する。",
+      "output_file": "W09-a-1.json"
+    },
+    {
+      "id": "X02",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「同じ評価条件」、mAPの「0.712」「0.748」、推論時間の「1.6倍」、少量データでの「未評価」を保持。冒頭の精度と時間の関係を数値で裏づけ、評価の限界へ自然につながる。",
+      "output_file": "W01-b-2.json"
+    },
+    {
+      "id": "X03",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「max_retry = 3」「接続に失敗した場合だけ再試行する」、数式、手順番号、コードを保持。設定・再試行条件・待機時間の順が明確。コード内の「ご依頼に沿って説明します」は保護対象であり、制作報告の混入ではない。",
+      "output_file": "W11-a-1.json"
+    }
+  ]
+}

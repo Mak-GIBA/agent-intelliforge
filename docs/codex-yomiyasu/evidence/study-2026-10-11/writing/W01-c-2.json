@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 16.84,
+  "prompt_sha256": "d26ef8083c3ec9ce0142331a6f7d01876651d0d4c1a0b02773c32307e9a785cc",
+  "output": "方式Bは方式Aより精度が高い一方、推論に時間がかかります。同じ評価条件で、mAPは方式Aが0.712、方式Bが0.748でした。方式Bの推論時間は方式Aの1.6倍でした。\n\n学習データ数が少ない場合の性能は未評価です。",
+  "usage": {
+    "input_tokens": 72250,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 534,
+    "reasoning_output_tokens": 450
+  },
+  "tools": [],
+  "error": null,
+  "job_id": "W01-c-2",
+  "task": "W01",
+  "repeat": 2,
+  "arm": "c"
+}

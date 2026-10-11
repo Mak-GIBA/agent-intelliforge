@@ -1,0 +1,56 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 19.93,
+  "prompt_sha256": "a496ce9e8cc77489f286fe10769f163292c5b0f0fbac466a9cdf3d19b5fb4b29",
+  "usage": {
+    "input_tokens": 15760,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 738,
+    "reasoning_output_tokens": 345
+  },
+  "tools": [],
+  "error": null,
+  "ratings": [
+    {
+      "id": "X01",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「90日間保存しなければならない」「通知は推奨」「通知先は未決定」で期間・義務・推奨・決定状況を保持。要件ごとの段落に目的も収まり、仕様として明確で自然。",
+      "output_file": "W06-a-1.json"
+    },
+    {
+      "id": "X02",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「90日間保存しなければならない」「通知は推奨」「通知先は未決定」で期間・義務・推奨・決定状況を保持。要件ごとの段落に目的も収まり、仕様として明確で自然。",
+      "output_file": "W06-b-2.json"
+    },
+    {
+      "id": "X03",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「文字列を照合する」から「意味が同じでも検索結果に含まれないことがある」へ、仕組みと限界が自然につながる。可能性の限定も保持され、記事本文として過不足がない。",
+      "output_file": "W04-b-1.json"
+    },
+    {
+      "id": "X04",
+      "meaning_errors": [],
+      "requester_residue": [],
+      "paragraph": 4,
+      "naturalness": 4,
+      "reader_fit": 4,
+      "evidence": "「山田様」、候補日「10月20日か10月22日」、依頼「ご都合をお知らせください」、署名「鈴木」を保持。宛名・用件・署名の構成が明確で、丁寧なメールとしてそのまま使える。",
+      "output_file": "W12-a-1.json"
+    }
+  ]
+}

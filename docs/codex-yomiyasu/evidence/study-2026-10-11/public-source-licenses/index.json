@@ -1,0 +1,37 @@
+[
+  {
+    "repository": "blader/humanizer",
+    "commit": "d4b81278e6604e237bf32f0f7ce5c217aee94269",
+    "url": "https://raw.githubusercontent.com/blader/humanizer/d4b81278e6604e237bf32f0f7ce5c217aee94269/LICENSE",
+    "file": "blader--humanizer-LICENSE",
+    "sha256": "4ac4810254ab36d45419141aeb8e69bf50652cfafe5b2dab947d06d44e5cbf96"
+  },
+  {
+    "repository": "hardikpandya/stop-slop",
+    "commit": "8da1f030185bdfe8471220585162991eaeb970e9",
+    "url": "https://raw.githubusercontent.com/hardikpandya/stop-slop/8da1f030185bdfe8471220585162991eaeb970e9/LICENSE",
+    "file": "hardikpandya--stop-slop-LICENSE",
+    "sha256": "2e2b2beaf41cc0ce28485455a62aed81777cdcdf68702e142427aef1cd720f2c"
+  },
+  {
+    "repository": "coji/natural-japanese",
+    "commit": "01802de30fffcd6f5dcc74edb298fc3a6df5ca19",
+    "url": "https://raw.githubusercontent.com/coji/natural-japanese/01802de30fffcd6f5dcc74edb298fc3a6df5ca19/LICENSE",
+    "file": "coji--natural-japanese-LICENSE",
+    "sha256": "fb3dd814f7b2807de2a812446c61643cf235e731bbf8cf908c0a5962d8917121"
+  },
+  {
+    "repository": "iKora128/stop-ai-slop-jp",
+    "commit": "926392e2713841d689e4b3bf7347e89cf4665c0d",
+    "url": "https://raw.githubusercontent.com/iKora128/stop-ai-slop-jp/926392e2713841d689e4b3bf7347e89cf4665c0d/LICENSE",
+    "file": "iKora128--stop-ai-slop-jp-LICENSE",
+    "sha256": "f9145903368bf0483fec06d7f2ed12d2e20667190783a7ffea161e92ff39f301"
+  },
+  {
+    "repository": "nakashimatakaya/deslop-ja",
+    "commit": "3fda6f7316b4d0d14e0660ec14bf21d2f8fc6978",
+    "url": "https://raw.githubusercontent.com/nakashimatakaya/deslop-ja/3fda6f7316b4d0d14e0660ec14bf21d2f8fc6978/LICENSE",
+    "file": "nakashimatakaya--deslop-ja-LICENSE",
+    "sha256": "2404a6147a302d676d6d81cdeaa3e177c24f7e0e8625cac8fd82f62da0a69b37"
+  }
+]

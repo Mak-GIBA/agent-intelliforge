@@ -1,0 +1,22 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 8.01,
+  "prompt_sha256": "9732b4526e14ad0dc4dc0971b05fb9dc62015fe986cb26e3fffdc29f85b6163d",
+  "output": "設定を保存しました",
+  "usage": {
+    "input_tokens": 15079,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 120,
+    "reasoning_output_tokens": 110
+  },
+  "tools": [],
+  "error": null,
+  "reads": {},
+  "route_pass": true,
+  "expected_reads": [],
+  "job_id": "N7-c-1",
+  "task": "N7",
+  "arm": "c",
+  "repeat": 1
+}

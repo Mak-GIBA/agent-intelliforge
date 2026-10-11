@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1220" height="1925" viewBox="0 0 1220 1925" role="img" aria-labelledby="title desc">
+<title id="title">基準案とCの共通工程・変更・追加</title>
+<desc id="desc">両案は同じ入力から範囲確認、段落・執筆、自然さ・留保、仕上げへ進む。Cは段落と留保で実補助Skillを読み、共通仕上げの後に追加レビューと条件付き局所改稿を行う。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7" fill="#333"/></marker></defs>
+<rect width="1220" height="1925" fill="white"/>
+<g font-family="Noto Sans CJK JP, Meiryo, sans-serif" fill="#161616">
+<text x="610.0" y="35" text-anchor="middle" font-size="20" font-weight="bold">基準案とCの共通工程・変更・追加</text>
+<text x="610.0" y="75" text-anchor="middle" font-size="13">概念図：実線は処理の流れ、破線はフィードバック。性能の実測図ではありません。</text>
+<path d="M430.0,194 V257.0 H240.0 V316" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="278.0" y="227.0" width="114.0" height="20" fill="white"/>
+<text x="335.0" y="240.0" font-size="12" text-anchor="middle">基準案へ同じxとq</text>
+<path d="M430.0,194 V257.0 H620.0 V316" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="484.25" y="227.0" width="81.5" height="20" fill="white"/>
+<text x="525.0" y="240.0" font-size="12" text-anchor="middle">Cへ同じxとq</text>
+<path d="M240.0,415 V478.0 H240.0 V537" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="170.0" y="448.0" width="140.0" height="20" fill="white"/>
+<text x="240.0" y="461.0" font-size="12" text-anchor="middle">素材、読者、保護対象</text>
+<path d="M240.0,636 V708.5 H240.0 V777" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="196.0" y="678.5" width="88.0" height="20" fill="white"/>
+<text x="240.0" y="691.5" font-size="12" text-anchor="middle">共通の下書き</text>
+<path d="M240.0,876 V939.0 H240.0 V998" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="189.5" y="909.0" width="101.0" height="20" fill="white"/>
+<text x="240.0" y="922.0" font-size="12" text-anchor="middle">整えた稿と素材</text>
+<path d="M240.0,1116 V1179.0 H240.0 V1238" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="176.5" y="1149.0" width="127.0" height="20" fill="white"/>
+<text x="240.0" y="1162.0" font-size="12" text-anchor="middle">既存確認後の完成稿</text>
+<path d="M620.0,415 V478.0 H620.0 V537" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="550.0" y="448.0" width="140.0" height="20" fill="white"/>
+<text x="620.0" y="461.0" font-size="12" text-anchor="middle">素材、読者、保護対象</text>
+<path d="M620.0,655 V718.0 H620.0 V777" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="576.0" y="688.0" width="88.0" height="20" fill="white"/>
+<text x="620.0" y="701.0" font-size="12" text-anchor="middle">共通の下書き</text>
+<path d="M620.0,876 V939.0 H620.0 V998" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="569.5" y="909.0" width="101.0" height="20" fill="white"/>
+<text x="620.0" y="922.0" font-size="12" text-anchor="middle">整えた稿と素材</text>
+<path d="M620.0,1097 V1169.5 H620.0 V1238" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="582.5" y="1139.5" width="75.0" height="20" fill="white"/>
+<text x="620.0" y="1152.5" font-size="12" text-anchor="middle">d、x、r、P</text>
+<path d="M620.0,1337 V1400.0 H430.0 V1459" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="451.75" y="1370.0" width="146.5" height="20" fill="white"/>
+<text x="525.0" y="1383.0" font-size="12" text-anchor="middle">Fが空でない：問題箇所</text>
+<path d="M620.0,1337 V1362 H890 V1656 H430.0 V1680" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="895" y="1497.5" width="133.5" height="20" fill="white"/>
+<text x="900" y="1510.5" font-size="12" text-anchor="start">Fが空：同じ稿を提出</text>
+<path d="M430.0,1558 V1621.0 H430.0 V1680" fill="none" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="376.25" y="1591.0" width="107.5" height="20" fill="white"/>
+<text x="430.0" y="1604.0" font-size="12" text-anchor="middle">照合後の完成稿y</text>
+<rect x="275.0" y="99" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="289.0" y="121" font-size="12">共通・維持　B0</text>
+<text x="289.0" y="146" font-size="17" font-weight="bold">同じ素材と依頼</text>
+<text x="289.0" y="170" font-size="13">x、q、読者と媒体の文脈</text>
+<rect x="85.0" y="320" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="99.0" y="342" font-size="12">既存法・維持　M1</text>
+<text x="99.0" y="367" font-size="17" font-weight="bold">基準案：範囲・保護対象</text>
+<text x="99.0" y="391" font-size="13">読者、作業範囲、重要情報を確認</text>
+<rect x="465.0" y="320" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="479.0" y="342" font-size="12">提案法・維持　M1</text>
+<text x="479.0" y="367" font-size="17" font-weight="bold">C：範囲・保護対象</text>
+<text x="479.0" y="391" font-size="13">基準案と共通の確認と局所依頼の扱い</text>
+<rect x="85.0" y="541" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="99.0" y="563" font-size="12">既存法・維持　B2</text>
+<text x="99.0" y="588" font-size="17" font-weight="bold">基準案：段落と下書き</text>
+<text x="99.0" y="612" font-size="13">同梱paragraphs.mdを参照して執筆</text>
+<rect x="465.0" y="541" width="310" height="114" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="479.0" y="563" font-size="12">提案法・変更　M2</text>
+<text x="479.0" y="588" font-size="17" font-weight="bold">C：実段落Skillと下書き</text>
+<text x="479.0" y="612" font-size="13">A由来の実paragraph-writing参照。共有下書</text>
+<text x="479.0" y="631" font-size="13">き</text>
+<rect x="85.0" y="781" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="99.0" y="803" font-size="12">既存法・維持　B3</text>
+<text x="99.0" y="828" font-size="17" font-weight="bold">基準案：自然さと留保</text>
+<text x="99.0" y="852" font-size="13">同梱directness.md。必要な確信度を保持</text>
+<rect x="465.0" y="781" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="479.0" y="803" font-size="12">提案法・変更　M3</text>
+<text x="479.0" y="828" font-size="17" font-weight="bold">C：自然さと実留保Skill</text>
+<text x="479.0" y="852" font-size="13">A由来の実japanese-direct-writing参照</text>
+<rect x="85.0" y="1002" width="310" height="114" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="99.0" y="1024" font-size="12">既存法・維持　M4</text>
+<text x="99.0" y="1049" font-size="17" font-weight="bold">基準案：既存の仕上げ</text>
+<text x="99.0" y="1073" font-size="13">検査、読者を意識した全文確認、上限付き修</text>
+<text x="99.0" y="1092" font-size="13">正</text>
+<rect x="465.0" y="1002" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="479.0" y="1024" font-size="12">提案法・維持　M4</text>
+<text x="479.0" y="1049" font-size="17" font-weight="bold">C：既存の仕上げ</text>
+<text x="479.0" y="1073" font-size="13">基準案と共通の検査、全文確認、修正上限</text>
+<rect x="85.0" y="1242" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="99.0" y="1264" font-size="12">既存法・維持　B5</text>
+<text x="99.0" y="1289" font-size="17" font-weight="bold">基準案：完成稿</text>
+<text x="99.0" y="1313" font-size="13">制作メモを本文へ混ぜず提出</text>
+<rect x="465.0" y="1242" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="479.0" y="1264" font-size="12">提案法・追加　M5</text>
+<text x="479.0" y="1289" font-size="17" font-weight="bold">C：追加読者レビュー</text>
+<text x="479.0" y="1313" font-size="13">境界、意味、段落、定型表現を順に一度確認</text>
+<rect x="275.0" y="1463" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="2.4"/>
+<text x="289.0" y="1485" font-size="12">提案法・追加　M6</text>
+<text x="289.0" y="1510" font-size="17" font-weight="bold">C：条件付き局所改稿</text>
+<text x="289.0" y="1534" font-size="13">問題箇所だけ最大一回。素材と照合</text>
+<rect x="275.0" y="1684" width="310" height="95" rx="7" fill="#f6f6f6" stroke="#333" stroke-width="1.1"/>
+<text x="289.0" y="1706" font-size="12">提案法・維持　C7</text>
+<text x="289.0" y="1731" font-size="17" font-weight="bold">C：完成稿</text>
+<text x="289.0" y="1755" font-size="13">問題がなければ同じ稿。制作メモは本文外</text>
+</g>
+</svg>

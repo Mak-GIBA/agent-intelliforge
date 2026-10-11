@@ -1,0 +1,9 @@
+{
+  "source_path": "tools/codex-yomiyasu/evals/run_study.py",
+  "source_sha256": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47",
+  "line_start": 179,
+  "line_end": 180,
+  "checked_at": "2026-10-11T12:43:13.939493+00:00",
+  "excerpt": "        {'id':'N7','prompt':'「設定を保存しましした」の誤字だけ直してください。他は変更しないでください。','expected':[]},\n        {'id':'N8','prompt':'次のコードだけを、aとbの和を返す形に直してください。説明文は不要です。\\ndef add(a, b):\\n    return a - b','expected':[]},",
+  "scope": "Static code observation; does not prove runtime behavior"
+}

@@ -1,0 +1,26 @@
+{
+  "run_id": "20261011T101101Z-7590eed5",
+  "preview_design_sha256": "13d43cfc10043e8e39f3fdd19be4c9d995ffe04bccbdfce4e9677b934341ed81",
+  "scope": "Supplemental readable rendering from the actual unchanged preview graph definitions. Original run diagrams, report, ledgers and study outcomes are untouched. This is not a replacement for the independent study report.",
+  "change": "Long bypass edges and their labels use outer lanes; node text, topology, conditional labels, captions and alt text are unchanged.",
+  "original_renderer_module_sha256": "4556374acaa56db42a90944132588a1a0c9302d450a3b05dccae53dc9d170e98",
+  "original_function_sha256": "2055c24b9e9a238b1a123631ad0be28583612fe448684b5f82d4faa36b508c54",
+  "supplemental_function_sha256": "ff59e6bf9d5f0d77e48951476a5fb022322948eaa1908f9436c6f9e45306cf7e",
+  "figures": [
+    {
+      "id": "F1",
+      "definition_sha256": "3108fe5411fbd7268937dbe0a8f85ad3396e46631598e41233f0d04759ec20f8",
+      "svg_sha256": "95604bf069a7db1aace5dfcfe4df462036626885ecd3c89a3f8be7e7464ced99"
+    },
+    {
+      "id": "F2",
+      "definition_sha256": "23317fbcfc665252f49869bc39327fc6233afe78e0629bb9f08b69e534415882",
+      "svg_sha256": "1eff4d3f013c1ce1d1ffb172e336c9559ebf6554cb8c06d07ff202f2799835f3"
+    },
+    {
+      "id": "F3",
+      "definition_sha256": "3b9441da490bf4209a3c575928d824f9dddc0dd78b55e08bd8b3f1e03dbeef14",
+      "svg_sha256": "057a69bfe04622da7c31b87c0afa5e6fc521acfb987a93bcd579302ad1d8338e"
+    }
+  ]
+}

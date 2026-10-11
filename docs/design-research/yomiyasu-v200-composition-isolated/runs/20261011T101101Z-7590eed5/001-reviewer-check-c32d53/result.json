@@ -1,0 +1,85 @@
+{
+  "status": "reviewed",
+  "reason": "E1のみを検証した。保存済み検査コード、同一runの成功receipt、実成果物、原receiptと評定の抜き取り照合から、要求された保存記録の来歴を確認した。",
+  "issues": [],
+  "checks": [
+    {
+      "check_id": "E1",
+      "result": "pass",
+      "reason": "親の3検査はexit_code=0、timed_out=false、truncated=falseで、receipt・成果物・stdout/stderrのハッシュも登録値と一致する。保存コードは主比較96試行、holdout12試行、native32試行について出力・status・task・arm・repeat・receipt hashと対応評定を照合し、不一致をinvalid_auditと非ゼロ終了で残す。確認した原記録との不一致はなかった。paired成果物は最終出力と評定根拠を保持し、親receiptのartifact hashと凍結contract hash 5131f1a304337549e1edf26354dace3d33116b61eeb27ca0b3083c61b0170537へ結び付いている。生成2件、native4件、旧採点2件のtimeout、baselineの未連携、未保存B05～B08を保持している。元prompt本文の独立確認はunknownであり、故障注入時の実行結果は未確認。検査は再実行していない。",
+      "evidence_ids": [
+        "EV-00006",
+        "EV-00007",
+        "EV-00008",
+        "EV-00009",
+        "EV-00012",
+        "EV-00013",
+        "EV-00015",
+        "EV-00016"
+      ]
+    }
+  ],
+  "code_evidence": [],
+  "dossier_json": "",
+  "sources": [
+    {
+      "id": "S6",
+      "title": "主比較の保存済み最終出力と評定：writing-paired.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-paired.json",
+      "locator": "tasks; trials[*].output, values.delivered_pass, grading_evidence",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "S8",
+      "title": "補足holdoutの保存済み最終出力と評定：holdout-paired.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/artifacts/experiments/artifacts/holdout-paired.json",
+      "locator": "holdout_task_manifest; paired_outputs[*].output, receipt, grading_evidence; not_a_primary_evaluation_export",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "S9",
+      "title": "nativeの保存済み実tool出力：native-audit.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/artifacts/experiments/artifacts/native-audit.json",
+      "locator": "records[*].receipt.tools, full_read_evidence, route_pass_recalculated, original_prompt_text_verified; excluded_setup; excluded_historical_caches; original_prompt_text_available; audit_status",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "S10",
+      "title": "主比較の原receiptと採点履歴：writing-audit.json",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-audit.json",
+      "locator": "records[*].receipt, grading_evidence; grading_history; execution_notes_original.deviations; limitations; audit_status",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "baseline_S_PARENT_WRITING",
+      "title": "親の主比較監査実行receipt",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/receipt.json",
+      "locator": "experiment_id, command, check_ids, started_at, finished_at, exit_code, timed_out, truncated, artifacts",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "baseline_S_PARENT_PROTECTED",
+      "title": "親の保護対象・holdout監査実行receipt",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/receipt.json",
+      "locator": "experiment_id, command, check_ids, started_at, finished_at, exit_code, timed_out, truncated, artifacts",
+      "read_level": "relevant_sections"
+    },
+    {
+      "id": "baseline_S_PARENT_NATIVE",
+      "title": "親のnative監査実行receipt",
+      "url": "",
+      "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/receipt.json",
+      "locator": "experiment_id, command, check_ids, started_at, finished_at, exit_code, timed_out, truncated, artifacts",
+      "read_level": "relevant_sections"
+    }
+  ],
+  "reference_implementations": [],
+  "complexity_ok": true,
+  "complexity_reason": "E1の照合は3件の保存済み決定的検査と原記録の読取りで完結している。追加実験やモデル生成は不要。内部適用回数や因果的時間差の妥当性は、この単位では評価していない。"
+}

@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 30.79,
+  "prompt_sha256": "75323e1db85178cd75844105926badf7a77ab502dcd0973246d659f23f4c361c",
+  "output": "{\n  \"ratings\": [\n    {\n      \"id\": \"O021\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"応答の保存・再利用によって再取得を省ける仕組み、情報が古くなる条件、期限切れ時の再取得が明確。用語の説明も簡潔で、仕組みと更新管理を段落で分けている。素材にない数値や効果の断定はない。\"\n    },\n    {\n      \"id\": \"O022\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"保存操作、完了を確認する表示、通信失敗時の入力保持と再送信が順に分かる。修正不要な原文を保っており、不要な説明や例もない。\"\n    },\n    {\n      \"id\": \"O023\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"14時から15時への変更依頼と、難しければ14時とする条件が明確。宛名・本文・署名の配置も自然で、架空の理由や制作説明を加えていない。\"\n    },\n    {\n      \"id\": \"O024\",\n      \"specificity\": 4,\n      \"causal_clarity\": 4,\n      \"reader_understanding\": 4,\n      \"naturalness\": 4,\n      \"information_efficiency\": 4,\n      \"paragraph\": 4,\n      \"meaning_preservation\": 4,\n      \"reader_boundary\": 4,\n      \"meaning_errors\": [],\n      \"requester_residue\": [],\n      \"reason\": \"記録する内容と日時、誤変更時に復元する内容、管理者に限る変更権限が具体的。同じ型の反復を避け、記録・復元と権限管理を整理し、事故防止を保証しない条件も保持している。\"\n    }\n  ]\n}",
+  "usage": {
+    "input_tokens": 15891,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 969,
+    "reasoning_output_tokens": 308
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O021",
+    "O022",
+    "O023",
+    "O024"
+  ],
+  "ratings": [
+    {
+      "id": "O021",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "応答の保存・再利用によって再取得を省ける仕組み、情報が古くなる条件、期限切れ時の再取得が明確。用語の説明も簡潔で、仕組みと更新管理を段落で分けている。素材にない数値や効果の断定はない。"
+    },
+    {
+      "id": "O022",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "保存操作、完了を確認する表示、通信失敗時の入力保持と再送信が順に分かる。修正不要な原文を保っており、不要な説明や例もない。"
+    },
+    {
+      "id": "O023",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "14時から15時への変更依頼と、難しければ14時とする条件が明確。宛名・本文・署名の配置も自然で、架空の理由や制作説明を加えていない。"
+    },
+    {
+      "id": "O024",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "記録する内容と日時、誤変更時に復元する内容、管理者に限る変更権限が具体的。同じ型の反復を避け、記録・復元と権限管理を整理し、事故防止を保証しない条件も保持している。"
+    }
+  ]
+}

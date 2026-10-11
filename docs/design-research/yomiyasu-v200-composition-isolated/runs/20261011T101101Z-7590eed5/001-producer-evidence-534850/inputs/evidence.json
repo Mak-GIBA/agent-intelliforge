@@ -1,0 +1,210 @@
+{
+  "EV-00001": {
+    "id": "EV-00001",
+    "kind": "source",
+    "description": "Humanizer: remove AI writing patterns",
+    "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S1.md",
+    "sha256": "0612f1dfb1672b0ea9b97e139bf1f06cabe98d8b27424fe8ff01e1fb4cc99cad",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:23:31.273796+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  },
+  "EV-00002": {
+    "id": "EV-00002",
+    "kind": "source",
+    "description": "Stop Slop",
+    "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S2.md",
+    "sha256": "7432a1d9ebdd42b27666da8458af252edf549f723fb14bcd4791425103930310",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:23:31.274073+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  },
+  "EV-00003": {
+    "id": "EV-00003",
+    "kind": "source",
+    "description": "natural-japanese",
+    "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S3.md",
+    "sha256": "0f662a6ab4955b9146a138a38b73a619b27fa1448ef71e27fcc57f67d3ad0267",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:23:31.274345+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  },
+  "EV-00004": {
+    "id": "EV-00004",
+    "kind": "source",
+    "description": "Stop AI Slop(日本語版)",
+    "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S4.md",
+    "sha256": "4da89e5f9c69ce69a8d6c04e8f3d238686cd3a3ba3946c5cfadad805116c50f3",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:23:31.274599+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  },
+  "EV-00005": {
+    "id": "EV-00005",
+    "kind": "source",
+    "description": "deslop-ja: 日本語のAI臭を消す",
+    "path": "runs/20261011T101101Z-7590eed5/source-inputs/2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc/docs/codex-yomiyasu/evidence/study-2026-10-11/research-inputs/S5.md",
+    "sha256": "c5c8cf8baeaa29167cda45d8b77b5fa883033877724388f9953c39d4907a17ff",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:23:31.274850+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  },
+  "EV-00006": {
+    "id": "EV-00006",
+    "kind": "experiment_code",
+    "description": "PoC source: experiments/audit_capture.py",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/code/experiments/audit_capture.py",
+    "sha256": "f1c3e895186915f7358ef25dd609b2ba683ac94da6b680017e5b7bc47405bf03",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:07.792254+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  },
+  "EV-00007": {
+    "id": "EV-00007",
+    "kind": "artifact",
+    "description": "Actual generated result: experiments/artifacts/writing-paired.json",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-paired.json",
+    "sha256": "421c621a23c01450a56f4fa528228214b290807ff5ab80beb589e41810dcf94c",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:08.203883+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc",
+    "experiment_id": "audit-writing"
+  },
+  "EV-00008": {
+    "id": "EV-00008",
+    "kind": "artifact",
+    "description": "Actual generated result: experiments/artifacts/writing-audit.json",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/artifacts/experiments/artifacts/writing-audit.json",
+    "sha256": "5cfe3a007e32adfaf77af03c4ea7c7f1a78891aa4dcaa4f96327084a61c5e4ef",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:08.216149+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc",
+    "experiment_id": "audit-writing"
+  },
+  "EV-00009": {
+    "id": "EV-00009",
+    "kind": "experiment",
+    "description": "Actual execution: python3 -B experiments/audit_capture.py --mode writing",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-writing/receipt.json",
+    "sha256": "904f9ad3eb6c55f8929eab3f77c5932f3c97867d2a78ef968d8da34a76cf395b",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:08.231810+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc",
+    "command": "python3 -B experiments/audit_capture.py --mode writing",
+    "check_ids": [
+      "P1",
+      "R1",
+      "R2",
+      "R4",
+      "R5",
+      "E1"
+    ],
+    "experiment_id": "audit-writing",
+    "exit_code": 0,
+    "timed_out": false,
+    "truncated": false
+  },
+  "EV-00010": {
+    "id": "EV-00010",
+    "kind": "experiment_code",
+    "description": "PoC source: experiments/audit_capture.py",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/code/experiments/audit_capture.py",
+    "sha256": "f1c3e895186915f7358ef25dd609b2ba683ac94da6b680017e5b7bc47405bf03",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:08.495333+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  },
+  "EV-00011": {
+    "id": "EV-00011",
+    "kind": "artifact",
+    "description": "Actual generated result: experiments/artifacts/protected-examples.json",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/artifacts/experiments/artifacts/protected-examples.json",
+    "sha256": "6b92d7e0a0853a304a1030cc4f055cafaf0443f0b164c6afdc8310e33cc36eaa",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:08.893201+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc",
+    "experiment_id": "audit-protected-holdout"
+  },
+  "EV-00012": {
+    "id": "EV-00012",
+    "kind": "artifact",
+    "description": "Actual generated result: experiments/artifacts/holdout-paired.json",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/artifacts/experiments/artifacts/holdout-paired.json",
+    "sha256": "bdf494a1de5cf85b90b8961a25536c09e6b2f8ddd2254b2972310819535231f7",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:08.895533+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc",
+    "experiment_id": "audit-protected-holdout"
+  },
+  "EV-00013": {
+    "id": "EV-00013",
+    "kind": "experiment",
+    "description": "Actual execution: python3 -B experiments/audit_capture.py --mode protected-holdout",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-protected-holdout/receipt.json",
+    "sha256": "87675ab967b8c6b0d394f0e2b8dedad8c120b58e2c9db145aa15f9024cfff8f2",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:08.910920+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc",
+    "command": "python3 -B experiments/audit_capture.py --mode protected-holdout",
+    "check_ids": [
+      "R1",
+      "R2",
+      "R4",
+      "E1"
+    ],
+    "experiment_id": "audit-protected-holdout",
+    "exit_code": 0,
+    "timed_out": false,
+    "truncated": false
+  },
+  "EV-00014": {
+    "id": "EV-00014",
+    "kind": "experiment_code",
+    "description": "PoC source: experiments/audit_capture.py",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/code/experiments/audit_capture.py",
+    "sha256": "f1c3e895186915f7358ef25dd609b2ba683ac94da6b680017e5b7bc47405bf03",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:09.177154+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  },
+  "EV-00015": {
+    "id": "EV-00015",
+    "kind": "artifact",
+    "description": "Actual generated result: experiments/artifacts/native-audit.json",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/artifacts/experiments/artifacts/native-audit.json",
+    "sha256": "f04ec0366e6a83a143f409b78ecd3d27acd4fcd9d8a5802ef1a7cf0ef9f2a304",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:09.606972+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc",
+    "experiment_id": "audit-native"
+  },
+  "EV-00016": {
+    "id": "EV-00016",
+    "kind": "experiment",
+    "description": "Actual execution: python3 -B experiments/audit_capture.py --mode native",
+    "path": "runs/20261011T101101Z-7590eed5/001-experiments/audit-native/receipt.json",
+    "sha256": "ebd8880343fadeccdd4d8c092dfe55cc767f3789399b42974ee12d358ab8f3ad",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T10:40:09.622891+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc",
+    "command": "python3 -B experiments/audit_capture.py --mode native",
+    "check_ids": [
+      "R3",
+      "E1"
+    ],
+    "experiment_id": "audit-native",
+    "exit_code": 0,
+    "timed_out": false,
+    "truncated": false
+  },
+  "EV-00017": {
+    "id": "EV-00017",
+    "kind": "source",
+    "description": "候補Aの比較に用いた凍結評価contract",
+    "path": "runs/20261011T101101Z-7590eed5/001-producer-evidence-0b112f/inputs/evaluation_contract.json",
+    "sha256": "00bc4befab360198c174d4f530a4463896413345abe97dc5f197332c634f5211",
+    "iteration": 1,
+    "recorded_at": "2026-10-11T11:11:10.039227+00:00",
+    "source_fingerprint": "2013a6df232c6365e19f79924d2894303154876cba9520c9310ceed95f4f6fcc"
+  }
+}

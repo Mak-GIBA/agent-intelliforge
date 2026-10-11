@@ -1,0 +1,62 @@
+[
+  {
+    "repository": "blader/humanizer",
+    "path": "SKILL.md",
+    "commit": "d4b81278e6604e237bf32f0f7ce5c217aee94269",
+    "url": "https://github.com/blader/humanizer/blob/d4b81278e6604e237bf32f0f7ce5c217aee94269/SKILL.md",
+    "license": "MIT",
+    "reading_level": "full_skill",
+    "effectiveness": "Not independently established by author claims",
+    "raw_url": "https://raw.githubusercontent.com/blader/humanizer/d4b81278e6604e237bf32f0f7ce5c217aee94269/SKILL.md",
+    "sha256": "0612f1dfb1672b0ea9b97e139bf1f06cabe98d8b27424fe8ff01e1fb4cc99cad",
+    "bytes": 32348
+  },
+  {
+    "repository": "hardikpandya/stop-slop",
+    "path": "SKILL.md",
+    "commit": "8da1f030185bdfe8471220585162991eaeb970e9",
+    "url": "https://github.com/hardikpandya/stop-slop/blob/8da1f030185bdfe8471220585162991eaeb970e9/SKILL.md",
+    "license": "MIT",
+    "reading_level": "full_skill",
+    "effectiveness": "Not independently established by author claims",
+    "raw_url": "https://raw.githubusercontent.com/hardikpandya/stop-slop/8da1f030185bdfe8471220585162991eaeb970e9/SKILL.md",
+    "sha256": "7432a1d9ebdd42b27666da8458af252edf549f723fb14bcd4791425103930310",
+    "bytes": 2629
+  },
+  {
+    "repository": "coji/natural-japanese",
+    "path": "skills/natural-japanese/SKILL.md",
+    "commit": "01802de30fffcd6f5dcc74edb298fc3a6df5ca19",
+    "url": "https://github.com/coji/natural-japanese/blob/01802de30fffcd6f5dcc74edb298fc3a6df5ca19/skills/natural-japanese/SKILL.md",
+    "license": "MIT",
+    "reading_level": "full_skill",
+    "effectiveness": "Not independently established by author claims",
+    "raw_url": "https://raw.githubusercontent.com/coji/natural-japanese/01802de30fffcd6f5dcc74edb298fc3a6df5ca19/skills/natural-japanese/SKILL.md",
+    "sha256": "0f662a6ab4955b9146a138a38b73a619b27fa1448ef71e27fcc57f67d3ad0267",
+    "bytes": 19976
+  },
+  {
+    "repository": "iKora128/stop-ai-slop-jp",
+    "path": "SKILL.md",
+    "commit": "926392e2713841d689e4b3bf7347e89cf4665c0d",
+    "url": "https://github.com/iKora128/stop-ai-slop-jp/blob/926392e2713841d689e4b3bf7347e89cf4665c0d/SKILL.md",
+    "license": "MIT",
+    "reading_level": "full_skill",
+    "effectiveness": "Not independently established by author claims",
+    "raw_url": "https://raw.githubusercontent.com/iKora128/stop-ai-slop-jp/926392e2713841d689e4b3bf7347e89cf4665c0d/SKILL.md",
+    "sha256": "4da89e5f9c69ce69a8d6c04e8f3d238686cd3a3ba3946c5cfadad805116c50f3",
+    "bytes": 10273
+  },
+  {
+    "repository": "nakashimatakaya/deslop-ja",
+    "path": "SKILL.md",
+    "commit": "3fda6f7316b4d0d14e0660ec14bf21d2f8fc6978",
+    "url": "https://github.com/nakashimatakaya/deslop-ja/blob/3fda6f7316b4d0d14e0660ec14bf21d2f8fc6978/SKILL.md",
+    "license": "MIT",
+    "reading_level": "full_skill",
+    "effectiveness": "Not independently established by author claims",
+    "raw_url": "https://raw.githubusercontent.com/nakashimatakaya/deslop-ja/3fda6f7316b4d0d14e0660ec14bf21d2f8fc6978/SKILL.md",
+    "sha256": "c5c8cf8baeaa29167cda45d8b77b5fa883033877724388f9953c39d4907a17ff",
+    "bytes": 13907
+  }
+]
