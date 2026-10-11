@@ -20,33 +20,16 @@ SIGNALS = re.compile(
     r"今後|次から|これからは|毎回|好み|覚えて|記憶して|教訓|再利用|再発防止|根本原因|"
     r"原因.{0,40}(?:確認|判明|特定)|"
     r"使って.{0,20}(?:作|進)|使った|利用した|同じ形式|同じ手順|検証済み|"
+    r"つまず(?:き|いた)|躓(?:き|いた)|手戻り|回避策|切り分け|復旧手順|作業上の発見|"
     r"commit|push|コミット|プッシュ|この形式で|この案で|元に戻|引き続き|あと.{0,20}だけ|修正|調整|フィードバック|改善|解決|うまくいった|期待どおり|成功事例|"
     r"もっと.{0,20}(?:短|長|詳|簡潔)|表にして|ではなく|じゃなく|その意味では|"
     r"\b(?:remember|preference|from now on|next time|lesson|reusable|root cause|"
     r"correction|feedback|instead|improved|resolved|worked|successful|adjust|shorter|"
     r"revise|not what I meant|reuse|reused|downstream|verified|"
+    r"workaround|workflow lesson|recovery procedure|diagnosed|bottleneck|"
     r"used (?:this|that|it)|same (?:format|procedure)|build on)\b",
     re.IGNORECASE,
 )
-RECALL = """Before drafting, search directly relevant Corrections, Rules, Workflows,
-Validations, and similar Cases in Basic Memory using the current purpose, audience,
-output type and constraints. For progressive Cases read the ordered steps and
-assessments, checking integrity before reuse. Prefer matching context, then evidence
-of actual adoption/reuse; do not equate an implicit signal with satisfaction.
-Unknown explicit acceptance does not block contextual reuse. Match the evidence
-to the claim: checks for tested properties, user behavior for adopted aspects,
-instructions for desired output. Read compact context/characteristic/evidence/limits
-Observations as search hints, then verify them against the canonical sequence.
-A needs_review Case is not a positive precedent; inspect its sources and affected
-Rules/Workflows under AUDIT.md. In Plan/read-only report concerns without writes.
-Read promising notes and, when useful, follow their
-real graph context at depth 2 or 3. Compare scope and exceptions before applying
-an old desired output. A scoped correction is not a standing preference; a graph
-path is potential relevance, not automatic applicability. An explicit correction
-can show what was requested even if its outcome is unknown. Current instructions
-always take precedence. Use applicable context in the initial output. Avoid exposing
-irrelevant private memory or persisting a recall diary.
-"""
 
 
 def read_object(path):
@@ -165,21 +148,10 @@ def evaluate(event, action):
     settings = (
         f"Effective Workgraph settings: auto={mode}, correction={config['correctionMode']}, "
         f"case={config['caseMode']}, skill={config['skillMode']}. "
-        "auto=off disables ALL automatic corrections, cases and Skill review/creation. "
-        "correction=scoped admits contextual user corrections even with unknown outcomes; "
-        "correction=off allows Correction capture only on an explicit save request. "
-        "case=off permits concrete case capture only on an explicit save request. "
-        "case=progressive allows useful corrections, downstream use/reuse requests and non-obvious verified successes, "
-        "including unfinished sequences; no prior correction or explicit acceptance is required. "
-        "Routine completion or generic passing tests alone do not qualify. "
-        "skill=review permits review only; skill=auto authorizes reviewed, validated "
-        "Workgraph-managed skill creation/registration. "
-        f"Read {ROOT / 'templates/CORRECTIONS.md'} for correction capture/recall, "
-        f"{ROOT / 'templates/CAPTURE.md'} for a case, "
-        f"{ROOT / 'templates/AUDIT.md'} for integrity checking/repair, and "
-        f"{ROOT / 'templates/SKILL_REVIEW.md'} for a workflow review. "
-        "Use only available conversation evidence; do not read raw transcript logs "
-        "or fabricate missing interaction steps."
+        f"Reference directory: {ROOT / 'templates'}. "
+        "Read the matching guide before its operation: CORRECTIONS.md (correction "
+        "capture/recall), CAPTURE.md (Case capture/reuse), AUDIT.md (integrity/repair), "
+        "SKILL_REVIEW.md (Workflow-to-Skill review)."
     )
 
     # Codex 0.157.1 maps approval policy to default/bypassPermissions; neither
@@ -197,13 +169,10 @@ def evaluate(event, action):
                                       "--ticket", state.stem, "--token", token,
                                       "--mode", "implementation"])
                 activation = (
-                    "Before the final answer, confirm the ACTUAL active collaboration mode. "
-                    "ONLY in implementation/default mode with writes allowed, run this command "
-                    "to enable the current turn's Stop evaluation. NEVER run it in Plan/read-only "
-                    "mode or a Stop-hook continuation; permission_mode does not prove the mode. "
-                    "Append --candidate if you recognized a correction, non-obvious verified result, downstream use, "
-                    "reuse request, reversal, memory error, or lesson "
-                    "semantically, even without a keyword match. Do not print the token to the user.\n"
+                    "Before final, confirm ACTUAL implementation/default mode and writes allowed, "
+                    "then run below. Never arm in Plan/read-only or a Stop continuation. "
+                    "Add --candidate for semantic signals described in the policy, even without "
+                    "keywords. Do not expose the token.\n"
                     + command
                 )
             except (OSError, ValueError):
@@ -213,11 +182,11 @@ def evaluate(event, action):
         automatic = (
             "Automatic persistence is off. Only explicit user save requests may write."
             if mode == "off" else
-            "Automatic persistence follows admission criteria; the Stop hook evaluates at most once after implementation-mode attestation."
+            "Stop requests at most one evaluation after implementation-mode attestation."
         )
         return {"hookSpecificOutput": {
             "hookEventName": "UserPromptSubmit",
-            "additionalContext": policy + "\n\n" + settings + "\n\n" + automatic + "\n\n" + RECALL + "\n" + activation,
+            "additionalContext": policy + "\n\n" + settings + "\n\n" + automatic + "\n" + activation,
         }}
 
     if (blocked or mode == "off" or saved.get("version") != 1
@@ -228,13 +197,10 @@ def evaluate(event, action):
     return {
         "decision": "block",
         "reason": (
-            "Evaluate Basic Memory persistence ONCE using the policy below. "
-            "This is an evaluation request, not a requirement to write. "
-            "If no candidate qualifies or the turn already saved the same knowledge, "
-            "finish without writing. Respect the CURRENT mode: if now Plan/read-only, "
-            "do not write. Do not arm another token during this continuation.\n\n"
+            "Evaluate Basic Memory persistence ONCE. Write only admitted new knowledge; "
+            "none or already saved means no write. Respect CURRENT mode: Plan/read-only "
+            "forbids writes. Do not arm or start another persistence pass in this continuation.\n\n"
             + policy + "\n\n" + settings
-            + "\n\nAfter this one pass, finish normally; do not start another persistence pass."
         ),
     }
 

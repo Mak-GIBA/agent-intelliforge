@@ -1,0 +1,45 @@
+{
+  "source_commit": "4068bd2d64f9351a2ddeff8aa0a3934c64217da6",
+  "policy_sha256": "d5dbca2b9cb55098e1f5ce99f27acb353aa28f9607129f331e13ee187e9e33b7",
+  "hook_sha256": "a043c5372aec4f38f06a73dc685d1a40fac0ed48a36dd84f66c09ea512c45032",
+  "policy_chars": 16628,
+  "normalization": "Replace shell-quoted hook path, Codex directory, then shell-quoted Python executable with <HOOK_SCRIPT>, <CODEX_HOME>, <PYTHON>. Count Python Unicode characters. Tokens/tickets retain their fixed 64 characters.",
+  "cases": [
+    {
+      "name": "default",
+      "mode": "smart",
+      "correctionMode": "off",
+      "caseMode": "off",
+      "skillMode": "review",
+      "recall_chars": 20109,
+      "stop_chars": 18271
+    },
+    {
+      "name": "progressive",
+      "mode": "smart",
+      "correctionMode": "scoped",
+      "caseMode": "progressive",
+      "skillMode": "review",
+      "recall_chars": 20120,
+      "stop_chars": 18282
+    },
+    {
+      "name": "reusable_auto",
+      "mode": "always",
+      "correctionMode": "scoped",
+      "caseMode": "reusable",
+      "skillMode": "auto",
+      "recall_chars": 20116,
+      "stop_chars": 18278
+    },
+    {
+      "name": "automatic_off",
+      "mode": "off",
+      "correctionMode": "scoped",
+      "caseMode": "progressive",
+      "skillMode": "auto",
+      "recall_chars": 19425,
+      "stop_chars": null
+    }
+  ]
+}

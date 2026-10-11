@@ -3,7 +3,7 @@
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方と設定](usage.md)
 
 Codexでの作業から、次の仕事にも役立つ知識をBasic Memoryへ蓄積するためのツールです。
-成功した手順やユーザーの修正を振り返り、再利用できるルール・具体事例・Skillを関連付けます。
+自身の試行・つまずき・検証済みの対処やユーザーの修正を振り返り、再利用できるルール・具体事例・Skillを関連付けます。
 修正指示を状況と望ましい出力の組として蓄積し、似た依頼の初回出力から活用できます。
 
 対象スクリプトは[install_basic_memory_workgraph.sh](../../install_basic_memory_workgraph.sh)です。

@@ -422,6 +422,101 @@ class WorkgraphTest(unittest.TestCase):
         self.assertEqual(self.hook('save', event)['decision'], 'block')
         self.assertEqual(self.hook('save', event), {})
 
+    def test_workflow_obstacle_signals_request_evaluation_without_capture(self):
+        self.assertEqual(self.install().returncode, 0)
+        for index, prompt in enumerate((
+            'つまずいた処理を切り分けました', '躓きの回避策を確認しました',
+            '手戻りを防ぐ復旧手順を検証しました', '作業上の発見があります',
+            'A workaround prevented the collision', 'Workflow lesson', 'Recovery procedure',
+        )):
+            with self.subTest(prompt=prompt):
+                event = {'session_id': 'workflow', 'turn_id': str(index), 'prompt': prompt}
+                self.hook('recall', event)
+                self.assertTrue(json.loads(self.state_files()[0].read_text())['candidate'])
+                self.activate(event)
+                reason = self.hook('save', event)['reason']
+                self.assertIn("Review the agent's own workflow", reason)
+                self.assertIn('User correction is not required', reason)
+                self.assertIn('Recovery alone does not establish', reason)
+                self.assertEqual(self.hook('save', event), {})
+        self.assertFalse((self.home / 'knowledge').exists())
+
+    def test_agent_reported_workflow_finding_after_neutral_request(self):
+        self.assertEqual(self.install().returncode, 0)
+        event = {'session_id': 'workflow', 'turn_id': 'agent-finding', 'prompt': '処理を続けて'}
+        self.hook('recall', event)
+        self.assertFalse(json.loads(self.state_files()[0].read_text())['candidate'])
+        self.activate(event)
+        result = self.hook('save', {**event, 'last_assistant_message':
+                                 '共通キャッシュの切り分けを行い、専用の配置で競合が止まることを確認しました。'})
+        self.assertEqual(result['decision'], 'block')
+        self.assertEqual(self.hook('save', event), {})
+        self.assertFalse((self.home / 'knowledge').exists())
+
+    def test_workflow_signals_do_not_bypass_mode_or_token(self):
+        event = {'session_id': 'workflow', 'turn_id': 'denied', 'prompt': '復旧手順を確認'}
+        self.assertEqual(self.install().returncode, 0)
+        self.hook('recall', event)
+        self.assertEqual(self.hook('save', event), {})  # No attestation.
+        self.hook('recall', {**event, 'permission_mode': 'plan'})
+        self.assertEqual(self.state_files(), [])
+        self.assertEqual(self.hook('save', event), {})
+        self.assertEqual(self.install(BM_AUTO_MODE='off').returncode, 0)
+        self.hook('recall', event)
+        self.assertEqual(self.state_files(), [])
+        self.assertEqual(self.hook('save', event), {})
+        self.assertFalse((self.home / 'knowledge').exists())
+
+    def test_workflow_lesson_without_keyword_uses_semantic_candidate(self):
+        self.assertEqual(self.install().returncode, 0)
+        event = {'session_id': 'workflow', 'turn_id': 'semantic', 'prompt': '処理を続けて'}
+        self.hook('recall', event)
+        self.assertFalse(json.loads(self.state_files()[0].read_text())['candidate'])
+        self.activate(event, semantic=True)
+        self.assertEqual(self.hook('save', {**event, 'last_assistant_message': 'Done'})['decision'], 'block')
+        self.assertEqual(self.hook('save', event), {})
+        self.assertFalse((self.home / 'knowledge').exists())
+
+    def test_plain_failure_or_test_completion_is_not_a_new_signal(self):
+        self.assertEqual(self.install().returncode, 0)
+        for index, prompt in enumerate(('コマンドが失敗しました', 'テストが通りました')):
+            event = {'session_id': 'workflow', 'turn_id': str(index), 'prompt': prompt}
+            self.hook('recall', event)
+            self.assertFalse(json.loads(self.state_files()[0].read_text())['candidate'])
+            self.activate(event)
+            self.assertEqual(self.hook('save', {**event, 'last_assistant_message': 'Done'}), {})
+
+    def test_full_prompt_budget_against_frozen_prechange_baseline(self):
+        baseline = json.loads((REPO / 'tests/fixtures/workgraph-prompt-baseline.json').read_text())
+
+        def size(text):
+            # Normalize environment paths, not policy text, references or control tokens.
+            return len(text.replace(shlex.quote(str(self.codex / 'hooks/basic_memory_workgraph.py')), '<HOOK_SCRIPT>')
+                       .replace(str(self.codex), '<CODEX_HOME>')
+                       .replace(shlex.quote(sys.executable), '<PYTHON>'))
+
+        for case in baseline['cases']:
+            with self.subTest(mode=case['name']):
+                self.assertEqual(self.install(BM_AUTO_MODE=case['mode'], BM_CORRECTION_MODE=case['correctionMode'],
+                                              BM_CASE_MODE=case['caseMode'], BM_SKILL_MODE=case['skillMode']).returncode, 0)
+                event = {'session_id': 'budget', 'turn_id': case['name'], 'prompt': '教訓を覚えて'}
+                recall = self.hook('recall', event)['hookSpecificOutput']['additionalContext']
+                self.assertLessEqual(size(recall), case['recall_chars'] * 0.8)
+                self.assertTrue(recall.startswith(POLICY))
+                self.assertEqual(recall.count(POLICY), 1)
+                for guide in ('CORRECTIONS.md', 'CAPTURE.md', 'AUDIT.md', 'SKILL_REVIEW.md'):
+                    self.assertTrue((self.codex / 'basic-memory-workgraph/templates' / guide).is_file())
+                    self.assertIn(guide, recall)
+                if case['stop_chars'] is None:
+                    self.assertEqual(self.hook('save', event), {})
+                else:
+                    self.activate(event)
+                    reason = self.hook('save', event)['reason']
+                    self.assertLessEqual(size(reason), case['stop_chars'] * 0.8)
+                    self.assertIn(POLICY, reason)
+                    self.assertEqual(reason.count(POLICY), 1)
+                    self.assertEqual(self.hook('save', event), {})
+
     def test_attestation_command_is_quoted_and_semantic_candidate_is_supported(self):
         self.assertEqual(self.install().returncode, 0)
         event = {"session_id": "semantic", "turn_id": "one", "prompt": "結論を先頭へ"}
