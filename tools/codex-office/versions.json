@@ -1,0 +1,30 @@
+{
+  "kit_version": "1.0.0",
+  "officecli_version": "1.0.153",
+  "officecli_release": "https://github.com/iOfficeAI/OfficeCLI/releases/tag/v1.0.153",
+  "officecli_assets": {
+    "linux-x64": "dc1bf7ec9e0bf3ac45c5bd32934842ca2f8939775660526e057642ea68606a80",
+    "linux-arm64": "29c2527491331ac7b1ad6ebb4aa5ff9a666f06353675463aae9a832237ef0fda",
+    "mac-x64": "64d5084ed2fc7cce05954ecaf5f8247d53fa272626d5872f6fb1f018bc628fee",
+    "mac-arm64": "61d6449da326c234149352a82e6047bd73b38e7d34d8b23310bd877b4ea65e79"
+  },
+  "officecli_references": {
+    "SKILL.md": "6c299f334a2e004ff5dda05641e75f7ec4453f37",
+    "LICENSE": "1155f8a49ca1b8b474b1abd55c259bc7b0411cc4",
+    "NOTICE": "5df81e65d88052382bbf797c444e7d6eb9902e51"
+  },
+  "python_requirements": [
+    "markitdown[pdf,docx,pptx]==0.1.8",
+    "pypdf==6.15.0",
+    "pdfplumber==0.11.9",
+    "pypdfium2==5.12.1",
+    "python-docx==1.2.0",
+    "python-pptx==1.0.2",
+    "Pillow==12.3.0",
+    "defusedxml==0.7.1"
+  ],
+  "docling_requirements": [
+    "docling-mcp[local]==3.0.0"
+  ],
+  "note": "Top-level Python versions are pinned. Transitive versions are resolved by pip and recorded in pip-freeze.txt; this is not a fully reproducible hash-locked Python environment. OfficeCLI asset SHA-256 values are from GitHub release metadata; references use Git blob SHA-1 identifiers. No publisher signature is asserted."
+}

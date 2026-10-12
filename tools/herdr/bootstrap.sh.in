@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Standalone Herdr installer + canonical-cwd workspace launcher.
+# Requires Bash and Python 3.8+ on Linux/macOS. No sudo or pip packages.
+# Usage: bash install_herdr.sh [--dry-run] [--binary /path/to/herdr]
+set -euo pipefail
+if ! command -v python3 >/dev/null 2>&1; then
+    printf '%s\n' 'ERROR: Python 3.8+ (python3) is required.' >&2
+    exit 1
+fi
+python3 - "$@" <<'HERDR_INSTALL_PY'
+@INSTALLER_SOURCE@
+HERDR_INSTALL_PY

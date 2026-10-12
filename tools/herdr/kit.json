@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "id": "herdr",
+  "name": "Herdr workspace reuse",
+  "version": "1.0.0",
+  "legacy": {
+    "script": "install_herdr.sh",
+    "actions": {
+      "install": [],
+      "update": null,
+      "doctor": null,
+      "uninstall": null
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [],
+  "sources": [
+    {
+      "url": "https://herdr.dev/",
+      "revision": "legacy official installer/reuse; native Windows x64 pinned v0.9.3 with SHA-256"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Herdr native binary (existing installation reused)",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "workspace-reuse wrapper",
+      "condition": "when this kit/feature is selected"
+    }
+  ],
+  "destinations": [
+    "{bin_home}/herdr-open"
+  ],
+  "settings": [
+    "owned Bash guidance/function in legacy mode; native launchers in portable mode"
+  ],
+  "plugin": {
+    "name": "herdr",
+    "enabled": false,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run herdr"
+  },
+  "editable_sources": [
+    "tools/herdr"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "native_windows_asset": {
+    "url": "https://github.com/herdrdev/herdr/releases/download/v0.9.3/herdr-windows-x86_64.zip",
+    "sha256": "c75b1fa49f7a3ba4b8b11789912a6147e4214a3b6fd3556d0f80076c8887d795",
+    "architecture": "x86_64",
+    "version": "0.9.3"
+  }
+}

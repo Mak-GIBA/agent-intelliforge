@@ -1,0 +1,6 @@
+interface:
+  display_name: "Office Workbench"
+  short_description: "PDF・Word・PowerPointを原本保護しながら閲覧・編集・検査"
+  default_prompt: "Use $office-workbench to inspect the source, make only requested changes on a copy, then validate and inspect rendered pages."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,166 @@
+{
+  "compression": 1,
+  "entries": [
+    {
+      "filename": "README_EXTRACTED.md",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "scripts/install_github_pm.py",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/github-project-director/SKILL.md",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/github-project-director/agents/openai.yaml",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/github-project-director/references/native-operations.md",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/github-project-director/references/planning-and-meetings.md",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/github-project-director/references/writing-and-tracking.md",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/github-project-director/scripts/github_inspect.py",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "tests/behavioral-scenarios.md",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "tests/test_github_project_director.py",
+      "date_time": [
+        2026,
+        10,
+        3,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    }
+  ],
+  "line_width": 96
+}

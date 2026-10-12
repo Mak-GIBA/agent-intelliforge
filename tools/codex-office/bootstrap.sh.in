@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# Codex Office Workbench 1.0.0 -- single-file, per-user installer.
+# Linux/WSL2 (glibc) x64/ARM64; macOS asset paths included, not tested here.
+# No sibling files required. Python 3.11+ and local Codex are prerequisites.
+#
+# Default: dry-run. --apply fetches fixed OfficeCLI/Python dependencies.
+# Existing ECC, Basic Memory, hooks, AGENTS.md and shell settings are untouched.
+# Codex config.toml changes ONLY with explicit --with-mcp / mcp-enable.
+# No fonts are embedded. --install-system-deps is an explicit OS-level action.
+#
+# bash install_codex_office.sh --dry-run
+# bash install_codex_office.sh --apply
+# bash install_codex_office.sh --doctor
+# bash install_codex_office.sh --apply --force
+# bash install_codex_office.sh --self-test
+# bash install_codex_office.sh --extract /tmp/codex-office-source
+#
+# Read/extract before running downloaded code. Embedded checksum detects
+# corruption, NOT publisher authenticity. Run as your ordinary user; no sudo.
+set -euo pipefail
+PY="${PYTHON_BIN:-}"
+if [[ -z "$PY" ]]; then
+  for candidate in python3 python3.13 python3.12 python3.11; do
+    if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3,11) else 1)' 2>/dev/null; then
+      PY="$candidate"; break
+    fi
+  done
+fi
+if [[ -z "$PY" ]] || ! "$PY" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3,11) else 1)' 2>/dev/null; then
+  echo 'ERROR: Python 3.11+ required. Set PYTHON_BIN to an appropriate interpreter.' >&2
+  exit 2
+fi
+export PYTHONDONTWRITEBYTECODE=1
+"$PY" - "$0" "$@" <<'CODEX_OFFICE_BOOTSTRAP'
+import base64, hashlib, io, os, stat, subprocess, sys, tempfile, zipfile
+from pathlib import Path, PurePosixPath
+EXPECTED_SHA256 = '@PAYLOAD_SHA256@'
+MARKER="\n: <<'CODEX_OFFICE_PAYLOAD_V1'\n"
+def fail(message):
+    print('ERROR: '+message,file=sys.stderr); raise SystemExit(2)
+def safe_destination(path):
+    for p in (path,*path.parents):
+        if p.is_symlink():fail('Symlink destination is not supported: '+str(p))
+try:
+    src=Path(sys.argv[1]).read_text(encoding='utf-8')
+    if MARKER not in src:fail('Embedded payload is missing')
+    encoded=src.split(MARKER,1)[1].rsplit('\nCODEX_OFFICE_PAYLOAD_V1',1)[0]
+    if len(encoded)>5_000_000:fail('Oversized payload')
+    data=base64.b64decode(''.join(encoded.split()),validate=True)
+    if hashlib.sha256(data).hexdigest()!=EXPECTED_SHA256:fail('Payload checksum mismatch; do not run a corrupt file')
+    z=zipfile.ZipFile(io.BytesIO(data)); names=set(); total=0
+    for info in z.infolist():
+        n=info.filename;p=PurePosixPath(n)
+        if not n or n in names or p.is_absolute() or '..' in p.parts or '\\' in n or ':' in n:
+            fail('Unsafe or duplicate archive member')
+        if info.is_dir() or stat.S_ISLNK(info.external_attr>>16):fail('Unexpected non-file archive member')
+        if info.flag_bits & 1:fail('Encrypted payload member')
+        if info.file_size>2_000_000:fail('Oversized member')
+        total+=info.file_size;names.add(n)
+    if total>12_000_000 or len(names)>500:fail('Oversized archive')
+    if not {'install.py','office.py','common.py','versions.json','README_JA.md'} <= names:
+        fail('Incomplete payload')
+    args=sys.argv[2:]
+    if '--extract' in args:
+        if len(args)!=2 or args[0]!='--extract':fail('Use --extract DIRECTORY alone')
+        dest=Path(os.path.abspath(os.path.expanduser(args[1])));safe_destination(dest)
+        if dest.exists() and (not dest.is_dir() or any(dest.iterdir())):
+            fail('Extract destination must be missing or an empty directory')
+        dest.mkdir(parents=True,exist_ok=True)
+        for info in z.infolist():
+            path=dest/info.filename;safe_destination(path);path.parent.mkdir(parents=True,exist_ok=True)
+            with path.open('xb') as f:f.write(z.read(info))
+            path.chmod(0o644)
+        print('Extracted sources without installing: '+str(dest))
+        print('Guide: '+str(dest/'README_JA.md'))
+        raise SystemExit(0)
+    if '--self-test' in args and args!=['--self-test']:fail('Use --self-test alone')
+    if '--help' in args or '-h' in args:
+        print('One-file extras: --extract DIRECTORY, --self-test. No sibling ZIP is required.\n',flush=True)
+    with tempfile.TemporaryDirectory(prefix='codex-office-installer-') as directory:
+        root=Path(directory)
+        for info in z.infolist():
+            target=root/info.filename;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(z.read(info))
+        if args==['--self-test']:
+            print('Offline local tests. Network and Codex/MCP boundaries use mocks.\n'
+                  'Installed PDF libraries are exercised when available; otherwise those tests SKIP.\n'
+                  'This is not real OfficeCLI or Codex end-to-end validation.',flush=True)
+            argv=[sys.executable,'-m','unittest','discover','-s','tests','-v']
+        else:
+            argv=[sys.executable,str(root/'install.py'),*args]
+        result=subprocess.run(argv,cwd=root,env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+        raise SystemExit(result.returncode)
+except (OSError,ValueError,RuntimeError,zipfile.BadZipFile) as e:
+    fail(str(e))
+CODEX_OFFICE_BOOTSTRAP
+exit 0
+
+: <<'CODEX_OFFICE_PAYLOAD_V1'
+@PAYLOAD_BASE64@
+CODEX_OFFICE_PAYLOAD_V1
