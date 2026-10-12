@@ -63,6 +63,91 @@ bash install_all.sh --only ux-stack,yomiyasu --apply
 個別インストーラーは引数なしの動作が異なるため、直接実行するときは各ガイドを確認してください。
 更新・再実行・解除は[一括導入ガイド](docs/installation.md#再実行更新解除)から各キットの手順へ進めます。
 
+### エージェントを並列実行する前に
+
+複数のエージェントを並列に走らせる場合は、メモリ不足に備えてswap領域の拡張をおすすめします。
+ビルド・テスト・ブラウザー検証が重なると、個々の作業では足りていたRAMを使い切ることがあります。
+swapは、RAMに収まりきらないメモリの一部をディスクへ退避し、メモリ不足によるプロセスの強制終了を起きにくくします。
+ただし、退避と読み戻しが頻繁になると処理が遅くなるため、重いテストを順番に実行するなど、同時にかかる負荷も調整してください。([Red Hatのswap解説](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_storage_devices/getting-started-with-swap))
+
+まず、現在のRAMとswapを確認します。以下の16 GiBは設定例です。既存のswap容量、同時に動かす処理、ディスクの空き容量に合わせて調整してください。
+
+```bash
+free -h
+swapon --show
+```
+
+<details>
+<summary>Linux：swapファイルを16 GiB追加する</summary>
+
+Ubuntuなど、ルートのファイルシステムがext4 / XFSの環境向けです。`df -h /`で16 GiBを追加しても十分な空きが残ることを確認してください。
+既存のswapは保持し、専用ファイルを追加します。同名ファイルがある場合は上書きせず停止します。
+Btrfsでは[専用の作成手順](https://btrfs.readthedocs.io/en/latest/Swapfile.html)を使ってください。
+
+```bash
+df -h /
+findmnt -no FSTYPE /
+
+sudo bash <<'SWAP'
+set -eu
+swapfile=/swapfile-agent-intelliforge
+case "$(findmnt -no FSTYPE /)" in
+  ext4|xfs) ;;
+  *) echo 'この手順はext4 / XFS向けです。' >&2; exit 1 ;;
+esac
+if [ -e "$swapfile" ] || [ -L "$swapfile" ]; then
+  echo "$swapfile は既に存在するため、処理を中止します。" >&2
+  exit 1
+fi
+umask 077
+dd if=/dev/zero of="$swapfile" bs=1M count=16384 status=progress
+chmod 600 "$swapfile"
+mkswap "$swapfile"
+swapon "$swapfile"
+# 再起動後も有効にする
+if ! grep -qE '^/swapfile-agent-intelliforge[[:space:]]' /etc/fstab; then
+  printf '%s\n' "$swapfile none swap defaults 0 0" >> /etc/fstab
+fi
+if [ -d /run/systemd/system ]; then
+  systemctl daemon-reload
+fi
+SWAP
+
+swapon --show
+free -h
+```
+
+ファイルの作成・有効化は[swapファイルの導入手順](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_storage_devices/getting-started-with-swap)に沿っています。
+
+</details>
+
+<details>
+<summary>WSL2：swap容量を16 GBに設定する</summary>
+
+WindowsのPowerShellから設定ファイルを開きます。swapファイルを置くWindows側のディスクにも空き容量を確保してください。
+
+```powershell
+notepad "$env:USERPROFILE\.wslconfig"
+```
+
+既存の設定を残し、`[wsl2]`セクションの`swap`だけを追加・変更します。セクションがなければ、以下を追記してください。
+
+```ini
+[wsl2]
+swap=16GB
+```
+
+ファイルを保存し、WSL内の作業も保存してからPowerShellで以下を実行します。すべてのWSLディストリビューションが停止します。
+
+```powershell
+wsl --shutdown
+```
+
+WSLを起動し直し、Linux側で`free -h`と`swapon --show`を確認してください。
+設定はWSL2全体に適用されます。詳細は[MicrosoftのWSL設定ガイド](https://learn.microsoft.com/en-us/windows/wsl/wsl-config#wslconfig)を参照してください。
+
+</details>
+
 <a id="kits"></a>
 
 ## 用途別のキット
