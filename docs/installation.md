@@ -2,7 +2,7 @@
 
 [リポジトリ概要](../README.md) · [docs一覧](README.md)
 
-[`install_all.sh`](../install_all.sh)は、全9ツールの一括導入と`--only`による個別選択に対応した共通の入口です。
+[`install_all.sh`](../install_all.sh)は、全ツールの一括導入と`--only`による個別選択に対応した共通の入口です。
 選んだツールの個別インストーラーを順に呼び出します。
 各ツールの取得元、配置先、編集保護は個別インストーラーに従います。
 
@@ -42,9 +42,9 @@ bash install_all.sh --apply
 | `speckit` | 固定版から両ツールを組み立て・検証し、SpecKit CLIとWorkbench・8 Skillを導入 | [導入・更新](speckit-upstream/installation.md) |
 | `github-pm` | GitHub Project DirectorとCodex共通指示。ghの導入は別途指定 | [導入・更新](codex-github-pm/installation.md) |
 | `design-research` | 固定版から両ツールを組み立て・検証し、単一入口の研究Skillとハーネスを導入 | [導入・更新](design-research/installation.md) |
-| `ecc` | Codex標準ECC pluginと必要時に参照する4つの入口。`--apply`で導入・設定 | [導入・更新・復元](codex-ecc/installation.md) |
+| `ecc` | Codex標準ECC pluginと必要時に参照する入口。`--apply`で導入・設定 | [導入・更新・復元](codex-ecc/installation.md) |
 | `office` | OfficeCLI、文書処理ライブラリ、Office Workbench。`--apply`で導入 | [導入・更新](codex-office/installation.md) |
-| `yomiyasu` | 推敲用yomiyasu、段落構成用paragraph-writing、留意書き点検用japanese-direct-writing、原本、検査ツール。`--apply`で3スキルを導入 | [導入・更新](codex-yomiyasu/installation.md) |
+| `yomiyasu` | 推敲用yomiyasu、段落構成用paragraph-writing、留意書き点検用japanese-direct-writing、原本、検査ツール。`--apply`でスキルを導入 | [導入・更新](codex-yomiyasu/installation.md) |
 | `herdr` | Herdr、herdr-open、Bash設定 | [導入とBash設定](herdr/installation.md) |
 
 UX Stackは日本語のUI文言を仕上げる際にyomiyasuを推奨します。

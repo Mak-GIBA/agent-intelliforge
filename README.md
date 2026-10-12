@@ -5,12 +5,11 @@
 <h1 align="center">Agent Intelliforge</h1>
 
 <p align="center">
-  <strong>Codexの調査・設計・実装・知識の再利用を支える、9つの導入キット。</strong>
+  <strong>Codexの調査・設計・実装・知識の再利用を支える、用途別の導入キット。</strong>
 </p>
 
 <p align="center">
   <a href="docs/README.md"><img src="https://img.shields.io/badge/Codex-Skills_%26_Tooling-0f172a?style=flat-square" alt="Codex Skills &amp; Tooling"></a>
-  <a href="#kits"><img src="https://img.shields.io/badge/Kits-9-0891b2?style=flat-square" alt="9 kits"></a>
   <a href="docs/installation.md"><img src="https://img.shields.io/badge/Platform-Linux_%2F_WSL2-475569?style=flat-square" alt="Linux / WSL2"></a>
 </p>
 
@@ -59,14 +58,14 @@ bash install_all.sh --only yomiyasu --apply
 bash install_all.sh --only ux-stack,yomiyasu --apply
 ```
 
-全9キットの導入は`bash install_all.sh --apply`で実行できます。
+全キットの導入は`bash install_all.sh --apply`で実行できます。
 一括インストーラーは引数なしでも予定表示にとどまり、`--apply`で実際に導入します。
 個別インストーラーは引数なしの動作が異なるため、直接実行するときは各ガイドを確認してください。
 更新・再実行・解除は[一括導入ガイド](docs/installation.md#再実行更新解除)から各キットの手順へ進めます。
 
 <a id="kits"></a>
 
-## 9つのキット
+## 用途別のキット
 
 キット名から概要、導入手順、使用例へ進めます。`ID`は`install_all.sh --only`で指定する名前です。
 
@@ -132,7 +131,7 @@ yomiyasuは設計書や報告文を仕上げる工程で使えます。
 | 正本の編集・配布物の生成・検証 | [開発ガイド](docs/development.md) |
 
 ルートの`install_*.sh`が導入の入口です。編集用ソースと配布資材は`tools/`、利用ガイドと評価資料は`docs/`、回帰テストは`tests/`にあります。
-一括インストーラー、Workgraph、Codex ECCはリポジトリ一式で使います。ほかの7キットは個別スクリプト単体でも使えます。
+一括インストーラー、Workgraph、Codex ECCはリポジトリ一式で使います。それ以外のキットは個別スクリプト単体でも使えます。
 Design ResearchとUpstreamは固定版ベースを取得・照合して組み立てるため、オフライン利用には[個別の準備](docs/design-research/installation.md#組み立てとオフライン利用)が必要です。
 
 このリポジトリは、独自の作業手順と導入・管理ツールを、外部のSkill・Plugin・CLIと組み合わせています。

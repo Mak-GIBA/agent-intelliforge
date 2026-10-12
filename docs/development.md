@@ -74,7 +74,7 @@ policy変更はリポジトリの `tools/basic-memory-workgraph/memory-policy.md
 
 | 対象 | 検証方法 | 分かること・制限 |
 |---|---|---|
-| 一括インストーラー | `python3 -m unittest discover -s tests -p 'test_install_all.py' -v`、Bash構文確認 | 一時HOMEと模擬インストーラーで全9ツール・個別選択・予定表示・設定保持の更新経路・失敗集計・中断を確認。実取得や全ツールの連続導入は含まない |
+| 一括インストーラー | `python3 -m unittest discover -s tests -p 'test_install_all.py' -v`、Bash構文確認 | 一時HOMEと模擬インストーラーで全ツール・個別選択・予定表示・設定保持の更新経路・失敗集計・中断を確認。実取得や全ツールの連続導入は含まない |
 | Workgraph | 上記のPythonテスト | 設定、保存形式、共有、更新等のローカル処理。実際の外部パッケージ導入は含まない |
 | UX Stack | Pythonテスト、Skill・配布物の検査、任意の実Chromiumチェック | OOUI資料の標準導入・更新・共有、編集保護、反復・停止、関連移動と状態保持、画像管理を一時環境で確認。実モデル反復の完了とGUI呼び出しは未確認。[検証範囲](codex-ux-stack/validation.md) |
 | SpecKit Upstream | `bash install_speckit_upstream.sh --bundle-self-test`、固定版からの組み立てと内蔵試験 | 同梱契約試験と組み立て後の本体試験を区別する。組み立て・内蔵166件と、このPCでの更新・診断を確認。[検証結果](design-research/validation.md) |
@@ -82,7 +82,7 @@ policy変更はリポジトリの `tools/basic-memory-workgraph/memory-policy.md
 | Design Research | `bash install_design_research.sh --bundle-self-test`、固定版からの組み立てと内蔵試験 | 両配布物に同じ更新資材を内蔵。2.5.0の同梱330件と両ツールの組み立て・自己テストを確認。実モデルの検証範囲は[検証結果](design-research/validation.md)を参照 |
 | Codex ECC | `python3 -m unittest discover -s tests -p 'test*ecc*.py' -v`、Bash構文確認 | 模擬Codexによる新規導入、既存再利用、更新失敗・再実行、復元、設定維持と原本取得。新規環境への実ダウンロードは別途確認が必要 |
 | Office Workbench | `bash install_codex_office.sh --self-test` | 一時環境で導入・編集保護・文書処理を検証。通信・Codexは模擬し、実PDFライブラリがない対象はSKIP。実OfficeCLIや描画のE2E確認は別途必要 |
-| yomiyasuと補助Skill | `bash install_codex_yomiyasu.sh --self-test` | 一時HOME・作業ディレクトリと模擬上流で3スキルの導入・更新・解除・検査を確認。配布元への実通信やモデルの文章品質は検証しない |
+| yomiyasuと補助Skill | `bash install_codex_yomiyasu.sh --self-test` | 一時HOME・作業ディレクトリと模擬上流でスキルの導入・更新・解除・検査を確認。配布元への実通信やモデルの文章品質は検証しない |
 | Herdr | `python3 -m unittest discover -s tests -p 'test_install_herdr.py' -v` | 一時HOMEで取得・Bash設定・workspace照合・再実行を検証。実ダウンロードや実セッションの起動は含まない |
 
 リポジトリの既存テストには、2.0.1系の通常インストーラーを前提とするDesign Research・Upstreamの検査があります。
@@ -220,7 +220,7 @@ Memory保存は外側のSkillが担当し、既存の保存基準・モードと
 どちらもスクリプト単体に独自資材とテストを含み、`--extract DIRECTORY`で展開できます。
 Office Workbenchは`README_JA.md`と`install.py`を確認します。yomiyasuは`tools/codex-yomiyasu/`の編集用ソースを確認し、`python3 tools/codex-yomiyasu/build_installer.py`で単一ファイルを再生成します。`--check`では配布物と編集用ソースの一致を検査します。展開時は`installer.py`、`SKILL.md`、`references/`、`scripts/`、`paragraph-writing/`、`japanese-direct-writing/`と、検査用の`tests/`・`evals/`を配置します。評価資材はSkillの導入先には配置しません。
 
-2.0.0-proposal.1では、補助2スキルの本文を部分作業用に限定しています。現在の本文のhashと由来は`UPSTREAM.json`・`SOURCE.json`に記録し、発動設定は導入時の`auto`/`explicit`に応じて生成します。資材を差し替える場合は、出典とhash、revisionを更新し、再生成と自己テストを行います。
+2.0.0-proposal.1では、補助スキルの本文を部分作業用に限定しています。現在の本文のhashと由来は`UPSTREAM.json`・`SOURCE.json`に記録し、発動設定は導入時の`auto`/`explicit`に応じて生成します。資材を差し替える場合は、出典とhash、revisionを更新し、再生成と自己テストを行います。
 展開物はレビュー用の一時ディレクトリに置き、利用者向けの説明は専用ガイドで保守します。
 
 1.1.0と1.2.0の文章比較を再測定する場合は、`tools/codex-yomiyasu/evaluate_writing.py`を明示実行します。比較対象の入口・参照資料と4件の原稿は、`tools/codex-yomiyasu/evaluation-v130/`に旧版のまま保持しています。Python 3.11以降、ログイン済みのCodex CLI、yomiyasuの上流原本が必要です。設定済みのモデルと推論設定で実際のモデル利用が発生するため、インストールや`--self-test`からは呼びません。
