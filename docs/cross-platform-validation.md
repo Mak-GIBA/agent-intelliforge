@@ -24,6 +24,7 @@
 | 単一ファイル配布 | yomiyasu、GitHub管理、Office、Herdrの正本と生成結果を照合。yomiyasuの自己テスト、Bash構文検査も成功 |
 | Plugin資材 | Marketplaceの参照・名前・root内への収容、Upstreamの明示使用設定を確認。Codex SkillはSkill Creatorの静的検査に合格 |
 | 標準パッケージ | wheel・sdistを構築。一時venvでwheelを導入し、パッケージ内資材から`inspect`と上記の実Codex導入・検査を実行 |
+| GitHub Actions | [コード変更のCI](https://github.com/Mak-GIBA/agent-intelliforge/actions/runs/38281776674)が全ジョブ成功。Ubuntuの全体試験340件・4件スキップ、Ubuntu / Windows Server 2025それぞれの共通試験27件、両OSのwheel・sdist構築と配布パッケージの`inspect`を確認 |
 | 編集・生成の一致 | キット定義、OS・ホストアダプター、生成物のハッシュを照合。古い生成物での構築を拒否することを確認 |
 
 GitHub管理とOfficeのソース展開では、元のpayloadハッシュと同じZIPを再生成しました。HerdrのPython正本も元の単一ファイルと一致します。
@@ -34,7 +35,7 @@ GitHub管理とOfficeのソース展開では、元のpayloadハッシュと同�
 
 ## 未実施・適用限界
 
-- ネイティブWindows 11での導入、Job Object、junction、PowerShell、ProcessContainer、ブラウザー操作は、このLinux環境では実機検証していません。Windows向けCIを追加していますが、まだ実行結果はありません。
+- ネイティブWindows 11でのキット導入、junction、PowerShell、ProcessContainer、ブラウザー操作は実機検証していません。Windows Server 2025のCIでは共通CLI・プロセス回収・配布形式を確認していますが、Windows 11での一連の利用を保証するものではありません。
 - Claude Codeの実CLIによる`plugin validate`、実Plugin導入、認証、MXCでのモデル実行、研究・UX評価の全工程は未実施です。モックの成功をClaude実機の成功と扱いません。
 - Skill Creatorの検査はCodex形式向けです。Claude公式の`disable-model-invocation`などの拡張は独立した契約検査の対象であり、Codexのvalidatorに合わせて削除していません。
 - 新しい文章品質、研究結果の品質、画像レビューの精度はこの配布変更では測定していません。インストール成功と生成品質の改善は別です。

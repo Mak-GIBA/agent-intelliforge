@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "date": "2026-10-13",
-  "environment": "Linux; temporary homes, settings and Skill destinations",
+  "environment": "Linux temporary homes/settings/Skill destinations; GitHub hosted Ubuntu and Windows Server 2025 runners",
   "baseline_commit": "7802d1782203f3ce7674a9e930aea2a11652d782",
   "personal_installation_modified": false,
   "tests": {
@@ -87,6 +87,7 @@
     "limits": "No model calls, native implicit-invocation behavior measurement or browser quality evaluation."
   },
   "distribution": {
+    "committed_git_archive_hash_check": "passed",
     "generated_source_check": "passed",
     "wheel_build": "passed",
     "sdist_build": "passed",
@@ -94,14 +95,25 @@
     "codex_skill_creator_static_validation": "passed",
     "claude_frontmatter": "Separate contract tests; Codex validator is not authoritative for Claude extensions."
   },
+  "github_actions": {
+    "url": "https://github.com/Mak-GIBA/agent-intelliforge/actions/runs/38281776674",
+    "commit": "65fd4ca0b41fc700cca05088b972edb88a431663",
+    "conclusion": "success",
+    "jobs": {
+      "package_ubuntu": {"conclusion": "success", "contracts": 27, "wheel_and_sdist": "passed", "packaged_inspect": "passed"},
+      "package_windows_server_2025": {"conclusion": "success", "contracts": 27, "wheel_and_sdist": "passed", "packaged_inspect": "passed"},
+      "legacy_ubuntu": {"conclusion": "success", "tests": 340, "skipped": 4}
+    },
+    "windows_checkout": "Per-job core.longpaths setting is applied before checkout; existing research archive paths are preserved.",
+    "limits": "Hosted Windows Server contracts do not establish Windows 11 installation, ProcessContainer isolation or model/browser workflow correctness."
+  },
   "not_performed": [
-    "native Windows installation and process, junction and PowerShell tests",
+    "native Windows 11 installation, junction and PowerShell tests",
     "Windows ProcessContainer and browser runtime verification",
     "Claude native plugin validation, installation and authentication",
     "Claude MXC model execution and complete research or UX workflow",
     "complete Office rendering, Docling and optional MCP integration",
     "native Windows Herdr session operations",
-    "GitHub Actions execution",
     "model output or writing quality comparison"
   ],
   "evidence_handling": "No credentials, personal home paths, model prompts or raw conversation logs are included."

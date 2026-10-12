@@ -80,6 +80,7 @@ intelliforge install --agent claude --only yomiyasu --apply
 ```
 
 WindowsではPowerShellから同じコマンドを実行できます。clone後の予定確認には`python intelliforge.py inspect`、導入には`install_all.ps1`も使えます。Pluginのフックやヘルパーを使う前に`uv tool install .`でCLIをPATHに登録してください。
+Windowsのcloneには`--config core.longpaths=true`を付け、保存済みの研究資料の長いパスを扱えるようにします。
 
 導入内容の正本は[`tools/*/kit.json`](tools/)です。Skill名、取得元、依存ソフト、配置先、設定の変更範囲を読み、`inspect --json`で選択した経路の予定を確認できます。既存のSkillやフックと競合する場合は、自動移行せず停止します。
 詳しい手順、更新・解除、検証範囲は[共通CLIとOS・ホスト対応](docs/cross-platform.md)にまとめています。
