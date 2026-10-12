@@ -105,6 +105,8 @@ def terminate(process: subprocess.Popen | None) -> None:
 
 def capture(argv: list[str], *, cwd, env, timeout: float, limit: int = 4 * 1024 * 1024, input_text: str | None = None) -> dict:
     """Threaded pipe draining works on Windows and bounds output on every OS."""
+    env = dict(os.environ if env is None else env)
+    env['PYTHONUTF8'] = '1'
     if os.name == 'nt': argv = [sys.executable, str(Path(__file__).with_name('windows_job.py')), *native_command(argv)]
     prompt_input = tempfile.TemporaryFile() if input_text is not None else None
     try:

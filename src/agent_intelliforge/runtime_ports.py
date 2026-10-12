@@ -51,7 +51,7 @@ def apply_ports(namespace: dict) -> None:
             if not script.is_file(): raise ValueError('Missing verified upstream helper')
             # Exact upstream bytes, isolated Python, sibling imports, same output contract.
             command='import runpy,sys; p=sys.argv.pop(1); sys.path.insert(0,str(__import__("pathlib").Path(p).parent)); sys.argv[0]=p; runpy.run_path(p,run_name="__main__")'
-            result=portable.capture([sys.executable,'-I','-B','-c',command,str(script),*args],cwd=script.parent,env=None,timeout=30,limit=5_000_000)
+            result=portable.capture([sys.executable,'-X','utf8','-I','-B','-c',command,str(script),*args],cwd=script.parent,env=None,timeout=30,limit=5_000_000)
             if result['exit_code'] not in (0,1) or result['timed_out'] or result['truncated']: raise RuntimeError('Verified upstream check failed or exceeded its limit')
             report=json.loads(result['stdout'])
             if not isinstance(report,dict): raise ValueError('Upstream JSON contract changed')

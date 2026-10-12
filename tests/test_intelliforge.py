@@ -216,8 +216,11 @@ class ProcessTests(unittest.TestCase):
                 with self.assertRaises(ForgeError):namespace['upstream']('yomiyasu_lint.py',[])
     def test_large_stdin_never_uses_command_line(self):
         prompt='あ'*50000
-        value=portable.capture([sys.executable,'-c','import sys;print(len(sys.stdin.read()))'],cwd=None,env=None,timeout=10,input_text=prompt)
+        child_environment=dict(os.environ,LC_ALL='C',PYTHONUTF8='0',PYTHONCOERCECLOCALE='0')
+        before=dict(child_environment)
+        value=portable.capture([sys.executable,'-c','import sys;print(len(sys.stdin.read()))'],cwd=None,env=child_environment,timeout=10,input_text=prompt)
         self.assertEqual(value['stdout'].strip(),'50000')
+        self.assertEqual(child_environment,before)
 
     def test_output_is_bounded(self):
         value=portable.capture([sys.executable,'-c','print("x"*100000)'],cwd=None,env=None,timeout=10,limit=4096)

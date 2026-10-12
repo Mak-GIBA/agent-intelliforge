@@ -47,10 +47,14 @@ intelliforge install --agent claude --only yomiyasu --apply
 WindowsのPowerShellでも同じ`intelliforge`コマンドを使います。checkoutからの入口も用意しています。
 
 ```powershell
+git clone --config core.longpaths=true https://github.com/Mak-GIBA/agent-intelliforge.git
+cd agent-intelliforge
 uv tool install .
 .\install_all.ps1 --only yomiyasu
 .\install_all.ps1 --only yomiyasu --apply
 ```
+
+Windowsのcloneでは、保存済みの研究資料に長いパスが含まれるため、`core.longpaths`を新しく作るリポジトリだけに設定します。Gitのグローバル設定には書き込みません。設定はcheckout前に有効になる[cloneの公式オプション](https://git-scm.com/docs/git-clone)を使います。
 
 Pluginのフック・Skill本文はPATH上の`intelliforge`を呼び出します。導入時にCLIの存在を確認します。公式の[Codex Plugin形式](https://developers.openai.com/plugins/build/plugins)と[Claude Plugin形式](https://code.claude.com/docs/en/plugins-reference)を生成し、各ホストの管理コマンドに登録します。
 登録元は管理するローカルMarketplaceです。Pythonパッケージを更新しても、ホストが参照するパスを維持できます。
