@@ -1,0 +1,4 @@
+# Keep editable sources and hash-owned generated resources identical on each OS.
+* text=auto eol=lf
+*.png binary
+*.zip binary

@@ -1,0 +1,72 @@
+{
+  "name": "agent-intelliforge",
+  "owner": {
+    "name": "Mak-GIBA"
+  },
+  "plugins": [
+    {
+      "name": "workgraph",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/workgraph"
+      },
+      "description": "Basic Memory Workgraph"
+    },
+    {
+      "name": "ux-stack",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/ux-stack"
+      },
+      "description": "UX Stack"
+    },
+    {
+      "name": "speckit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/speckit"
+      },
+      "description": "SpecKit Upstream"
+    },
+    {
+      "name": "github-pm",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/github-pm"
+      },
+      "description": "GitHub Project Director"
+    },
+    {
+      "name": "design-research",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/design-research"
+      },
+      "description": "Design Research"
+    },
+    {
+      "name": "ecc",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/ecc"
+      },
+      "description": "ECC on demand"
+    },
+    {
+      "name": "office",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/office"
+      },
+      "description": "Office Workbench"
+    },
+    {
+      "name": "yomiyasu",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/yomiyasu"
+      },
+      "description": "yomiyasu writing skills"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "basic-memory": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "basic-memory",
+        "basic-memory",
+        "mcp"
+      ],
+      "type": "stdio"
+    }
+  }
+}

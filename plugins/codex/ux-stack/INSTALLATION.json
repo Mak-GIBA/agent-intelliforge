@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "ux-stack",
+  "name": "UX Stack",
+  "version": "1.1.2",
+  "legacy": {
+    "script": "install_codex_ux_stack.sh",
+    "actions": {
+      "install": [],
+      "update": [
+        "--force"
+      ],
+      "doctor": [
+        "--doctor"
+      ],
+      "uninstall": [
+        "--uninstall"
+      ]
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "ux-gan-harness",
+      "source": "tools/codex-ux-stack/skill",
+      "assembled": false
+    },
+    {
+      "name": "ooui-design",
+      "source": "tools/codex-ux-stack/ooui-design",
+      "assembled": false
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/vercel-labs/agent-skills",
+      "revision": "063bee94c3f4df8453406c830b0a7df0f2860278"
+    },
+    {
+      "url": "https://github.com/Thecsiz/ux-critique",
+      "revision": "3da293cafb639195bf71797590081d4ffb0045ba (optional deep install)"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Node.js >=20",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "pinned Playwright/browser MCP runtime",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "Codex vendor plugins (Codex only)",
+      "condition": "legacy Codex install only; optional existing vendor integrations in the additional Codex path; not installed for Claude"
+    },
+    {
+      "name": "Node.js >=24, @microsoft/mxc-sdk==1.0.0",
+      "condition": "Claude experiment execution only"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/ux-gan-harness",
+    "{skills_home}/ooui-design",
+    "{agent_home}/ux-stack/runtime"
+  ],
+  "settings": [
+    "selected plugins and MCP configuration; owned CLI launchers"
+  ],
+  "plugin": {
+    "name": "ux-stack",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run ux-stack",
+    "notes": "Additional path uses the pinned local Playwright browser; vendor plugins and optional deep critique are not automatically installed."
+  },
+  "editable_sources": [
+    "tools/codex-ux-stack"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "definition": "tools/codex-ux-stack/kit.json",
+  "agent": "codex"
+}

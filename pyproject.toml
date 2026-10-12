@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-intelliforge"
+version = "0.1.0"
+description = "Inspectable Codex-first development kits and optional Claude Code plugins"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+intelliforge = "agent_intelliforge.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+agent_intelliforge = ["resources/**/*", "resources/*", "*.mjs"]

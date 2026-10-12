@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "ecc",
+  "name": "ECC on demand",
+  "version": "1.0.0",
+  "legacy": {
+    "script": "install_codex_ecc.sh",
+    "actions": {
+      "install": [
+        "--apply"
+      ],
+      "update": [
+        "--update",
+        "--apply"
+      ],
+      "doctor": [
+        "--doctor"
+      ],
+      "uninstall": [
+        "--restore",
+        "--apply"
+      ]
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "ecc-library",
+      "source": "tools/ecc-on-demand/skills/ecc-library",
+      "assembled": false
+    },
+    {
+      "name": "ecc-python",
+      "source": "tools/ecc-on-demand/skills/ecc-python",
+      "assembled": false
+    },
+    {
+      "name": "ecc-errors",
+      "source": "tools/ecc-on-demand/skills/ecc-errors",
+      "assembled": false
+    },
+    {
+      "name": "ecc-security",
+      "source": "tools/ecc-on-demand/skills/ecc-security",
+      "assembled": false
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/affaan-m/ECC",
+      "revision": "legacy: official ecc@ecc plugin; portable: stable released tag plus recorded commit"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "official ECC released source (portable) / native plugin (legacy)",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "selected optional MCP tools",
+      "condition": "when this kit/feature is selected"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/ecc-*",
+    "{agent_home}/ecc-on-demand"
+  ],
+  "settings": [
+    "owned ECC config/MCP blocks; other tools and opt-outs preserved"
+  ],
+  "plugin": {
+    "name": "ecc",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run ecc"
+  },
+  "editable_sources": [
+    "tools/ecc-on-demand"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "definition": "tools/ecc-on-demand/kit.json",
+  "agent": "codex"
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "design-research",
+  "name": "Design Research",
+  "version": "2.5.0",
+  "legacy": {
+    "script": "install_design_research.sh",
+    "actions": {
+      "install": [],
+      "update": [
+        "--update"
+      ],
+      "doctor": [
+        "--doctor"
+      ],
+      "uninstall": [
+        "--uninstall"
+      ]
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "design-research",
+      "source": "tools/design-research/skill",
+      "assembled": true
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/Mak-GIBA/agent-intelliforge",
+      "revision": "verified base d3f46e0d591b45cb2423317030a489b91566e891 plus maintained upgrade layers"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "agent CLI and its authentication",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "isolated experiment execution",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "optional scholarly providers",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "Node.js >=24, @microsoft/mxc-sdk==1.0.0",
+      "condition": "Claude experiment execution only"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/design-research",
+    "{agent_home}/design-research"
+  ],
+  "settings": [
+    "owned skills and runtime; experiment network/source-change permissions remain explicit"
+  ],
+  "plugin": {
+    "name": "design-research",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run design-research"
+  },
+  "editable_sources": [
+    "tools/design-research",
+    "tools/design-research-upgrade"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "definition": "tools/design-research/kit.json",
+  "agent": "codex"
+}

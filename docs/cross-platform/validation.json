@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-13",
+  "environment": "Linux; temporary homes, settings and Skill destinations",
+  "baseline_commit": "7802d1782203f3ce7674a9e930aea2a11652d782",
+  "personal_installation_modified": false,
+  "tests": {
+    "baseline": {"discovered": 313, "failed": 0, "skipped": 4},
+    "after": {
+      "command": "uv run --no-project --python 3.11 --with PyYAML>=6,<7 python -B -m unittest discover -s tests -v",
+      "discovered": 340,
+      "failed": 0,
+      "skipped": 4
+    },
+    "additional_contracts": {
+      "command": "python3 -B -m unittest discover -s tests -p test_intelliforge.py -v",
+      "discovered": 27,
+      "failed": 0,
+      "skipped": 0,
+      "properties": [
+        "preview does not mutate or invoke host CLIs",
+        "default Linux Codex installation delegates the existing installer",
+        "destination overrides cannot be silently ignored by the legacy route",
+        "manual edits, unowned registrations, unsafe paths and links are preserved",
+        "bundle and upstream restoration on plugin registration failure",
+        "mocked installation, repeat, update, upstream-only update, diagnosis and removal",
+        "bounded process output, timeout and descendant termination",
+        "large literal prompts use stdin",
+        "Claude accepts structured successful output only",
+        "read-only roles exclude editing and shell tools",
+        "missing isolation stops execution",
+        "Windows npm host entry preserves literal arguments and rejects unknown batch shims",
+        "Windows Claude role selects PowerShell with a child-only environment setting",
+        "generated nested text IO uses UTF-8 while preserving explicit encodings",
+        "upstream writing helper hashes are verified before execution",
+        "Claude turn identifiers, explicit arm, Plan rejection and one-time Stop gating",
+        "generated marketplaces contain their sources and preserve explicit Upstream invocation"
+      ],
+      "limits": "Mocked Windows and Claude branches do not establish native runtime or model correctness."
+    }
+  },
+  "legacy_compatibility": {
+    "result": "verified",
+    "comparison": "SHA256 against baseline; only generated comment block removed from install_all.sh",
+    "execution_bytes_match": {
+      "install_all.sh": true,
+      "install_codex_github_pm.sh": true,
+      "install_codex_ux_stack.sh": true,
+      "install_speckit_upstream.sh": true,
+      "install_basic_memory_workgraph.sh": true,
+      "install_codex_ecc.sh": true,
+      "install_design_research.sh": true,
+      "install_codex_office.sh": true,
+      "install_herdr.sh": true,
+      "install_codex_yomiyasu.sh": true
+    },
+    "canonical_builders": {
+      "yomiyasu_check": "passed",
+      "yomiyasu_self_test": "passed",
+      "github_pm_check": "passed",
+      "office_check": "passed",
+      "herdr_check": "passed",
+      "bash_syntax": "passed"
+    },
+    "assembled_sources": {
+      "design_research": "2.5.0",
+      "speckit_upstream": "2.0.6",
+      "fixed_base_hash_verification": "passed",
+      "existing_assembly_tests_and_self_tests": "passed"
+    }
+  },
+  "native_codex": {
+    "cli_version": "0.162.1",
+    "environment": "temporary Linux Codex home; packaged CLI from temporary wheel installation",
+    "kit": "yomiyasu",
+    "steps": [
+      {"operation": "install", "mode": "explicit", "exit_code": 0},
+      {"operation": "repeat_install", "mode": "explicit", "exit_code": 0},
+      {"operation": "kit_run_lint", "upstream_status": "EXECUTED", "exit_code": 0},
+      {"operation": "update", "mode": "auto", "exit_code": 0},
+      {"operation": "upstream_only_update", "exit_code": 0},
+      {"operation": "doctor", "plugin_registered": true, "exit_code": 0},
+      {"operation": "uninstall", "exit_code": 0}
+    ],
+    "local_marketplace_update": "Native plugin add after managed source update; marketplace upgrade is Git-only.",
+    "isolation_smoke": {"read": true, "write_denied": true, "fixtures_intact": true},
+    "limits": "No model calls, native implicit-invocation behavior measurement or browser quality evaluation."
+  },
+  "distribution": {
+    "generated_source_check": "passed",
+    "wheel_build": "passed",
+    "sdist_build": "passed",
+    "wheel_install_and_packaged_inspect": "passed",
+    "codex_skill_creator_static_validation": "passed",
+    "claude_frontmatter": "Separate contract tests; Codex validator is not authoritative for Claude extensions."
+  },
+  "not_performed": [
+    "native Windows installation and process, junction and PowerShell tests",
+    "Windows ProcessContainer and browser runtime verification",
+    "Claude native plugin validation, installation and authentication",
+    "Claude MXC model execution and complete research or UX workflow",
+    "complete Office rendering, Docling and optional MCP integration",
+    "native Windows Herdr session operations",
+    "GitHub Actions execution",
+    "model output or writing quality comparison"
+  ],
+  "evidence_handling": "No credentials, personal home paths, model prompts or raw conversation logs are included."
+}

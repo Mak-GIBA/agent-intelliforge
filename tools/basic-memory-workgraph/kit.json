@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "workgraph",
+  "name": "Basic Memory Workgraph",
+  "version": "1.0.0",
+  "legacy": {
+    "script": "install_basic_memory_workgraph.sh",
+    "actions": {
+      "install": [],
+      "update": [
+        "--update"
+      ],
+      "doctor": null,
+      "uninstall": null
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [],
+  "sources": [
+    {
+      "url": "https://github.com/basicmachines-co/basic-memory",
+      "revision": "existing pinned source or official plugin policy; inspect source definition below"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "basic-memory CLI/MCP",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "Workgraph policy, templates and advisory hooks",
+      "condition": "when this kit/feature is selected"
+    }
+  ],
+  "destinations": [
+    "{agent_home}/basic-memory-workgraph",
+    "{agent_home}/hooks"
+  ],
+  "settings": [
+    "owned UserPromptSubmit/Stop hooks; memory settings and guidance blocks"
+  ],
+  "plugin": {
+    "name": "workgraph",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run workgraph"
+  },
+  "editable_sources": [
+    "tools/basic-memory-workgraph"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately"
+}

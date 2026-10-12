@@ -1,0 +1,48 @@
+{
+  "name": "agent-intelliforge",
+  "owner": {
+    "name": "Mak-GIBA"
+  },
+  "plugins": [
+    {
+      "name": "workgraph",
+      "source": "./plugins/claude/workgraph",
+      "description": "Basic Memory Workgraph"
+    },
+    {
+      "name": "ux-stack",
+      "source": "./plugins/claude/ux-stack",
+      "description": "UX Stack"
+    },
+    {
+      "name": "speckit",
+      "source": "./plugins/claude/speckit",
+      "description": "SpecKit Upstream"
+    },
+    {
+      "name": "github-pm",
+      "source": "./plugins/claude/github-pm",
+      "description": "GitHub Project Director"
+    },
+    {
+      "name": "design-research",
+      "source": "./plugins/claude/design-research",
+      "description": "Design Research"
+    },
+    {
+      "name": "ecc",
+      "source": "./plugins/claude/ecc",
+      "description": "ECC on demand"
+    },
+    {
+      "name": "office",
+      "source": "./plugins/claude/office",
+      "description": "Office Workbench"
+    },
+    {
+      "name": "yomiyasu",
+      "source": "./plugins/claude/yomiyasu",
+      "description": "yomiyasu writing skills"
+    }
+  ]
+}

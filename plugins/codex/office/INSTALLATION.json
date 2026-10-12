@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "office",
+  "name": "Office Workbench",
+  "version": "1.0.0",
+  "legacy": {
+    "script": "install_codex_office.sh",
+    "actions": {
+      "install": [
+        "--apply"
+      ],
+      "update": [
+        "--force",
+        "--apply"
+      ],
+      "doctor": [
+        "--doctor"
+      ],
+      "uninstall": [
+        "--uninstall",
+        "--apply"
+      ]
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "office-workbench",
+      "source": "tools/codex-office/skills/office-workbench",
+      "assembled": false
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/iOfficeAI/OfficeCLI",
+      "revision": "v1.0.153; tools/codex-office/versions.json contains pins and hashes"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "OfficeCLI 1.0.153 (verified asset)",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "pinned Python document libraries",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "optional Docling/MCP/OS renderers",
+      "condition": "when this kit/feature is selected"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/office-workbench",
+    "{data_home}/codex-office",
+    "{bin_home}/office-workbench"
+  ],
+  "settings": [
+    "MCP only on explicit selection; no implicit system package installation"
+  ],
+  "plugin": {
+    "name": "office",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run office"
+  },
+  "editable_sources": [
+    "tools/codex-office"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "definition": "tools/codex-office/kit.json",
+  "agent": "codex"
+}

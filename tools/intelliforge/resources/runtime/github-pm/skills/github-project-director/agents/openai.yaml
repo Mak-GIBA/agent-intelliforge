@@ -1,0 +1,6 @@
+interface:
+  display_name: "GitHub Project Director"
+  short_description: "GitHubの進捗・残タスク・優先順位を整理し、重要な変化だけを読みやすく記録する"
+  default_prompt: "$github-project-director を使い、今回のGitHub依頼に必要な根拠を確認し、依頼に合った読みやすい形で対応してください。投稿の必要性と既存記録を先に確認し、重要な変化だけを記録してください。"
+policy:
+  allow_implicit_invocation: true

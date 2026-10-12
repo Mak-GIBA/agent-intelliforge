@@ -1,0 +1,6 @@
+interface:
+  display_name: "Design Research"
+  short_description: "要件から研究テーマを見つけ、方式検討・再検討・検証・図解報告を一括で行う"
+  default_prompt: "Use $design-research. 依頼と現行要件・過去結果を確認し、必要な研究工程だけ実施して。"
+policy:
+  allow_implicit_invocation: true

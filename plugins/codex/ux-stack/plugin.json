@@ -1,0 +1,7 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ux-stack",
+  "version": "1.1.2",
+  "description": "UX Stack",
+  "repository": "https://github.com/Mak-GIBA/agent-intelliforge"
+}

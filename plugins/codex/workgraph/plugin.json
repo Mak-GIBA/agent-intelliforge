@@ -1,0 +1,7 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "workgraph",
+  "version": "1.0.0",
+  "description": "Basic Memory Workgraph",
+  "repository": "https://github.com/Mak-GIBA/agent-intelliforge"
+}

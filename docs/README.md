@@ -2,6 +2,8 @@
 
 [リポジトリ概要](../README.md) · [一括インストール](installation.md) · [開発・検証](development.md)
 
+[共通CLI・Windows・Claude Code](cross-platform.md) · [配布資材の編集手順](cross-platform-development.md) · [追加経路の検証結果](cross-platform-validation.md)
+
 インストーラーごとに、概要・収録ツール、導入手順、利用ガイドをまとめています。
 初めて使う場合は、概要から目的に合うものを選んでください。
 全ツールの一括導入やIDによる個別選択は、[一括インストール](installation.md)で説明しています。

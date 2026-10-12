@@ -1,0 +1,246 @@
+{
+  "compression": 1,
+  "entries": [
+    {
+      "filename": "LICENSE",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "README_JA.md",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "SOURCES.md",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "common.py",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "install.py",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "office.py",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/office-workbench/SKILL.md",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/office-workbench/agents/openai.yaml",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "skills/office-workbench/references/workflows.md",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "tests/__init__.py",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "tests/smoke_local.py",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "tests/test_pdf_real.py",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "tests/test_regressions.py",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "tests/test_workbench.py",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    },
+    {
+      "filename": "versions.json",
+      "date_time": [
+        2026,
+        10,
+        2,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "create_system": 3,
+      "create_version": 20,
+      "extract_version": 20,
+      "compress_type": 8
+    }
+  ],
+  "line_width": 100
+}

@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "id": "speckit",
+  "name": "SpecKit Upstream",
+  "version": "2.0.6",
+  "legacy": {
+    "script": "install_speckit_upstream.sh",
+    "actions": {
+      "install": [
+        "--apply"
+      ],
+      "update": [
+        "--update",
+        "--apply"
+      ],
+      "doctor": null,
+      "uninstall": null
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "upstream-new",
+      "source": "tools/speckit-upstream/workbench/command_skills.py",
+      "assembled": true,
+      "generated": true
+    },
+    {
+      "name": "upstream-existing",
+      "source": "tools/speckit-upstream/workbench/command_skills.py",
+      "assembled": true,
+      "generated": true
+    },
+    {
+      "name": "upstream-change",
+      "source": "tools/speckit-upstream/workbench/command_skills.py",
+      "assembled": true,
+      "generated": true
+    },
+    {
+      "name": "upstream-bug",
+      "source": "tools/speckit-upstream/workbench/command_skills.py",
+      "assembled": true,
+      "generated": true
+    },
+    {
+      "name": "upstream-refactor",
+      "source": "tools/speckit-upstream/workbench/command_skills.py",
+      "assembled": true,
+      "generated": true
+    },
+    {
+      "name": "upstream-check",
+      "source": "tools/speckit-upstream/workbench/command_skills.py",
+      "assembled": true,
+      "generated": true
+    },
+    {
+      "name": "upstream-review",
+      "source": "tools/speckit-upstream/workbench/command_skills.py",
+      "assembled": true,
+      "generated": true
+    },
+    {
+      "name": "upstream-approve",
+      "source": "tools/speckit-upstream/workbench/command_skills.py",
+      "assembled": true,
+      "generated": true
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/github/spec-kit",
+      "revision": "verified base d3f46e0d591b45cb2423317030a489b91566e891 plus maintained upgrade layers"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "pinned specify CLI",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "Upstream workbench and approval contracts",
+      "condition": "when this kit/feature is selected"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/upstream-*",
+    "{data_home}/speckit-upstream",
+    "{bin_home}/swb"
+  ],
+  "settings": [
+    "owned per-user CLI/skills; per-project initialization remains explicit"
+  ],
+  "plugin": {
+    "name": "speckit",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run speckit"
+  },
+  "editable_sources": [
+    "tools/speckit-upstream",
+    "tools/design-research-upgrade"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "definition": "tools/speckit-upstream/kit.json",
+  "agent": "codex"
+}

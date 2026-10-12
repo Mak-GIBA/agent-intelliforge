@@ -2,6 +2,8 @@
 
 [docs一覧](README.md) · [リポジトリ概要](../README.md)
 
+共通CLI・Windows・Claude Code向けの追加配布は[配布資材の編集と検証](cross-platform-development.md)を参照してください。
+
 ## ソースと資材の配置
 
 ルートには`install_*.sh`を置き、補助コード・配布資材・解除スクリプトは

@@ -1,0 +1,5 @@
+{
+  "source_installer": "install_codex_office.sh",
+  "payload_sha256": "ba280a2b902759774f18168948e56853be916fc1fa5f0a03d9d30196a987e67b",
+  "note": "Readable canonical source extracted without changing the distributed installer."
+}

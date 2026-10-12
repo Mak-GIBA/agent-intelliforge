@@ -1,0 +1,5 @@
+{
+  "source_installer": "install_codex_github_pm.sh",
+  "payload_sha256": "ca1b24115d32845ab8d57012c44701945b6b54141f30c58f1d7dfa433135005e",
+  "note": "Readable canonical source extracted without changing the distributed installer."
+}

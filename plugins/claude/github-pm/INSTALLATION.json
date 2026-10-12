@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "github-pm",
+  "name": "GitHub Project Director",
+  "version": "1.3.1",
+  "legacy": {
+    "script": "install_codex_github_pm.sh",
+    "actions": {
+      "install": [],
+      "update": null,
+      "doctor": [
+        "--doctor"
+      ],
+      "uninstall": [
+        "--uninstall"
+      ]
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "github-project-director",
+      "source": "tools/codex-github-pm/skills/github-project-director",
+      "assembled": false
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://cli.github.com/",
+      "revision": "existing pinned source or official plugin policy; inspect source definition below"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "GitHub CLI (optional verified install)",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "existing GitHub authentication",
+      "condition": "when this kit/feature is selected"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/github-project-director"
+  ],
+  "settings": [
+    "owned user-level AGENTS guidance only; no GitHub mutations during install"
+  ],
+  "plugin": {
+    "name": "github-pm",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run github-pm"
+  },
+  "editable_sources": [
+    "tools/codex-github-pm"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "definition": "tools/codex-github-pm/kit.json",
+  "agent": "claude"
+}

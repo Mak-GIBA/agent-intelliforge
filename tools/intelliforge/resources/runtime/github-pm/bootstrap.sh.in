@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+# GitHub Project Director v1.3.1 — single-file installer for Codex (Linux / WSL2 / macOS)
+# Add THIS FILE ONLY to the repository. No sibling scripts/assets are required.
+# Installs one user-level Codex Skill and managed global AGENTS guidance.
+# Does not modify project AGENTS, hooks, Codex config, Basic Memory, ECC, SpecKit, or GitHub data.
+set -euo pipefail
+
+PY="${PYTHON_BIN:-}"
+if [[ -z "$PY" ]]; then
+  for candidate in python3 python3.13 python3.12 python3.11 python3.10; do
+    if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3,10) else 1)' 2>/dev/null; then
+      PY="$candidate"
+      break
+    fi
+  done
+fi
+if [[ -z "$PY" ]] || ! "$PY" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3,10) else 1)' 2>/dev/null; then
+  echo 'ERROR: Python 3.10+ is required. Set PYTHON_BIN to a suitable interpreter.' >&2
+  exit 2
+fi
+export PYTHONDONTWRITEBYTECODE=1
+
+"$PY" - "$0" "$@" <<'GPD_BOOTSTRAP_PY'
+import base64, hashlib, io, os, stat, subprocess, sys, tempfile, zipfile
+from pathlib import Path, PurePosixPath
+
+VERSION = "1.3.1"
+EXPECTED_SHA256 = "@PAYLOAD_SHA256@"
+MARKER = "\n: <<'GPD_EMBEDDED_RESOURCES_V1'\n"
+REQUIRED = {
+    "scripts/install_github_pm.py",
+    "skills/github-project-director/SKILL.md",
+    "skills/github-project-director/agents/openai.yaml",
+    "skills/github-project-director/references/native-operations.md",
+    "skills/github-project-director/references/planning-and-meetings.md",
+    "skills/github-project-director/references/writing-and-tracking.md",
+    "skills/github-project-director/scripts/github_inspect.py",
+    "tests/test_github_project_director.py",
+    "tests/behavioral-scenarios.md",
+}
+
+def fail(message):
+    print("ERROR: " + message, file=sys.stderr)
+    raise SystemExit(2)
+
+def validate_path(path):
+    for p in [path, *path.parents]:
+        if p.is_symlink():
+            fail("symlink destination is not supported: " + str(p))
+
+def safe_archive(data):
+    if hashlib.sha256(data).hexdigest() != EXPECTED_SHA256:
+        fail("embedded resource checksum mismatch; re-download the saved file")
+    try:
+        z = zipfile.ZipFile(io.BytesIO(data))
+    except zipfile.BadZipFile as exc:
+        fail(str(exc))
+    names, total = set(), 0
+    for item in z.infolist():
+        name = item.filename
+        p = PurePosixPath(name)
+        if name in names:
+            fail("duplicate archive member: " + name)
+        names.add(name)
+        if not name or p.is_absolute() or ".." in p.parts or "\\" in name or ":" in name:
+            fail("unsafe archive member: " + name)
+        if item.is_dir() or stat.S_ISLNK(item.external_attr >> 16):
+            fail("unexpected archive entry: " + name)
+        if item.file_size > 3_000_000:
+            fail("oversized embedded file: " + name)
+        total += item.file_size
+    if total > 15_000_000 or len(names) > 1000:
+        fail("oversized embedded payload")
+    missing = REQUIRED - names
+    if missing:
+        fail("incomplete embedded resources: " + ", ".join(sorted(missing)))
+    return z
+
+def extract(z, root):
+    for item in z.infolist():
+        dst = root / item.filename
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        with dst.open("xb") as f:
+            f.write(z.read(item))
+        dst.chmod(0o644)
+
+try:
+    source = Path(sys.argv[1]).read_text(encoding="utf-8")
+    if MARKER not in source:
+        fail("embedded resource marker is missing")
+    section = source.split(MARKER, 1)[1]
+    encoded = section.rsplit("\nGPD_EMBEDDED_RESOURCES_V1", 1)[0]
+    data = base64.b64decode("".join(encoded.split()), validate=True)
+    z = safe_archive(data)
+    args = sys.argv[2:]
+
+    if "--help" in args or "-h" in args:
+        print(f"""GitHub Project Director {VERSION} — single-file installer
+
+Usage:
+  bash install_codex_github_pm.sh [options]
+
+Install/update options (passed to the embedded installer):
+  --dry-run            Show plan only; no persistent writes or downloads
+  --force              Update an existing owned Skill after backup
+  --doctor             Read-only installation/auth diagnostics
+  --uninstall          Remove only files owned by this installer
+  --install-gh         If gh is missing, install verified official GitHub CLI binary
+  --gh-version X.Y.Z   Pin the optional gh download
+  --skills-dir PATH    Override the user skill parent directory
+  --codex-home PATH    Global guidance directory (CODEX_HOME or ~/.codex)
+  --bin-dir PATH       Override optional gh install directory
+  --hostname HOST      GitHub hostname for doctor
+
+Single-file inspection/testing:
+  --self-test          Run embedded offline tests; no real GitHub writes
+  --extract DIRECTORY  Extract readable embedded sources without installing
+
+After install, start a new Codex session and use:
+  $github-project-director
+  このプロジェクトのIssue構成を見直して。まず提案だけ。
+
+GitHub requests use the Skill via implicit selection and managed global AGENTS guidance.
+Progress, remaining-task and priority requests also activate when context identifies GitHub.
+Activation does not imply posting: record important new information only; recurring reports require agreement.
+Project AGENTS files are not modified. Global guidance is backed up on update/removal.
+""")
+        raise SystemExit(0)
+
+    if "--self-test" in args:
+        if args != ["--self-test"]:
+            fail("use --self-test alone")
+        with tempfile.TemporaryDirectory(prefix="github-project-director-test-") as d:
+            root = Path(d)
+            extract(z, root)
+            cp = subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", "test_github_project_director.py", "-v"], cwd=root)
+            raise SystemExit(cp.returncode)
+
+    if "--extract" in args:
+        if len(args) != 2 or args[0] != "--extract":
+            fail("use --extract DIRECTORY alone")
+        target = Path(args[1]).expanduser().absolute()
+        validate_path(target)
+        if target.exists() and (not target.is_dir() or any(target.iterdir())):
+            fail("extract destination must be missing or an empty directory")
+        target.mkdir(parents=True, exist_ok=True)
+        extract(z, target)
+        print("Extracted readable sources (no global install): " + str(target))
+        print("Guide: " + str(target / "README_EXTRACTED.md"))
+        raise SystemExit(0)
+
+    with tempfile.TemporaryDirectory(prefix="github-project-director-installer-") as d:
+        root = Path(d)
+        extract(z, root)
+        cp = subprocess.run([sys.executable, str(root / "scripts/install_github_pm.py"), *args], cwd=root, env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
+        raise SystemExit(cp.returncode)
+except (OSError, ValueError, RuntimeError) as exc:
+    fail(str(exc))
+GPD_BOOTSTRAP_PY
+exit 0
+
+: <<'GPD_EMBEDDED_RESOURCES_V1'
+@PAYLOAD_BASE64@
+GPD_EMBEDDED_RESOURCES_V1

@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="docs/README.md"><img src="https://img.shields.io/badge/Codex-Skills_%26_Tooling-0f172a?style=flat-square" alt="Codex Skills &amp; Tooling"></a>
-  <a href="docs/installation.md"><img src="https://img.shields.io/badge/Platform-Linux_%2F_WSL2-475569?style=flat-square" alt="Linux / WSL2"></a>
+  <a href="docs/cross-platform.md"><img src="https://img.shields.io/badge/Platform-Linux_%2F_WSL2_%2F_Windows-475569?style=flat-square" alt="Linux / WSL2 / Windows"></a>
 </p>
 
 <p align="center">
@@ -25,6 +25,7 @@
 Agent Intelliforgeは、Codexの開発環境にSkill・ツール・作業手順を用途ごとに導入するリポジトリです。
 要件整理と技術選定から、画面の設計・検証、GitHubでの進捗管理、日本語やOffice文書の編集までを扱います。
 必要なキットだけを選び、既存のプロジェクトで使い始められます。
+Codexを標準の対象とし、Claude Codeには独立した試験対応のPluginを用意しています。
 
 作業で得た知識を次の仕事へ引き継ぐ仕組みも備えています。
 Workgraphは、検証済みの対処法や文脈付きの修正指示を保存候補として評価し、条件と根拠を添えて蓄積します。
@@ -62,6 +63,26 @@ bash install_all.sh --only ux-stack,yomiyasu --apply
 一括インストーラーは引数なしでも予定表示にとどまり、`--apply`で実際に導入します。
 個別インストーラーは引数なしの動作が異なるため、直接実行するときは各ガイドを確認してください。
 更新・再実行・解除は[一括導入ガイド](docs/installation.md#再実行更新解除)から各キットの手順へ進めます。
+
+### 共通CLI・Windows・Claude Code
+
+共通CLIは標準のPythonパッケージとして導入できます。Linux / WSL2でホストを省略した場合は、上記の既存インストーラーを呼び出します。Windowsの追加経路とClaude Codeでは、各製品の公式Plugin管理コマンドを使います。
+
+```bash
+# cloneしたリポジトリで実行。uvの独立したツール環境にCLIを導入
+uv tool install .
+intelliforge inspect --only yomiyasu
+intelliforge install --only yomiyasu --apply
+
+# Claude CodeはCodexを導入せず利用可能（試験対応）
+intelliforge inspect --agent claude --only yomiyasu
+intelliforge install --agent claude --only yomiyasu --apply
+```
+
+WindowsではPowerShellから同じコマンドを実行できます。clone後の予定確認には`python intelliforge.py inspect`、導入には`install_all.ps1`も使えます。Pluginのフックやヘルパーを使う前に`uv tool install .`でCLIをPATHに登録してください。
+
+導入内容の正本は[`tools/*/kit.json`](tools/)です。Skill名、取得元、依存ソフト、配置先、設定の変更範囲を読み、`inspect --json`で選択した経路の予定を確認できます。既存のSkillやフックと競合する場合は、自動移行せず停止します。
+詳しい手順、更新・解除、検証範囲は[共通CLIとOS・ホスト対応](docs/cross-platform.md)にまとめています。
 
 ### エージェントを並列実行する前に
 
@@ -215,7 +236,8 @@ yomiyasuは設計書や報告文を仕上げる工程で使えます。
 | 知識の保存・共有・点検 | [Workgraphの使い方](docs/basic-memory-workgraph/usage.md) · [共有](docs/basic-memory-workgraph/sharing.md) · [点検](docs/basic-memory-workgraph/troubleshooting.md) |
 | 正本の編集・配布物の生成・検証 | [開発ガイド](docs/development.md) |
 
-ルートの`install_*.sh`が導入の入口です。編集用ソースと配布資材は`tools/`、利用ガイドと評価資料は`docs/`、回帰テストは`tests/`にあります。
+ルートの`install_*.sh`は従来の導入入口です。共通CLIは`src/agent_intelliforge/`、編集用ソースとキット定義は`tools/`、生成するPluginは`plugins/`、利用ガイドと評価資料は`docs/`、回帰テストは`tests/`にあります。
+生成資材を直接編集せず、正本を直して再生成します。[配布資材の編集と検証](docs/cross-platform-development.md)に手順をまとめています。
 一括インストーラー、Workgraph、Codex ECCはリポジトリ一式で使います。それ以外のキットは個別スクリプト単体でも使えます。
 Design ResearchとUpstreamは固定版ベースを取得・照合して組み立てるため、オフライン利用には[個別の準備](docs/design-research/installation.md#組み立てとオフライン利用)が必要です。
 

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "id": "yomiyasu",
+  "name": "yomiyasu writing skills",
+  "version": "2.0.0-proposal.3",
+  "legacy": {
+    "script": "install_codex_yomiyasu.sh",
+    "actions": {
+      "install": [
+        "--apply"
+      ],
+      "update": [
+        "--update",
+        "--apply"
+      ],
+      "doctor": [
+        "--doctor"
+      ],
+      "uninstall": [
+        "--uninstall",
+        "--apply"
+      ]
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "yomiyasu",
+      "source": "tools/codex-yomiyasu/assets",
+      "assembled": false
+    },
+    {
+      "name": "paragraph-writing",
+      "source": "tools/codex-yomiyasu/assets/paragraph-writing",
+      "assembled": false
+    },
+    {
+      "name": "japanese-direct-writing",
+      "source": "tools/codex-yomiyasu/assets/japanese-direct-writing",
+      "assembled": false
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/nanaism/yomiyasu",
+      "revision": "latest stable upstream release; local writing rules have independent version"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Python >=3.10 in the standalone installer",
+      "condition": "when this kit/feature is selected"
+    },
+    {
+      "name": "upstream latest stable release on apply/update",
+      "condition": "when this kit/feature is selected"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/yomiyasu",
+    "{skills_home}/paragraph-writing",
+    "{skills_home}/japanese-direct-writing"
+  ],
+  "settings": [],
+  "plugin": {
+    "name": "yomiyasu",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run yomiyasu"
+  },
+  "editable_sources": [
+    "tools/codex-yomiyasu"
+  ],
+  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "package_version": "0.1.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "definition": "tools/codex-yomiyasu/kit.json",
+  "agent": "codex"
+}

@@ -1,0 +1,36 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "intelliforge",
+            "args": [
+              "hook",
+              "--agent",
+              "claude",
+              "recall"
+            ]
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "intelliforge",
+            "args": [
+              "hook",
+              "--agent",
+              "claude",
+              "save"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
