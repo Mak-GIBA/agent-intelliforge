@@ -25,7 +25,8 @@ project to that shared policy. Each role checks the note's original context and 
 against the current brief; current screenshots and operations still establish findings and
 resolution. Already-read supplied notes may be reused. Missing Memory, failed lookup or no
 matching notes does not block execution, and the harness does not install/configure/write Memory.
-Reading available yomiyasu and polishing Japanese UI drafts and report narrative fields before
+Read available kotonoha (fall back to yomiyasu) once, without applying both. Polishing
+Japanese UI drafts and report narrative fields before
 returning JSON is recommended. Preserve evidence, IDs, numbers, conditions, outcomes, keys/enums
 and certainty; published reports and archived results remain parent-owned generated artifacts.
 
