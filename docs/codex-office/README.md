@@ -2,7 +2,7 @@
 
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md)
 
-PDF、DOCX、PPTXの閲覧・作成・部分編集と、原本の保護・差分・描画確認を支援します。
+PDF、DOCX、PPTXを読み、原本を保護した作業コピーで作成・部分編集するキットです。本文の差分、文書構造、ページを画像にしたときの表示をそれぞれ確認します。
 [install_codex_office.sh](../../install_codex_office.sh)は単体で使えます。
 引数なしでは予定を表示し、`--apply`でツールを導入します。
 

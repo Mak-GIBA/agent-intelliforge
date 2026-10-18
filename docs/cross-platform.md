@@ -2,8 +2,9 @@
 
 [README](../README.md) · [従来の一括導入](installation.md) · [検証結果](cross-platform-validation.md)
 
-Codexを既定の対象にし、既存のLinux / WSL2導入を保ったまま配布経路を追加しています。
-Claude CodeのPluginと実行アダプターは試験対応です。Codexのインストールや認証を必要とせず、Claude自身のCLIと認証を使います。
+共通CLIの`intelliforge`は、選んだOSとホストに合う導入経路を使います。既定の対象はCodexです。Linux / WSL2の既存インストーラーを維持し、ネイティブWindowsとClaude CodeにはPlugin方式を用意しています。
+
+Claude Codeは試験対応です。Codexの導入や認証を必要とせず、Claude自身のCLIと認証を使います。
 
 | 対象 | 共通CLIが選ぶ経路 | 既存導入への影響 |
 |---|---|---|
@@ -15,7 +16,9 @@ Claude CodeのPluginと実行アダプターは試験対応です。Codexのイ�
 
 ## 導入前に内容を確認する
 
-共通CLIの導入にはPython 3.11以上と、選んだホストの公式CLIを用意します。日本語キットは単体の`install_kotonoha.sh`／`install_kotonoha.ps1`から不足するPython・Node.jsを自動準備できます。Windowsでも管理者権限、Bash、WSL、Dockerはこの追加経路の前提ではありません。
+共通CLIにはPython 3.11以上と、選んだホストの公式CLIが必要です。WindowsのPlugin方式に管理者権限、Bash、WSL、Dockerは必要ありません。
+
+日本語キットだけを導入する場合は、単体の`install_kotonoha.sh`／`install_kotonoha.ps1`で不足するPython・Node.jsも準備できます。共通CLIそのものを導入する手順とは別です。
 CLIの配布には[uvのツール環境](https://docs.astral.sh/uv/guides/tools/)を使えます。PyPIへの公開はまだ行っていません。
 
 ```bash
@@ -23,7 +26,7 @@ git clone https://github.com/Mak-GIBA/agent-intelliforge.git
 cd agent-intelliforge
 uv tool install .
 intelliforge list
-intelliforge inspect --only yomiyasu --json
+intelliforge inspect --only kotonoha --json
 ```
 
 cloneした資材から標準のwheelを構築して導入します。パッケージの構築はダウンロードやホスト設定の更新を行いません。生成済み資材と編集用ソースが一致しなければ構築を止めます。
@@ -33,15 +36,17 @@ cloneした資材から標準のwheelを構築して導入します。パッケ�
 
 ## 導入する
 
+日本語執筆の入口は`$kotonoha`です。`--only kotonoha`と互換IDの`--only yomiyasu`は同じキットを選びます。内部のキットID・Plugin名は`yomiyasu`を維持しています。詳細は[kotonohaの導入](codex-yomiyasu/installation.md)を参照してください。
+
 ```bash
 # Linux / WSL2：既存Codex方式。ホスト指定を省略できる
-intelliforge install --only yomiyasu --apply
+intelliforge install --only kotonoha --apply
 
 # Codex Plugin方式を明示的に選択
-intelliforge install --agent codex --plugin --only yomiyasu --apply
+intelliforge install --agent codex --plugin --only kotonoha --apply
 
 # Claude Code
-intelliforge install --agent claude --only yomiyasu --apply
+intelliforge install --agent claude --only kotonoha --apply
 ```
 
 WindowsのPowerShellでも同じ`intelliforge`コマンドを使います。checkoutからの入口も用意しています。
@@ -50,8 +55,8 @@ WindowsのPowerShellでも同じ`intelliforge`コマンドを使います。chec
 git clone --config core.longpaths=true https://github.com/Mak-GIBA/agent-intelliforge.git
 cd agent-intelliforge
 uv tool install .
-.\install_all.ps1 --only yomiyasu
-.\install_all.ps1 --only yomiyasu --apply
+.\install_all.ps1 --only kotonoha
+.\install_all.ps1 --only kotonoha --apply
 ```
 
 Windowsのcloneでは、保存済みの研究資料に長いパスが含まれるため、`core.longpaths`を新しく作るリポジトリだけに設定します。Gitのグローバル設定には書き込みません。設定はcheckout前に有効になる[cloneの公式オプション](https://git-scm.com/docs/git-clone)を使います。
@@ -59,7 +64,7 @@ Windowsのcloneでは、保存済みの研究資料に長いパスが含まれ�
 Pluginのフック・Skill本文はPATH上の`intelliforge`を呼び出します。導入時にCLIの存在を確認します。公式の[Codex Plugin形式](https://developers.openai.com/plugins/build/plugins)と[Claude Plugin形式](https://code.claude.com/docs/en/plugins-reference)を生成し、各ホストの管理コマンドに登録します。
 登録元は管理するローカルMarketplaceです。Pythonパッケージを更新しても、ホストが参照するパスを維持できます。
 
-複数のキットは`--only ux-stack,design-research,yomiyasu`のように指定します。`--agent both`はホストごとに別の資材を導入します。
+複数のキットは`--only ux-stack,design-research,kotonoha`のように指定します。`--agent both`はホストごとに別の資材を導入します。
 全選択では、そのキットに必要な外部ソフトの準備も必要です。GitHub管理には`gh`の導入と認証、Officeの完全な描画にはLibreOfficeや適切なフォントなどを用意してください。
 
 ## 更新・診断・解除
@@ -68,22 +73,22 @@ Pluginのフック・Skill本文はPATH上の`intelliforge`を呼び出します
 
 ```bash
 uv tool install --force .
-intelliforge update --agent claude --only yomiyasu --apply
-intelliforge doctor --agent claude --only yomiyasu
-intelliforge uninstall --agent claude --only yomiyasu --apply
+intelliforge update --agent claude --only kotonoha --apply
+intelliforge doctor --agent claude --only kotonoha
+intelliforge uninstall --agent claude --only kotonoha --apply
 ```
 
 Codex Plugin方式の管理には`--agent codex --plugin`を付けます。Linuxの既定方式の更新は従来の個別インストーラーへ委譲し、対応する既存コマンドがない操作は自動で代替しません。
 
 ```bash
 # 上流yomiyasuだけ更新。独自規範・補助Skillはそのまま
-intelliforge update --agent claude --only yomiyasu --upstream-only --apply
+intelliforge update --agent claude --only kotonoha --upstream-only --apply
 # 自動使用の許可を切り替える
-intelliforge update --agent claude --only yomiyasu --mode explicit --apply
-intelliforge update --agent claude --only yomiyasu --mode auto --apply
+intelliforge update --agent claude --only kotonoha --mode explicit --apply
+intelliforge update --agent claude --only kotonoha --mode auto --apply
 # 実際の資材と上流原本の保存先を調べる
-intelliforge locate --agent claude --only yomiyasu
-intelliforge locate --agent claude --only yomiyasu --upstream
+intelliforge locate --agent claude --only kotonoha
+intelliforge locate --agent claude --only kotonoha --upstream
 ```
 
 更新前に所有権・ファイルハッシュを確認します。未管理資材、手動編集、リンク・junction、危険な相対パス、大小文字で衝突するファイル名は上書きしません。
@@ -128,5 +133,3 @@ intelliforge doctor --agent claude --only design-research --isolation-smoke
 - Herdrは既存実行ファイルを優先します。Windows x64で未導入なら固定版公式ZIPをハッシュ検証して導入します。作業ディレクトリの再利用は`intelliforge kit-run herdr --agent <host> -- <directory>`から実行します。未知のセッション形式では停止します。
 
 Windows実機とClaudeの実モデルによる一連の評価は、この環境では未実施です。[確認済みの範囲と残る検証](cross-platform-validation.md)を区別して利用してください。
-
-日本語執筆の入口は`$kotonoha`です。`--only kotonoha`と従来の`--only yomiyasu`は同じキットを選びます。詳細は[kotonohaの導入](codex-yomiyasu/installation.md)を参照してください。

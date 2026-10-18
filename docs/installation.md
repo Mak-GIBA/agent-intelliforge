@@ -1,10 +1,9 @@
-# 全ツールの一括インストール
+# キットを選んでインストールする
 
 [リポジトリ概要](../README.md) · [docs一覧](README.md)
 
-[`install_all.sh`](../install_all.sh)は、全ツールの一括導入と`--only`による個別選択に対応した共通の入口です。
-選んだツールの個別インストーラーを順に呼び出します。
-各ツールの取得元、配置先、編集保護は個別インストーラーに従います。
+[`install_all.sh`](../install_all.sh)では、`--only`で必要なキットを選ぶか、全キットを一括導入できます。
+選んだキットの個別インストーラーを順番に呼び出すため、取得元、配置先、既存ファイルの保護方法はキットごとに異なります。導入前に予定を確認し、`--apply`で適用します。
 
 共通CLI、ネイティブWindows、Claude Codeの導入は[OS・ホスト対応ガイド](cross-platform.md)を参照してください。
 このページのBash経路はCodex向けの既存方式を維持しています。Plugin方式への移行は明示的に選択します。
@@ -42,7 +41,7 @@ bash install_all.sh --apply
 |---|---|---|
 | `workgraph` | Basic Memory、公式plugin、Workgraph・hooks・保存プロジェクト。導入済みなら設定を保持する`--update` | [導入・更新](basic-memory-workgraph/installation.md) |
 | `ux-stack` | ooui-design、認知負荷のガイド、画像付きUX検証、Product Design・Build Web Apps、UIレビュー、Playwright | [導入・更新](codex-ux-stack/installation.md) |
-| `speckit` | 固定版から両ツールを組み立て・検証し、SpecKit CLIとWorkbench・8 Skillを導入 | [導入・更新](speckit-upstream/installation.md) |
+| `speckit` | 固定版から両ツールを組み立て・検証し、SpecKit CLIとWorkbench・上流工程のSkillを導入 | [導入・更新](speckit-upstream/installation.md) |
 | `github-pm` | GitHub Project DirectorとCodex共通指示。ghの導入は別途指定 | [導入・更新](codex-github-pm/installation.md) |
 | `design-research` | 固定版から両ツールを組み立て・検証し、単一入口の研究Skillとハーネスを導入 | [導入・更新](design-research/installation.md) |
 | `ecc` | Codex標準ECC pluginと必要時に参照する入口。`--apply`で導入・設定 | [導入・更新・復元](codex-ecc/installation.md) |
@@ -54,8 +53,8 @@ UX Stackは日本語のUI文言を仕上げる際にkotonohaを推奨します�
 一括導入では両方が含まれ、個別選択なら次のように組み合わせられます。
 
 ```bash
-bash install_all.sh --only ux-stack,yomiyasu --dry-run
-bash install_all.sh --only ux-stack,yomiyasu --apply
+bash install_all.sh --only ux-stack,kotonoha --dry-run
+bash install_all.sh --only ux-stack,kotonoha --apply
 ```
 
 `--only`はカンマ区切りでも、複数回でも指定できます。同じIDの重複は1回にまとめ、上の表の順序で実行します。
@@ -64,15 +63,14 @@ bash install_all.sh --only ux-stack,yomiyasu --apply
 UpstreamとDesign Researchを組み合わせる場合は、両方を選びます。片方の導入で、もう片方が自動導入されるわけではありません。
 
 ```bash
-bash install_all.sh --only speckit,design-research,yomiyasu --dry-run
-bash install_all.sh --only speckit,design-research,yomiyasu --apply
+bash install_all.sh --only speckit,design-research,kotonoha --dry-run
+bash install_all.sh --only speckit,design-research,kotonoha --apply
 ```
 
 両配布スクリプトは、固定コミットの元インストーラー2本を取得・照合して組み立てるため、通常は通信します。
 一括スクリプトは`--base-dir`・`--offline`・`--build-only`を転送しません。
 オフラインの組み立て・再配布は、[Design Research](design-research/installation.md#組み立てとオフライン利用)または[Upstream](speckit-upstream/installation.md#組み立てとオフライン利用)の個別手順を使います。
-2026-10-10に組み立ての停止原因を修正し、両ツールの組み立て・自己テストと、このPCでの更新・診断を確認しました。
-[検証結果](design-research/validation.md)を参照してください。
+組み立て・自己テスト・更新・診断の確認結果と過去の停止条件は、[検証結果](design-research/validation.md)に記載しています。
 
 ## 再実行・更新・解除
 

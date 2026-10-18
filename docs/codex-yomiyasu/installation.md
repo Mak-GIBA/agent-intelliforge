@@ -1,131 +1,119 @@
 # kotonohaのインストール・更新・解除
 
-[概要](README.md) · [使い方](usage.md)
+[概要](README.md) · [使い方](usage.md) · [検証結果](kotonoha-validation.md)
 
 ## 前提と導入
 
-Linux / WSL2はBash、HTTPS取得と展開に使うcurl（またはwget）・tar・ハッシュ検査コマンドが必要です。WindowsはPowerShellを使います。Skillを使うCodex等のホストは事前に用意してください。
+kotonohaは、必要なPython・Node.jsと文章検査ツールをユーザー専用領域へ用意します。既存の適合環境は再利用し、sudo、OSのパッケージ管理、永続的なPATH変更は行いません。Codexなど、Skillを使うホストは別途用意してください。
 
-Python・Node.jsがなくても`--apply`でユーザー専用環境を準備します。Pythonが必要な場合は固定版uvを経由して3.11系を用意し、Node.jsは検証した24系LTSの公式配布をハッシュ照合して取得します。検査パッケージはlockfileに固定します。sudo、OSのパッケージ管理、永続的なPATH変更は行いません。
+Linux / WSL2ではBash、curlまたはwget、tar、ハッシュ検査コマンドが必要です。WindowsではPowerShellを使います。
 
 ```bash
-bash install_kotonoha.sh                 # 予定表示
-bash install_kotonoha.sh --apply         # Skillと実行環境
-bash install_all.sh --only kotonoha --apply
+bash install_kotonoha.sh                 # 導入予定を表示
+bash install_kotonoha.sh --apply         # Skillと検査環境を導入
+bash install_kotonoha.sh --doctor        # 配置・ハッシュ・検査環境を診断
 ```
 
 ```powershell
-.\install_kotonoha.ps1                  # 予定表示
+.\install_kotonoha.ps1                  # 導入予定を表示
 .\install_kotonoha.ps1 --apply
+.\install_kotonoha.ps1 --doctor
 ```
 
-従来名の単体インストーラーも同じ正本から生成します。共通CLIは`intelliforge install --only kotonoha --apply`でも選択でき、既存のキットID・Plugin名`yomiyasu`は維持します。Windowsの一括入口はPython/uvがなくても、日本語キットだけなら単体bootstrapへ委譲します。
+一括導入は`bash install_all.sh --only kotonoha --apply`で実行します。共通CLIでは`intelliforge install --only kotonoha --apply`を使えます。Windowsの一括入口も、日本語キットだけならPythonやuvがなくても単体インストーラーへ委譲します。
 
-Python自体がない環境のプレビューは、取得せずbootstrapの概要を表示します。引数ごとの完全なプレビューには既存のPythonを`PYTHON_BIN`で指定してください。`--apply`を付けない診断・ヘルプでも、Pythonを自動取得しません。
+### 名前と配置先
 
-専用環境はskillsディレクトリの親にある`.kotonoha-runtime`、Python bootstrapはユーザーデータ領域の`agent-intelliforge/kotonoha-bootstrap`へ保存します。Pluginではキット状態ディレクトリの`dependencies/kotonoha`を使います。解除しても環境とバックアップは残ります。
+通常の執筆・推敲は`$kotonoha`から始めます。既存の`$yomiyasu`は同じ工程への互換入口です。段落だけの調整には`$paragraph-writing`、過剰な留保だけの調整には`$japanese-direct-writing`を使えます。
 
+標準の配置先は`~/.agents/skills/`です。`--skills-dir PATH`で変更した場合は、診断・更新・解除でも同じパスを指定してください。互換性のため、内部のキットID・Plugin名と管理ディレクトリ名は`yomiyasu`を維持しています。従来の`install_codex_yomiyasu.sh`も新しい単体インストーラーと同じ正本から生成します。
 
-```bash
-bash install_codex_yomiyasu.sh
-bash install_codex_yomiyasu.sh --apply
-bash install_codex_yomiyasu.sh --doctor
-```
+同名の未管理Skillや別の場所にある同名Skillは上書き・二重登録しません。選択した全Skillを検査・準備してから配置し、切り替えに失敗した場合は切り替え済みのSkillも元へ戻します。
 
-標準ではkotonoha、yomiyasu互換入口、paragraph-writing、japanese-direct-writingを導入します。meisekiとyomiyasuの初回導入ではGitHub Releasesの最新安定版を調べ、その実行で取得するcommitを確定します。
-yomiyasuはGit blob IDとサイズ、meisekiは対応確認済み資材のSHA-256を検査してから配置します。meisekiに未対応の規範変更がある場合は停止し、既存Skillを維持します。正常な再実行では上流を勝手に更新しません。
-同じ構成での再実行は既存の導入を保持し、上流を自動更新しません。
+### 実行環境と取得する原本
 
-paragraph-writingとjapanese-direct-writingは、役割を限定した現在の本文と由来の記録を同梱しています。導入時に元のGistやZIPへアクセスする必要はありません。各スキルの発動設定は、選んだモードに合わせて生成します。
+Pythonが必要な場合は固定版uvを経由して3.11系を用意します。Node.jsは検証した24系LTSの公式配布をハッシュ照合して取得し、文章検査の依存パッケージはlockfileで固定します。
 
-既定の配置先は`~/.agents/skills/`の下にある各スキル名のディレクトリです。
-`--skills-dir PATH`で親ディレクトリを変えた場合は、診断・更新・解除でも同じ指定を使います。
-同名の未管理Skillや別の場所の同名Skillを検出した場合は上書き・二重登録をしません。
-選択した全スキルの検証と準備を済ませてから配置します。ディレクトリの切り替えに失敗した場合は、切り替え済みのSkillも元へ戻します。
+専用環境はSkillディレクトリの親の`.kotonoha-runtime`に保存します。Python bootstrapの保存先は、ユーザーデータ領域の`agent-intelliforge/kotonoha-bootstrap`です。Plugin方式ではキット状態ディレクトリの`dependencies/kotonoha`を使います。解除後も環境とバックアップは残ります。
+
+初回導入ではmeisekiとyomiyasuの最新安定版Releaseを確認し、取得するcommitを確定します。yomiyasuはGit blob IDとサイズ、meisekiは対応確認済み資材のSHA-256を検査します。meisekiに未対応の規範変更がある場合は停止し、既存Skillを維持します。同じ構成で再実行しても、上流を自動更新しません。
+
+paragraph-writingとjapanese-direct-writingは同梱版から導入・更新します。元のGistやZIPへ接続する必要はありません。
+
+Python自体がない環境では、プレビューは通信せずbootstrapの概要を表示します。引数ごとの完全な予定表示には、既存のPythonを`PYTHON_BIN`で指定してください。`--apply`のない診断・ヘルプではPythonを自動取得しません。
 
 ## 対象を選ぶ
 
-`--only all|yomiyasu|paragraph-writing|japanese-direct-writing`で導入・更新・診断・解除の対象を選べます。既定は`all`です。
+単体インストーラーの`--only`は、個々のSkillを選ぶ指定です。`all`（既定）、`yomiyasu`、`kotonoha`、`paragraph-writing`、`japanese-direct-writing`を使えます。一括導入・共通CLIの`--only kotonoha`と`--only yomiyasu`は、どちらも日本語キット全体を選びます。
 
 ```bash
-bash install_codex_yomiyasu.sh --only paragraph-writing --apply
-bash install_codex_yomiyasu.sh --only japanese-direct-writing --apply
-bash install_codex_yomiyasu.sh --only yomiyasu --doctor
-bash install_all.sh --only yomiyasu --apply
+bash install_kotonoha.sh --only paragraph-writing --apply
+bash install_kotonoha.sh --only japanese-direct-writing --apply
+bash install_kotonoha.sh --only yomiyasu --doctor
 ```
 
-既存の適合Pythonがあれば、paragraph-writingまたはjapanese-direct-writing単独の導入に上流取得は不要です。一括導入の`kotonoha`と互換ID`yomiyasu`は同じ日本語キットを導入します。
-1.3.0、2.0.0-proposal.1、proposal.2から2.0.0-proposal.3へ移行する場合は、次の更新を使います。入口と補助スキルを更新し、yomiyasuの上流原本を最新安定版から取得します。既存の発動モードは保持します。
-
-```bash
-bash install_codex_yomiyasu.sh --update --apply
-```
+既存の適合Pythonがあれば、paragraph-writingまたはjapanese-direct-writing単独の導入に上流取得は不要です。
 
 ## 更新と発動モード
 
-```bash
-bash install_codex_yomiyasu.sh --check-update
-bash install_codex_yomiyasu.sh --update
-bash install_codex_yomiyasu.sh --update --apply
-```
-
-`--check-update`はyomiyasuの最新安定版と、補助スキルの同梱版を、それぞれ導入版と比較します。
-`--update`は`--apply`がなければ通信せず予定を表示します。適用時にyomiyasuの上流版を確定し、検査してから配置します。
-paragraph-writingまたはjapanese-direct-writing単独の更新確認・更新は通信せず、実行しているスクリプトの同梱版を使います。
-既存の管理ファイルに編集や欠落がある場合は、`--force`を付けても停止します。
-更新前の資材はバックアップに残します。
-
-上流を更新せず、このリポジトリの入口・運用設定と補助スキルを更新する場合は`--force --apply`を使います。ただし上流の必須ファイルが欠ける旧導入は、まず`--update --apply`で整えてください。2.0系列では`upstream/UNICODE-LICENSE.txt`も必須です。
-既存の各Skillの発動モードは保持します。新規の補助スキルは管理済みyomiyasuのモードを継承し、全て新規なら`auto`にします。
-`--mode`を指定すると選択したSkillへ適用します。既存設定を変更するときは、次のように明示します。
+新しいインストーラーを用意し、更新内容を確認してから適用します。
 
 ```bash
-bash install_codex_yomiyasu.sh --mode explicit --force --apply
-bash install_codex_yomiyasu.sh --mode auto --force --apply
+bash install_kotonoha.sh --check-update
+bash install_kotonoha.sh --update
+bash install_kotonoha.sh --update --apply
+bash install_kotonoha.sh --doctor
 ```
 
-新規導入の既定は`auto`で、文章を仕上げる依頼でSkillの自動選択を許可します。
-`explicit`は各スキル名を指定して使う設定です。`agents/openai.yaml`の`allow_implicit_invocation`を`false`にします。毎回答を校正するHookは登録しません。
+`--check-update`は両上流の最新安定版と同梱の独自規範・補助Skillを確認し、未対応のmeiseki変更もエラーとして知らせます。`--update`は`--apply`がなければ通信せず予定を表示し、適用時に取得版を確定・検査して配置します。補助Skill単独の更新確認・更新は通信せず同梱版を使います。
+
+上流版を保ち、同梱の入口・運用設定・補助Skillだけを更新する場合は`--force --apply`を使います。ただし、上流の必須ファイルが欠ける旧導入は、まず`--update --apply`で整えてください。2.0系列以降では`upstream/UNICODE-LICENSE.txt`も必須です。
+
+既存の管理ファイルに編集・欠落があると、`--force`でも停止します。更新前の資材は、Skill名付きZIPとして`.yomiyasu-installer-backups/`へ保存します。配置・解除の完了後に旧一時フォルダーの清掃だけが失敗した場合は、完了した操作と残ったパスを警告します。
+
+既存Skillの発動モードは保持します。新規Skillは管理済みyomiyasuのモードを引き継ぎ、全て新規なら`auto`です。モードを変更する場合は明示します。
+
+```bash
+bash install_kotonoha.sh --mode explicit --force --apply
+bash install_kotonoha.sh --mode auto --force --apply
+```
+
+`auto`は依頼に合うSkillの自動選択を許可する設定です。yomiyasu互換入口は明示呼び出し用として扱います。`explicit`では各Skill名を指定して使い、`agents/openai.yaml`の`allow_implicit_invocation`を`false`にします。毎回答を校正するHookは登録しません。
 
 ## 上流だけを更新する・取得版を固定する
 
 ```bash
-bash install_codex_yomiyasu.sh --update --upstream-only
-bash install_codex_yomiyasu.sh --update --upstream-only --apply
-bash install_codex_yomiyasu.sh --check-update --upstream-ref v1.1.1
-bash install_codex_yomiyasu.sh --update --upstream-ref v1.1.1 --apply
+bash install_kotonoha.sh --update --upstream-only
+bash install_kotonoha.sh --update --upstream-only --apply
+bash install_kotonoha.sh --check-update --upstream-ref v1.1.1
+bash install_kotonoha.sh --update --upstream-ref v1.1.1 --apply
 ```
 
-`--upstream-only`は`--update`と併用し、yomiyasuの上流原本だけを更新します。独自ルールとその版、説明用の`references/explanation.md`、補助2スキルは保持します。`--upstream-ref`は更新または更新確認で、取得対象を安定版Releaseのtagに固定します。独自ルールの版を指定するオプションではありません。
+`--upstream-only`は`--update`と併用し、yomiyasuの上流原本だけを更新します。kotonoha、meiseki、独自規範とその版、`references/explanation.md`、補助Skill、検査環境は保持します。`--upstream-ref`は安定版Releaseのtagを指定するオプションで、独自規範の版を指定するものではありません。
 
 ## 解除と検査
 
 ```bash
-bash install_codex_yomiyasu.sh --uninstall
-bash install_codex_yomiyasu.sh --uninstall --apply
-bash install_codex_yomiyasu.sh --only paragraph-writing --uninstall --apply
-bash install_codex_yomiyasu.sh --only japanese-direct-writing --uninstall --apply
-bash install_codex_yomiyasu.sh --self-test
-bash install_codex_yomiyasu.sh --extract /tmp/yomiyasu-review
+bash install_kotonoha.sh --uninstall
+bash install_kotonoha.sh --uninstall --apply
+bash install_kotonoha.sh --only paragraph-writing --uninstall --apply
+bash install_kotonoha.sh --only japanese-direct-writing --uninstall --apply
+bash install_kotonoha.sh --self-test
+bash install_kotonoha.sh --extract /tmp/yomiyasu-review
 ```
 
-標準の解除は管理する日本語Skillが対象です。個別解除では`--only`を付けます。手で編集した管理ファイルや追加ファイルを検出した場合は、選択した全スキルの解除前に停止します。
-バックアップは親フォルダの`.yomiyasu-installer-backups/`へ、Skill名付きのZIPで保存します。
-配置・解除の切り替えが完了した後、旧一時フォルダの清掃だけに失敗した場合は、操作の完了と残ったパスを警告します。
-`--doctor`は通信せず配置・ハッシュ・発動設定・既知の競合を調べます。
-競合する別の校正Skillを検出しても、そのSkillを無効化しません。
-`--project PATH`で競合診断の対象プロジェクトを指定できます。
+標準の解除は管理する日本語Skill全体が対象です。個別解除には`--only`を使います。手動編集や追加ファイルがあれば、選択した全Skillの解除前に停止します。
 
-自己テストは一時環境と模擬の上流応答を使います。実際の配布元への通信やモデルの文章品質は検証しません。
-比較研究のモデル実行は`evals/run_study.py`や`evals/explanation_study.py`の明示実行専用で、インストール時には動きません。補助2スキルは同梱版を導入し、上流yomiyasuの最新安定版取得とは別に管理します。
-`--extract`は同梱資材を未使用または空のディレクトリへ展開します。インストールは行いません。`--self-test`と`--extract`は`--only`と併用できません。
-yomiyasuの原本をローカルから配置するには`--source-dir PATH --apply`を使います。ローカルGit checkout、管理済み導入のsnapshot、旧v1.0.4固定版のフラット原本を受け付け、形式に応じてファイルを検査します。
-`--source-dir`はyomiyasuを含む導入・更新で使います。`--upstream-ref`と併用できません。
+`--doctor`は通信せず、配置・ハッシュ・発動設定・既知の競合と検査環境を調べます。競合する校正Skillを検出しても無効化しません。`--project PATH`で競合診断の対象プロジェクトを指定できます。
+
+自己テストは一時環境と模擬の上流応答を使い、導入・更新・解除・検査の挙動を確認します。実際の配布元への通信やモデルの文章品質を検証するものではありません。文章比較は`evals/run_study.py`や`evals/explanation_study.py`などを明示実行し、インストール時には動かしません。
+
+`--extract`は未使用または空のディレクトリへ同梱資材を展開し、インストールは行いません。`--self-test`と`--extract`は`--only`と併用できません。
 
 ## 上流と依存の確認
 
-通常更新では両上流の最新安定版を確認します。`--update --upstream-only --apply`は従来どおりyomiyasu上流だけを更新し、kotonoha・meiseki・独自規範・検査環境を保持します。`--check-update`は未対応のmeiseki変更もエラーとして知らせます。
+`--source-dir PATH --apply`では、ローカル原本からyomiyasuを配置できます。受け付けるのはGit checkout、管理済み導入のsnapshot、旧v1.0.4固定版のフラット原本です。形式に応じて検査し、meisekiには対応確認済みの同梱原本を使います。両上流のネットワーク取得は省略しますが、未準備の実行環境や検査依存の取得には接続が必要です。`--source-dir`はyomiyasuを含む導入・更新で使い、`--upstream-ref`とは併用できません。
 
-導入前に実行環境の準備が失敗した場合、Skillは切り替えません。途中まで取得した所有済みキャッシュは再利用できます。自動対応はLinux glibc、macOS、Windowsのx64/ARM64向け配布を定義しています。実機検証の範囲は[検証記録](kotonoha-validation.md)で確認してください。
+実行環境の準備に失敗した場合はSkillを切り替えません。途中まで取得した所有済みキャッシュと、準備済みの専用環境は再利用できます。
 
-`--source-dir`を明示した場合は、meisekiも対応確認済みの同梱原本を使い、両上流のネットワーク取得を省略します。実行環境・検査依存が未準備なら、その取得には接続が必要です。既に準備した専用環境は再利用します。
+自動準備用の配布はLinux glibc、macOS、Windowsのx64 / ARM64向けに定義しています。配布の定義と実機検証は別であり、確認済みのOS・操作は[検証記録](kotonoha-validation.md)を参照してください。

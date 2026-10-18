@@ -3,7 +3,7 @@
 [導入手順](cross-platform.md) · [開発手順](cross-platform-development.md)
 
 2026-10-13にLinux環境で確認しました。既存のCodex経路を互換性の基準にし、追加経路は一時ホーム・一時設定・一時Skillディレクトリで検証しています。
-このPCの既存Skill、フック、MCP、AGENTS.mdは更新していません。
+この検証では、PCに既存のSkill、フック、MCP、AGENTS.mdを更新していません。以後の実装と日本語Skillの評価は[kotonohaの検証記録](codex-yomiyasu/kotonoha-validation.md)を参照してください。
 
 ## 確認済み
 

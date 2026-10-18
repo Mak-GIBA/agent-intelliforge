@@ -2,8 +2,8 @@
 
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md)
 
-プロジェクトへ移動して`herdr`を実行すると、そのディレクトリに対応するworkspaceを開く構成を用意します。
-既存のworkspaceがあれば再利用し、なければ作成します。
+プロジェクトへ移動して`herdr`を実行すると、そのディレクトリに対応するworkspaceを開けるようにします。workspaceはHerdrで作業するターミナルのまとまりです。
+同じディレクトリのworkspaceがあれば再利用し、なければ作成します。
 [install_herdr.sh](../../install_herdr.sh)は単体で使えます。引数なしでは実際に導入・設定します。
 
 ## 導入するもの

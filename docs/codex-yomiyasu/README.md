@@ -3,16 +3,15 @@
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md)
 
 日本語の技術文書、仕様書、Issue・PR、報告文などを、意味を保ったまま読みやすく整えるためのSkillです。
-主張、数値、専門用語、条件、断定の強さを確認し、読みにくい表現を直し、重要な主張から仕組みや実際の変化を追える文章を目指します。
+数値、専門用語、条件、断定の強さを保ち、読みにくい構文や重複を整理します。重要な主張が抽象語で止まる箇所では、資料にある仕組みや実際の変化まで説明します。
 kotonoha 3.0.0は、meisekiの構文明晰化、段落構成、説明の具体化、留保の整理、yomiyasuの自然さを一つの執筆工程に統合した独自Skillです。上流原本を順番に全文読み込みする方式ではなく、必要な規範を参照して同じ下書きを仕上げます。両上流の原本・版・ライセンスは分離して保持します。
 
 通常は`$kotonoha`で依頼します。既存の`$yomiyasu`は互換入口、paragraph-writingとjapanese-direct-writingは部分作業の入口として利用できます。短いメールや十分な原稿へ不要な説明を追加しません。
 
 `--apply`は必要なPython、Node.js、textlint、markdownlintもユーザー専用領域へ用意します。既存の適合環境を再利用し、システムの既定環境やシェル設定を変更しません。インストーラーの正本と依存バージョンは`tools/codex-yomiyasu/`で確認・編集できます。
 
-
-[install_codex_yomiyasu.sh](../../install_codex_yomiyasu.sh)は単体で使えます。
-引数なしでは導入予定を表示し、`--apply`で配置します。
+[install_kotonoha.sh](../../install_kotonoha.sh)と[install_kotonoha.ps1](../../install_kotonoha.ps1)は単体で使えます。
+引数なしでは予定を表示し、`--apply`で導入します。旧名の[install_codex_yomiyasu.sh](../../install_codex_yomiyasu.sh)も引き続き使えます。
 
 ## 導入するもの
 
@@ -30,7 +29,7 @@ meisekiの原本は`meiseki-upstream/SKILL.upstream.md`と設定・辞書・MIT�
 ECC、Basic Memory、Office Workbench、GitHub Project Directorは必須の依存ではありません。
 既存のHook、MCP、AGENTS、他のSkillの設定は変更しません。
 
-## 読む順序
+## 導入から利用へ
 
 1. [導入手順](installation.md)で配置先と更新方法を確認します。
 2. [使い方](usage.md)で対象の文章と保持する条件を指定します。

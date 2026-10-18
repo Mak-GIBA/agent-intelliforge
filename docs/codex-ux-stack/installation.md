@@ -63,9 +63,8 @@ skills@latestへの依存は外しました。取得するSkillの正本は[sour
 
 OOUIと認知負荷の参照資料は、同じ正本からooui-designとハーネスへ配置します。
 ハーネスには自身の資料を同梱するため、別のSkill配置先には依存しません。
-yomiyasuは日本語UI文言と設計・レビュー・改善レポートの推敲に利用を推奨します。導入する場合は
-[既存の別インストーラー](../codex-yomiyasu/installation.md)を使ってください。
-status / doctorには利用可能かを表示しますが、未導入でもUX Stackの導入失敗にはしません。
+日本語UI文言と設計・レビュー・改善レポートにはkotonohaを推奨し、未導入なら既存のyomiyasuも使えます。[日本語Skillの導入手順](../codex-yomiyasu/installation.md)で別途導入してください。UX Stackからは自動導入しません。
+現在の`status` / `doctor`は互換入口のyomiyasuの有無を表示します。日本語Skillが未導入でも、UX Stackの導入失敗にはしません。
 Basic Memoryが利用可能なら、スキルは既存の設定に従って関連する過去の指摘を参照します。
 参照は読み取りのみで、未導入・参照不能でも作業を続けます。UX StackからMemoryの導入・設定変更は行いません。
 

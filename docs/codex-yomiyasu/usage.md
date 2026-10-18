@@ -20,8 +20,16 @@ $kotonoha このPR説明を、開発者と非開発者が追える文章にし�
 既存ファイルでは対象と範囲を指定し、原文と差分を確認します。
 法令や引用など逐語保持が必要な本文は書き換えません。
 
-`auto`では各スキルの説明に合う依頼が自動選択の対象です。通常の日本語文書の執筆・推敲はkotonohaから始めます。yomiyasuは明示呼び出し用の互換入口です。コードだけの作業、単純な事実照会、逐語引用は対象外です。
-paragraph-writingは段落構成だけ、japanese-direct-writingは過剰な留意書きだけを直す依頼、または各スキル名の明示指定で使います。
+通常の執筆・推敲には`$kotonoha`を使います。`auto`では、説明に合う依頼から自動選択することも許可します。コードだけの作業、単純な事実照会、逐語引用は対象外です。
+
+| 呼び出し | 用途 |
+|---|---|
+| `$kotonoha` | 日本語文書全体の執筆・推敲 |
+| `$yomiyasu` | kotonohaと同じ工程への互換入口。明示呼び出し用 |
+| `$paragraph-writing` | 段落構成だけの点検・改善 |
+| `$japanese-direct-writing` | 過剰な留意書き・予防線・婉曲表現だけの整理 |
+
+補助Skillは対象を限定した依頼で使います。通常の推敲では、利用者が全ての名前を列挙する必要はありません。
 
 ## 仕組みと実際の変化を説明する
 
@@ -35,7 +43,7 @@ $kotonoha この技術説明を、新任の担当者が仕組みと操作を理�
 
 推敲では、原稿と提供資料にない方式・原因・数値を作りません。新規解説に仮想例を使う場合は、「仮に」のように実測と区別します。原因が不明なら不明のまま残し、接続詞や例の数を目標にしません。短いメールや語句修正には重い説明工程を適用しません。
 
-[新旧の比較と具体例](validation.md)では、生成品質と参照の読込、インストーラーの成功を分けて報告します。
+[新旧の比較と具体例](kotonoha-validation.md)では、生成品質と参照の読込、インストーラーの成功を分けて報告します。
 
 ## 段落と論旨を整理する
 
@@ -59,7 +67,7 @@ $japanese-direct-writing この説明から不要な留意書き・予防線・�
 
 主張の意味や確信度を変えず、判断に役立たない但し書きを削ります。必要な条件や不確実性は、その条件が掛かる主張の近くに具体的に記します。引用、数値、保持指定の注記、具体的な安全条件は残します。
 
-yomiyasuは留保の工程でjapanese-direct-writingの実ファイルを読んで適用します。複数のスキルを指定しても同じ工程を重ねず、構成、留保、表現を一続きで扱います。補助スキルが未導入なら、同梱の段落・留保の参照資料で処理を続けます。代替を使った点は、完成稿の外で短く伝えます。
+kotonohaは留保の工程でjapanese-direct-writingの実ファイルを読んで適用します。複数のスキルを指定しても同じ工程を重ねず、構成、留保、表現を一続きで扱います。補助スキルが未導入なら、同梱の段落・留保の参照資料で処理を続けます。代替を使った点は、完成稿の外で短く伝えます。
 
 ## AI的な定型と文の宛先を点検する
 
@@ -71,8 +79,21 @@ yomiyasuは留保の工程でjapanese-direct-writingの実ファイルを読ん�
 
 ## 保存する文章を検査する
 
-異なるUTF-8ファイルに修正前後を残し、ローカルの検査ツールを使います。
+修正前のUTF-8コピーを作業先の外に残し、編集前後をローカルの検査ツールで比べます。
 以下の`before.md`と`after.md`は、用意した原文と修正文に置き換えてください。
+
+ファイル推敲では編集前後にtextlintを実行し、Markdownの場合はmarkdownlintも実行します。指摘は文脈で判断し、文字数やスコアのためだけに修正しません。`writing_lint.py`は原稿を変更しません。
+
+```bash
+# 専用環境のPythonは .kotonoha-runtime/settings.json に記録
+<Pythonのパス> <skills-dir>/yomiyasu/scripts/writing_lint.py after.md --before before.md
+# Plugin利用時
+intelliforge kit-run yomiyasu --agent codex --tool writing_lint.py -- after.md --before before.md
+```
+
+検査済みと実行不能はJSONのstatusで区別します。実行不能時は文章の推敲を続け、検査を省略したことを完成稿の外で知らせます。本文を外部判定APIへ送信せず、Jevや自動フックは導入しません。
+
+### 意味の保持と段落構成を確認する
 
 ```bash
 python3 ~/.agents/skills/yomiyasu/scripts/check.py lint after.md --genre manual
@@ -85,17 +106,4 @@ python3 ~/.agents/skills/yomiyasu/scripts/check.py compare before.md after.md --
 検出が0件でも意味の一致は証明できません。否定、条件、因果、断定の強さは本文を読んで確認します。
 
 GitHubへの投稿権限や、Office文書のレイアウト確認は、それぞれの作業手順に従います。
-yomiyasuを使ったことだけで投稿・共有・commit・pushを自動実行することはありません。
-
-## ファイルの検査
-
-ファイル推敲では編集前後にtextlintを実行し、Markdownの場合はmarkdownlintも実行します。指摘は文脈で判断し、文字数やスコアのためだけに修正しません。`writing_lint.py`は原稿を変更しません。
-
-```bash
-# 専用環境のPythonは .kotonoha-runtime/settings.json に記録
-<Pythonのパス> <skills-dir>/yomiyasu/scripts/writing_lint.py after.md --before before.md
-# Plugin利用時
-intelliforge kit-run yomiyasu --agent codex --tool writing_lint.py -- after.md --before before.md
-```
-
-検査済みと実行不能はJSONのstatusで区別します。実行不能時は文章の推敲を続け、検査を省略したことを完成稿の外で知らせます。本文を外部判定APIへ送信せず、Jevや自動フックは導入しません。
+kotonohaを使ったことだけで投稿・共有・commit・pushを自動実行することはありません。

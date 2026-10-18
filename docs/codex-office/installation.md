@@ -5,7 +5,7 @@
 ## 前提と導入
 
 主対象はLinux / WSL2のglibc環境で、x86_64とARM64に対応します。
-macOS用の取得経路もありますが、この環境では未検証です。ネイティブWindowsとAlpineは対象外です。
+このBashインストーラーにはmacOS用の取得経路もありますが、実機検証は未実施です。ネイティブWindowsとAlpineは対象外です。WindowsのPlugin方式は[共通CLIの導入ガイド](../cross-platform.md)を参照してください。
 Bash、Python 3.11以降、venv・pip、導入済みCodexが必要です。初回導入はGitHubとPyPIへ接続します。
 
 ```bash

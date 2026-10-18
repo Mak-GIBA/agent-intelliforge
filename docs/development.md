@@ -2,7 +2,14 @@
 
 [docs一覧](README.md) · [リポジトリ概要](../README.md)
 
-共通CLI・Windows・Claude Code向けの追加配布は[配布資材の編集と検証](cross-platform-development.md)を参照してください。
+変更する対象によって、編集する正本と確認方法が異なります。生成済みのPluginやインストーラーを直接編集せず、元の資材を直して再生成してください。
+
+| 変更するもの | 確認する手順 |
+|---|---|
+| README・利用ガイド | [文書だけを変更した場合の確認](#ドキュメントだけを変更した場合の確認) |
+| 個別キットの実装・規範 | [ソースと資材の配置](#ソースと資材の配置)、[キットごとの検証範囲](#インストーラーごとの検証範囲) |
+| 共通CLI・Windows・Claude Code向け配布 | [配布資材の編集と検証](cross-platform-development.md) |
+| 新しいキットのガイド | [説明の追加手順](#新しいインストーラーの説明を追加する) |
 
 ## ソースと資材の配置
 
@@ -84,7 +91,7 @@ policy変更はリポジトリの `tools/basic-memory-workgraph/memory-policy.md
 | Design Research | `bash install_design_research.sh --bundle-self-test`、固定版からの組み立てと内蔵試験 | 両配布物に同じ更新資材を内蔵。2.5.0の同梱330件と両ツールの組み立て・自己テストを確認。実モデルの検証範囲は[検証結果](design-research/validation.md)を参照 |
 | Codex ECC | `python3 -m unittest discover -s tests -p 'test*ecc*.py' -v`、Bash構文確認 | 模擬Codexによる新規導入、既存再利用、更新失敗・再実行、復元、設定維持と原本取得。新規環境への実ダウンロードは別途確認が必要 |
 | Office Workbench | `bash install_codex_office.sh --self-test` | 一時環境で導入・編集保護・文書処理を検証。通信・Codexは模擬し、実PDFライブラリがない対象はSKIP。実OfficeCLIや描画のE2E確認は別途必要 |
-| yomiyasuと補助Skill | `bash install_codex_yomiyasu.sh --self-test` | 一時HOME・作業ディレクトリと模擬上流でスキルの導入・更新・解除・検査を確認。配布元への実通信やモデルの文章品質は検証しない |
+| kotonohaと日本語執筆 | `bash install_kotonoha.sh --self-test` | 一時HOME・作業ディレクトリと模擬上流で導入・更新・解除・検査を確認。実通信・実行環境の準備と文章生成の比較は[専用の検証記録](codex-yomiyasu/kotonoha-validation.md)を参照 |
 | Herdr | `python3 -m unittest discover -s tests -p 'test_install_herdr.py' -v` | 一時HOMEで取得・Bash設定・workspace照合・再実行を検証。実ダウンロードや実セッションの起動は含まない |
 
 リポジトリの既存テストには、2.0.1系の通常インストーラーを前提とするDesign Research・Upstreamの検査があります。
@@ -217,10 +224,16 @@ GitHub Project Directorも単一ファイル内に資料と実装を持ちます
 導入・状態確認のオプションは[導入手順](design-research/installation.md)、ローカルHTTP・PoC・根拠・復旧の過去の試験は[検証結果](design-research/validation.md)を参照してください。
 Memory保存は外側のSkillが担当し、既存の保存基準・モードと許可に従います。ハーネスの子役は書き込みません。
 
-### Office Workbenchとyomiyasuの埋め込み資料
+<a id="office-workbenchとyomiyasuの埋め込み資料"></a>
+
+### Office Workbenchとkotonohaの埋め込み資料
 
 どちらもスクリプト単体に独自資材とテストを含み、`--extract DIRECTORY`で展開できます。
-Office Workbenchは`README_JA.md`と`install.py`を確認します。yomiyasuは`tools/codex-yomiyasu/`の編集用ソースを確認し、`python3 tools/codex-yomiyasu/build_installer.py`で単一ファイルを再生成します。`--check`では配布物と編集用ソースの一致を検査します。展開時は`installer.py`、`SKILL.md`、`references/`、`scripts/`、`paragraph-writing/`、`japanese-direct-writing/`と、検査用の`tests/`・`evals/`を配置します。評価資材はSkillの導入先には配置しません。
+Office Workbenchは`README_JA.md`と`install.py`を確認します。
+
+kotonohaの正本は、互換性のため従来名の`tools/codex-yomiyasu/`で管理します。`python3 tools/codex-yomiyasu/build_installer.py`で、`install_kotonoha.sh`、`install_kotonoha.ps1`、互換入口の`install_codex_yomiyasu.sh`を再生成します。`--check`は全ての配布物と正本の一致を検査します。
+
+展開物には`installer.py`、`SKILL.md`、`kotonoha/`、`meiseki-upstream/`、`references/`、`scripts/`、`paragraph-writing/`、`japanese-direct-writing/`と、検査用の`tests/`・`evals/`を含みます。評価資材はSkillの導入先には配置しません。上流原本、独自規範、実行環境の版を分け、上流のみの更新で独自規範が失われないことを確認します。
 
 2.0.0-proposal.1では、補助スキルの本文を部分作業用に限定しています。現在の本文のhashと由来は`UPSTREAM.json`・`SOURCE.json`に記録し、発動設定は導入時の`auto`/`explicit`に応じて生成します。資材を差し替える場合は、出典とhash、revisionを更新し、再生成と自己テストを行います。
 展開物はレビュー用の一時ディレクトリに置き、利用者向けの説明は専用ガイドで保守します。
@@ -237,7 +250,7 @@ python3 tools/codex-yomiyasu/evaluate_writing.py --out /tmp/paragraph-writing-co
 
 ### 日本語の説明を推敲する
 
-yomiyasuを使う場合は、修正前後を別のUTF-8ファイルに残してlintとcompareを実行します。
+kotonohaを使う場合は、修正前後を別のUTF-8ファイルに残します。textlint・markdownlintによる表現と構造の点検に加え、`check.py compare`で数値・コード等の変化を調べます。実行例は[日本語文書の検査手順](codex-yomiyasu/usage.md#保存する文章を検査する)を参照してください。
 コマンド、設定名、数値、条件、否定、断定の強さを保持し、表や番号付き手順は用途に合えば残します。
 検査結果は見直し候補として扱い、警告を消すためだけに意味を変えません。
 

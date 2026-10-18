@@ -40,8 +40,7 @@ cd agent-intelliforge
 bash install_basic_memory_workgraph.sh
 ```
 
-installerは `uv` / `uvx`、Basic Memory、公式Codex plugin、保存プロジェクト、
-スキーマ、設定と追加hooksを用意します。ECCの設定は変更しません。
+インストーラーは`uv` / `uvx`、Basic Memory、公式Codex Pluginを用意し、保存プロジェクト、スキーマ、設定、追加hooksを配置します。ECCの設定は変更しません。
 
 ### 導入直後の状態
 
@@ -65,7 +64,7 @@ bash install_basic_memory_workgraph.sh
 ```
 
 すでに導入済みなら、[アップデート](#update)を使ってください。
-引数なしの通常installerは、保存先を省略すると上記の既定値を使います。
+引数なしの通常インストーラーは、保存先を省略すると上記の既定値を使います。
 
 ### Codex側で確認する
 

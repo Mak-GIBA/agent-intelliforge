@@ -13,7 +13,7 @@
 | `tools/intelliforge/build.py` | 資材・Plugin・冒頭コメントの生成 | 正本 |
 | `plugins/codex/`・`plugins/claude/` | ホスト形式のPlugin | 生成物 |
 | `tools/intelliforge/resources/runtime/` | PythonのOS依存箇所とホスト呼び出しを接続した配布コピー | 生成物 |
-| `install_*.sh` | 従来の単一ファイルインストーラー | 生成対象は対応するbuilderから更新 |
+| `install_*.sh`・`install_kotonoha.ps1` | 単一ファイルインストーラー | 対応するビルダーから更新 |
 
 GitHub管理とOfficeは、以前のZIP資材を検証して読みやすいソースへ展開しています。`EXTRACTED.json`が元の配布ファイルとpayloadハッシュを記録します。
 `payload-layout.json`と`bootstrap.sh.in`から、元の形式を維持して単一ファイルを再生成します。HerdrもPython正本とBashのbootstrapを分けています。
@@ -71,5 +71,5 @@ Windows 11のネイティブ隔離とClaudeの実モデル評価は別に実施�
 導入、再実行、モード切替、更新、上流のみの更新、診断、解除、手動編集の保護、依存失敗時の復旧を確認します。
 研究・UXは同じ素材・モデル・推論条件・予算で実行し、構造化出力、役割の独立、隔離、証拠、秘密情報の除去、途中終了を点検します。
 
-Windowsでは必要なOS更新を確認し、隔離内で読み取り・書き込み制約が実際に働くことを試験します。PowerShellのチェック構文、子プロセスのJob Object回収、空白や日本語を含むパス、junction、同時実行も確認対象です。
+Windowsでは必要なOS更新を確認し、隔離内で読み取り・書き込み制約が実際に働くことを試験します。PowerShellの構文、Job Objectによる子プロセスの回収、空白・日本語を含むパス、junction、同時実行も確認します。
 未実施や停止した試験は成功と記載せず、生成品質とインストール成功を分けて記録します。

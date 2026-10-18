@@ -4,9 +4,9 @@
 
 [共通CLI・Windows・Claude Code](cross-platform.md) · [配布資材の編集手順](cross-platform-development.md) · [追加経路の検証結果](cross-platform-validation.md)
 
-インストーラーごとに、概要・収録ツール、導入手順、利用ガイドをまとめています。
-初めて使う場合は、概要から目的に合うものを選んでください。
-全ツールの一括導入やIDによる個別選択は、[一括インストール](installation.md)で説明しています。
+目的に合うキットを選び、概要・導入手順・使い方の順に読めます。
+Linux / WSL2でCodexへ導入する場合は[一括インストール](installation.md)、ネイティブWindowsやClaude Codeでは[共通CLIの導入ガイド](cross-platform.md)から始めてください。
+導入済みなら、表の「導入後の使い方」から依頼例と確認方法へ進めます。
 
 | 対象 | 概要・収録ツール | インストール・更新・解除 | 導入後の使い方 |
 |---|---|---|---|
@@ -17,10 +17,14 @@
 | コアロジックをテーマ別に比較・実測・再評価する | [Design Research](design-research/README.md) | [導入手順](design-research/installation.md) | [使い方](design-research/usage.md) |
 | ECCを導入し、必要なスキルだけ参照する | [Codex ECC](codex-ecc/README.md) | [導入・更新・復元](codex-ecc/installation.md) | [使い方](codex-ecc/usage.md) |
 | PDF・Word・PowerPointを閲覧・編集する | [Office Workbench](codex-office/README.md) | [導入手順](codex-office/installation.md) | [使い方](codex-office/usage.md) |
-| 日本語の段落構成・表現・留意書きを整える | [yomiyasuと補助Skill](codex-yomiyasu/README.md) | [導入手順](codex-yomiyasu/installation.md) | [使い方](codex-yomiyasu/usage.md) |
+| 日本語を明晰にし、段落・説明・表現・留保を整える | [kotonohaと日本語執筆](codex-yomiyasu/README.md) | [導入手順](codex-yomiyasu/installation.md) | [使い方](codex-yomiyasu/usage.md) |
 | 作業ディレクトリからターミナルworkspaceを開く | [Herdr](herdr/README.md) | [導入とBash設定](herdr/installation.md) | [使い方](herdr/usage.md) |
 
-## Design ResearchとUpstreamを組み合わせる
+## キットを組み合わせる
+
+画面の設計と日本語UI文言にはUX Stackとkotonohaを使えます。UX Stackで対象・操作・状態を整理し、kotonohaでラベルや説明を推敲します。短いラベルは長文化せず、必要な情報を隠さないことを優先します。
+
+### Design ResearchとUpstreamを組み合わせる
 
 機能・システム全体の設計は`$upstream-new`・`$upstream-change`、特定の方式の研究は`$design-research`から始めます。
 短い依頼から、ストーリー・懸念・ユースケース・要件、テーマ別研究、統合設計、検証計画へ進みます。

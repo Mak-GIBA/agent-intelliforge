@@ -1,4 +1,4 @@
-# 使い方
+# GitHub Project Director：使い方
 
 [docs一覧](../README.md) · [概要](README.md) · [導入手順](installation.md) · [記録方針と検証](behavior.md)
 
