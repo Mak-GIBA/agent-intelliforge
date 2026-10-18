@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 16.36,
+  "prompt_sha256": "d2b99a0b3002e0cb91cd640c92a9f3f74a22647c7b59dc3b23aa18110c3b00eb",
+  "output": "{\"ratings\":[{\"id\":\"O005\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"必須項目の空欄検査、空欄時の送信停止と該当欄への表示が明確。事実性は確認しないという範囲も保持し、制作説明や不要な留保を除いている。\"},{\"id\":\"O006\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"再送の条件と二重否定の向きを正しく整理している。負荷増大は可能性にとどめ、ログ出力についても義務や積極的な推奨に変えていない。\"},{\"id\":\"O007\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"応答の再利用によって再取得を省ける仕組みと、更新後に古い情報が残る条件を説明している。有効期限切れの再取得までつながり、利点と更新管理を分けた段落も読みやすい。数値や実績の追加はない。\"},{\"id\":\"O008\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"設定が無効でなければ再送されるという条件を保持している。「負荷が増大することがある」は可能性を表し、ログを出さないよう推奨しているわけではないという原文の立場も保たれている。\"}]}",
+  "usage": {
+    "input_tokens": 18150,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 607,
+    "reasoning_output_tokens": 99
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O005",
+    "O006",
+    "O007",
+    "O008"
+  ],
+  "ratings": [
+    {
+      "id": "O005",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "必須項目の空欄検査、空欄時の送信停止と該当欄への表示が明確。事実性は確認しないという範囲も保持し、制作説明や不要な留保を除いている。"
+    },
+    {
+      "id": "O006",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "再送の条件と二重否定の向きを正しく整理している。負荷増大は可能性にとどめ、ログ出力についても義務や積極的な推奨に変えていない。"
+    },
+    {
+      "id": "O007",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "応答の再利用によって再取得を省ける仕組みと、更新後に古い情報が残る条件を説明している。有効期限切れの再取得までつながり、利点と更新管理を分けた段落も読みやすい。数値や実績の追加はない。"
+    },
+    {
+      "id": "O008",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "設定が無効でなければ再送されるという条件を保持している。「負荷が増大することがある」は可能性を表し、ログを出さないよう推奨しているわけではないという原文の立場も保たれている。"
+    }
+  ]
+}

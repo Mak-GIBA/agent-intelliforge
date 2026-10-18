@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 19.49,
+  "prompt_sha256": "424e866e487df8139e7b746f2848a30adc4b7d0aa8f8df1ee3356dabc309f3be",
+  "output": "{\"ratings\":[{\"id\":\"O009\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":3,\"naturalness\":3,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"接続維持時の到達と遅延の可能性が明確で、再送の義務や禁止も追加していない。末文は否定する方針を引用で示しているが、「毎回は要求しない」と「勧めているわけではない」の組み合わせには読み直しの余地がある。\"},{\"id\":\"O010\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"受付、実行、状態確認の流れが具体的で、キューの説明と仮想と明示したID例も初学者の理解を助ける。順次実行を応答速度の原因とせず、成功完了との区別と所要時間の未測定を保持している。第2段落末は既出の区別を繰り返し、最終文も未測定の説明と重複するため、少し圧縮できる。\"},{\"id\":\"O011\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"数値と同時変更の事実を保持し、変更別の効果が未測定であることから、寄与を特定できない理由まで簡潔につないでいる。観測結果と原因の不確実性が一読で分かる。\"},{\"id\":\"O012\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"受付と実行の分離、キューとワーカーの役割、IDによる状態確認を順序立てて説明している。仮想例の明示、成功完了との区別、所要時間の未測定も適切。「すぐに処理が終わるとは限りません」は既出の説明と重なり、末文の「使う際の基本です」も具体的な操作説明に情報を加えていない。\"}]}",
+  "usage": {
+    "input_tokens": 18332,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 745,
+    "reasoning_output_tokens": 117
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O009",
+    "O010",
+    "O011",
+    "O012"
+  ],
+  "ratings": [
+    {
+      "id": "O009",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 3,
+      "naturalness": 3,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "接続維持時の到達と遅延の可能性が明確で、再送の義務や禁止も追加していない。末文は否定する方針を引用で示しているが、「毎回は要求しない」と「勧めているわけではない」の組み合わせには読み直しの余地がある。"
+    },
+    {
+      "id": "O010",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "受付、実行、状態確認の流れが具体的で、キューの説明と仮想と明示したID例も初学者の理解を助ける。順次実行を応答速度の原因とせず、成功完了との区別と所要時間の未測定を保持している。第2段落末は既出の区別を繰り返し、最終文も未測定の説明と重複するため、少し圧縮できる。"
+    },
+    {
+      "id": "O011",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "数値と同時変更の事実を保持し、変更別の効果が未測定であることから、寄与を特定できない理由まで簡潔につないでいる。観測結果と原因の不確実性が一読で分かる。"
+    },
+    {
+      "id": "O012",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "受付と実行の分離、キューとワーカーの役割、IDによる状態確認を順序立てて説明している。仮想例の明示、成功完了との区別、所要時間の未測定も適切。「すぐに処理が終わるとは限りません」は既出の説明と重なり、末文の「使う際の基本です」も具体的な操作説明に情報を加えていない。"
+    }
+  ]
+}

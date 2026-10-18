@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 16.39,
+  "prompt_sha256": "67cdacbe2812ec161a9e51cf35d1a30632b8fe9ba80b4211bfbf02ba74d61b9e",
+  "output": "{\"ratings\":[{\"id\":\"O057\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"空欄の確認、送信停止、該当欄への表示と、事実性を確認しない範囲が簡潔に示されている。制作説明や不要な留保もない。\"},{\"id\":\"O058\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"到着集中からメモリ不足に至る関係、キューと上限2の仕組み、待ち時間との交換条件が明瞭。処理別の使用量、未試験、上限の未検証、導入未決定も保持し、段落ごとの役割が分かれている。\"},{\"id\":\"O059\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"許された100件中2件の例で更新対象の違いを具体化し、検知漏れで索引が古くなる理由も説明している。性能や採用を断定していない。ただし、最終段落の速度未測定と検知確認の説明は、直前までの内容とやや重複する。\"},{\"id\":\"O060\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"方式名を伏せる目的と提示順を変える目的が対応し、評価用語も平易に説明されている。影響除去の限界と未実施・結果なしも保持している。第2段落末の『区別して確認します』は直前の定義と分けて評価する説明を繰り返している。\"}]}",
+  "usage": {
+    "input_tokens": 18936,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 632,
+    "reasoning_output_tokens": 81
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O057",
+    "O058",
+    "O059",
+    "O060"
+  ],
+  "ratings": [
+    {
+      "id": "O057",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "空欄の確認、送信停止、該当欄への表示と、事実性を確認しない範囲が簡潔に示されている。制作説明や不要な留保もない。"
+    },
+    {
+      "id": "O058",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "到着集中からメモリ不足に至る関係、キューと上限2の仕組み、待ち時間との交換条件が明瞭。処理別の使用量、未試験、上限の未検証、導入未決定も保持し、段落ごとの役割が分かれている。"
+    },
+    {
+      "id": "O059",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "許された100件中2件の例で更新対象の違いを具体化し、検知漏れで索引が古くなる理由も説明している。性能や採用を断定していない。ただし、最終段落の速度未測定と検知確認の説明は、直前までの内容とやや重複する。"
+    },
+    {
+      "id": "O060",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "方式名を伏せる目的と提示順を変える目的が対応し、評価用語も平易に説明されている。影響除去の限界と未実施・結果なしも保持している。第2段落末の『区別して確認します』は直前の定義と分けて評価する説明を繰り返している。"
+    }
+  ]
+}

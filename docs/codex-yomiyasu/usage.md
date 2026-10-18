@@ -1,4 +1,4 @@
-# yomiyasuと補助Skillで文章を整える
+# kotonohaで文章を整える
 
 [概要](README.md) · [導入手順](installation.md)
 
@@ -7,12 +7,12 @@
 導入後に新しいCodexセッションを開き、会話欄でSkillを指定します。
 
 ```text
-$yomiyasu docs/usage.mdを初めて使う人向けに整えて。
+$kotonoha docs/usage.mdを初めて使う人向けに整えて。
 コマンド、設定名、既定値、例外条件は変えず、読みにくい説明だけ直して。
 ```
 
 ```text
-$yomiyasu このPR説明を、開発者と非開発者が追える文章にして。
+$kotonoha このPR説明を、開発者と非開発者が追える文章にして。
 変更の目的、確認した結果、未確認の範囲を保持して。
 ```
 
@@ -20,13 +20,13 @@ $yomiyasu このPR説明を、開発者と非開発者が追える文章にし�
 既存ファイルでは対象と範囲を指定し、原文と差分を確認します。
 法令や引用など逐語保持が必要な本文は書き換えません。
 
-`auto`では各スキルの説明に合う依頼が自動選択の対象です。通常の日本語文書の執筆・推敲はyomiyasuから始めます。コードだけの作業、単純な事実照会、逐語引用は対象外です。
+`auto`では各スキルの説明に合う依頼が自動選択の対象です。通常の日本語文書の執筆・推敲はkotonohaから始めます。yomiyasuは明示呼び出し用の互換入口です。コードだけの作業、単純な事実照会、逐語引用は対象外です。
 paragraph-writingは段落構成だけ、japanese-direct-writingは過剰な留意書きだけを直す依頼、または各スキル名の明示指定で使います。
 
 ## 仕組みと実際の変化を説明する
 
 ```text
-$yomiyasu この技術説明を、新任の担当者が仕組みと操作を理解できる文章にして。
+$kotonoha この技術説明を、新任の担当者が仕組みと操作を理解できる文章にして。
 原稿と補足資料にある事実を使い、理由、実際の処理、方式の違いが不足する箇所だけ補って。
 原因が未調査の箇所と、実測していない効果は断定しないで。
 ```
@@ -45,7 +45,7 @@ $paragraph-writing この報告を、導入を判断する人向けに組み替�
 ```
 
 段落ごとの要点、説明・根拠の位置、段落間のつながりを整理します。報告・Issue/PRでは判断に必要な結論や状態を早めに示し、技術解説では理解に必要な前提を順に置きます。
-通常の執筆・推敲では、yomiyasuが段落設計の工程でparagraph-writingの実ファイルを読んで適用します。使い手が補助スキルを追加指定する必要はありません。同じ下書きを次の工程へ渡します。
+通常の執筆・推敲では、kotonohaが段落設計の工程でparagraph-writingの実ファイルを読んで適用します。使い手が補助スキルを追加指定する必要はありません。同じ下書きを次の工程へ渡します。
 
 短い語句の訂正や既存の順序を維持する依頼には、段落の並べ替えを加えません。コード・表・手順・IDの対応関係、比較条件、否定や推量も保持します。
 paragraph-writingだけでも使えます。過去の併用比較と、現在の導入・検査の確認範囲は[検証結果](validation.md)を参照してください。
@@ -86,3 +86,16 @@ python3 ~/.agents/skills/yomiyasu/scripts/check.py compare before.md after.md --
 
 GitHubへの投稿権限や、Office文書のレイアウト確認は、それぞれの作業手順に従います。
 yomiyasuを使ったことだけで投稿・共有・commit・pushを自動実行することはありません。
+
+## ファイルの検査
+
+ファイル推敲では編集前後にtextlintを実行し、Markdownの場合はmarkdownlintも実行します。指摘は文脈で判断し、文字数やスコアのためだけに修正しません。`writing_lint.py`は原稿を変更しません。
+
+```bash
+# 専用環境のPythonは .kotonoha-runtime/settings.json に記録
+<Pythonのパス> <skills-dir>/yomiyasu/scripts/writing_lint.py after.md --before before.md
+# Plugin利用時
+intelliforge kit-run yomiyasu --agent codex --tool writing_lint.py -- after.md --before before.md
+```
+
+検査済みと実行不能はJSONのstatusで区別します。実行不能時は文章の推敲を続け、検査を省略したことを完成稿の外で知らせます。本文を外部判定APIへ送信せず、Jevや自動フックは導入しません。

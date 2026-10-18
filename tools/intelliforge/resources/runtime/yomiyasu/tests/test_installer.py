@@ -53,6 +53,11 @@ class Isolated(unittest.TestCase):
         self.project = self.home/'project'; self.project.mkdir()
         self.env = mock.patch.dict(os.environ, {'HOME': str(self.home), 'CODEX_HOME': str(self.home/'.codex')})
         self.env.start()
+        self.runtime_patch = mock.patch.object(I, 'prepare_writing_runtime', return_value={'versions':{'fixture':True}})
+        self.runtime_mock = self.runtime_patch.start(); self.addCleanup(self.runtime_patch.stop)
+        meiseki={k:v for k,v in I.assets().items() if k.startswith('meiseki-upstream/')}
+        self.meiseki_patch = mock.patch.object(I, 'fetch_meiseki', return_value=({},meiseki))
+        self.meiseki_mock = self.meiseki_patch.start(); self.addCleanup(self.meiseki_patch.stop)
         self.old_cwd = Path.cwd(); os.chdir(self.project)
         self.meta, self.up, self.rows = fixture()
         self.resolve = mock.patch.object(I, 'resolve_release', return_value=self.meta)

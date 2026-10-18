@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 10.18,
+  "prompt_sha256": "0ad3ab6a8d9d02d869a8ade98ecef78327f257e33f0aec6b8505ba71c75d10a1",
+  "output": "接続が維持されていれば、通知は届く。ただし、通知が遅れることはある。「再送を常に要求しない」よう勧めているわけではない。",
+  "usage": {
+    "input_tokens": 70747,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 240,
+    "reasoning_output_tokens": 188
+  },
+  "tools": [],
+  "error": null,
+  "task": "K03",
+  "arm": "baseline",
+  "repeat": 2,
+  "guide_characters": 70221
+}

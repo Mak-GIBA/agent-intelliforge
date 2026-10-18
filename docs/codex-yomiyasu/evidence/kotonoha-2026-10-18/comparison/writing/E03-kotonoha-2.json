@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 7.43,
+  "prompt_sha256": "740ac21285b6fd5d15f5009c24332ba26d67a3f2e749dd50f2bc65834532cf1f",
+  "output": "新しい方式では、処理の完了を待たずに、受付時にジョブIDが返されます。受け付けた処理はキューに入り、順番に進みます。\n\n処理の状態を確認するには、返されたジョブIDを照会画面に入力してください。たとえば、ジョブIDが `JOB-12345` なら、その値を入力します。\n\n「受付済み」は、処理の成功を意味しません。完了までにかかる時間は不明のため、照会画面で状態を確認してください。",
+  "usage": {
+    "input_tokens": 24451,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 135,
+    "reasoning_output_tokens": 0
+  },
+  "tools": [],
+  "error": null,
+  "task": "E03",
+  "arm": "kotonoha",
+  "repeat": 2,
+  "guide_characters": 10429
+}

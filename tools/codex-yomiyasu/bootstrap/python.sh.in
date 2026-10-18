@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# kotonoha: preview by default; --apply prepares user-local Python, Node and lint tools.
+# Canonical source: tools/codex-yomiyasu. Generated; never edit embedded assets.
+set -e
+PY="${PYTHON_BIN:-}"
+if [[ -z "$PY" ]]; then
+  for candidate in python3 python3.14 python3.13 python3.12 python3.11 python3.10; do
+    if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys;raise SystemExit(sys.version_info<(3,10))' >/dev/null 2>&1; then PY="$candidate";break;fi
+  done
+fi
+base="${KOTONOHA_BOOTSTRAP_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/agent-intelliforge/kotonoha-bootstrap}"
+if [[ -z "$PY" && ! -L "$base" && -f "$base/.kotonoha-bootstrap-owner" ]];then
+  read -r owner < "$base/.kotonoha-bootstrap-owner"
+  if [[ "$owner" == agent-intelliforge/kotonoha-bootstrap-v1 ]];then
+    for candidate in "$base"/python/*/bin/python3.11;do
+      if [[ -x "$candidate" ]] && "$candidate" -c 'import sys;raise SystemExit(sys.version_info<(3,11))' >/dev/null 2>&1;then PY="$candidate";break;fi
+    done
+  fi
+fi
+if [[ -z "$PY" ]]; then
+  apply=0
+  for arg in "$@";do case "$arg" in --apply) apply=1;; --dry-run|--help|-h|--self-test|--doctor|--status|--check-update|--uninstall) apply=-1;break;;esac;done
+  if [[ $apply != 1 ]];then
+    printf '%s\n' '{"status":"PYTHON_REQUIRED_FOR_FULL_PREVIEW","applied":false,"network":false,"plan":"--apply provisions user-local Python 3.11, Node.js 24 LTS, fixed lint packages and kotonoha; use an existing PYTHON_BIN for full argument-specific preview"}'
+    for arg in "$@";do case "$arg" in --doctor|--status|--self-test|--check-update|--uninstall) exit 2;;esac;done
+    exit 0
+  fi
+  base="${KOTONOHA_BOOTSTRAP_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/agent-intelliforge/kotonoha-bootstrap}"
+  cursor="$base"
+  while [[ "$cursor" != / && "$cursor" != . ]];do [[ ! -L "$cursor" ]] || { printf '%s\n' 'Linked bootstrap directory refused' >&2;exit 2; };cursor=$(dirname "$cursor");done
+  mkdir -p "$base"
+  marker="$base/.kotonoha-bootstrap-owner"
+  [[ ! -L "$marker" ]] || { printf '%s\n' 'Linked bootstrap marker refused' >&2;exit 2; }
+  if [[ -f "$marker" ]];then
+    read -r owner < "$marker"
+    [[ "$owner" == agent-intelliforge/kotonoha-bootstrap-v1 ]] || exit 2
+  elif [[ -n "$(find "$base" -mindepth 1 -maxdepth 1 -print -quit)" ]];then
+    printf '%s\n' 'Unmanaged bootstrap directory refused' >&2;exit 2
+  else
+    printf '%s\n' 'agent-intelliforge/kotonoha-bootstrap-v1' > "$marker"
+  fi
+  uvbin=$(command -v uv || true)
+  if [[ -z "$uvbin" ]];then
+    case "$(uname -s)-$(uname -m)" in
+@UV_CASES@
+      *) printf '%s\n' 'No verified Python bootstrap for this platform' >&2;exit 2;;
+    esac
+    stage=$(mktemp -d "$base/.uv-XXXXXX")
+    trap 'rm -rf "$stage"' EXIT
+    if command -v curl >/dev/null 2>&1;then curl -fLsS --max-time 180 "$url" -o "$stage/uv.tar.gz";else wget -q "$url" -O "$stage/uv.tar.gz";fi
+    if command -v sha256sum >/dev/null 2>&1;then actual=$(sha256sum "$stage/uv.tar.gz");else actual=$(shasum -a 256 "$stage/uv.tar.gz");fi
+    [[ "${actual%% *}" == "$digest" ]] || { printf '%s\n' 'uv SHA-256 mismatch' >&2;exit 2; }
+    tar -xzf "$stage/uv.tar.gz" -C "$stage"
+    uvbin=$(find "$stage" -type f -name uv | head -1)
+    [[ -n "$uvbin" ]] || exit 2
+    # uv is needed only to provision Python; no permanent global executable is installed.
+  fi
+  export UV_PYTHON_INSTALL_DIR="$base/python" UV_CACHE_DIR="$base/cache" UV_PYTHON_BIN_DIR="$base/bin" UV_NO_MODIFY_PATH=1
+  "$uvbin" python install @PYTHON_VERSION@ >&2
+  PY=$("$uvbin" python find --managed-python @PYTHON_VERSION@)
+fi
+export PYTHONDONTWRITEBYTECODE=1
+"$PY" -B - "$0" "$@" <<'YOMI_INSTALL_PY'

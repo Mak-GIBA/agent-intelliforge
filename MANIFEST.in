@@ -1,4 +1,4 @@
-include install_*.sh install_all.ps1 intelliforge.py
+include install_*.sh install_*.ps1 intelliforge.py
 recursive-include tools *
 recursive-include plugins *
 recursive-include .agents *.json

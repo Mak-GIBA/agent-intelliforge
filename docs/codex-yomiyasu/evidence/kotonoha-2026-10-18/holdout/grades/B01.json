@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 14.88,
+  "prompt_sha256": "e8d24c05cc813b5bc5c1afd6ae04e331ddd010e5406ad91becbf1b8c8c3949f8",
+  "output": "{\"ratings\":[{\"id\":\"O005\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"更新操作、取得失敗時の継続使用、成功時の時刻表示が明確。素材のままで十分に理解でき、追加や変更は不要。\"},{\"id\":\"O006\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"開始時刻と資料の保存先を保持し、宛名・本文・結びを自然に整理している。余計な説明がなく、そのまま送れる。\"},{\"id\":\"O007\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"数値と同時変更、効果の未測定を保持し、短縮の原因を特定できない理由を明確に説明している。裏付けのない因果の追加もない。\"},{\"id\":\"O008\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"開始時刻と保存先が簡潔かつ明確で、改行も自然。必要な連絡事項を保持し、制作説明を加えず完成したメールになっている。\"}]}",
+  "usage": {
+    "input_tokens": 17752,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 477,
+    "reasoning_output_tokens": 46
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O005",
+    "O006",
+    "O007",
+    "O008"
+  ],
+  "ratings": [
+    {
+      "id": "O005",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "更新操作、取得失敗時の継続使用、成功時の時刻表示が明確。素材のままで十分に理解でき、追加や変更は不要。"
+    },
+    {
+      "id": "O006",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "開始時刻と資料の保存先を保持し、宛名・本文・結びを自然に整理している。余計な説明がなく、そのまま送れる。"
+    },
+    {
+      "id": "O007",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "数値と同時変更、効果の未測定を保持し、短縮の原因を特定できない理由を明確に説明している。裏付けのない因果の追加もない。"
+    },
+    {
+      "id": "O008",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "開始時刻と保存先が簡潔かつ明確で、改行も自然。必要な連絡事項を保持し、制作説明を加えず完成したメールになっている。"
+    }
+  ]
+}

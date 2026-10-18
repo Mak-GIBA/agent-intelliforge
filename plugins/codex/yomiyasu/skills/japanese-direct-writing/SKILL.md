@@ -1,6 +1,6 @@
 ---
 name: japanese-direct-writing
-description: 過剰な留意書き・予防線・婉曲表現だけを減らす依頼、または明示的な $japanese-direct-writing で使う。通常の日本語文書全体の作成・推敲には yomiyasu を入口にする。必要な条件と不確実性は保持する。
+description: 過剰な留意書き・予防線・婉曲表現だけを減らす依頼、または明示的な $japanese-direct-writing で使う。通常の日本語文書全体の作成・推敲には kotonoha を入口にする。必要な条件と不確実性は保持する。
 ---
 
 # japanese-direct-writing
@@ -22,5 +22,4 @@ description: 過剰な留意書き・予防線・婉曲表現だけを減らす�
 
 このスキルを読んだら対象の段落・留保の工程を適用し、同じ下書きを次の工程へ渡す。yomiyasuや他の文体スキルを追加で起動しない。全体の制作報告は本文に混ぜない。
 
-## 配布環境の呼び出し
-このPluginの管理ソースは `tools/codex-yomiyasu/kit.json`。導入先は `intelliforge locate --only yomiyasu --agent codex` で確認する。Pythonヘルパーは `intelliforge kit-run yomiyasu --agent codex --tool <ファイル名> -- <引数>`、研究・UXハーネスは `intelliforge kit-run yomiyasu --agent codex -- <引数>` から実行する。Windowsではこの入口を使い、Bashやpython3という実行名を前提にしない。
+検査は `intelliforge kit-run yomiyasu --agent codex --tool writing_lint.py -- <原稿> [--before <原稿>]`。Python・Node.jsは導入時に準備した専用環境を使う。

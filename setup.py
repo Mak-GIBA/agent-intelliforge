@@ -21,8 +21,11 @@ class WithResources(build_py):
         if not (root / 'tools/intelliforge/resources/runtime/yomiyasu/installer.py').is_file():
             raise RuntimeError('Generate distributions with python tools/intelliforge/build.py before building the wheel.')
         target = Path(self.build_lib) / 'agent_intelliforge/resources'
+        # A previous build may contain a renamed Skill entrypoint. Never merge stale resources.
+        if target.exists(): shutil.rmtree(target)
         target.mkdir(parents=True, exist_ok=True)
-        for script in root.glob('install_*.sh'): shutil.copy2(script, target / script.name)
+        for pattern in ('install_*.sh','install_*.ps1'):
+            for script in root.glob(pattern): shutil.copy2(script, target / script.name)
         for directory in ('tools', 'plugins', '.agents', '.claude-plugin'):
             shutil.copytree(root / directory, target / directory, dirs_exist_ok=True,
                             ignore=shutil.ignore_patterns('__pycache__','node_modules','*.pyc','evaluation*','evals','evidence'))

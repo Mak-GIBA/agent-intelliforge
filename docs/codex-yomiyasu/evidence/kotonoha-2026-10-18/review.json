@@ -1,0 +1,54 @@
+{
+  "selection": "Initial compact normative rules retained. Additional causal sentence was not adopted: no measured gain in the holdout and overlap with meaning preservation.",
+  "manual_review": {
+    "positive": [
+      "E01-kotonoha-1",
+      "K01-initial-1",
+      "K03-initial-1",
+      "K06-initial-1"
+    ],
+    "failure": [
+      "E03-kotonoha-1: temporal/sequential relationship phrased as a cause; redundant final instruction",
+      "E04-kotonoha-2: explanation of separate evaluation axes could be deeper"
+    ],
+    "grading_limits": [
+      "Same-model independent sessions, not independent human raters",
+      "Baseline E02 alleged requester residue also contains necessary uncertainty; treat automatic residue labels cautiously",
+      "Small hand-selected tasks and ceiling scores do not establish general superiority or statistical equivalence"
+    ],
+    "native_initial_recovery": "Initial native trials searched the wrong runtime-settings location; explicit path and repeated --protect examples were clarified. Final native trials had no failed command receipts."
+  },
+  "final_assets": {
+    "SKILL.md": "b3398d9c34b0cfabd09fa63e9f42619a2fadfb87e38c30cee095254badac3e35",
+    "paragraph-writing/SKILL.md": "f3f2a436322c1c79b9725ee8b64b6ec44bd0886d8c38a77b5d8dc18463bb3b6f",
+    "paragraph-writing/UPSTREAM.json": "1da8befb81d22152e3d1e9bb9852fad8a2234aaf60e6ca5d7fb4683fd28f49e0",
+    "references/clarity.md": "2c42b31549dca579f402d65a006fdf9828183d3b1b6a19eff4ea5fb1690f23f0",
+    "references/workflow.md": "23af2e8885152432819c6d2844c2ad23fe87d05e547b2ce134d1a3cae85c8d07",
+    "references/finish.md": "fc9a240e63f56ff3312d5377a8a3e2b45a635ec20ced3a13618d005e3ef9e839",
+    "references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+    "references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+    "references/reader-review.md": "76984c6cccd0f2aac2085f5ed93b155447b221441df00ff53ca3f5f38fa4e8b6",
+    "references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+    "references/explanation.md": "8010c08e8ccbc8768c06a73263c92707af17ad82f755b41cd5b5bc5c9d12ac23",
+    "references/review.md": "a0980d8292717fa74f6b17221e479447b3a0211ae2f6eafec91944b5d50a8a19",
+    "references/paragraphs.md": "a17d1e6c4c7e8fa30734eda9efed373cbf263ed5b0cc34a832a3ebda4b1da5ad",
+    "references/sources.md": "de747ba966215b28b7b6d3243bc5d6a6f8cadf9004f4b724234f3a112ff5acb4",
+    "references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+    "scripts/writing_lint.py": "30cd02ed70dd1c7127feae1d8f90a2af8125c2bf94487495d978351f1473b1ed",
+    "scripts/writing_runtime.py": "230756deef3219472895e70f9336e885f091cab0a7bd025e0b6035384e7c5d9b",
+    "scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584",
+    "scripts/runtime-versions.json": "641658614c150f8bb32d8e15d07805c9f82baf445028e25cd5386546bf43d263",
+    "meiseki-upstream/LICENSE": "3cccb14e8dbb175e8cfb17f2a9e30897792052b7207514c75da24d98d3ba157f",
+    "meiseki-upstream/SKILL.upstream.md": "c21b3f92b335faaae829619539916fcf2d7998ac03e36f5ced5178d045b30192",
+    "meiseki-upstream/UPSTREAM.json": "8ff738c127f0e6063e4b3ac0132327a899cdb1e2172ba1363fbd094cfa6e16ac",
+    "kotonoha/SKILL.md": "e2db547664c0e41624de21aa4a297a9a64e4e1217e352731afb3fdfc5a2bca8f",
+    "japanese-direct-writing/SOURCE.json": "e57b42d89b72bdffdc72200bb314a0185833446952185255168ec68f4df643a1",
+    "japanese-direct-writing/SKILL.md": "728b7ba08b8149c8eb46c210f852f2650896f4620a9a2b2d1d95152e0bb4b51d",
+    "scripts/lint-runtime/package-lock.json": "517e8eab74da22ef6a02b7789ab22e5a8e0e322f7bf19ea446401be44c5645bb",
+    "scripts/lint-runtime/package.json": "443937393998f7aab2fac29f22fd28705b5b1b885e65cfb62687b5e47dfa16b0",
+    "meiseki-upstream/references/patterns.md": "477845c9c8c2a56590f448be8c0ad664a4c0ad0875ae1ef6c8f9922c1f8d078b",
+    "meiseki-upstream/references/prh-llm-phrases.yml": "ba97e2adb6953edcdb62b1959f6958b4967bcbbf0503e3ed09253ce58d8d0fd2",
+    "meiseki-upstream/references/markdownlint.config.jsonc": "632d6906a460b7b14c2ca95f20c35385679c1f19626ff63a6ad92893e172eba6",
+    "meiseki-upstream/references/textlint.config.json": "19b7592e0c6c711291e2634e488a65172c461ef6d6b9d20db98adac809c8bf29"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 17.76,
+  "prompt_sha256": "aa0709f797c1f791137c6bac068a5eadbf531f3e93392e35672e48ac2e8af411",
+  "output": "{\"ratings\":[{\"id\":\"O069\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"空欄の検査、送信停止、該当欄への表示、事実性を検査しない範囲が簡潔に示され、制作説明や不要な留保もない。\"},{\"id\":\"O070\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"100件中2件の比較と検知漏れの影響が明確で、速度の不明と導入未決定も保持している。末段の判断項目は有用だが、変更検知の必要性と古い索引の説明にやや重複がある。\"},{\"id\":\"O071\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"受付と完了の違いからジョブIDによる照会へ自然につながり、成功や時間の保証も加えていない。仮想IDの例は許容範囲だが、「その値を入力します」は直前の操作説明と重複し、短い解説では省略できる。\"},{\"id\":\"O072\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"15時への変更依頼と、難しければ14時にする条件が自然で明確。架空の事情や制作説明を加えず、そのまま送れるメールになっている。\"}]}",
+  "usage": {
+    "input_tokens": 18483,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 605,
+    "reasoning_output_tokens": 106
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O069",
+    "O070",
+    "O071",
+    "O072"
+  ],
+  "ratings": [
+    {
+      "id": "O069",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "空欄の検査、送信停止、該当欄への表示、事実性を検査しない範囲が簡潔に示され、制作説明や不要な留保もない。"
+    },
+    {
+      "id": "O070",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "100件中2件の比較と検知漏れの影響が明確で、速度の不明と導入未決定も保持している。末段の判断項目は有用だが、変更検知の必要性と古い索引の説明にやや重複がある。"
+    },
+    {
+      "id": "O071",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "受付と完了の違いからジョブIDによる照会へ自然につながり、成功や時間の保証も加えていない。仮想IDの例は許容範囲だが、「その値を入力します」は直前の操作説明と重複し、短い解説では省略できる。"
+    },
+    {
+      "id": "O072",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "15時への変更依頼と、難しければ14時にする条件が自然で明確。架空の事情や制作説明を加えず、そのまま送れるメールになっている。"
+    }
+  ]
+}

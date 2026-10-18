@@ -1,6 +1,6 @@
 ---
 name: japanese-direct-writing
-description: 過剰な留意書き・予防線・婉曲表現だけを減らす依頼、または明示的な $japanese-direct-writing で使う。通常の日本語文書全体の作成・推敲には yomiyasu を入口にする。必要な条件と不確実性は保持する。
+description: 過剰な留意書き・予防線・婉曲表現だけを減らす依頼、または明示的な $japanese-direct-writing で使う。通常の日本語文書全体の作成・推敲には kotonoha を入口にする。必要な条件と不確実性は保持する。
 ---
 
 # japanese-direct-writing

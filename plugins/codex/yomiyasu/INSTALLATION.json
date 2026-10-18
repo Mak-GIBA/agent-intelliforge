@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "id": "yomiyasu",
-  "name": "yomiyasu writing skills",
-  "version": "2.0.0-proposal.3",
+  "name": "kotonoha Japanese writing",
+  "version": "3.0.0",
   "legacy": {
     "script": "install_codex_yomiyasu.sh",
     "actions": {
@@ -28,6 +28,11 @@
   },
   "skills": [
     {
+      "name": "kotonoha",
+      "source": "tools/codex-yomiyasu/assets/kotonoha",
+      "assembled": false
+    },
+    {
       "name": "yomiyasu",
       "source": "tools/codex-yomiyasu/assets",
       "assembled": false
@@ -47,22 +52,32 @@
     {
       "url": "https://github.com/nanaism/yomiyasu",
       "revision": "latest stable upstream release; local writing rules have independent version"
+    },
+    {
+      "url": "https://github.com/bamboo-nova/meiseki",
+      "revision": "latest stable release; normative changes require reviewed adapter"
     }
   ],
   "dependencies": [
     {
-      "name": "Python >=3.10 in the standalone installer",
-      "condition": "when this kit/feature is selected"
+      "name": "Python >=3.11 (standalone engine remains >=3.10)",
+      "condition": "prepared in user-owned directory on apply if no compatible runtime exists"
     },
     {
-      "name": "upstream latest stable release on apply/update",
-      "condition": "when this kit/feature is selected"
+      "name": "Node.js 24 LTS and npm",
+      "condition": "prepared in user-owned directory on apply if no compatible runtime exists"
+    },
+    {
+      "name": "fixed textlint and markdownlint packages",
+      "condition": "prepared in user-owned directory on apply if no compatible runtime exists"
     }
   ],
   "destinations": [
+    "{skills_home}/kotonoha",
     "{skills_home}/yomiyasu",
     "{skills_home}/paragraph-writing",
-    "{skills_home}/japanese-direct-writing"
+    "{skills_home}/japanese-direct-writing",
+    "{skills_home}/../.kotonoha-runtime"
   ],
   "settings": [],
   "plugin": {
@@ -78,6 +93,9 @@
   "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
   "package_version": "0.1.0",
   "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "aliases": [
+    "kotonoha"
+  ],
   "definition": "tools/codex-yomiyasu/kit.json",
   "agent": "codex"
 }

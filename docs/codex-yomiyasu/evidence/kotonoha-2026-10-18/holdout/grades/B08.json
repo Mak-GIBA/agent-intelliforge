@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 15.27,
+  "prompt_sha256": "776c855c2fc6d75649dc89d00fb54d15de90852d5b506df4e64d0221f3302011",
+  "output": "{\"ratings\":[{\"id\":\"O033\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"数値と同時変更の事実を保持し、個別の効果が未測定であることから、短縮への寄与を特定できない理由を明確に説明している。\"},{\"id\":\"O034\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":2,\"naturalness\":2,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"接続条件と遅延の可能性は明快。末文は意味を保持しているが、「要求しない」よう勧めている「わけではない」という否定の重なりが残り、再送についての立場を一読で理解しにくい。\"},{\"id\":\"O035\",\"specificity\":3,\"causal_clarity\":4,\"reader_understanding\":3,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"方式名と提示順による偏りを抑える理由、二つの評価観点を分ける理由、未実施であることを明確に説明している。ただし、読みやすさが何を指すかの説明は薄く、末段の結果不在と優劣不明の説明には重複がある。\"},{\"id\":\"O036\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"開始時刻と資料の保存先を保持し、同僚宛メールとして自然な改行で整えている。不要な説明や制作メタはない。\"}]}",
+  "usage": {
+    "input_tokens": 15766,
+    "cached_input_tokens": 12416,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 615,
+    "reasoning_output_tokens": 120
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O033",
+    "O034",
+    "O035",
+    "O036"
+  ],
+  "ratings": [
+    {
+      "id": "O033",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "数値と同時変更の事実を保持し、個別の効果が未測定であることから、短縮への寄与を特定できない理由を明確に説明している。"
+    },
+    {
+      "id": "O034",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 2,
+      "naturalness": 2,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "接続条件と遅延の可能性は明快。末文は意味を保持しているが、「要求しない」よう勧めている「わけではない」という否定の重なりが残り、再送についての立場を一読で理解しにくい。"
+    },
+    {
+      "id": "O035",
+      "specificity": 3,
+      "causal_clarity": 4,
+      "reader_understanding": 3,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "方式名と提示順による偏りを抑える理由、二つの評価観点を分ける理由、未実施であることを明確に説明している。ただし、読みやすさが何を指すかの説明は薄く、末段の結果不在と優劣不明の説明には重複がある。"
+    },
+    {
+      "id": "O036",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "開始時刻と資料の保存先を保持し、同僚宛メールとして自然な改行で整えている。不要な説明や制作メタはない。"
+    }
+  ]
+}

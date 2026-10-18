@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 18.4,
+  "prompt_sha256": "f0c789f5a8e49174db3bf1f6c8fd5ae77c9bd30590a294e4112ed68666af2d39",
+  "output": "{\"ratings\":[{\"id\":\"O049\",\"specificity\":4,\"causal_clarity\":3,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"受付と完了の違い、照会操作、時間の不確実性が明確。キューで順番に進むことと、完了前にIDを返せることの因果はやや不正確。末尾の照会案内は第2段落と重複する。\"},{\"id\":\"O050\",\"specificity\":4,\"causal_clarity\":3,\"reader_understanding\":4,\"naturalness\":3,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"必要な操作と注意点は簡潔に伝わる。ただし、受付が成功を意味しない理由をキューの順番に結び付ける説明はやや粗い。末尾の「状態を確認してください」は、状態を確認した結果への案内として循環的で、直前の説明とも重複する。\"},{\"id\":\"O051\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"saveValueと専門用語を保ち、検証から保存への順序、失敗時は保存せず成功時だけ保存できる条件を、自然で簡潔な文章に整理している。\"},{\"id\":\"O052\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"100ファイルと変更2ファイルの違い、検知漏れで索引が古くなる関係、速度未測定と判断未決定を明確に説明している。全件再計算が更新対象選別の変更検知に依存しない説明も素材から導ける。最終段落では、既出の対象差・検知漏れ・速度不明の説明が重複している。\"}]}",
+  "usage": {
+    "input_tokens": 16294,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 743,
+    "reasoning_output_tokens": 186
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O049",
+    "O050",
+    "O051",
+    "O052"
+  ],
+  "ratings": [
+    {
+      "id": "O049",
+      "specificity": 4,
+      "causal_clarity": 3,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "受付と完了の違い、照会操作、時間の不確実性が明確。キューで順番に進むことと、完了前にIDを返せることの因果はやや不正確。末尾の照会案内は第2段落と重複する。"
+    },
+    {
+      "id": "O050",
+      "specificity": 4,
+      "causal_clarity": 3,
+      "reader_understanding": 4,
+      "naturalness": 3,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "必要な操作と注意点は簡潔に伝わる。ただし、受付が成功を意味しない理由をキューの順番に結び付ける説明はやや粗い。末尾の「状態を確認してください」は、状態を確認した結果への案内として循環的で、直前の説明とも重複する。"
+    },
+    {
+      "id": "O051",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "saveValueと専門用語を保ち、検証から保存への順序、失敗時は保存せず成功時だけ保存できる条件を、自然で簡潔な文章に整理している。"
+    },
+    {
+      "id": "O052",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "100ファイルと変更2ファイルの違い、検知漏れで索引が古くなる関係、速度未測定と判断未決定を明確に説明している。全件再計算が更新対象選別の変更検知に依存しない説明も素材から導ける。最終段落では、既出の対象差・検知漏れ・速度不明の説明が重複している。"
+    }
+  ]
+}

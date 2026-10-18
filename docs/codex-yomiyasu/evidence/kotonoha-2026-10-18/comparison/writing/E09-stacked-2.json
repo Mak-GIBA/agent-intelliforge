@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 11.12,
+  "prompt_sha256": "1408c050f1163182e6304d09c9c147245ab432d9ae22c201f5a7c0fda3096f41",
+  "output": "設定が有効なら、再送は行われる。ただし、負荷が増えることがある。ログを出さないことは推奨していない。",
+  "usage": {
+    "input_tokens": 80073,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 199,
+    "reasoning_output_tokens": 155
+  },
+  "tools": [],
+  "error": null,
+  "task": "E09",
+  "arm": "stacked",
+  "repeat": 2,
+  "guide_characters": 87787
+}

@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 7.28,
+  "prompt_sha256": "6ccf8b8107f1dc6c050819eec280010b2e11d616a0a038e8fe6b744833e9f4af",
+  "output": "キャッシュは、保存した応答を再利用する仕組みである。保存済みの応答を使える場合を「キャッシュヒット」と呼ぶ。キャッシュヒットでは、同じ応答をサーバーから取得し直さずに済むため、応答を効率よく処理できる。\n\nただし、サーバー側の情報が更新された後も古い応答を使うと、画面の情報が古いままになる。そのため、保存した応答をいつ取得し直すかの管理も重要である。ここで扱う方式では、保存した応答に有効期限を設け、期限が切れた場合にサーバーから再取得する。",
+  "usage": {
+    "input_tokens": 83708,
+    "cached_input_tokens": 15104,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 167,
+    "reasoning_output_tokens": 0
+  },
+  "tools": [],
+  "error": null,
+  "task": "E02",
+  "arm": "stacked",
+  "repeat": 1,
+  "guide_characters": 89395
+}

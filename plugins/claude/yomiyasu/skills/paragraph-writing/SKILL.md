@@ -1,6 +1,6 @@
 ---
 name: paragraph-writing
-description: 段落構成だけを点検・改善する依頼、または明示的な /yomiyasu:paragraph-writing で使う。通常の日本語文書全体の作成・推敲には yomiyasu を入口にする。既存の事実、順序指定、引用、コードを保持する。
+description: 段落構成だけを点検・改善する依頼、または明示的な /yomiyasu:paragraph-writing で使う。通常の日本語文書全体の作成・推敲には kotonoha を入口にする。既存の事実、順序指定、引用、コードを保持する。
 ---
 
 # paragraph-writing
@@ -45,6 +45,5 @@ description: 段落構成だけを点検・改善する依頼、または明示�
 
 このスキルを読んだら対象の段落・留保の工程を適用し、同じ下書きを次の工程へ渡す。yomiyasuや他の文体スキルを追加で起動しない。全体の制作報告は本文に混ぜない。
 
-## 配布環境の呼び出し
-このPluginの管理ソースは `tools/codex-yomiyasu/kit.json`。導入先は `intelliforge locate --only yomiyasu --agent claude` で確認する。Pythonヘルパーは `intelliforge kit-run yomiyasu --agent claude --tool <ファイル名> -- <引数>`、研究・UXハーネスは `intelliforge kit-run yomiyasu --agent claude -- <引数>` から実行する。Windowsではこの入口を使い、Bashやpython3という実行名を前提にしない。
+検査は `intelliforge kit-run yomiyasu --agent claude --tool writing_lint.py -- <原稿> [--before <原稿>]`。Python・Node.jsは導入時に準備した専用環境を使う。
 Claude Code対応は試験対応。実機未検証の機能を検証済みと扱わない。

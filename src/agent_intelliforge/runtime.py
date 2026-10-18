@@ -96,6 +96,8 @@ def environment(home, agent, state):
              'PYTHONUTF8': '1',
              'PYTHONPATH': os.pathsep.join([str(Path(__file__).resolve().parent.parent), os.environ.get('PYTHONPATH', '')])}
     config = settings(home)
+    if config.get('writing_runtime'):
+        value['KOTONOHA_RUNTIME_DIR'] = config['writing_runtime']
     if config.get('browser'):
         value['UX_GAN_RUNTIME'] = config['browser']
         value['PLAYWRIGHT_BROWSERS_PATH'] = str(Path(config['browser']) / 'browsers')
@@ -113,6 +115,12 @@ def dependency_directory(home, label):
 def prepare_dependencies(kit, agent, home, bundle, config, state):
     """Explicit dependency policies, kept here instead of opaque shell payloads."""
     identity = kit['id']
+    if identity == 'yomiyasu':
+        helper = load(bundle / 'assets/scripts/writing_runtime.py', '_kotonoha_runtime')
+        try: writing = helper.prepare(home / 'dependencies/kotonoha')
+        except RuntimeError as error: raise ForgeError(str(error)) from error
+        config['writing_runtime'] = str(home / 'dependencies/kotonoha')
+        config['python'] = writing['python']
     if identity == 'ecc':
         from .ecc_port import prepare
         prepare(home, agent)
@@ -191,6 +199,13 @@ def prepare_dependencies(kit, agent, home, bundle, config, state):
         config['basic_memory_setup'] = 'Use bm install ' + ('claude-code' if agent == 'claude' else 'codex') + ' if the upstream integration is not already connected.'
 
 
+def meiseki_assets(bundle):
+    engine = load(bundle / 'installer.py', '_kotonoha_upstream')
+    try: _, data = engine.fetch_meiseki()
+    except RuntimeError as error: raise ForgeError(str(error)) from error
+    return {'assets/'+name:raw for name,raw in data.items()}
+
+
 def upstream_update(bundle, home, agent):
     engine = load(bundle / 'installer.py', '_intelliforge_yomiyasu')
     metadata = engine.resolve_release()
@@ -206,12 +221,16 @@ def marketplace(root, kit, agent, state, mode):
     prefix = 'plugins/' + kit['id'] + '/'
     data = {name: raw for name, raw in data.items() if not name.startswith(prefix)}
     for name, raw in files(root / 'plugins' / agent / kit['id']).items():
+        if kit['id'] == 'yomiyasu' and name.startswith('skills/yomiyasu/meiseki-upstream/'):
+            relative = name.removeprefix('skills/yomiyasu/')
+            raw = (state / agent / kit['id'] / 'bundle/assets' / relative).read_bytes()
         if kit['id'] == 'yomiyasu' and name.endswith('agents/openai.yaml'):
-            raw = f'policy:\n  allow_implicit_invocation: {str(mode != "explicit").lower()}\n'.encode()
+            raw = f'policy:\n  allow_implicit_invocation: {str(mode != "explicit" and '/skills/yomiyasu/' not in '/'+name).lower()}\n'.encode()
         if agent == 'claude' and kit['id'] == 'yomiyasu' and name.endswith('SKILL.md') and mode == 'explicit':
             text = raw.decode(); split = text.split('---', 2)
             if len(split) != 3 or split[0].strip(): raise ForgeError('Missing Skill frontmatter')
-            raw = ('---' + split[1] + 'disable-model-invocation: true\n---' + split[2]).encode()
+            if 'disable-model-invocation:' not in split[1]:
+                raw = ('---' + split[1] + 'disable-model-invocation: true\n---' + split[2]).encode()
         data[prefix + name] = raw
     identities = sorted({name.split('/')[1] for name in data if name.startswith('plugins/')})
     entries = [{'name': name, 'source': {'source': 'local', 'path': './plugins/' + name} if agent == 'codex' else './plugins/' + name} for name in identities]
@@ -239,6 +258,10 @@ def diagnose(kit, agent, state, legacy=False):
         missing = []
         for key in ('python', 'binary', 'specify'):
             if config.get(key) and not Path(config[key]).is_file(): missing.append(key)
+        if config.get('writing_runtime'):
+            helper=load(home/'bundle/assets/scripts/writing_runtime.py','_kotonoha_health')
+            result['writing_runtime']=helper.diagnose(Path(config['writing_runtime']))
+            if result['writing_runtime']['status']!='READY':missing.append('writing runtime')
         for key in ('browser',):
             if config.get(key) and not Path(config[key]).is_dir(): missing.append(key)
         if kit['id'] == 'yomiyasu': verify(home / 'upstream', owner('yomiyasu-upstream', agent))
@@ -305,7 +328,10 @@ def portable_action(root, kits, plan, args, state):
             if getattr(args, 'upstream_only', False):
                 verify(bundle, owner(kit['id'], agent)); upstream_update(bundle, home, agent)
                 results.append({'kit': kit['id'], 'agent': agent, 'upstream_only': True}); continue
-            backup = replace_tree(bundle, owner(kit['id'], agent), files(root / 'tools/intelliforge/resources/runtime' / kit['id']))
+            bundle_data = files(root / 'tools/intelliforge/resources/runtime' / kit['id'])
+            if kit['id'] == 'yomiyasu':
+                bundle_data.update(meiseki_assets(root / 'tools/intelliforge/resources/runtime/yomiyasu'))
+            backup = replace_tree(bundle, owner(kit['id'], agent), bundle_data)
             skill_backups = []; upstream_backup = None; upstream_changed = False; market_backup = None; market_target = None
             old_config = (home / 'settings.json').read_bytes() if (home / 'settings.json').exists() else None
             try:
@@ -321,7 +347,7 @@ def portable_action(root, kits, plan, args, state):
                         target = destination / name
                         if kit['id'] == 'yomiyasu':
                             mode = config.get('mode', 'auto')
-                            data['agents/openai.yaml'] = f'policy:\n  allow_implicit_invocation: {str(mode == "auto").lower()}\n'.encode()
+                            data['agents/openai.yaml'] = f'policy:\n  allow_implicit_invocation: {str(mode == "auto" and name != "yomiyasu").lower()}\n'.encode()
                         skill_backups.append((target, replace_tree(target, owner(name, agent), data)))
                         config['skills'].append(str(target))
                 atomic_write(home / 'settings.json', (json.dumps(config, ensure_ascii=False, indent=2) + '\n').encode())
@@ -383,7 +409,7 @@ def kit_run(identity, agent, arguments, state):
         matches = [p for p in bundle.rglob(options.tool) if 'tests' not in p.parts and p.is_file()]
         if len(matches) != 1: raise ForgeError('Helper not found or ambiguous: ' + options.tool)
         allowed = {'workgraph': {'workgraph_tools.py','workgraph_github.py','install_schemas.py'},
-                   'office': {'office.py'}, 'yomiyasu': {'check.py'}, 'github-pm': {'github_inspect.py'},
+                   'office': {'office.py'}, 'yomiyasu': {'check.py','writing_lint.py'}, 'github-pm': {'github_inspect.py'},
                    'speckit': {'swb.py'}, 'ux-stack': {'harness.py'}}
         if identity in allowed and options.tool not in allowed[identity]:
             raise ForgeError('Installer/configuration helpers are not executable through the portable Skill entry')

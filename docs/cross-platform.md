@@ -15,7 +15,7 @@ Claude CodeのPluginと実行アダプターは試験対応です。Codexのイ�
 
 ## 導入前に内容を確認する
 
-Python 3.11以上と、選んだホストの公式CLIを用意します。Windowsでも管理者権限、Bash、WSL、Dockerはこの追加経路の前提ではありません。
+共通CLIの導入にはPython 3.11以上と、選んだホストの公式CLIを用意します。日本語キットは単体の`install_kotonoha.sh`／`install_kotonoha.ps1`から不足するPython・Node.jsを自動準備できます。Windowsでも管理者権限、Bash、WSL、Dockerはこの追加経路の前提ではありません。
 CLIの配布には[uvのツール環境](https://docs.astral.sh/uv/guides/tools/)を使えます。PyPIへの公開はまだ行っていません。
 
 ```bash
@@ -128,3 +128,5 @@ intelliforge doctor --agent claude --only design-research --isolation-smoke
 - Herdrは既存実行ファイルを優先します。Windows x64で未導入なら固定版公式ZIPをハッシュ検証して導入します。作業ディレクトリの再利用は`intelliforge kit-run herdr --agent <host> -- <directory>`から実行します。未知のセッション形式では停止します。
 
 Windows実機とClaudeの実モデルによる一連の評価は、この環境では未実施です。[確認済みの範囲と残る検証](cross-platform-validation.md)を区別して利用してください。
+
+日本語執筆の入口は`$kotonoha`です。`--only kotonoha`と従来の`--only yomiyasu`は同じキットを選びます。詳細は[kotonohaの導入](codex-yomiyasu/installation.md)を参照してください。

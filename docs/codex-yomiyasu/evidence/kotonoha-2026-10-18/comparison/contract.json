@@ -1,0 +1,242 @@
+{
+  "schema": 1,
+  "created": "2026-10-18T11:10:27.448238+00:00",
+  "arms": [
+    "baseline",
+    "stacked",
+    "kotonoha"
+  ],
+  "tasks": [
+    {
+      "id": "E01",
+      "category": "抽象的な技術説明",
+      "explanation": true,
+      "instruction": "新任の開発者向けに、素材を使って原稿を推敲してください。提案と実測を区別し、完成稿だけ返してください。",
+      "input": "原稿：並列実行では適切なリソース管理が重要となる。実行環境の制御により、安定性を改善できる。\n補足素材：ビルドとテストはCPUとメモリを消費する。同時実行時に資源が競合し、応答が遅くなる場合がある。編集は並列のまま、ビルドとテストだけをキューで順番に実行する案がある。効果は未測定。",
+      "requirements": [
+        "CPU・メモリ競合と応答への関係",
+        "編集と重い処理の実行順序を区別",
+        "提案の効果を測定済みとしない"
+      ]
+    },
+    {
+      "id": "E02",
+      "category": "技術的な因果",
+      "explanation": true,
+      "instruction": "この技術解説を、Web開発を始めた読者が読める文章にしてください。素材の範囲で意味を保って推敲してください。",
+      "input": "原稿：キャッシュの活用は応答の効率化に寄与する。ただし更新管理も重要である。\n補足素材：保存した応答を再利用するキャッシュヒットでは、同じ応答をサーバーから取得し直さずに済む。更新後も古い応答を使うと、画面の情報が古いままになる。保存した応答の有効期限が切れた場合に再取得する方式を扱う。具体的な時間や性能測定はない。",
+      "requirements": [
+        "再取得を省ける仕組み",
+        "情報が古くなる条件",
+        "有効期限切れの再取得",
+        "効果の数値を作らない"
+      ]
+    },
+    {
+      "id": "E03",
+      "category": "仕組みから操作例",
+      "explanation": true,
+      "instruction": "素材から、利用者向けの短い操作解説を書いてください。背景となる仕組みと利用者の操作を自然につなげてください。",
+      "input": "素材：処理の完了を待ってから受付応答を返す方式では、完了まで利用者が待つ。新しい方式では受付時にジョブIDを返し、処理はキューで順番に進める。利用者は返されたジョブIDを照会画面へ入力して状態を確認する。受付済みは処理成功を意味しない。処理時間は不明。仮想のジョブIDを例示してよいが、実際の処理結果は作らない。",
+      "requirements": [
+        "受付と完了の違い",
+        "ジョブIDから照会までの操作",
+        "時間保証や成功結果を捏造しない"
+      ]
+    },
+    {
+      "id": "E04",
+      "category": "研究手法を初見の読者へ",
+      "explanation": true,
+      "instruction": "研究に詳しくない社内の読者に、素材の研究手法を説明してください。用語の意味が分かるようにし、結論は追加しないでください。",
+      "input": "素材：同じ資料から2方式で要約を生成し、方式名を伏せて第三者に評価してもらう計画。提示順は無作為に入れ替える。名称の印象と提示順の偏りを抑えるためであり、それらの影響が消える保証はない。評価は事実の保持と読みやすさを別に行う。まだ実施しておらず、結果もない。",
+      "requirements": [
+        "匿名化と提示順変更がそれぞれ何をするか",
+        "評価観点を分ける意味",
+        "計画と結果を混同しない",
+        "完全なバイアス除去を断定しない"
+      ]
+    },
+    {
+      "id": "E05",
+      "category": "方式比較の具体的差異",
+      "explanation": true,
+      "instruction": "新しい担当者が方式を判断できるよう、素材から比較の解説を作ってください。追加の性能データはありません。",
+      "input": "素材：全件再計算は毎回すべてのファイルから索引を作り直す。差分更新は変更されたファイルだけ索引を更新する。仮に100ファイルのうち2ファイルを編集する場面を使ってよい。差分更新では変更の検知漏れがあると索引が古いままになる。全件再計算の方が速いか遅いかは測定していない。導入判断は未決定。",
+      "requirements": [
+        "100件と変更2件で対象の違いを示す",
+        "検知漏れと古い索引の関係",
+        "処理時間を50倍などと断定しない",
+        "採用決定を作らない"
+      ]
+    },
+    {
+      "id": "E06",
+      "category": "十分な説明を保持",
+      "explanation": false,
+      "instruction": "この文章を点検し、必要な箇所だけ推敲してください。問題がなければそのまま返してください。",
+      "input": "保存ボタンを押すと、入力した内容がサーバーへ送られる。画面に「保存しました」と表示されたら保存は完了している。通信に失敗した場合はエラーが表示され、入力内容は画面に残る。再度保存ボタンを押して送信できる。",
+      "requirements": [
+        "不要な例・一般論を増やさない",
+        "保存完了の条件と通信失敗時の保持を変えない"
+      ]
+    },
+    {
+      "id": "E07",
+      "category": "短いメール",
+      "explanation": false,
+      "instruction": "同僚へ送るメールを自然に整えてください。完成したメールだけ返してください。",
+      "input": "佐藤さん\n明日の打ち合わせを14時から15時に変更できますか。難しければ、元の14時でお願いします。\n田中",
+      "requirements": [
+        "14時から15時の依頼",
+        "難しければ14時",
+        "架空の理由・説明・免責を加えない",
+        "実際の受信者への依頼を消さない"
+      ]
+    },
+    {
+      "id": "E08",
+      "category": "根拠不足",
+      "explanation": true,
+      "instruction": "情報を足さず、原因の確信度を保って報告文を推敲してください。完成稿だけ返してください。",
+      "input": "導入後、応答が速くなった。原因は未調査である。測定した時間の数値はない。効果が継続するかも分からない。",
+      "requirements": [
+        "原因未調査を保持",
+        "CPU・キャッシュなどの原因を創作しない",
+        "数値・継続性を捏造しない"
+      ]
+    },
+    {
+      "id": "E09",
+      "explanation": false,
+      "instruction": "技術マニュアルの意味と確信度を保って推敲し、完成稿だけ返してください。",
+      "input": "設定が無効でない限り、再送が行われないということはない。ただし、負荷の増大を招かないとは言えない。ログを出さないことを推奨しているわけではない。",
+      "requirements": [
+        "二重否定の向きと条件を保持",
+        "負荷増大は可能性であり必然にしない",
+        "ログ出力を必須にしない"
+      ]
+    },
+    {
+      "id": "E10",
+      "explanation": false,
+      "instruction": "説明の順序と専門用語を保ち、読みやすく推敲してください。",
+      "input": "利用者が入力した値の妥当性の検証の実施の後にその値の保存の処理を担当するsaveValue関数は、検証に失敗したときには保存を行わず、成功したときだけ保存することができます。",
+      "requirements": [
+        "saveValueを保持",
+        "検証成功時だけ保存",
+        "検証失敗時は保存しない"
+      ]
+    },
+    {
+      "id": "E11",
+      "category": "留保と制作メタの再導入防止",
+      "explanation": true,
+      "instruction": "社外の利用者向けの説明として推敲してください。必要な条件は残し、制作の説明は除いてください。",
+      "input": "ご依頼に沿って、初心者向けに分かりやすく構成しました。適切な検査は重要と言える可能性があるかもしれません。\n素材：入力時に必須項目の空欄を検査する。空欄があれば送信を止め、該当欄にメッセージを表示する。入力内容が事実かどうかは検査しない。さらに自然な文面にもできます。",
+      "requirements": [
+        "空欄検査・送信停止・欄のメッセージを説明",
+        "事実性を保証しない",
+        "ご依頼・構成した・申し出を本文に残さない",
+        "不要な二重留保を増やさない"
+      ]
+    },
+    {
+      "id": "E12",
+      "category": "長文の段落間の論理",
+      "explanation": true,
+      "instruction": "素材から、新任担当者向けの説明を複数段落で作ってください。各論点をつなぎ、実測と提案を区別してください。",
+      "input": "素材：処理が到着するたびに開始する現行方式は、到着が集中すると同時実行数が増える。各処理はメモリを使うため、集中時にはメモリ不足が起こる場合がある。提案方式はキューに入れ、同時に動かす処理を2つまでに制限する。待っている処理もあるため、個別の完了が遅くなる場合がある。これにより最大同時実行数を制限できるが、メモリ不足が必ずなくなるわけではない。処理ごとの使用量も関係する。比較試験は未実施で、上限2が適切かは未検証。導入は決めていない。",
+      "requirements": [
+        "到着集中→同時実行→メモリの関係",
+        "キューと上限2の仕組み",
+        "待ち時間とのトレードオフ",
+        "使用量・未試験・未決定を保持",
+        "同じ結論を毎段落に置かない"
+      ]
+    }
+  ],
+  "repeats": 2,
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "cli_version": "codex-cli 0.163.0",
+  "seed": 20261018,
+  "rubric": "文章の使用条件や作成方法を推測せず、依頼、素材、保護事項と完成稿だけを評価してください。\n8軸は具体性、因果の明瞭さ、読者理解、自然さ、情報効率、段落構造、意味保持、指示者向け表現の不在。\n各0〜4: 0=目的不達、1=大幅な修正、2=局所修正が必要、3=実用可能、4=ほぼ修正不要。\n説明不要の原稿・メールでは、余計な説明を足さず理解できる状態を高く評価してください。\n素材にない原因・数値・実績、条件や確信度の変化をmeaning_errorsへ、制作説明の混入をrequester_residueへ記録。\n素材から分かる処理の展開と、許された仮想例は捏造としない。接続詞の数だけで判定せず内容を読む。\n重要な理由や処理が分からない、抽象語の言い換え、必要のない例や結論はその箇所を理由に示す。\n各完成稿を独立に採点し、異なる文面を作ったこと自体は改善としない。ツールは使わずJSONだけ返してください。",
+  "axes": [
+    "specificity",
+    "causal_clarity",
+    "reader_understanding",
+    "naturalness",
+    "information_efficiency",
+    "paragraph",
+    "meaning_preservation",
+    "reader_boundary"
+  ],
+  "timeout_seconds": 480,
+  "automatic_retries": 0,
+  "grader": "Separate anonymous sessions of the same model; no independent human raters",
+  "selection": "No increase in critical meaning errors/requester residue; no loss of explanation depth, naturalness or efficiency. Prefer smaller instructions in a tie.",
+  "temperature": "not controlled by CLI",
+  "files": {
+    "snapshots/baseline/SKILL.md": "47f0184dabb09c4f62f8604a12efe37fa9b79ed273056ee584dd89e9f95a16b0",
+    "snapshots/baseline/japanese-direct-writing/SKILL.md": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374",
+    "snapshots/baseline/japanese-direct-writing/SOURCE.json": "e57b42d89b72bdffdc72200bb314a0185833446952185255168ec68f4df643a1",
+    "snapshots/baseline/paragraph-writing/SKILL.md": "cd9cbeeff8d22c88835d6f7dda6645f936911aa0af9319b678da3e326f7eb33c",
+    "snapshots/baseline/paragraph-writing/UPSTREAM.json": "1da8befb81d22152e3d1e9bb9852fad8a2234aaf60e6ca5d7fb4683fd28f49e0",
+    "snapshots/baseline/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+    "snapshots/baseline/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+    "snapshots/baseline/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+    "snapshots/baseline/references/explanation.md": "8010c08e8ccbc8768c06a73263c92707af17ad82f755b41cd5b5bc5c9d12ac23",
+    "snapshots/baseline/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+    "snapshots/baseline/references/paragraphs.md": "a17d1e6c4c7e8fa30734eda9efed373cbf263ed5b0cc34a832a3ebda4b1da5ad",
+    "snapshots/baseline/references/reader-review.md": "76984c6cccd0f2aac2085f5ed93b155447b221441df00ff53ca3f5f38fa4e8b6",
+    "snapshots/baseline/references/review.md": "a0980d8292717fa74f6b17221e479447b3a0211ae2f6eafec91944b5d50a8a19",
+    "snapshots/baseline/references/sources.md": "c87ed1e09d0b12db4012dd6ea3ff7979f1191b074365dde07892918e260f292b",
+    "snapshots/baseline/references/workflow.md": "48e3024f025d6065c03bb9a88ac33d28fc798a0a2140e9a574cf9572baf1601a",
+    "snapshots/baseline/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584",
+    "snapshots/kotonoha/SKILL.md": "b3398d9c34b0cfabd09fa63e9f42619a2fadfb87e38c30cee095254badac3e35",
+    "snapshots/kotonoha/japanese-direct-writing/SKILL.md": "728b7ba08b8149c8eb46c210f852f2650896f4620a9a2b2d1d95152e0bb4b51d",
+    "snapshots/kotonoha/japanese-direct-writing/SOURCE.json": "e57b42d89b72bdffdc72200bb314a0185833446952185255168ec68f4df643a1",
+    "snapshots/kotonoha/kotonoha/SKILL.md": "e2db547664c0e41624de21aa4a297a9a64e4e1217e352731afb3fdfc5a2bca8f",
+    "snapshots/kotonoha/meiseki-upstream/LICENSE": "3cccb14e8dbb175e8cfb17f2a9e30897792052b7207514c75da24d98d3ba157f",
+    "snapshots/kotonoha/meiseki-upstream/SKILL.md": "c21b3f92b335faaae829619539916fcf2d7998ac03e36f5ced5178d045b30192",
+    "snapshots/kotonoha/meiseki-upstream/UPSTREAM.json": "8ff738c127f0e6063e4b3ac0132327a899cdb1e2172ba1363fbd094cfa6e16ac",
+    "snapshots/kotonoha/meiseki-upstream/references/markdownlint.config.jsonc": "632d6906a460b7b14c2ca95f20c35385679c1f19626ff63a6ad92893e172eba6",
+    "snapshots/kotonoha/meiseki-upstream/references/patterns.md": "477845c9c8c2a56590f448be8c0ad664a4c0ad0875ae1ef6c8f9922c1f8d078b",
+    "snapshots/kotonoha/meiseki-upstream/references/prh-llm-phrases.yml": "ba97e2adb6953edcdb62b1959f6958b4967bcbbf0503e3ed09253ce58d8d0fd2",
+    "snapshots/kotonoha/meiseki-upstream/references/textlint.config.json": "19b7592e0c6c711291e2634e488a65172c461ef6d6b9d20db98adac809c8bf29",
+    "snapshots/kotonoha/paragraph-writing/SKILL.md": "f3f2a436322c1c79b9725ee8b64b6ec44bd0886d8c38a77b5d8dc18463bb3b6f",
+    "snapshots/kotonoha/paragraph-writing/UPSTREAM.json": "1da8befb81d22152e3d1e9bb9852fad8a2234aaf60e6ca5d7fb4683fd28f49e0",
+    "snapshots/kotonoha/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+    "snapshots/kotonoha/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+    "snapshots/kotonoha/references/clarity.md": "2c42b31549dca579f402d65a006fdf9828183d3b1b6a19eff4ea5fb1690f23f0",
+    "snapshots/kotonoha/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+    "snapshots/kotonoha/references/explanation.md": "8010c08e8ccbc8768c06a73263c92707af17ad82f755b41cd5b5bc5c9d12ac23",
+    "snapshots/kotonoha/references/finish.md": "fc9a240e63f56ff3312d5377a8a3e2b45a635ec20ced3a13618d005e3ef9e839",
+    "snapshots/kotonoha/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+    "snapshots/kotonoha/references/paragraphs.md": "a17d1e6c4c7e8fa30734eda9efed373cbf263ed5b0cc34a832a3ebda4b1da5ad",
+    "snapshots/kotonoha/references/reader-review.md": "76984c6cccd0f2aac2085f5ed93b155447b221441df00ff53ca3f5f38fa4e8b6",
+    "snapshots/kotonoha/references/review.md": "a0980d8292717fa74f6b17221e479447b3a0211ae2f6eafec91944b5d50a8a19",
+    "snapshots/kotonoha/references/sources.md": "de747ba966215b28b7b6d3243bc5d6a6f8cadf9004f4b724234f3a112ff5acb4",
+    "snapshots/kotonoha/references/workflow.md": "b8794b929d3ef93467544a9c0185a5cc14eebe9fffe4adafd3d4b8042b63acf6",
+    "snapshots/kotonoha/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584",
+    "snapshots/kotonoha/scripts/lint-runtime/package-lock.json": "517e8eab74da22ef6a02b7789ab22e5a8e0e322f7bf19ea446401be44c5645bb",
+    "snapshots/kotonoha/scripts/lint-runtime/package.json": "443937393998f7aab2fac29f22fd28705b5b1b885e65cfb62687b5e47dfa16b0",
+    "snapshots/kotonoha/scripts/runtime-versions.json": "0a124fed60c44c3be42c5bc8c2c5a7733111697a86fae0b75854ab7befef1745",
+    "snapshots/kotonoha/scripts/writing_lint.py": "30cd02ed70dd1c7127feae1d8f90a2af8125c2bf94487495d978351f1473b1ed",
+    "snapshots/kotonoha/scripts/writing_runtime.py": "6c2b6eb94320d5ed632511cd542b47a05efaf8c057fa041eae4fd137bc7dd0ef",
+    "upstream/LICENSE": "79d802f15bc8caf67f1a83c1bdbe214ccb41a0a0275f9046b329b89c65ee1fca",
+    "upstream/README.md": "d301ec5bad7a47ce61ca95804b4f04a9fc17e0ab9536061d2d2de0bb03ff716a",
+    "upstream/SKILL.upstream.md": "651818c2f5b97f0114b9a568bc5e672b5d190226cec2e403acc03450d8b958ac",
+    "upstream/UNICODE-LICENSE.txt": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+    "upstream/assets/algo-artis.png": "57c7c204d43d0e2873e3b61221db3ac4ba75a7ce29271a6deaeb3bd09f26fdec",
+    "upstream/references/domains/business.md": "b9970281b5005bbbc998d5de9b9e6b2bc1bb83976b3862c0556425a142f4352c",
+    "upstream/references/domains/essay.md": "8c0dc2afe132299ad111d4e3bc004d75da6291dc4857328717dc63ba5c9c6740",
+    "upstream/references/domains/tech.md": "255b1bcbf42a0c7ea7f42c7293cd964e541d70f6f5079ebcbffc332ce6b7b0dd",
+    "upstream/references/gemini-syntax.md": "9d1dc107a2e389d5bfc2db9e826d0fdcb69be5115d07afd4586d6b0cf5b87879",
+    "upstream/references/slop-catalog.md": "402fff215d7171f021bd418075832dc4a3867801ccb4c3a5ecdab60eb0241897",
+    "upstream/scripts/markdown_visibility.py": "7e6f739114bc28b132aa8e2bcfb51c7de7f441c12a54431c7248b5353a9966bb",
+    "upstream/scripts/yomiyasu_diff.py": "090868e2ab0d2b7eb9dadb014a80c7a5865b5082f250d05fea8ce4483730c312",
+    "upstream/scripts/yomiyasu_lint.py": "a5a253fbe5db7cde021e7c34b1e203472ff164f60a3886c85d5f69b140dcf230"
+  }
+}

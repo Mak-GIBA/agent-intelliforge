@@ -1,0 +1,34 @@
+{
+  "source_tests": {
+    "total": 169,
+    "result": "pass"
+  },
+  "standalone_self_test": {
+    "total": 169,
+    "result": "pass"
+  },
+  "portable_contracts": {
+    "total": 28,
+    "result": "pass"
+  },
+  "regression": {
+    "total": 341,
+    "skipped": 4,
+    "result": "pass"
+  },
+  "standalone_build_check": "pass",
+  "distribution_build_check": "pass",
+  "bash_syntax": "pass",
+  "skill_format": "pass",
+  "powershell_embedded_python_extract_and_self_test": "pass; PowerShell host not executed",
+  "wheel_sdist_and_installed_inspect": "pass",
+  "git_visible_source_build_and_installed_inspect": "pass",
+  "unperformed": [
+    "Windows/macOS bootstrap execution",
+    "Windows ARM64",
+    "PowerShell host execution",
+    "Claude plugin/model execution",
+    "actual PC Skill update",
+    "commit/push/release"
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: paragraph-writing
-description: 段落構成だけを点検・改善する依頼、または明示的な $paragraph-writing で使う。通常の日本語文書全体の作成・推敲には yomiyasu を入口にする。既存の事実、順序指定、引用、コードを保持する。
+description: 段落構成だけを点検・改善する依頼、または明示的な $paragraph-writing で使う。通常の日本語文書全体の作成・推敲には kotonoha を入口にする。既存の事実、順序指定、引用、コードを保持する。
 ---
 
 # paragraph-writing

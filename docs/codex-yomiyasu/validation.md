@@ -1,3 +1,7 @@
+# 現行kotonohaと過去版の検証
+
+kotonoha 3.0.0の検証は[専用記録](kotonoha-validation.md)にまとめます。以下はyomiyasuを入口としていた過去版の検証履歴です。過去の点数や導入件数をkotonohaの結果として扱いません。
+
 # yomiyasuの比較実験・導入検証
 
 [概要](README.md) · [導入手順](installation.md) · [使い方](usage.md)

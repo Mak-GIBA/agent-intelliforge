@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 5.05,
+  "prompt_sha256": "296720440a695122b42befaa15aaef23bb186e51737bb2ea1c3976731e3b56b1",
+  "output": "田中さん\n\nお疲れさまです。\n明日のレビューは11時開始です。資料は共有フォルダに置きました。\n\nよろしくお願いします。",
+  "usage": {
+    "input_tokens": 23059,
+    "cached_input_tokens": 15104,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 38,
+    "reasoning_output_tokens": 0
+  },
+  "tools": [],
+  "error": null,
+  "task": "K04",
+  "arm": "initial",
+  "repeat": 1,
+  "guide_characters": 8821
+}

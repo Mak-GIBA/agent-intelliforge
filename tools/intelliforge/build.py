@@ -137,6 +137,9 @@ def render_skill(data: bytes, kit: dict, agent: str, name: str) -> bytes:
                 f"Pythonヘルパーは `intelliforge kit-run {kit['id']} --agent {agent} --tool <ファイル名> -- <引数>`、"
                 f"研究・UXハーネスは `intelliforge kit-run {kit['id']} --agent {agent} -- <引数>` から実行する。"
                 "Windowsではこの入口を使い、Bashやpython3という実行名を前提にしない。\n")
+    if kit['id'] == 'yomiyasu':
+        appendix = (f"\n\n検査は `intelliforge kit-run yomiyasu --agent {agent} --tool writing_lint.py -- <原稿> [--before <原稿>]`。"
+                    "Python・Node.jsは導入時に準備した専用環境を使う。\n")
     if agent == "claude":
         # Namespacing is a host API detail; upstream originals stay unchanged.
         owners = {skill['name']: item['id'] for item in definitions(ROOT).values() for skill in item['skills']}
@@ -184,12 +187,17 @@ def build_outputs(assembled: Path) -> dict[str, bytes]:
                     base = assembled if skill.get("assembled") else ROOT
                     data = files_under(source_path(base, skill["source"]))
                     if kit["id"] == "yomiyasu" and name == "yomiyasu":
-                        data = {key: value for key, value in data.items() if not key.startswith(("paragraph-writing/", "japanese-direct-writing/"))}
+                        data = {key: value for key, value in data.items() if not key.startswith(("kotonoha/", "paragraph-writing/", "japanese-direct-writing/"))}
+                if kit['id'] == 'yomiyasu' and agent == 'codex':
+                    data['agents/openai.yaml'] = ('policy:\n  allow_implicit_invocation: '+str(name != 'yomiyasu').lower()+'\n').encode()
                 for path, raw in data.items():
                     if path == "SKILL.md": raw = render_skill(raw, kit, agent, name)
+                    if kit['id'] == 'yomiyasu' and path == 'references/finish.md':
+                        raw = raw.decode().replace('`../upstream/references/`',f'`intelliforge locate --only yomiyasu --agent {agent} --upstream` が示す先の `references/`').encode()
+
                     if path.endswith(".py"): raw = portable_python(raw, path)
                     if agent == "claude" and path == "agents/openai.yaml": continue
-                    if agent == "claude" and path == "SKILL.md" and name.startswith("upstream-"):
+                    if agent == "claude" and path == "SKILL.md" and (name.startswith("upstream-") or (kit["id"] == "yomiyasu" and name == "yomiyasu")):
                         parts = raw.decode().split('---', 2)
                         raw = ('---' + parts[1] + 'disable-model-invocation: true\n---' + parts[2]).encode()
                     output[prefix + f"/skills/{name}/{path}"] = raw
@@ -255,7 +263,8 @@ def main():
     if args.package_resources:
         if package.exists(): shutil.rmtree(package)
         package.mkdir(parents=True)
-        for script in ROOT.glob("install_*.sh"): shutil.copy2(script, package / script.name)
+        for pattern in ("install_*.sh", "install_*.ps1"):
+            for script in ROOT.glob(pattern): shutil.copy2(script, package / script.name)
         for directory in ("tools", "plugins", ".agents", ".claude-plugin"):
             shutil.copytree(ROOT / directory, package / directory, ignore=shutil.ignore_patterns(
                 "__pycache__", "node_modules", "*.pyc", "evaluation*", "evals", "evidence", "resources"))

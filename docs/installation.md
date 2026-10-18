@@ -19,7 +19,7 @@ Node.js 20以降・npm、Git、curl、導入済みCodex CLI、外部配布元へ
 
 Codex CLIには、各ツールが使うplugin・MCP・app-server等のコマンドが必要です。
 選択したツールだけを入れる場合は、そのツールの前提条件を確認してください。
-たとえばUX Stackとyomiyasuの組み合わせにはPython 3.10以降を使えます。
+kotonoha単独では不足するPython・Node.jsを専用領域へ自動準備します。他キットの前提条件はそれぞれの導入ガイドを参照してください。
 Design Research 2.5.0とUpstream 2.0.6の組み立てにはPython 3.11以上が必要です。
 導入後のGitHub接続、モデルの認証、文書描画など、実際の利用に必要な準備は各ガイドで説明しています。
 
@@ -47,10 +47,10 @@ bash install_all.sh --apply
 | `design-research` | 固定版から両ツールを組み立て・検証し、単一入口の研究Skillとハーネスを導入 | [導入・更新](design-research/installation.md) |
 | `ecc` | Codex標準ECC pluginと必要時に参照する入口。`--apply`で導入・設定 | [導入・更新・復元](codex-ecc/installation.md) |
 | `office` | OfficeCLI、文書処理ライブラリ、Office Workbench。`--apply`で導入 | [導入・更新](codex-office/installation.md) |
-| `yomiyasu` | 推敲用yomiyasu、段落構成用paragraph-writing、留意書き点検用japanese-direct-writing、原本、検査ツール。`--apply`でスキルを導入 | [導入・更新](codex-yomiyasu/installation.md) |
+| `kotonoha`（`yomiyasu`も互換） | meisekiの明晰化、yomiyasuの自然さ、段落構成・留保整理を統合。`--apply`で不足するPython・Node.jsと検査環境も準備 | [導入・更新](codex-yomiyasu/installation.md) |
 | `herdr` | Herdr、herdr-open、Bash設定 | [導入とBash設定](herdr/installation.md) |
 
-UX Stackは日本語のUI文言を仕上げる際にyomiyasuを推奨します。
+UX Stackは日本語のUI文言を仕上げる際にkotonohaを推奨します。
 一括導入では両方が含まれ、個別選択なら次のように組み合わせられます。
 
 ```bash

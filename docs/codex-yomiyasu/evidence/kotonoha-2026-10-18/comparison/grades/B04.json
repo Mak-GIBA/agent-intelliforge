@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 16.09,
+  "prompt_sha256": "978b287aaa41fc9a4af90e0c41056805560d10bb962d2ca047e7d6fc88233d34",
+  "output": "{\"ratings\":[{\"id\":\"O017\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"保存完了の条件、通信失敗時の入力保持、再送の操作が明確。原文のままで十分に理解でき、不要な変更や説明もない。\"},{\"id\":\"O018\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"再送の条件と二重否定の向きを保ち、負荷増大を可能性として表現している。ログ出力も必須にせず、簡潔に整理できている。\"},{\"id\":\"O019\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"空欄の確認から送信停止、該当欄への表示までが明確。事実性を確認しない点も独立して示し、制作説明と不要な留保を除いている。\"},{\"id\":\"O020\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"方式名を伏せる目的と提示順を変える目的、各評価観点、未実施であることを分かりやすく説明している。ただし、第2段落の末文は直前の定義と重なり、評価観点を分ける説明がやや反復的。\"}]}",
+  "usage": {
+    "input_tokens": 18269,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 631,
+    "reasoning_output_tokens": 160
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O017",
+    "O018",
+    "O019",
+    "O020"
+  ],
+  "ratings": [
+    {
+      "id": "O017",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "保存完了の条件、通信失敗時の入力保持、再送の操作が明確。原文のままで十分に理解でき、不要な変更や説明もない。"
+    },
+    {
+      "id": "O018",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "再送の条件と二重否定の向きを保ち、負荷増大を可能性として表現している。ログ出力も必須にせず、簡潔に整理できている。"
+    },
+    {
+      "id": "O019",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "空欄の確認から送信停止、該当欄への表示までが明確。事実性を確認しない点も独立して示し、制作説明と不要な留保を除いている。"
+    },
+    {
+      "id": "O020",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "方式名を伏せる目的と提示順を変える目的、各評価観点、未実施であることを分かりやすく説明している。ただし、第2段落の末文は直前の定義と重なり、評価観点を分ける説明がやや反復的。"
+    }
+  ]
+}

@@ -19,6 +19,8 @@ jobs:
       - run: uv python install 3.11
       - name: Portable contracts (no personal installation or model calls)
         run: uv run --no-project --python 3.11 python -B -m unittest discover -s tests -p test_intelliforge.py -v
+      - name: Kotonoha offline runtime contracts
+        run: uv run --no-project --python 3.11 python -B -m unittest discover -s tools/codex-yomiyasu/tests -p test_kotonoha.py -v
       - run: uv build
       - name: Inspect packaged resources in an isolated tool environment
         shell: pwsh

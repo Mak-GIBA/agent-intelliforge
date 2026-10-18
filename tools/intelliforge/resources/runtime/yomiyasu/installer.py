@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Codex yomiyasu writing integration. Proposal 2.0.0, Python 3.10+.
+"""kotonoha writing integration 3.0.0, engine Python 3.10+; managed runtime >=3.11.
 Based on basic-memory-workgraph installer 1.3.0's CLI, ownership contract,
 path checks, staged directory replacement and backup strategy.
-No npm/pip, hooks, AGENTS.md edits, credentials, or document upload.
+User-local Node/npm lint dependencies; no hooks, AGENTS edits, credentials, or document upload.
 """
 from __future__ import annotations
 import argparse
@@ -29,11 +29,11 @@ import uuid
 import zipfile
 import zlib
 
-VERSION = '2.0.0-proposal.3'
+VERSION = '3.0.0'
 REPO = 'nanaism/yomiyasu'
 BASE_REPO_COMMIT = 'f0efd23a53c1c1cd028775aa415cc3f34ca5661a'
-COMPONENTS = ('yomiyasu', 'paragraph-writing', 'japanese-direct-writing')
-OWNERS = {'yomiyasu': 'basic-memory-workgraph/codex-yomiyasu',
+COMPONENTS = ('yomiyasu', 'kotonoha', 'paragraph-writing', 'japanese-direct-writing')
+OWNERS = {'kotonoha': 'basic-memory-workgraph/kotonoha', 'yomiyasu': 'basic-memory-workgraph/codex-yomiyasu',
           'paragraph-writing': 'basic-memory-workgraph/paragraph-writing',
           'japanese-direct-writing': 'basic-memory-workgraph/japanese-direct-writing'}
 MANIFEST = '.installer.json'
@@ -77,9 +77,16 @@ def abs_path(value: str | Path) -> Path:
     return Path(os.path.abspath(os.path.expanduser(str(value))))
 
 
+def linked(path: Path) -> bool:
+    try:
+        return path.is_symlink() or bool(getattr(path.lstat(), 'st_file_attributes', 0) & 0x400)
+    except FileNotFoundError:
+        return False
+
+
 def safe_path(path: Path) -> None:
     for p in [path, *path.parents]:
-        if p.is_symlink():
+        if linked(p):
             raise InstallError('symlink経由の管理先は変更しません: '+str(p))
         if p.exists() and p != path and not p.is_dir():
             raise InstallError('親パスがディレクトリではありません: '+str(p))
@@ -109,7 +116,7 @@ def assets() -> dict[str, bytes]:
             for p in sorted(directory.rglob('*')):
                 if '__pycache__' in p.parts:
                     continue
-                if p.is_symlink():
+                if linked(p):
                     raise InstallError('同梱資材のsymlinkを拒否しました。')
                 if p.is_file():
                     out[safe_rel(prefix+p.relative_to(directory).as_posix())] = p.read_bytes()
@@ -140,7 +147,7 @@ def inventory(directory: Path) -> dict[str, bytes]:
     total = 0
     for parent, dirs, files in os.walk(directory, followlinks=False):
         for d in dirs:
-            if (Path(parent)/d).is_symlink():
+            if linked(Path(parent)/d):
                 raise InstallError('管理先内のsymlinkを拒否しました。')
         for name in files:
             p = Path(parent)/name
@@ -206,7 +213,8 @@ class LockedRedirect(urllib.request.HTTPRedirectHandler):
 
 def validate_url(url: str) -> None:
     u = urllib.parse.urlparse(url)
-    prefixes = {'api.github.com': '/repos/'+REPO+'/', 'raw.githubusercontent.com': '/'+REPO+'/'}
+    prefixes = {'api.github.com': ('/repos/'+REPO+'/', '/repos/bamboo-nova/meiseki/'),
+                'raw.githubusercontent.com': ('/'+REPO+'/', '/bamboo-nova/meiseki/')}
     if (u.scheme != 'https' or u.hostname not in prefixes or u.username or u.password
         or u.port not in (None, 443) or not u.path.startswith(prefixes[u.hostname])):
         raise InstallError('許可されていない取得先です。')
@@ -405,23 +413,60 @@ def source_upstream(source: Path) -> tuple[dict, dict[str, bytes]]:
     return meta, out
 
 
+
+def fetch_meiseki() -> tuple[dict, dict[str, bytes]]:
+    """Resolve latest stable; never silently adopt unreviewed normative changes."""
+    bundled = {k.removeprefix('meiseki-upstream/'):v for k,v in assets().items() if k.startswith('meiseki-upstream/')}
+    reviewed = json.loads(bundled['UPSTREAM.json'])
+    repo = 'bamboo-nova/meiseki'
+    release = json_download(f'https://api.github.com/repos/{repo}/releases/latest')
+    if release.get('draft') or release.get('prerelease'): raise InstallError('meiseki must be a stable release')
+    tag = str(release['tag_name'])
+    commit = json_download(f'https://api.github.com/repos/{repo}/commits/{urllib.parse.quote(tag, safe="")}')['sha']
+    if not re.fullmatch('[a-f0-9]{40}', commit): raise InstallError('Invalid meiseki commit')
+    files = {}
+    for name,digest in reviewed['files'].items():
+        remote = 'LICENSE' if name == 'LICENSE' else '.agents/skills/meiseki/'+name
+        raw = download(f'https://raw.githubusercontent.com/{repo}/{commit}/{remote}')
+        if sha(raw) != digest:
+            raise InstallError('meiseki '+tag+' has unreviewed normative changes: '+name+'; existing installation retained')
+        local_name = 'SKILL.upstream.md' if name == 'SKILL.md' else name
+        files['meiseki-upstream/'+local_name] = raw
+    meta = {**reviewed, 'tag':tag, 'commit':commit, 'latest_stable_checked':True}
+    files['meiseki-upstream/UPSTREAM.json'] = (json.dumps(meta,ensure_ascii=False,indent=2)+'\n').encode('utf-8')
+    return meta, files
+
+
+def prepare_writing_runtime(root: Path) -> dict:
+    """Prepare dependencies before replacing any owned Skill."""
+    bundle = assets()
+    with tempfile.TemporaryDirectory(prefix='kotonoha-runtime-source-') as td:
+        base = Path(td)
+        for name,raw in bundle.items():
+            if name.startswith('scripts/') or name.startswith('meiseki-upstream/'):
+                target = base/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(raw)
+        scope = {'__name__':'kotonoha_runtime','__file__':str(base/'scripts/writing_runtime.py')}
+        exec(compile(bundle['scripts/writing_runtime.py'],scope['__file__'],'exec'),scope)
+        return scope['prepare'](root.parent/'.kotonoha-runtime')
+
+
 def agent_yaml(name: str, mode: str) -> bytes:
-    titles = {'yomiyasu': 'yomiyasu 日本語執筆・推敲', 'paragraph-writing': 'paragraph-writing 段落構成',
+    titles = {'kotonoha': 'kotonoha 日本語執筆・推敲', 'yomiyasu': 'yomiyasu 日本語執筆・推敲', 'paragraph-writing': 'paragraph-writing 段落構成',
               'japanese-direct-writing': 'japanese-direct-writing 留保の整理'}
-    summary = {'yomiyasu': '読者に向けた自然な日本語を段落から組み立てる',
+    summary = {'kotonoha': '明晰さ・段落・説明の深さ・自然さを統合する', 'yomiyasu': '読者に向けた自然な日本語を段落から組み立てる',
                'paragraph-writing': '事実と意味を保って段落の論旨を整える',
                'japanese-direct-writing': '確信度を変えず不要な予防線だけを減らす'}
     prompt = '$'+name+'を使い、原文の意味・情報量を保って日本語の完成稿を仕上げてください。'
     return ('interface:\n  display_name: '+json.dumps(titles[name], ensure_ascii=False)+
             '\n  short_description: '+json.dumps(summary[name], ensure_ascii=False)+
             '\n  default_prompt: '+json.dumps(prompt, ensure_ascii=False)+
-            '\npolicy:\n  products:\n    - "CODEX"\n  allow_implicit_invocation: '+str(mode == 'auto').lower()+'\n').encode('utf-8')
+            '\npolicy:\n  products:\n    - "CODEX"\n  allow_implicit_invocation: '+str(mode == 'auto' and name != 'yomiyasu').lower()+'\n').encode('utf-8')
 
 
 def own_bundle(component: str, mode: str) -> dict[str, bytes]:
     data = assets()
     if component == 'yomiyasu':
-        out = {k: v for k, v in data.items() if k == 'SKILL.md' or k.startswith(('references/', 'scripts/'))}
+        out = {k: v for k, v in data.items() if k == 'SKILL.md' or k.startswith(('references/', 'scripts/', 'meiseki-upstream/'))}
     else:
         prefix = component+'/'
         out = {k[len(prefix):]: v for k, v in data.items() if k.startswith(prefix)}
@@ -547,10 +592,24 @@ def install_selected(root: Path, names: tuple[str, ...], mode: str | None = None
     if not apply or not pending:
         return summarize(results)
     # All downloads/validation finish before mutating installed skill directories.
+    meiseki_files = None
+    if 'yomiyasu' in pending and not upstream_only:
+        if source:
+            meiseki_files = {k:v for k,v in assets().items() if k.startswith('meiseki-upstream/')}
+        elif update or states['yomiyasu'][1] is None:
+            _, meiseki_files = fetch_meiseki()
+        else:
+            meiseki_files = {k:v for k,v in states['yomiyasu'][2].items() if k.startswith('meiseki-upstream/')}
+            if not meiseki_files: _, meiseki_files = fetch_meiseki()
+    runtime = None
+    if not upstream_only and any(n in pending for n in ('yomiyasu', 'kotonoha')):
+        runtime = prepare_writing_runtime(root)
     prepared = {}
     for name in pending:
         result, marker, old = states[name]
         expected = own_bundle(name, result['mode'])
+        if name == 'yomiyasu' and meiseki_files is not None:
+            expected.update(meiseki_files)
         upstream_meta = None
         version = VERSION
         if name == 'yomiyasu':
@@ -591,6 +650,7 @@ def install_selected(root: Path, names: tuple[str, ...], mode: str | None = None
         else:
             new_marker['upstream_revision'] = VERSION
         prepared[name] = {**expected, **extras, MANIFEST: (json.dumps(new_marker, ensure_ascii=False, indent=2)+'\n').encode('utf-8')}
+        if runtime: results[name]['writing_runtime'] = runtime['versions']
         results[name].update(version=version, preserved_extra_files=sorted(extras), applied=True,
                              implicit_invocation=result['mode'] == 'auto',
                              next='Codexの新しいセッションで $'+name+' を確認してください。')
@@ -675,6 +735,15 @@ def doctor(target: Path, project=None, component='yomiyasu') -> tuple[dict, int]
         if component == 'yomiyasu':
             out['upstream_compatibility'] = upstream_contract(files)
             out.update(upstream_tag=marker.get('upstream_tag'), upstream_commit=marker.get('upstream_commit'))
+            if 'meiseki-upstream/UPSTREAM.json' in files:
+                out['meiseki'] = json.loads(files['meiseki-upstream/UPSTREAM.json'])
+            runtime_path = target.parent.parent/'.kotonoha-runtime/settings.json'
+            out['writing_runtime_configured'] = runtime_path.is_file()
+            helper = target/'scripts/writing_runtime.py'
+            if runtime_path.is_file() and helper.is_file() and not changed:
+                scope={'__name__':'kotonoha_health','__file__':str(helper)}
+                exec(compile(helper.read_text(encoding='utf-8'),str(helper),'exec'),scope)
+                out['writing_runtime'] = scope['diagnose'](runtime_path.parent)
         unknown_upstream = [k for k in files if k.startswith('upstream/') and k not in marker['files']]
         out['untracked_upstream'] = unknown_upstream
         ok = not changed and not unknown_upstream and not out['conflicts']['duplicate_skill']
@@ -696,6 +765,8 @@ def check_updates(root: Path, names: tuple[str, ...], ref=None) -> dict:
                'bundled_version': VERSION, 'wrapper_update_available': not marker or marker.get('version') != VERSION}
         if name == 'yomiyasu':
             latest = resolve_release(ref)
+            meiseki, _ = fetch_meiseki()
+            row['meiseki_latest'] = {k:v for k,v in meiseki.items() if k != 'files'}
             row.update(network=True, latest={k: v for k, v in latest.items() if k != 'files'},
                        installed_upstream_commit=marker.get('upstream_commit') if marker else None,
                        upstream_update_available=not marker or marker.get('upstream_commit') != latest['commit'])
@@ -716,7 +787,12 @@ def extract(destination: Path) -> dict:
             stream.write(data)
     if SELF_SCRIPT:
         shell = Path(SELF_SCRIPT).read_text(encoding='utf-8')
-        source = shell.split("<<'YOMI_INSTALL_PY'\n", 1)[1].rsplit('\nYOMI_INSTALL_PY', 1)[0]
+        if str(SELF_SCRIPT).endswith('.ps1'):
+            match = re.search(r"\$payload = '([A-Za-z0-9+/=]+)'", shell)
+            if not match: raise InstallError('PowerShell payload missing')
+            source = base64.b64decode(match[1],validate=True).decode('utf-8')
+        else:
+            source = shell.split("<<'YOMI_INSTALL_PY'\n", 1)[1].rsplit('\nYOMI_INSTALL_PY', 1)[0]
         source = source.replace('    SELF_SCRIPT = abs_path(sys.argv[1])\n    raise SystemExit(main(sys.argv[2:]))',
                                 '    raise SystemExit(main())')
         (destination/'installer.py').write_text(source, encoding='utf-8')
@@ -778,7 +854,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.uninstall and (args.force or args.update or args.mode or args.source_dir or args.upstream_only or args.upstream_ref):
             raise InstallError('解除と更新のオプションは併用できません。')
         root = abs_path(args.skills_dir or Path.home()/'.agents/skills')
-        names = COMPONENTS if args.only == 'all' else (args.only,)
+        names = COMPONENTS if args.only in ('all', 'kotonoha') else (args.only,)
         if args.upstream_only:
             if args.only not in ('all', 'yomiyasu'):
                 raise InstallError('--upstream-onlyの対象はyomiyasuです。')
@@ -806,7 +882,7 @@ def main(argv: list[str] | None = None) -> int:
                               abs_path(args.source_dir) if args.source_dir else None, project,
                               args.update, args.upstream_only, args.upstream_ref))
         return 0
-    except (InstallError, OSError, ValueError, KeyError, SyntaxError, subprocess.SubprocessError) as exc:
+    except (RuntimeError, OSError, ValueError, KeyError, SyntaxError, subprocess.SubprocessError) as exc:
         emit({'status': 'ERROR', 'message': str(exc), 'note': '不明な状態で上書きせず停止しました。'})
         return 2
 

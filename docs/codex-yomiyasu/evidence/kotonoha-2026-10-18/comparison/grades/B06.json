@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 15.22,
+  "prompt_sha256": "647adc0a2972c3b2f14dda8df9da71b5ccd73f56c80f7c888637aa217155c2d7",
+  "output": "{\"ratings\":[{\"id\":\"O025\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"キャッシュヒットで再取得を省ける仕組みと、更新後も古い応答を使うことで情報が古くなる関係が明確。有効期限切れの再取得も説明し、数値を補わず初心者に必要な情報を二段落に整理している。\"},{\"id\":\"O026\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"保存操作、完了の表示、通信失敗時の入力保持、再送信の順に簡潔に説明している。素材をそのまま保つことで、不要な説明を加えず必要な条件と操作が理解できる。\"},{\"id\":\"O027\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"重なった名詞表現を整理し、検証から保存への順序と専門用語を保持している。検証失敗時は保存せず、成功時だけ保存できる条件も明確。\"},{\"id\":\"O028\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"到着集中から同時実行数とメモリ使用への関係、キューと上限2の仕組み、完了が遅れる可能性を順に説明している。処理ごとの使用量、比較試験と上限の未検証、導入未決定を保持し、段落ごとの役割も明確。\"}]}",
+  "usage": {
+    "input_tokens": 16180,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 573,
+    "reasoning_output_tokens": 54
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O025",
+    "O026",
+    "O027",
+    "O028"
+  ],
+  "ratings": [
+    {
+      "id": "O025",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "キャッシュヒットで再取得を省ける仕組みと、更新後も古い応答を使うことで情報が古くなる関係が明確。有効期限切れの再取得も説明し、数値を補わず初心者に必要な情報を二段落に整理している。"
+    },
+    {
+      "id": "O026",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "保存操作、完了の表示、通信失敗時の入力保持、再送信の順に簡潔に説明している。素材をそのまま保つことで、不要な説明を加えず必要な条件と操作が理解できる。"
+    },
+    {
+      "id": "O027",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "重なった名詞表現を整理し、検証から保存への順序と専門用語を保持している。検証失敗時は保存せず、成功時だけ保存できる条件も明確。"
+    },
+    {
+      "id": "O028",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "到着集中から同時実行数とメモリ使用への関係、キューと上限2の仕組み、完了が遅れる可能性を順に説明している。処理ごとの使用量、比較試験と上限の未検証、導入未決定を保持し、段落ごとの役割も明確。"
+    }
+  ]
+}

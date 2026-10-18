@@ -1,0 +1,83 @@
+{
+  "root": "<temporary-workspace>",
+  "runtime": {
+    "node": "v24.22.0",
+    "python": "Python 3.11.17"
+  },
+  "steps": [
+    {
+      "step": "preview",
+      "exit_code": 0,
+      "status": "PYTHON_REQUIRED_FOR_FULL_PREVIEW",
+      "applied": false
+    },
+    {
+      "step": "install",
+      "exit_code": 0,
+      "status": null,
+      "applied": true
+    },
+    {
+      "step": "rerun",
+      "exit_code": 0,
+      "status": null,
+      "applied": false
+    },
+    {
+      "step": "update",
+      "exit_code": 0,
+      "status": null,
+      "applied": true
+    },
+    {
+      "step": "upstream-only",
+      "exit_code": 0,
+      "status": null,
+      "applied": true
+    },
+    {
+      "step": "doctor",
+      "exit_code": 0,
+      "status": null,
+      "applied": false
+    },
+    {
+      "step": "explicit",
+      "exit_code": 0,
+      "status": null,
+      "applied": true
+    },
+    {
+      "step": "auto",
+      "exit_code": 0,
+      "status": null,
+      "applied": true
+    },
+    {
+      "step": "Japanese-space-path-lint",
+      "exit_code": 0
+    },
+    {
+      "step": "edited-uninstall-refused",
+      "exit_code": 2,
+      "status": "ERROR",
+      "applied": null
+    },
+    {
+      "step": "uninstall",
+      "exit_code": 0,
+      "status": null,
+      "applied": true
+    },
+    {
+      "step": "bulk-preview-kotonoha",
+      "exit_code": 0
+    },
+    {
+      "step": "bulk-preview-yomiyasu",
+      "exit_code": 0
+    }
+  ],
+  "real_PC_updated": false,
+  "windows_executed": false
+}

@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 9.07,
+  "prompt_sha256": "d746ebe447d5cc3e21f33629ca6947c3a3f33b0d68cb88070a6731bf92e6370a",
+  "output": "サーバーは、処理の受付と実行を分けています。処理を受け付けるとIDを返し、ワーカーがキューから処理を取り出して順番に実行します。キューは、実行する処理を並べておく場所です。IDが返された時点では、処理が正常に完了したとは限りません。\n\n処理の状態を確認するには、受付時に返されたIDを状態照会APIへ渡します。例えば、仮にIDとして `123` が返された場合は、その `123` を使って状態を照会します。受付時の応答と、その後の状態照会を分けて確認することで、受け付けられたことと、正常に完了したことを区別できます。\n\n処理の所要時間は未測定です。受付から完了までにどの程度かかるかは、まだ分かっていません。",
+  "usage": {
+    "input_tokens": 72083,
+    "cached_input_tokens": 15104,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 220,
+    "reasoning_output_tokens": 0
+  },
+  "tools": [],
+  "error": null,
+  "task": "K01",
+  "arm": "baseline",
+  "repeat": 2,
+  "guide_characters": 71829
+}

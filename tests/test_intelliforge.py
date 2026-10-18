@@ -25,6 +25,7 @@ class DistributionTests(unittest.TestCase):
         catalog = definitions(ROOT)
         self.assertEqual([k['id'] for k in selection(['yomiyasu,workgraph','yomiyasu'],catalog)], ['workgraph','yomiyasu'])
         self.assertEqual(len(catalog['speckit']['skills']),8)
+        self.assertEqual([k['id'] for k in selection(['kotonoha'],catalog)],['yomiyasu'])
         with self.assertRaises(ForgeError): selection(['yomiyasu,typo'],catalog)
         output=io.StringIO()
         with contextlib.redirect_stdout(output):self.assertEqual(cli.main(['list','--only','yomiyasu','--json']),0)
@@ -96,6 +97,19 @@ class DistributionTests(unittest.TestCase):
             self.assertEqual(target.read_bytes(),source.read_bytes())
 
 
+class WritingDistributionTests(unittest.TestCase):
+    def test_only_intended_skills_are_discoverable(self):
+        expected={'kotonoha','yomiyasu','paragraph-writing','japanese-direct-writing'}
+        for agent in ('codex','claude'):
+            root=ROOT/'plugins'/agent/'yomiyasu/skills'
+            discovered=list(root.rglob('SKILL.md'))
+            self.assertEqual({p.parent.name for p in discovered},expected)
+            self.assertTrue(all(p.parent.parent==root for p in discovered))
+        root=ROOT/'plugins/codex/yomiyasu/skills'
+        self.assertIn('allow_implicit_invocation: true',(root/'kotonoha/agents/openai.yaml').read_text())
+        self.assertIn('allow_implicit_invocation: false',(root/'yomiyasu/agents/openai.yaml').read_text())
+
+
 class OwnershipTests(unittest.TestCase):
     def lifecycle(self, temporary, agent='claude'):
         kit = definitions(ROOT)['yomiyasu']; state = Path(temporary)/'state'
@@ -108,7 +122,7 @@ class OwnershipTests(unittest.TestCase):
             kit,state,args,plan=self.lifecycle(temporary)
             def upstream(bundle,home,agent):
                 return ownership.replace_tree(home/'upstream',runtime.owner('yomiyasu-upstream',agent),{'SKILL.upstream.md':b'unchanged upstream original'})
-            with patch.object(plugins,'preflight'),patch.object(plugins,'manage'),patch.object(plugins.shutil,'which',return_value='claude'),patch.object(plugins,'installed',return_value={'yomiyasu@agent-intelliforge'}),patch.object(runtime,'prepare_dependencies'),patch.object(runtime,'upstream_update',upstream),contextlib.redirect_stdout(io.StringIO()):
+            with patch.object(plugins,'preflight'),patch.object(plugins,'manage'),patch.object(plugins.shutil,'which',return_value='claude'),patch.object(plugins,'installed',return_value={'yomiyasu@agent-intelliforge'}),patch.object(runtime,'prepare_dependencies'),patch.object(runtime,'meiseki_assets',return_value={}),patch.object(runtime,'upstream_update',upstream),contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 args.action='update';self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
@@ -125,7 +139,7 @@ class OwnershipTests(unittest.TestCase):
             kit,state,args,plan=self.lifecycle(temporary)
             def upstream(bundle,home,agent):
                 return ownership.replace_tree(home/'upstream',runtime.owner('yomiyasu-upstream',agent),{'SKILL.upstream.md':b'original'})
-            with patch.object(plugins,'preflight'),patch.object(plugins,'manage',side_effect=ForgeError('injected native manager failure')),patch.object(runtime,'prepare_dependencies'),patch.object(runtime,'upstream_update',upstream),contextlib.redirect_stdout(io.StringIO()):
+            with patch.object(plugins,'preflight'),patch.object(plugins,'manage',side_effect=ForgeError('injected native manager failure')),patch.object(runtime,'prepare_dependencies'),patch.object(runtime,'meiseki_assets',return_value={}),patch.object(runtime,'upstream_update',upstream),contextlib.redirect_stdout(io.StringIO()):
                 with self.assertRaises(ForgeError): runtime.portable_action(ROOT,[kit],plan,args,state)
             self.assertFalse((state/'claude/yomiyasu/bundle').exists())
             self.assertFalse((state/'claude/yomiyasu/upstream').exists())

@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 14.99,
+  "prompt_sha256": "5b69fcc2920d7f1249fa0d285177e20f2601efdc1c03abd974dda03dc004ec9d",
+  "output": "{\"ratings\":[{\"id\":\"O053\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"CPU・メモリの競合から応答遅延への関係が明確。編集の並列実行とビルド・テストの順次実行を区別し、期待される効果と未測定の事実も適切に示している。\"},{\"id\":\"O054\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"資源競合による応答遅延と、重い処理の集中を避ける提案が具体的に説明されている。編集は並列で続けることが明確で、提案を実測済みの成果として扱っていない。\"},{\"id\":\"O055\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"方式名を伏せる目的と提示順を変える目的を分け、用語と評価観点も説明している。影響の完全な除去を保証せず、未実施・結果なしも保持している。ただし「どちらの方式で作った要約かを知らせず」と、評価観点の説明後の「別々に評価することで」の文は、直前の説明と重複する。\"},{\"id\":\"O056\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"保存操作、完了を判断する表示、通信失敗時の入力保持と再送方法が簡潔に分かる。不要な説明を足さず、素材の条件をそのまま保持している。\"}]}",
+  "usage": {
+    "input_tokens": 18638,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 649,
+    "reasoning_output_tokens": 112
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O053",
+    "O054",
+    "O055",
+    "O056"
+  ],
+  "ratings": [
+    {
+      "id": "O053",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "CPU・メモリの競合から応答遅延への関係が明確。編集の並列実行とビルド・テストの順次実行を区別し、期待される効果と未測定の事実も適切に示している。"
+    },
+    {
+      "id": "O054",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "資源競合による応答遅延と、重い処理の集中を避ける提案が具体的に説明されている。編集は並列で続けることが明確で、提案を実測済みの成果として扱っていない。"
+    },
+    {
+      "id": "O055",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "方式名を伏せる目的と提示順を変える目的を分け、用語と評価観点も説明している。影響の完全な除去を保証せず、未実施・結果なしも保持している。ただし「どちらの方式で作った要約かを知らせず」と、評価観点の説明後の「別々に評価することで」の文は、直前の説明と重複する。"
+    },
+    {
+      "id": "O056",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "保存操作、完了を判断する表示、通信失敗時の入力保持と再送方法が簡潔に分かる。不要な説明を足さず、素材の条件をそのまま保持している。"
+    }
+  ]
+}

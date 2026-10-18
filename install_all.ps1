@@ -65,12 +65,15 @@
 # Edit: tools/codex-office/kit.json
 # Inspect: intelliforge inspect --only office
 # Regenerate: python tools/intelliforge/build.py
-# Kit: yomiyasu — yomiyasu writing skills
-# Skills: yomiyasu, paragraph-writing, japanese-direct-writing
+# Kit: yomiyasu — kotonoha Japanese writing
+# Skills: kotonoha, yomiyasu, paragraph-writing, japanese-direct-writing
 # Source: https://github.com/nanaism/yomiyasu (latest stable upstream release; local writing rules have independent version)
+# Source: https://github.com/bamboo-nova/meiseki (latest stable release; normative changes require reviewed adapter)
+# Destination: {skills_home}/kotonoha
 # Destination: {skills_home}/yomiyasu
 # Destination: {skills_home}/paragraph-writing
 # Destination: {skills_home}/japanese-direct-writing
+# Destination: {skills_home}/../.kotonoha-runtime
 # Settings: none
 # Edit: tools/codex-yomiyasu/kit.json
 # Inspect: intelliforge inspect --only yomiyasu
@@ -90,6 +93,20 @@
 # Example: .\install_all.ps1 --only yomiyasu --apply
 $ErrorActionPreference = 'Stop'
 $entry = Join-Path $PSScriptRoot 'intelliforge.py'
+# Japanese-only preview must not cause uv to download Python.
+$selectedIndex = [Array]::IndexOf($args, '--only')
+$japaneseOnly = $selectedIndex -ge 0 -and ($selectedIndex + 1) -lt $args.Count -and $args[$selectedIndex + 1] -in @('kotonoha','yomiyasu')
+if ($japaneseOnly) {
+    $existingPython = Get-Command python -ErrorAction SilentlyContinue
+    if ($existingPython -and $existingPython.Source -notlike '*\Microsoft\WindowsApps\python*.exe') {
+        & $existingPython.Source -c 'import sys;raise SystemExit(sys.version_info<(3,11))' 2>$null
+        if ($LASTEXITCODE -eq 0) { & $existingPython.Source $entry install @args; exit $LASTEXITCODE }
+    }
+    if (($args -notcontains '--apply') -or -not (Get-Command uv -ErrorAction SilentlyContinue)) {
+        & (Join-Path $PSScriptRoot 'install_kotonoha.ps1') @args
+        exit $LASTEXITCODE
+    }
+}
 if (Get-Command uv -ErrorAction SilentlyContinue) {
     & uv run --no-project --python 3.11 $entry install @args
 } elseif (Get-Command python -ErrorAction SilentlyContinue) {

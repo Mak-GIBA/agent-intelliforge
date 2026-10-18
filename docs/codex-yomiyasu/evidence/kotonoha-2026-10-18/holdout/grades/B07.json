@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 14.82,
+  "prompt_sha256": "7455c79918d88ab2b77a2b9636ced22bebedb49bdc07e8b926bb090b4699978a",
+  "output": "{\"ratings\":[{\"id\":\"O029\",\"specificity\":3,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":3,\"information_efficiency\":2,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"受付と実行の分離、キューとワーカーの役割、状態照会の方法が分かり、受付と成功完了の違い、所要時間の未測定も保持しています。ただし、仮想例が直前の操作説明を繰り返すだけで理解を補っていません。ワーカーの役割、成功完了との区別、所要時間についても重複があります。\"},{\"id\":\"O030\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"開始時刻と資料の保存先が明確で、同僚宛メールとして自然です。「ご確認ください」も資料共有に伴う自然な依頼に収まり、余計な説明や制作メタはありません。\"},{\"id\":\"O031\",\"specificity\":3,\"causal_clarity\":4,\"reader_understanding\":3,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"比較の目的と、方式名を伏せて提示順を無作為化する理由が明確です。未実施・結果なしも保持しています。正確さと読みやすさを分ける必要性は説明できていますが、初めて読む人向けには、読みやすさが文章の理解しやすさを指すことを短く示すと、二つの評価観点の違いがさらに明確になります。\"},{\"id\":\"O032\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"時刻と保存先を正確に保持し、挨拶、連絡事項、結びが簡潔にまとまっています。必要な情報だけで理解でき、余計な説明や制作メタもありません。\"}]}",
+  "usage": {
+    "input_tokens": 18181,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 641,
+    "reasoning_output_tokens": 75
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O029",
+    "O030",
+    "O031",
+    "O032"
+  ],
+  "ratings": [
+    {
+      "id": "O029",
+      "specificity": 3,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 3,
+      "information_efficiency": 2,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "受付と実行の分離、キューとワーカーの役割、状態照会の方法が分かり、受付と成功完了の違い、所要時間の未測定も保持しています。ただし、仮想例が直前の操作説明を繰り返すだけで理解を補っていません。ワーカーの役割、成功完了との区別、所要時間についても重複があります。"
+    },
+    {
+      "id": "O030",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "開始時刻と資料の保存先が明確で、同僚宛メールとして自然です。「ご確認ください」も資料共有に伴う自然な依頼に収まり、余計な説明や制作メタはありません。"
+    },
+    {
+      "id": "O031",
+      "specificity": 3,
+      "causal_clarity": 4,
+      "reader_understanding": 3,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "比較の目的と、方式名を伏せて提示順を無作為化する理由が明確です。未実施・結果なしも保持しています。正確さと読みやすさを分ける必要性は説明できていますが、初めて読む人向けには、読みやすさが文章の理解しやすさを指すことを短く示すと、二つの評価観点の違いがさらに明確になります。"
+    },
+    {
+      "id": "O032",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "時刻と保存先を正確に保持し、挨拶、連絡事項、結びが簡潔にまとまっています。必要な情報だけで理解でき、余計な説明や制作メタもありません。"
+    }
+  ]
+}

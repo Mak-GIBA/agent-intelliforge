@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 8.01,
+  "prompt_sha256": "d2133d7bd94b0f438f0b14f2f16c21a40287656e1d0e0fbd31221ebfe68da9e7",
+  "output": "新しい方式では、処理の完了を待たずに、受付時にジョブIDが返されます。処理はキューに入り、順番に進みます。従来の方式では完了まで受付応答を待つ必要がありましたが、新しい方式では、受け取ったジョブIDを使って状態を確認します。\n\nジョブIDが返されたら、照会画面へ入力してください。例えば、受け取ったIDが `JOB-12345` なら、そのIDを入力して状態を確認します。受付済みでも、処理が成功したとは限りません。処理にかかる時間は不明です。",
+  "usage": {
+    "input_tokens": 72124,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 155,
+    "reasoning_output_tokens": 0
+  },
+  "tools": [],
+  "error": null,
+  "task": "E03",
+  "arm": "baseline",
+  "repeat": 1,
+  "guide_characters": 71829
+}

@@ -1,3 +1,13 @@
+# kotonohaの出典と独自規範
+
+kotonohaはbamboo-nova/meisekiの構文明晰化、nanaism/yomiyasuの自然さ、既存の段落構成・留保整理を統合した独自Skill。上流と同一の動作や公式派生版を意味しない。
+
+meiseki原本は `../meiseki-upstream/`、yomiyasu原本は `../upstream/` に保持する。各UPSTREAM.jsonが版、commit、検証ハッシュを記録する。両者のMITライセンスと著作権表示を保持する。独自の版と上流の版は別に管理する。
+
+独自工程は検査スコアの強制低下、二重否定の一律除去、全資料の毎回読込を採用しない。textlintの指摘は文脈判断の候補とする。meisekiのJev・自動フック・他のSkillは導入しない。
+
+以下は既存規範の由来。現在の実行判断はworkflow.mdを正本とする。
+
 # 参照先と利用範囲
 
 確認日：2026-10-11。最新版の固定的な保証ではなく、今回の設計時点の記録。

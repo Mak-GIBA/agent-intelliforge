@@ -10,26 +10,7 @@ import zlib
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT.parents[1]/'install_codex_yomiyasu.sh'
-HEADER = '''#!/usr/bin/env bash
-# yomiyasu Japanese writing integration 2.0.0-proposal.3 — standalone.
-# Default: dry-run. --update --apply migrates an owned 1.3.0 installation.
-# --update --upstream-only --apply refreshes upstream without changing local rules.
-# Python 3.10+; no npm/pip/sudo/hooks/AGENTS.md edits. Save to a file before running.
-PY="${PYTHON_BIN:-}"
-if [[ -z "$PY" ]]; then
-  for candidate in python3 python3.14 python3.13 python3.12 python3.11 python3.10; do
-    if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3,10) else 1)' 2>/dev/null; then
-      PY="$candidate"; break
-    fi
-  done
-fi
-if [[ -z "$PY" ]] || ! "$PY" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3,10) else 1)' 2>/dev/null; then
-  printf '%s\\n' 'ERROR: Python 3.10+が必要です。PYTHON_BIN=/path/to/python3で指定できます。' >&2
-  exit 2
-fi
-export PYTHONDONTWRITEBYTECODE=1
-"$PY" -B - "$0" "$@" <<'YOMI_INSTALL_PY'
-'''
+
 
 
 def build() -> str:
@@ -48,7 +29,26 @@ def build() -> str:
     source = source.replace("if __name__ == '__main__':\n    raise SystemExit(main())",
                             "if __name__ == '__main__':\n    SELF_SCRIPT = abs_path(sys.argv[1])\n    raise SystemExit(main(sys.argv[2:]))")
     compile(source, 'embedded-installer.py', 'exec')
-    return HEADER+source.rstrip()+'\n\nYOMI_INSTALL_PY\n'
+    return shell_header()+source.rstrip()+'\n\nYOMI_INSTALL_PY\n'
+
+
+def shell_header():
+    versions=json.loads((ROOT/'assets/scripts/runtime-versions.json').read_text(encoding='utf-8'))
+    cases=[]
+    for key,label in [('linux-x64','Linux-x86_64'),('linux-arm64','Linux-aarch64'),('darwin-x64','Darwin-x86_64'),('darwin-arm64','Darwin-arm64')]:
+        spec=versions['platforms'][key]['uv']
+        cases.append(f"      {label}) url='{spec['url']}';digest='{spec['sha256']}';;")
+    return (ROOT/'bootstrap/python.sh.in').read_text(encoding='utf-8').replace('@UV_CASES@','\n'.join(cases)).replace('@PYTHON_VERSION@',versions['python'])
+
+
+def powershell(shell):
+    source=shell.split("<<'YOMI_INSTALL_PY'\n",1)[1].rsplit('\nYOMI_INSTALL_PY',1)[0]
+    versions=json.loads((ROOT/'assets/scripts/runtime-versions.json').read_text(encoding='utf-8'))
+    cases=[]
+    for key,label in [('win32-x64','X64'),('win32-arm64','Arm64')]:
+        spec=versions['platforms'][key]['uv']
+        cases.append(f"                '{label}' {{ $url='{spec['url']}'; $digest='{spec['sha256']}' }}")
+    return (ROOT/'bootstrap/python.ps1.in').read_text(encoding='utf-8').replace('@UV_PS_CASES@','\n'.join(cases)).replace('@PYTHON_VERSION@',versions['python']).replace('@PYTHON_PAYLOAD@',base64.b64encode(source.encode('utf-8')).decode())
 
 
 def main():
@@ -56,13 +56,15 @@ def main():
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
     generated = build()
-    if args.check:
-        if not OUTPUT.exists() or OUTPUT.read_text(encoding='utf-8') != generated:
-            parser.exit(1, 'Standalone installer differs from maintained source. Rebuild it.\n')
-        print('Standalone installer matches maintained source.')
-    else:
-        OUTPUT.write_text(generated, encoding='utf-8')
-        print('Built '+str(OUTPUT))
+    outputs={OUTPUT:generated,OUTPUT.with_name('install_kotonoha.sh'):generated,
+             OUTPUT.with_name('install_kotonoha.ps1'):powershell(generated)}
+    for path,text in outputs.items():
+        if args.check:
+            if not path.exists() or path.read_text(encoding='utf-8') != text:
+                parser.exit(1,'Generated installer differs: '+str(path)+'\n')
+            print('Installer matches maintained source: '+path.name)
+        else:
+            path.write_text(text,encoding='utf-8');print('Built '+str(path))
 
 
 if __name__ == '__main__':

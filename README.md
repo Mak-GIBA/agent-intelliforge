@@ -47,10 +47,10 @@ bash install_all.sh --list
 bash install_all.sh --dry-run
 ```
 
-まず日本語の執筆・推敲を使うなら、`yomiyasu`だけを導入できます。
+まず日本語の執筆・推敲を使うなら、独自Skillの`kotonoha`を導入できます。必要なPython・Node.jsと検査ツールもユーザー専用領域へ自動で用意します。
 
 ```bash
-bash install_all.sh --only yomiyasu --apply
+bash install_all.sh --only kotonoha --apply
 ```
 
 画面の設計・検証も使う場合は、キットを組み合わせます。
@@ -71,13 +71,15 @@ bash install_all.sh --only ux-stack,yomiyasu --apply
 ```bash
 # cloneしたリポジトリで実行。uvの独立したツール環境にCLIを導入
 uv tool install .
-intelliforge inspect --only yomiyasu
-intelliforge install --only yomiyasu --apply
+intelliforge inspect --only kotonoha
+intelliforge install --only kotonoha --apply
 
 # Claude CodeはCodexを導入せず利用可能（試験対応）
-intelliforge inspect --agent claude --only yomiyasu
-intelliforge install --agent claude --only yomiyasu --apply
+intelliforge inspect --agent claude --only kotonoha
+intelliforge install --agent claude --only kotonoha --apply
 ```
+
+日本語キットだけなら、Pythonがない環境でも`bash install_kotonoha.sh --apply`、Windowsでは`.\install_kotonoha.ps1 --apply`で導入できます。
 
 WindowsではPowerShellから同じコマンドを実行できます。clone後の予定確認には`python intelliforge.py inspect`、導入には`install_all.ps1`も使えます。Pluginのフックやヘルパーを使う前に`uv tool install .`でCLIをPATHに登録してください。
 Windowsのcloneには`--config core.longpaths=true`を付け、保存済みの研究資料の長いパスを扱えるようにします。
@@ -185,7 +187,7 @@ WSLを起動し直し、Linux側で`free -h`と`swapon --show`を確認してく
 | `design-research` | [Design Research](docs/design-research/README.md) | コアロジックの方式を一次資料と実験で比較し、条件・結果・未検証事項を報告にまとめる。 |
 | `ecc` | [Codex ECC](docs/codex-ecc/README.md) | ECCの原本を保持し、Python実装、エラー処理、安全性レビューなどの手順を必要なときに読む。 |
 | `office` | [Office Workbench](docs/codex-office/README.md) | PDF・Word・PowerPointを読み、原本を保護しながら編集と差分・描画の確認を行う。 |
-| `yomiyasu` | [yomiyasuと補助Skill](docs/codex-yomiyasu/README.md) | 意味と条件を保って日本語を整え、段落の論旨や仕組みが伝わる説明にする。 |
+| `kotonoha`（旧ID: `yomiyasu`） | [kotonohaと日本語執筆](docs/codex-yomiyasu/README.md) | 意味と条件を保って日本語を整え、段落の論旨や仕組みが伝わる説明にする。 |
 | `herdr` | [Herdr](docs/herdr/README.md) | 作業ディレクトリに対応するターミナルworkspaceを開き、既存workspaceを再利用する。 |
 
 <a id="workflow"></a>
@@ -209,19 +211,19 @@ $design-research このプロジェクトの検索精度を改善する方法を
 ### 設計書を、仕組みが伝わる日本語にする
 
 ```text
-$yomiyasu この設計書を、技術用語と条件を保って、仕組みや実際の変化が伝わる日本語に整えて。
+$kotonoha この設計書を、技術用語と条件を保って、仕組みや実際の変化が伝わる日本語に整えて。
 ```
 
 全体の要件・設計はUpstream、特定の方式の比較はDesign Researchから始めます。
 たとえば検索アプリなら、検索方式の比較結果を全体設計へ反映し、UX Stackで検索画面と操作を確認できます。
-yomiyasuは設計書や報告文を仕上げる工程で使えます。
+kotonohaは設計書や報告文を仕上げる工程で使えます。
 
 各キットは単独でも利用できます。組み合わせる場合も、研究結果の採用、設計の承認、アプリの実装はそれぞれの手順に沿って進めます。
 [上流工程の使い方](docs/speckit-upstream/usage.md)と[研究テーマの分割・設計の見直し](docs/speckit-upstream/reassessment.md)に、連携の流れをまとめています。
 
 ## 導入と運用の設計
 
-- **必要なものから始める。** `--only`で導入対象を選べます。ECCの専門手順やyomiyasuの追加規範は、必要な場面で参照する構成です。
+- **必要なものから始める。** `--only`で導入対象を選べます。ECCの専門手順やkotonohaの追加規範は、必要な場面で参照する構成です。
 - **変更範囲を確認できる。** 導入ガイドに、取得元、配置先、既存設定の扱い、更新・解除の手順をまとめています。保護処理と任意機能はキットごとに異なります。
 - **検証の根拠を残す。** 自己テスト、回帰テスト、文章生成の比較評価などを、対象に合わせて用意しています。測定条件と未実施の範囲も確認できます。
 
@@ -243,7 +245,7 @@ yomiyasuは設計書や報告文を仕上げる工程で使えます。
 Design ResearchとUpstreamは固定版ベースを取得・照合して組み立てるため、オフライン利用には[個別の準備](docs/design-research/installation.md#組み立てとオフライン利用)が必要です。
 
 このリポジトリは、独自の作業手順と導入・管理ツールを、外部のSkill・Plugin・CLIと組み合わせています。
-Codex、Basic Memory、SpecKit、ECC、Playwright、yomiyasu等の上流プロジェクトは各提供元が管理しています。
+Codex、Basic Memory、SpecKit、ECC、Playwright、meiseki、yomiyasu等の上流プロジェクトは各提供元が管理しています。
 導入資材の提供元と独自機能の区分は、各キットの概要・導入ガイドに記載しています。
 
 <details>

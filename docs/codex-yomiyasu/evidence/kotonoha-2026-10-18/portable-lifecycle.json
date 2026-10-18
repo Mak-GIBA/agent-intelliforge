@@ -1,0 +1,34 @@
+{
+  "steps": [
+    {
+      "step": "install",
+      "exit_code": 0
+    },
+    {
+      "step": "rerun",
+      "exit_code": 0
+    },
+    {
+      "step": "update",
+      "exit_code": 0
+    },
+    {
+      "step": "upstream-only",
+      "exit_code": 0
+    },
+    {
+      "step": "doctor",
+      "exit_code": 0
+    },
+    {
+      "step": "kit-run-lint",
+      "exit_code": 0
+    },
+    {
+      "step": "uninstall",
+      "exit_code": 0
+    }
+  ],
+  "platform": "Linux native assets path; not a Windows execution",
+  "real_PC_updated": false
+}

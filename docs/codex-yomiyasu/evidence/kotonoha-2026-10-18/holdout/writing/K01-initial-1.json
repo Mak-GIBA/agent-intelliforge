@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 7.63,
+  "prompt_sha256": "6c0c1bddfd739fc79beadfc45ff9f585b845e8b46396c5fcc9caac3b3571bab2",
+  "output": "このサーバーでは、処理の受付と実行を分けています。サーバーは処理を受け付けるとIDを返し、ワーカーがキューに並んだ処理を取り出して順番に実行します。IDが返ってきた時点では、受付が済んだことを示すだけで、処理が正常に完了したとは限りません。\n\n処理の状態を確認するには、受け取ったIDを状態照会APIへ渡します。例えば、ある処理の受付後に「abc123」というIDが返されたと仮定すると、その「abc123」を使って状態を照会します。このIDは仮想の操作例です。\n\n処理にかかる時間は未測定です。完了したかどうかは、受付後の経過時間ではなく、状態照会APIで確認してください。",
+  "usage": {
+    "input_tokens": 24414,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 203,
+    "reasoning_output_tokens": 0
+  },
+  "tools": [],
+  "error": null,
+  "task": "K01",
+  "arm": "initial",
+  "repeat": 1,
+  "guide_characters": 10429
+}

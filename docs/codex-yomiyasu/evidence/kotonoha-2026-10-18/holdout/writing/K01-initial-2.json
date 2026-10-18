@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 9.98,
+  "prompt_sha256": "6c0c1bddfd739fc79beadfc45ff9f585b845e8b46396c5fcc9caac3b3571bab2",
+  "output": "このサーバーでは、処理の受付と実行が分かれています。サーバーは処理を受け付けるとIDを返します。受付時点では処理が成功して完了したとは限らないため、その後の状態をIDで確認します。\n\n受け付けた処理はキューに入り、実行を待ちます。ワーカーは、キューから処理を取り出して順番に実行する役割を担います。IDが返っても、すぐに処理が終わるとは限りません。完了までの所要時間は未測定です。\n\n処理の状態を確認するには、受付時に返されたIDを状態照会APIへ渡します。例えば、仮に受付時に`job-123`というIDが返された場合は、その`job-123`を状態照会APIに渡し、返された情報で処理の状態を確認します。受付の応答と、その後の状態照会を分けて扱うことが、このサーバーを使う際の基本です。",
+  "usage": {
+    "input_tokens": 22150,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 248,
+    "reasoning_output_tokens": 0
+  },
+  "tools": [],
+  "error": null,
+  "task": "K01",
+  "arm": "initial",
+  "repeat": 2,
+  "guide_characters": 10429
+}

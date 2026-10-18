@@ -1,0 +1,19 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 6.74,
+  "prompt_sha256": "51d7cff46df2a5c25d48c9284ce03bc3bec0df60839d916b3358186d9aee1c2c",
+  "output": "導入後、応答が速くなった。ただし、原因は未調査で、測定した時間の数値はない。効果が継続するかも分からない。",
+  "usage": {
+    "input_tokens": 83627,
+    "cached_input_tokens": 12288,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 48,
+    "reasoning_output_tokens": 0
+  },
+  "tools": [],
+  "error": null,
+  "task": "E08",
+  "arm": "stacked",
+  "repeat": 2,
+  "guide_characters": 89395
+}

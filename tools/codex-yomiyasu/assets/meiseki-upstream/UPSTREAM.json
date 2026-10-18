@@ -1,0 +1,13 @@
+{
+  "repository": "bamboo-nova/meiseki",
+  "tag": "v0.9.0",
+  "commit": "a6cac6e2cabe1d39a0c079a898749311c7fadbf5",
+  "files": {
+    "SKILL.md": "c21b3f92b335faaae829619539916fcf2d7998ac03e36f5ced5178d045b30192",
+    "references/patterns.md": "477845c9c8c2a56590f448be8c0ad664a4c0ad0875ae1ef6c8f9922c1f8d078b",
+    "references/textlint.config.json": "19b7592e0c6c711291e2634e488a65172c461ef6d6b9d20db98adac809c8bf29",
+    "references/markdownlint.config.jsonc": "632d6906a460b7b14c2ca95f20c35385679c1f19626ff63a6ad92893e172eba6",
+    "references/prh-llm-phrases.yml": "ba97e2adb6953edcdb62b1959f6958b4967bcbbf0503e3ed09253ce58d8d0fd2",
+    "LICENSE": "3cccb14e8dbb175e8cfb17f2a9e30897792052b7207514c75da24d98d3ba157f"
+  }
+}

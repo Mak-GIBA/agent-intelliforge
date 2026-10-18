@@ -1,0 +1,79 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 18.12,
+  "prompt_sha256": "d230f509084128bb4ca9416aab355db94295d4a7c86d4fad6f7314985e871142",
+  "output": "{\"ratings\":[{\"id\":\"O033\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"空欄の検査、送信停止、該当欄への表示と、事実性を確認しない範囲が明確。制作説明や不要な留保もない。\"},{\"id\":\"O034\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"再送の条件と断定、負荷増大の可能性を正確に保持している。ログについても、出力しないことを推奨しないという意味を保ち、必須化していない。\"},{\"id\":\"O035\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":4,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"CPU・メモリの競合と応答遅延の関係が具体的。編集の並列継続とビルド・テストの順次実行を区別し、提案の効果が未測定であることも明示している。\"},{\"id\":\"O036\",\"specificity\":4,\"causal_clarity\":4,\"reader_understanding\":4,\"naturalness\":4,\"information_efficiency\":3,\"paragraph\":4,\"meaning_preservation\":4,\"reader_boundary\":4,\"meaning_errors\":[],\"requester_residue\":[],\"reason\":\"方式名を伏せる目的と提示順を変える目的をそれぞれ説明し、評価観点の意味、影響除去の限界、未実施であることも明確。「分けて確認します」と「この2つを別々に評価します」は重複している。\"}]}",
+  "usage": {
+    "input_tokens": 18402,
+    "cached_input_tokens": 0,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 728,
+    "reasoning_output_tokens": 237
+  },
+  "tools": [],
+  "error": null,
+  "labels": [
+    "O033",
+    "O034",
+    "O035",
+    "O036"
+  ],
+  "ratings": [
+    {
+      "id": "O033",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "空欄の検査、送信停止、該当欄への表示と、事実性を確認しない範囲が明確。制作説明や不要な留保もない。"
+    },
+    {
+      "id": "O034",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "再送の条件と断定、負荷増大の可能性を正確に保持している。ログについても、出力しないことを推奨しないという意味を保ち、必須化していない。"
+    },
+    {
+      "id": "O035",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 4,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "CPU・メモリの競合と応答遅延の関係が具体的。編集の並列継続とビルド・テストの順次実行を区別し、提案の効果が未測定であることも明示している。"
+    },
+    {
+      "id": "O036",
+      "specificity": 4,
+      "causal_clarity": 4,
+      "reader_understanding": 4,
+      "naturalness": 4,
+      "information_efficiency": 3,
+      "paragraph": 4,
+      "meaning_preservation": 4,
+      "reader_boundary": 4,
+      "meaning_errors": [],
+      "requester_residue": [],
+      "reason": "方式名を伏せる目的と提示順を変える目的をそれぞれ説明し、評価観点の意味、影響除去の限界、未実施であることも明確。「分けて確認します」と「この2つを別々に評価します」は重複している。"
+    }
+  ]
+}

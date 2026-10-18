@@ -66,12 +66,15 @@
 # Edit: tools/codex-office/kit.json
 # Inspect: intelliforge inspect --only office
 # Regenerate: python tools/intelliforge/build.py
-# Kit: yomiyasu — yomiyasu writing skills
-# Skills: yomiyasu, paragraph-writing, japanese-direct-writing
+# Kit: yomiyasu — kotonoha Japanese writing
+# Skills: kotonoha, yomiyasu, paragraph-writing, japanese-direct-writing
 # Source: https://github.com/nanaism/yomiyasu (latest stable upstream release; local writing rules have independent version)
+# Source: https://github.com/bamboo-nova/meiseki (latest stable release; normative changes require reviewed adapter)
+# Destination: {skills_home}/kotonoha
 # Destination: {skills_home}/yomiyasu
 # Destination: {skills_home}/paragraph-writing
 # Destination: {skills_home}/japanese-direct-writing
+# Destination: {skills_home}/../.kotonoha-runtime
 # Settings: none
 # Edit: tools/codex-yomiyasu/kit.json
 # Inspect: intelliforge inspect --only yomiyasu
@@ -149,9 +152,11 @@ while [[ $# -gt 0 ]]; do
       [[ "$2" =~ ^[a-z][a-z0-9-]*(,[a-z][a-z0-9-]*)*$ ]] || bulk_error "--only はツールIDをカンマ区切りで指定してください。"
       IFS=',' read -r -a requested_tools <<< "$2"
       for requested_tool in "${requested_tools[@]}"; do
+        [[ "$requested_tool" != kotonoha ]] || requested_tool=yomiyasu
         bulk_known_tool "$requested_tool" || bulk_error "不明なツールID: $requested_tool（--listで確認）"
       done
-      BULK_ONLY="${BULK_ONLY:+$BULK_ONLY,}$2"
+      normalized_tools=${2//kotonoha/yomiyasu}
+      BULK_ONLY="${BULK_ONLY:+$BULK_ONLY,}$normalized_tools"
       shift 2
       ;;
     --list) BULK_LIST=1; shift ;;
