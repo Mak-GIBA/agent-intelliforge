@@ -1,10 +1,12 @@
-# Design Research 2.5.0 — single-entry workflow
+# Design Research 2.6.0 — single-entry workflow
 
 **Codexで使うのは `$design-research` だけです。** `$upstream-new` / `$upstream-change` はシステム全体の要件→設計→検証を担当し、その途中で本Skillの研究機能を使います。
 
 短い指示例: `$design-research 検索精度を改善して`、`$design-research 前回の検討を見直して`、`$design-research 研究状況を教えて`。
 
 内部では `research`, `plan`, `workstream`, `reassess`, `resume`, `status` に振り分けます。新機能全体は要件整理→コアロジック分解→テーマ単位の研究→統合設計→検証計画の順。選択根拠・止める箇所は `overlay/tools/design-research/skill/references/workflow-guide.md` を参照。
+
+2.6.0 / Upstream 2.1.0では、確認ページを`overview`へ集約し、新規研究の実行記録を`.artifacts/design-research/`へ分離します。採用runは`export-evidence`で依存ファイルを固定し、`verify-evidence`でclone後も照合できます。保守元は`navigation_upgrade.py`、共通のパス解決・証拠処理とUpstreamの追加モジュールは`overlay/`、Skillの短縮は`skill_compaction.py`です。旧run・v1/v2 binding・旧承認のハッシュは維持し、v3 bindingの設計だけ実際の証拠ハッシュを承認に含めます。
 
 従来2.3.0でインストールした5つのショートカットSkillは、次の更新時に **改変のない所有済みフォルダだけ** バックアップへ退避してSkill一覧を簡潔にします。個別に編集したもの・所有者不明な同名フォルダは保存します。機能は共通Skillから使えます。
 

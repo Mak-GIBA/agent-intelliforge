@@ -53,11 +53,11 @@ def load_previous(project: Path, previous: str, slug: str) -> dict:
     if path.name != "state.json" or path.parent.name != run_id or path.parent.parent.name != "runs":
         raise ValueError("--prior-run must be the exact runs/<run-id>/state.json")
     workspace = path.parents[2]
-    if workspace.parent != project / "docs/design-research":
-        raise ValueError("Previous run must be within docs/design-research/<topic>")
+    from workspace_paths import state_identity
+    state_identity(project,path)
     if not SLUG.fullmatch(slug) or slug == workspace.name:
         raise ValueError("Use a new safe slug; never overwrite the earlier topic report")
-    if (project / "docs/design-research" / slug).exists():
+    if (project / "docs/design-research" / slug).exists() or (project / ".artifacts/design-research" / slug).exists():
         raise ValueError("Reassessment needs a new topic directory")
     if state.get("status") != "research_complete" or not isinstance(state.get("dossier"), dict):
         raise ValueError("Previous research is not complete; use resume for an interrupted run")

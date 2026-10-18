@@ -51,6 +51,10 @@ def main(argv=None)->int:
     sub.add_parser('commands',help='Codexで使える定型Skillを一覧表示')
     q=sub.add_parser('flow',help='選んだ作業モードの固定手順を表示。モデルは起動しない')
     q.add_argument('--project',default='.');q.add_argument('--mode',choices=MODES+['check'],required=True)
+    q.add_argument('--brief',action='store_true')
+    q=sub.add_parser('overview',help='確認対象・状態・次の操作を表示。既定は読み取りのみ')
+    q.add_argument('--project',default='.')
+    q.add_argument('--json',action='store_true');q.add_argument('--write',action='store_true')
     q=sub.add_parser('gate',help='上流文書のready構造検査。アプリの動作確認ではない')
     q.add_argument('--project',default='.')
     g=q.add_mutually_exclusive_group();g.add_argument('--write',action='store_true');g.add_argument('--verify',action='store_true')
@@ -91,13 +95,22 @@ def main(argv=None)->int:
                 raise WorkbenchError('移行を中断しました。適用途中の変更は復元します')
             previous=signal.signal(signal.SIGTERM,interrupted)
             try:
-                print(json_text(migrate(root,a.apply,a.include_doc)));return 0
+                data=migrate(root,a.apply,a.include_doc)
+                if a.apply:
+                    from .overview import refresh
+                    refresh(root)
+                print(json_text(data));return 0
             finally:
                 signal.signal(signal.SIGTERM,previous)
         if a.cmd=='commands':
             for name,(_,desc) in COMMANDS.items():print('$'+name+' : '+desc)
             return 0
-        if a.cmd=='flow':print(flow(root,a.mode));return 0
+        if a.cmd=='flow':print(flow(root,a.mode,a.brief));return 0
+        if a.cmd=='overview':
+            from .overview import overview, render, write
+            data=overview(root)
+            if a.write:write(root,data)
+            print(json_text(data) if a.json else render(data));return 0
         if a.cmd=='gate':
             result=verify_gate(root) if a.verify else run_gate(root,a.write)
             if a.json:print(json_text(result))
@@ -106,6 +119,9 @@ def main(argv=None)->int:
                 print('snapshot: '+result['fingerprint'])
                 for f in result['findings']:print(f"[{f['severity']}] {f['code']} {f['item']}: {f['message']}")
                 print(result['scope'])
+            if a.write:
+                from .overview import refresh
+                refresh(root)
             return 0 if result['passed'] else 1
         if a.cmd=='doctor':return doctor(root)
         if a.cmd=='paths':
@@ -144,12 +160,18 @@ def main(argv=None)->int:
                 print(result['verdict']+f" | items={len(result['items'])}, errors={result['errors']}, warnings={result['warnings']}")
                 for f in result['findings']:print(f"[{f['severity']}] {f['code']} {f['item']}: {f['message']}")
                 print(result['scope'])
+            if getattr(a,'write',False):
+                from .overview import refresh
+                refresh(root)
             return 1 if result['errors'] else 0
         elif a.cmd=='item':add_item(root,a.type,a.id,a.title,a.parent,a.file,a.apply)
         elif a.cmd=='register-doc':register_doc(root,a.file,a.apply)
         elif a.cmd=='uninstall':
             from .installer import uninstall
             uninstall(a.apply)
+        if root and (getattr(a,'apply',False) or getattr(a,'write',False)) and a.cmd!='uninstall':
+            from .overview import refresh
+            refresh(root)
     except (WorkbenchError,OSError,ValueError) as exc:
         print('ERROR: '+str(exc),file=sys.stderr);return 2
     return 0

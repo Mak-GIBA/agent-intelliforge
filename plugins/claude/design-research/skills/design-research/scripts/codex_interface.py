@@ -67,8 +67,8 @@ def read(root, name):
 def state_record(root, name):
     path = safe(root, name)
     rel = path.relative_to(root).parts
-    if len(rel) != 6 or rel[:2] != ('docs', 'design-research') or rel[3] != 'runs' or rel[5] != 'state.json':
-        raise ValueError('Use docs/design-research/<topic>/runs/<run-id>/state.json')
+    from workspace_paths import state_identity
+    state_identity(root,path)
     raw = read(root, name)
     state = json.loads(raw)
     if not isinstance(state, dict) or state.get('schema_version') != 1:
@@ -106,7 +106,8 @@ def runs(root, topic=None):
     base = safe(root, 'docs/design-research')
     records, warnings = [], []
     count = 0
-    for path in sorted(base.glob('*/runs/*/state.json')):
+    from workspace_paths import state_paths
+    for path in state_paths(root):
         count += 1
         if count > 500:
             warnings.append('Run scan limited to 500 records; use an exact --prior-run/--run-id')
@@ -134,7 +135,7 @@ def fresh_slug(root, base):
     for i in range(1, 1000):
         suffix = '' if i == 1 else '-' + str(i)
         slug = base[:64-len(suffix)].rstrip('-') + suffix
-        if not safe(root, 'docs/design-research/'+slug).exists():
+        if not safe(root, 'docs/design-research/'+slug).exists() and not safe(root,'.artifacts/design-research/'+slug).exists():
             return slug
     raise ValueError('Cannot find a fresh topic name')
 
@@ -198,7 +199,8 @@ def prepare(args):
             # Search path IDs directly when the general listing was capped.
             if not re.fullmatch(r'[A-Za-z0-9_-]{1,80}', args.run_id):
                 raise ValueError('Unsafe run ID')
-            rows = [state_record(root, str(p)) for p in safe(root, 'docs/design-research').glob('*/runs/'+args.run_id+'/state.json')]
+            from workspace_paths import state_paths
+            rows = [state_record(root,str(p)) for p in state_paths(root,args.run_id)]
         elif warnings:
             raise SelectionNeeded('Run scan incomplete; select an exact --run-id', warnings)
         row = choose([r for r in rows if r['resume_eligible']], 'Choose an interrupted run; completed work uses reassess')
@@ -249,7 +251,7 @@ def prepare(args):
                 or args.report_profile is not None or args.evaluation_purpose is not None):
             raise ValueError('A workstream uses frozen plan inputs; edit and revalidate the plan instead')
         brief, slug, requirement, target = task['question'], task['slug'], plan['requirements']['path'], task.get('target_methods', 5)
-        if safe(root, 'docs/design-research/'+slug).exists():
+        if safe(root, 'docs/design-research/'+slug).exists() or safe(root,'.artifacts/design-research/'+slug).exists():
             raise ValueError('This task topic already exists; resume it or create a new reassessment plan/slug')
         if mode == 'reassess':
             prior = state_record(root, task['prior_run'])
@@ -274,7 +276,7 @@ def prepare(args):
             if args.prior_run or args.run_id:
                 raise ValueError('Previous-run input belongs to reassess or resume')
             slug = args.slug or fresh_slug(root, 'research')
-        if not SLUG.fullmatch(slug) or safe(root, 'docs/design-research/'+slug).exists():
+        if not SLUG.fullmatch(slug) or safe(root, 'docs/design-research/'+slug).exists() or safe(root,'.artifacts/design-research/'+slug).exists():
             raise ValueError('Use a fresh safe topic slug')
         requirement = requirements_path(root, args.requirements, prior)
         extras = []

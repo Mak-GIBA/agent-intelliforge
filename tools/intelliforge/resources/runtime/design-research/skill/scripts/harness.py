@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Bounded core-logic research/improvement and independent verifier (stdlib only)."""
 from __future__ import annotations
+from workspace_paths import topic_workspace
+from runtime import atomic_bytes
 
 import argparse
 import collections
@@ -39,7 +41,7 @@ from reassessment import snapshot_requirements
 from research_workstreams import snapshot_task, role_instructions as workstream_instructions
 
 HERE = Path(__file__).resolve().parent
-VERSION = "2.5.0"
+VERSION = "2.6.0"
 SEVERITIES = ["Critical", "High", "Medium", "Low"]
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}")
 
@@ -252,8 +254,7 @@ Do not run checks yourself; the parent executes them in an isolated workspace.""
         inputs.pop("proposal_design", None)
     for key in ("reassessment_context", "requirements_context", "workstream_context"):
         inputs[key] = state.get(key)
-    inputs["workspace"] = str(Path(state["config"]["project"]) / "docs/design-research" /
-                              state["config"]["slug"])
+    inputs["workspace"] = str(topic_workspace(state["config"]["project"], state["config"]["slug"]))
     inputs["skill_directory"] = str(HERE.parent)
     inputs["ledger_contract"] = str(HERE.parent / "references/evidence-format.md")
     from evaluation_contract import instructions as evaluation_instructions
@@ -284,6 +285,7 @@ def run_role(role, schema, state, workspace, run_dir):
         argv.extend(["--model", state["config"]["model"]])
     # Codex reads '-' from stdin; large dossiers must not become one OS argument.
     argv.extend(["--", "-"])
+    atomic_bytes(role_dir / "prompt.txt", scrub(prompt).encode("utf-8"))
     atomic_json(role_dir / "invocation.json", {"role": role, "started_at": now(),
                 "sandbox": "workspace-write" if role == "fixer" else "read-only",
                 "model": state["config"].get("model") or "inherited Codex configuration",
@@ -382,7 +384,7 @@ def design_format(value, state):
             raise Blocked("Comparison design format: candidate IDs/baseline differ from frozen evaluation")
     if not state.get("execution_contract_version"):
         require_method_report(draft, state)
-        require_contract(draft, state, Path(state["config"]["project"]) / "docs/design-research" / state["config"]["slug"])
+        require_contract(draft, state, topic_workspace(state["config"]["project"], state["config"]["slug"]))
 
 
 def bounded_instructions(role, state):
@@ -827,6 +829,10 @@ def experiments(state, workspace, run_dir):
                     raise Blocked("PoC input would overwrite generated code")
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, dest)
+                archived = regular_path(directory / "inputs" / name)
+                archived.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, archived)
+                add_record(state, workspace, archived, kind="experiment_input", description=f"Frozen experiment input: {name}")
             env = test_environment(scratch)
             execute_check(experiment["command"], experiment["check_ids"], state, workspace,
                           directory, scratch, env, experiment_id=experiment["id"],
@@ -1418,9 +1424,7 @@ def scoped_review_format(value, state):
         scoped["review"]["issues"] = [r for r in scoped["review"]["issues"]
             if set(r["check_ids"]) & set(state["unit_task"]["criterion_ids"])]
     try:
-        validate_review(value, scoped, Path(state["config"]["project"]) / "docs/design-research" /
-                        state["config"]["slug"], Path(state["config"]["project"]) / "docs/design-research" /
-                        state["config"]["slug"] / "runs" / state["run_id"])
+        validate_review(value, scoped, topic_workspace(state["config"]["project"], state["config"]["slug"]), topic_workspace(state["config"]["project"], state["config"]["slug"]) / "runs" / state["run_id"])
     except Blocked as exc:
         raise Blocked("Scoped review format: " + str(exc)) from exc
     # The parent now owns captured passages. Subsequent assembly cites those
@@ -1572,6 +1576,7 @@ def execution(args):
     project = regular_path(args.project)
     if not project.is_dir():
         raise Blocked("Project directory does not exist")
+    from workspace_paths import topic_workspace, state_paths
     parent = regular_path(project / "docs/design-research")
     parent.mkdir(parents=True, exist_ok=True)
     lock_path = regular_path(parent / ".gan.lock")
@@ -1585,7 +1590,7 @@ def execution(args):
         if args.mode == "resume":
             if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", args.run_id):
                 raise Blocked("Invalid run ID")
-            matches = list(parent.glob("*/runs/" + args.run_id + "/state.json"))
+            matches = state_paths(project, args.run_id)
             if len(matches) != 1:
                 raise Blocked("Run ID was not found uniquely in this project")
             state_path = regular_path(matches[0])
@@ -1628,7 +1633,7 @@ def execution(args):
                 else:
                     state["phase"] = "proposal" if state["config"]["mode"] == "research" else "checks"
         else:
-            workspace = regular_path(parent / args.slug)
+            workspace = regular_path(topic_workspace(project, args.slug, create=True))
             workspace.mkdir(parents=True, exist_ok=True)
             from layout import initialize
             initialize(workspace)
@@ -1769,6 +1774,10 @@ def parser():
 
 
 def main(argv=None):
+    argv=list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] and argv[0] in {"export-evidence","verify-evidence"}:
+        from published_evidence import main as evidence_main
+        return evidence_main(argv)
     args = parser().parse_args(argv)
     if args.mode == "migrate":
         from migration import migrate

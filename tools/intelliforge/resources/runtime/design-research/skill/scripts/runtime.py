@@ -142,7 +142,10 @@ def fingerprint(project, output):
     excluded = output.relative_to(project).as_posix() + "/"
     files = {}
     for name in names:
-        if name.startswith(excluded) or name == "docs/design-research/.gan.lock":
+        from workspace_paths import split, public_topic
+        public_excluded = public_topic(output).relative_to(project).as_posix()+"/" if split(output) else excluded
+        from workspace_paths import generated_navigation
+        if name.startswith((excluded, public_excluded)) or name == "docs/design-research/.gan.lock" or generated_navigation(project, name):
             continue
         path = project / relative(name)
         if path.is_symlink():

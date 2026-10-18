@@ -415,6 +415,20 @@ class BoundedPipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(rt.Blocked, 'current matching parent record'):
             evaluate(draft, copy.deepcopy(invalid), self.workspace)
 
+    def test_completed_measured_run_exports_the_full_recorded_dependency_closure(self):
+        self.test_effectiveness_runs_real_algorithms_and_parent_grades_outputs()
+        self.state['schema_version']=1
+        h.save(self.state,self.run)
+        from report import publish
+        publish(self.state,self.workspace,self.run)
+        from published_evidence import export,verify
+        exported=export(self.project,'demo','run1',True)
+        package=self.project/exported['package'];manifest=verify(package)
+        self.assertIn('runs/run1/001-experiments/E1/artifacts/results.json',manifest['files'])
+        self.assertIn('runs/run1/001-experiments/E1/code/compare.py',manifest['files'])
+        self.assertIn('runs/run1/001-experiments/E1/stdout.log',manifest['files'])
+        self.assertIn('runs/run1/001-experiments/E1/stderr.log',manifest['files'])
+
     def test_run_fixes_source_then_requires_fresh_success_and_resolution(self):
         self.project_files({
             "app.py": "answer=0\n",

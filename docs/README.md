@@ -28,6 +28,8 @@ Linux / WSL2でCodexへ導入する場合は[一括インストール](installat
 
 ### Design ResearchとUpstreamを組み合わせる
 
+まず[出力先と確認の順序](upstream-research-workflow.md)を読み、対象アプリの確認ページから正本・研究報告・採用した証拠へ進みます。8つのコマンドの確認事項と、予約管理・検索改善の具体例をまとめています。
+
 機能・システム全体の設計は`$upstream-new`・`$upstream-change`、特定の方式の研究は`$design-research`から始めます。
 短い依頼から、ストーリー・懸念・ユースケース・要件、テーマ別研究、統合設計、検証計画へ進みます。
 

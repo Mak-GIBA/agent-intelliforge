@@ -53,7 +53,7 @@ def bindings(text):
     if len(matches) != 1:
         raise ValueError("design.md needs exactly one design-research JSON binding")
     data = json.loads(matches[0])
-    if not isinstance(data, dict) or type(data.get('schema_version')) is not int or data['schema_version'] not in {1, 2}:
+    if not isinstance(data, dict) or type(data.get('schema_version')) is not int or data['schema_version'] not in {1, 2, 3}:
         raise ValueError("Unsupported design-research binding schema")
     return data
 
@@ -65,7 +65,7 @@ def validate_binding(root, data, design_ids, canonical_requirements=None):
         deps.add(path)
         return read(root, name)
     plan = None
-    if data.get('schema_version') == 2:
+    if (data.get('schema_version') == 2 or (data.get('schema_version') == 3 and 'workstream_plan' in data)):
         try:
             from .research_workstreams import load_plan
         except ImportError:  # direct-module unit tests only
@@ -90,6 +90,17 @@ def validate_binding(root, data, design_ids, canonical_requirements=None):
     for binding in runs:
         if not isinstance(binding, dict):
             raise ValueError("Research binding must be an object")
+        if data.get('schema_version') == 3:
+            from .published_evidence import verify
+            manifest_path = local_file(root,binding.get('evidence_manifest'))
+            manifest_raw = load(binding['evidence_manifest'])
+            if sha(manifest_raw) != binding.get('evidence_manifest_sha256'):
+                raise ValueError('Published manifest binding changed')
+            package = verify(manifest_path.parent)
+            prefix = manifest_path.parent/'files'
+            if local_file(root,binding.get('state')) != prefix/package['state'] or local_file(root,binding.get('report')) != prefix/package['report']:
+                raise ValueError('Binding does not identify the published run')
+            deps.update(prefix/name for name in package['files'])
         raw = load(binding.get('state'))
         state = json.loads(raw)
         if not isinstance(state, dict) or state.get('schema_version') != 1:
@@ -100,7 +111,7 @@ def validate_binding(root, data, design_ids, canonical_requirements=None):
         state_path = Path(binding['state'])
         if (state_path.name != 'state.json' or state_path.parent.name != state.get('run_id')
                 or state_path.parent.parent.name != 'runs'
-                or state_path.parents[2].parent != Path('docs/design-research')):
+                or (data.get('schema_version') != 3 and state_path.parents[2].parent not in {Path('docs/design-research'),Path('.artifacts/design-research')})):
             raise ValueError("Research state must identify an exact docs/design-research topic/run")
         report = binding.get('report')
         expected = {str(state_path.parent / 'reports/report.md'),
@@ -264,10 +275,10 @@ def inspect_design_documents(root, items, phase='draft', canonical_requirements=
                 finding('既存文書は保持します。新たな方式設計・To-Be変更時に図解と研究実行の契約を追加してください。', True)
                 continue
             data = bindings(text)
-            if WORKSTREAM_MARKER in text and data.get('schema_version') != 2:
+            if WORKSTREAM_MARKER in text and data.get('schema_version') not in {2, 3}:
                 raise ValueError('New workstream design marker requires a v2 binding')
             validate_binding(root, data, ids, canonical_requirements)
-            if data.get('schema_version') == 2:
+            if (data.get('schema_version') == 2 or (data.get('schema_version') == 3 and 'workstream_plan' in data)):
                 known = {r['id'] for r in items if r.get('type') == 'verification' and r.get('status') != 'retired'}
                 if set(data['integration']['verification_ids']) - known:
                     raise ValueError('Integration refers to an unknown active verification ID')
@@ -291,7 +302,7 @@ def dependency_files(root, documents):
                 rel = absolute.relative_to(Path(os.path.abspath(root))).as_posix()
                 paths.add(local_file(root, rel))
             data = bindings(text)
-            if data.get('schema_version') == 2:
+            if (data.get('schema_version') == 2 or (data.get('schema_version') == 3 and 'workstream_plan' in data)):
                 plan_ref = data['workstream_plan']['path']
                 paths.add(local_file(root, plan_ref))
                 plan = json.loads(read(root, plan_ref))
@@ -302,6 +313,11 @@ def dependency_files(root, documents):
                 for name in data.get('integration', {}).get('artifacts', []):
                     paths.add(local_file(root, name))
             for row in data.get('runs', []):
+                if data.get('schema_version') == 3:
+                    manifest=local_file(root,row['evidence_manifest'])
+                    paths.add(manifest)
+                    package=json.loads(read(root,row['evidence_manifest']))
+                    paths.update(local_file(root,(manifest.parent/'files'/name).relative_to(root).as_posix()) for name in package['files'])
                 for key in ('state', 'report'):
                     paths.add(local_file(root, row[key]))
                 state = json.loads(read(root, row['state']))

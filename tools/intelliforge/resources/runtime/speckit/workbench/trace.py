@@ -31,7 +31,8 @@ def documents(root: Path, config: dict) -> list[Path]:
         p=inside(root,rel)
         if not p.is_file(): raise WorkbenchError(f'登録文書がありません: {p}')
         files.add(p)
-    return sorted(files)
+    from .overview import owned_navigation
+    return sorted(p for p in files if not owned_navigation(root,p))
 
 
 def parse_file(root:Path,path:Path,scoped:bool|None=None)->tuple[list[dict],list[dict]]:
@@ -97,6 +98,11 @@ def parse_file(root:Path,path:Path,scoped:bool|None=None)->tuple[list[dict],list
         else:
             item['_document_prose']=document_prose
             item['_prose_sha256']=prose_hash
+    from .overview import evidence_hashes
+    hashes=evidence_hashes(root,path,text)
+    if hashes is not None:
+        for item in items:
+            if item.get("type") in {"design","decision"}:item["_evidence_hashes"]=hashes
     return items,findings
 
 

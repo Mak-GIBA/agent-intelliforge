@@ -24,7 +24,10 @@ DESCRIPTIONS = {
     'check': '上流文書の構造と内容を点検する。アプリの動作テストではない。',
 }
 
-def flow(root: Path, mode: str) -> str:
+def flow(root: Path, mode: str, brief: bool=False) -> str:
+    if brief:
+        from .overview import brief_flow
+        return brief_flow(root,mode)
     if mode not in DESCRIPTIONS:
         raise WorkbenchError('未対応のワークフローです')
     p=inside(root,'.specify/workbench.json')
