@@ -1,5 +1,7 @@
 # インストール・更新・解除
 
+[English](../en/codex-github-pm/installation.md) | **日本語**
+
 [docs一覧](../README.md) · [概要](README.md) · [使い方](usage.md) · [記録方針と検証](behavior.md)
 
 ## 前提条件
@@ -8,7 +10,7 @@
 - SkillとCodex共通指示の配置先への書き込み権限。既定の配置先では管理者権限は不要です。
 - GitHub操作時には、対象にアクセスできるGitHub CLIまたは既存GitHub MCPの認証とネットワーク接続。
 
-[トップREADMEの取得手順](../../README.md#はじめに)でリポジトリを取得し、ルートで実行します。
+[トップREADMEの取得手順](../../README.ja.md#はじめに)でリポジトリを取得し、ルートで実行します。
 スクリプト単体を保存した場合は、その保存先で実行してください。
 Skillの配置だけならオフラインで可能です。Codex本体は別途必要です。
 

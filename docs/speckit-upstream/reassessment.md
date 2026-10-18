@@ -1,5 +1,7 @@
 # 既存要件・設計の見直しとDesign Researchの使い方
 
+[English](../en/speckit-upstream/reassessment.md) | **日本語**
+
 [概要](README.md) · [使い方](usage.md) · [導入手順](installation.md) · [Design Research](../design-research/README.md)
 
 既存の要件が今も必要か、評価方法が適切か、より精度を出せる実現方式があるかを、目的と根拠から見直します。

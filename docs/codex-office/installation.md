@@ -1,5 +1,7 @@
 # Office Workbenchのインストール・更新・解除
 
+[English](../en/codex-office/installation.md) | **日本語**
+
 [概要](README.md) · [使い方](usage.md)
 
 ## 前提と導入

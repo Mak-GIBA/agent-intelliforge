@@ -1,5 +1,7 @@
 # kotonohaのインストール・更新・解除
 
+[English](../en/codex-yomiyasu/installation.md) | **日本語**
+
 [概要](README.md) · [使い方](usage.md) · [検証結果](kotonoha-validation.md)
 
 ## 前提と導入

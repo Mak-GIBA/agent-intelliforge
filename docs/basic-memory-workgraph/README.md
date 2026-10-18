@@ -1,5 +1,7 @@
 # Basic Memory Workgraph
 
+[English](../en/basic-memory-workgraph/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方と設定](usage.md)
 
 Codexでの作業から、次の仕事にも役立つ知識をBasic Memoryへ蓄積するためのツールです。

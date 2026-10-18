@@ -1,5 +1,7 @@
 # Codex UX Stack：使い方
 
+[English](../en/codex-ux-stack/usage.md) | **日本語**
+
 [概要](README.md) · [導入手順](installation.md) · [検証範囲](validation.md) · [docs一覧](../README.md)
 
 ## 新規アプリを設計・実装する

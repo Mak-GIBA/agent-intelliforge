@@ -1,5 +1,7 @@
 # Herdr — 作業ディレクトリからターミナルを開く
 
+[English](../en/herdr/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md)
 
 プロジェクトへ移動して`herdr`を実行すると、そのディレクトリに対応するworkspaceを開けるようにします。workspaceはHerdrで作業するターミナルのまとまりです。

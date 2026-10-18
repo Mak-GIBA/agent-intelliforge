@@ -1,5 +1,7 @@
 # Design Research
 
+[English](../en/design-research/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md) · [検証結果](validation.md)
 
 検索・抽出・分類・推論など、プロジェクトの目的を支えるコアロジックの方式を比較し、根拠と検証結果から改善案をまとめるCodex用キットです。

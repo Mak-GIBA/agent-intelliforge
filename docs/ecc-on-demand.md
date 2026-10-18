@@ -1,5 +1,7 @@
 # ECCを必要なときに読む
 
+[English](en/ecc-on-demand.md) | **日本語**
+
 ECCの原本をCodex標準プラグインのキャッシュに残し、初期スキル一覧には短い入口だけを載せます。
 Python 3.11以降、Linux / WSL2、導入済みのCodexとネイティブECCプラグインが必要です。
 

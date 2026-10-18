@@ -1,5 +1,7 @@
 # HerdrのインストールとBash設定
 
+[English](../en/herdr/installation.md) | **日本語**
+
 [概要](README.md) · [使い方](usage.md)
 
 ## 前提と導入

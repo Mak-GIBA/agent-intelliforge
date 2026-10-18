@@ -1,5 +1,7 @@
 # SpecKit Upstream
 
+[English](../en/speckit-upstream/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md) · [既存要件・設計の見直し](reassessment.md)
 
 実装前に、利用者の目的・懸念・ユースケースから要件を整理し、方式研究を根拠に全体設計と検証計画を作る環境です。

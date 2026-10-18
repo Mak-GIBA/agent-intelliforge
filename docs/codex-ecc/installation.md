@@ -1,5 +1,7 @@
 # ECCのインストール・更新・復元
 
+[English](../en/codex-ecc/installation.md) | **日本語**
+
 [概要](README.md) · [使い方](usage.md)
 
 ## 前提条件

@@ -1,5 +1,7 @@
 # ディレクトリに対応するHerdrを開く
 
+[English](../en/herdr/usage.md) | **日本語**
+
 [概要](README.md) · [導入手順](installation.md)
 
 ## 日常の操作

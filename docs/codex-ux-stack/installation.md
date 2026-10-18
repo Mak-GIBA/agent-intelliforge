@@ -1,5 +1,7 @@
 # Codex UX Stack：インストール・更新・解除
 
+[English](../en/codex-ux-stack/installation.md) | **日本語**
+
 [概要](README.md) · [使い方](usage.md) · [検証範囲](validation.md) · [docs一覧](../README.md)
 
 ## 前提条件と導入

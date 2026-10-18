@@ -1,5 +1,7 @@
 # Basic Memory Workgraphで構築されるナレッジグラフ
 
+[English](../en/basic-memory-workgraph/knowledge-graph.md) | **日本語**
+
 [概要](README.md) · [使い方と設定](usage.md) · [保存方針・仕組み](reference.md) · [docs一覧](../README.md)
 
 Workgraphでは、作業から得たルール、手順、検証方法や修正指示をMarkdownノートに残し、根拠になった事例や成果物との関係を記録します。

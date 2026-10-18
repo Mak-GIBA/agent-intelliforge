@@ -1,5 +1,7 @@
 # Office Workbenchで文書を扱う
 
+[English](../en/codex-office/usage.md) | **日本語**
+
 [概要](README.md) · [導入手順](installation.md)
 
 ## 最初の依頼

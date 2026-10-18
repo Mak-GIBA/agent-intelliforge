@@ -1,5 +1,7 @@
 # SpecKit Upstream：インストール・更新・解除
 
+[English](../en/speckit-upstream/installation.md) | **日本語**
+
 [概要と収録ツール](README.md) · [使い方](usage.md) · [docs一覧](../README.md)
 
 ## 前提条件
@@ -10,7 +12,7 @@
 - Skillを使うためのCodex環境。Codex自体はインストールしません。
 
 sudoは使わず通常ユーザーで実行します。必要なら`PYTHON_BIN`でPython実行ファイルを指定できます。
-リポジトリの取得方法は[トップREADME](../../README.md)を参照してください。
+リポジトリの取得方法は[トップREADME](../../README.ja.md)を参照してください。
 以下はスクリプトのあるディレクトリで実行します。
 
 配布版2.0.6は、固定版へ同梱の更新資材を適用する組み立て用スクリプトです。

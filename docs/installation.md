@@ -1,6 +1,8 @@
 # キットを選んでインストールする
 
-[リポジトリ概要](../README.md) · [docs一覧](README.md)
+[English](en/installation.md) | **日本語**
+
+[リポジトリ概要](../README.ja.md) · [docs一覧](README.md)
 
 [`install_all.sh`](../install_all.sh)では、`--only`で必要なキットを選ぶか、全キットを一括導入できます。
 選んだキットの個別インストーラーを順番に呼び出すため、取得元、配置先、既存ファイルの保護方法はキットごとに異なります。導入前に予定を確認し、`--apply`で適用します。

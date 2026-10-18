@@ -1,5 +1,7 @@
 # 記録方針と検証
 
+[English](../en/codex-github-pm/behavior.md) | **日本語**
+
 [概要](README.md) · [使い方](usage.md) · [導入手順](installation.md)
 
 ## 現在の方針

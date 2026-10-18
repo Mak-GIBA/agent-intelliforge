@@ -1,5 +1,7 @@
 # GitHub Project Director
 
+[English](../en/codex-github-pm/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md) · [記録方針と検証](behavior.md)
 
 GitHubのIssue・PR・Projectsを、Codexとの会話から調査・整理・更新するSkillです。

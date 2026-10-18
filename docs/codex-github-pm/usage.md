@@ -1,5 +1,7 @@
 # GitHub Project Director：使い方
 
+[English](../en/codex-github-pm/usage.md) | **日本語**
+
 [docs一覧](../README.md) · [概要](README.md) · [導入手順](installation.md) · [記録方針と検証](behavior.md)
 
 ## 普段の言葉で依頼する

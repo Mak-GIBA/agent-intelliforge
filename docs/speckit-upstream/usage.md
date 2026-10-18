@@ -1,5 +1,7 @@
 # SpecKit Upstream：使い方
 
+[English](../en/speckit-upstream/usage.md) | **日本語**
+
 [概要と収録ツール](README.md) · [導入手順](installation.md) · [既存要件・設計の見直し](reassessment.md) · [docs一覧](../README.md)
 
 ## 最初の操作

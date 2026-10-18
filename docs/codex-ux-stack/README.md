@@ -1,5 +1,7 @@
 # Codex UX Stack
 
+[English](../en/codex-ux-stack/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md) · [検証範囲](validation.md)
 
 Webアプリで利用者が扱う対象を起点に、画面と操作を設計するキットです。この考え方をOOUI（オブジェクト指向UI）と呼びます。

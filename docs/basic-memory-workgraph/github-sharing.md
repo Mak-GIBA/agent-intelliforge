@@ -1,5 +1,7 @@
 # GitHub経由でメモリを共有する
 
+[English](../en/basic-memory-workgraph/github-sharing.md) | **日本語**
+
 [概要](README.md) · [導入](installation.md) · [使い方](usage.md) · [ファイル共有・学習用出力](sharing.md)
 
 「メモリを共有して」と依頼すると、確認済みのチーム共有メモリを書き出して、専用のprivateリポジトリにPRを作成します。

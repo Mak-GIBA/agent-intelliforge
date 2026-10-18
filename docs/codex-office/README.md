@@ -1,5 +1,7 @@
 # Office Workbench — PDF・Word・PowerPointを扱う
 
+[English](../en/codex-office/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md)
 
 PDF、DOCX、PPTXを読み、原本を保護した作業コピーで作成・部分編集するキットです。本文の差分、文書構造、ページを画像にしたときの表示をそれぞれ確認します。

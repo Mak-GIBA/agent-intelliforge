@@ -1,5 +1,7 @@
 # 配布資材の編集と検証
 
+[English](en/cross-platform-development.md) | **日本語**
+
 [導入ガイド](cross-platform.md) · [検証結果](cross-platform-validation.md) · [既存の開発ガイド](development.md)
 
 編集する正本と、生成して配布する資材を分けています。既存の単一ファイル配布は継続します。

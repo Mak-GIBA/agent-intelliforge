@@ -1,5 +1,7 @@
 # kotonoha — 明晰で自然な日本語を書く
 
+[English](../en/codex-yomiyasu/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md)
 
 日本語の技術文書、仕様書、Issue・PR、報告文などを、意味を保ったまま読みやすく整えるためのSkillです。

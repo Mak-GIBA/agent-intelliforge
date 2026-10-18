@@ -1,5 +1,7 @@
 # kotonohaで文章を整える
 
+[English](../en/codex-yomiyasu/usage.md) | **日本語**
+
 [概要](README.md) · [導入手順](installation.md)
 
 ## 対象と条件を指定する

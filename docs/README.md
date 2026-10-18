@@ -1,6 +1,8 @@
 # Agent Intelliforge ドキュメント
 
-[リポジトリ概要](../README.md) · [一括インストール](installation.md) · [開発・検証](development.md)
+[English](en/README.md) | **日本語**
+
+[リポジトリ概要](../README.ja.md) · [一括インストール](installation.md) · [開発・検証](development.md)
 
 [共通CLI・Windows・Claude Code](cross-platform.md) · [配布資材の編集手順](cross-platform-development.md) · [追加経路の検証結果](cross-platform-validation.md)
 

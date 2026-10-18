@@ -1,5 +1,7 @@
 # Codex ECCのスキルを必要なときに読む
 
+[English](../en/codex-ecc/README.md) | **日本語**
+
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md) · [MCPの導入判断](mcp-evaluation.md)
 
 ECCの専門スキルを、作業に必要なときだけ参照できるようにするキットです。Codex標準のPlugin機能でECCの原本を取得し、常設Skillは短い入口に絞ります。

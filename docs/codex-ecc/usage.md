@@ -1,5 +1,7 @@
 # ECCの入口を使う
 
+[English](../en/codex-ecc/usage.md) | **日本語**
+
 [概要](README.md) · [導入手順](installation.md)
 
 ## 最初の操作

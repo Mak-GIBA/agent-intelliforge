@@ -1,6 +1,8 @@
 # 共通CLIとOS・ホスト対応
 
-[README](../README.md) · [従来の一括導入](installation.md) · [検証結果](cross-platform-validation.md)
+[English](en/cross-platform.md) | **日本語**
+
+[README](../README.ja.md) · [従来の一括導入](installation.md) · [検証結果](cross-platform-validation.md)
 
 共通CLIの`intelliforge`は、選んだOSとホストに合う導入経路を使います。既定の対象はCodexです。Linux / WSL2の既存インストーラーを維持し、ネイティブWindowsとClaude CodeにはPlugin方式を用意しています。
 
@@ -32,7 +34,7 @@ intelliforge inspect --only kotonoha --json
 cloneした資材から標準のwheelを構築して導入します。パッケージの構築はダウンロードやホスト設定の更新を行いません。生成済み資材と編集用ソースが一致しなければ構築を止めます。
 
 `inspect`、および`--apply`のない導入・更新・解除は、キット定義の表示だけです。ネットワーク接続、依存ソフトの導入、Plugin管理CLIの起動を行いません。
-正本の[`kit.json`](../tools/)と一括スクリプトの冒頭コメントから、取得元・Skill名・依存ソフト・配置先・設定範囲を確認できます。
+正本の[`kit.json`](../tools)と一括スクリプトの冒頭コメントから、取得元・Skill名・依存ソフト・配置先・設定範囲を確認できます。
 
 ## 導入する
 

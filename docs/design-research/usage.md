@@ -1,5 +1,7 @@
 # Design Research：使い方
 
+[English](../en/design-research/usage.md) | **日本語**
+
 [docs一覧](../README.md) · [概要](README.md) · [導入手順](installation.md) · [検証結果](validation.md)
 
 ## 調査の中心はコアロジックの改善

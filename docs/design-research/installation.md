@@ -1,5 +1,7 @@
 # インストール・更新・解除
 
+[English](../en/design-research/installation.md) | **日本語**
+
 [docs一覧](../README.md) · [概要](README.md) · [使い方](usage.md) · [検証結果](validation.md)
 
 ## 前提条件
@@ -17,7 +19,7 @@ Codex本体、アプリのテスト依存、ブラウザー、MCP、別のLLM AP
 
 ## 初回導入
 
-[トップREADME](../../README.md#はじめに)からスクリプトを取得し、その保存先で実行します。
+[トップREADME](../../README.ja.md#はじめに)からスクリプトを取得し、その保存先で実行します。
 引数なしのDesign Researchスクリプトは実際に導入します。
 
 ```bash

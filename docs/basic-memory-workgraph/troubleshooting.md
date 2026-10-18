@@ -1,5 +1,7 @@
 # Basic Memory Workgraph：困ったとき・記憶の点検
 
+[English](../en/basic-memory-workgraph/troubleshooting.md) | **日本語**
+
 [概要](README.md) · [導入](installation.md) · [使い方](usage.md) · [共有](sharing.md) · [仕組み](reference.md) · [困ったとき](troubleshooting.md) · [docs一覧](../README.md)
 
 ターミナルのコマンドは、特に指定がなければこのリポジトリのルートで実行します。
