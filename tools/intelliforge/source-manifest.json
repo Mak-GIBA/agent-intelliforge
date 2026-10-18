@@ -659,7 +659,7 @@
     "src/agent_intelliforge/plugins.py": "44b586a024ca189bfac09271afc3d8d2b6a3b7184b25deea6f4d074ab3d60964",
     "src/agent_intelliforge/portable.py": "72f9bdd468ed09527a027ad07ea237c19927240bb0a47ff2eaddd010fba6fabf",
     "src/agent_intelliforge/provider.py": "9c8fc5636704603acbbc402a636ee4dffcfa75abaf287a2edb285a134555429a",
-    "src/agent_intelliforge/runtime.py": "6a5c6836b0ba9dcdc6c41d55547355bf40a4100a5d477d3f5b0d3104d3783add",
+    "src/agent_intelliforge/runtime.py": "21cb7547ee98befa164ecbe909a2ac052f5ac32fb1d1ff464c86ccc9ed847a59",
     "src/agent_intelliforge/runtime_ports.py": "97a02028a3474ff05662f24343660c38cd686fe59a09525dc75cde8720e414b4",
     "src/agent_intelliforge/subprocess_bridge.py": "c6f7e1dc9e32712ada4b91a6288422f87bf44a329b5d634c0b1cb9e7bb15bb1d",
     "src/agent_intelliforge/windows_job.py": "defce7d7d3911ff862f9c5546e124c7add940e324b910dbdf847be00a5a04781",

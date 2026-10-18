@@ -225,7 +225,8 @@ def marketplace(root, kit, agent, state, mode):
             relative = name.removeprefix('skills/yomiyasu/')
             raw = (state / agent / kit['id'] / 'bundle/assets' / relative).read_bytes()
         if kit['id'] == 'yomiyasu' and name.endswith('agents/openai.yaml'):
-            raw = f'policy:\n  allow_implicit_invocation: {str(mode != "explicit" and '/skills/yomiyasu/' not in '/'+name).lower()}\n'.encode()
+            implicit = mode != 'explicit' and '/skills/yomiyasu/' not in '/' + name
+            raw = f'policy:\n  allow_implicit_invocation: {str(implicit).lower()}\n'.encode()
         if agent == 'claude' and kit['id'] == 'yomiyasu' and name.endswith('SKILL.md') and mode == 'explicit':
             text = raw.decode(); split = text.split('---', 2)
             if len(split) != 3 or split[0].strip(): raise ForgeError('Missing Skill frontmatter')
