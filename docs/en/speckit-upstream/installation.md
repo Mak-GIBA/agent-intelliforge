@@ -8,7 +8,7 @@
 
 Requires Linux / WSL2, Bash, Python 3.11+, network access to pinned GitHub files (no GitHub login), and Codex for Skill use. Installing SpecKit CLI additionally needs Python venv/pip and PyPI. Codex itself is not installed. Run as a normal user without sudo; `PYTHON_BIN` selects Python. See the [README](../../../README.md) for retrieval and run from the script directory.
 
-Distribution 2.0.6 assembles embedded upgrades on a pinned base. 2.0.5 build failures were fixed on 2026-10-10, followed by tests/machine update/diagnosis. 2.0.6 shares Research 2.5.0 upgrades; offline builds/self-tests were checked. [Validation (Japanese)](../../design-research/validation.md) separates bundled, assembled, and real-machine checks.
+Distribution 2.1.0 assembles embedded upgrades on a pinned base. 2.0.5 build failures were fixed on 2026-10-10, followed by tests/machine update/diagnosis. 2.0.6 shares Research 2.5.0 upgrades; offline builds/self-tests were checked. [Validation (Japanese)](../../design-research/validation.md) separates bundled, assembled, and real-machine checks.
 
 ## Install for the user
 
@@ -40,7 +40,7 @@ If `specify` is missing, assembly's installation stage creates a venv and fetche
 
 ## Assembly and offline use
 
-Both originals at `d3f46e0d591b45cb2423317030a489b91566e891` are fetched/verified, then Research 2.5.0 and Upstream 2.0.6 are built/tested before selected installation. Distribution `--doctor`, `--self-test`, and `--extract` also assemble first.
+Both originals at `d3f46e0d591b45cb2423317030a489b91566e891` are fetched/verified, then Research 2.6.0 and Upstream 2.1.0 are built/tested before selected installation. Distribution `--doctor`, `--self-test`, and `--extract` also assemble first.
 
 ```bash
 bash install_speckit_upstream.sh --build-only ./offline-installers
@@ -88,7 +88,7 @@ Use list/build/extract-bundle/bundle-self-test individually, without installatio
 |---|---|
 | `~/.local/bin/speckit-workbench` | Launcher |
 | `~/.local/bin/specify` | Launcher if CLI installed here |
-| `~/.local/share/speckit-workbench/releases/2.0.6/` | Code/templates/references/guides |
+| `~/.local/share/speckit-workbench/releases/2.1.0/` | Code/templates/references/guides |
 | `~/.local/share/speckit-workbench/tooling/specify-1.0.8/` | Optional dedicated venv |
 | `~/.local/share/speckit-workbench/backups/` | Prior assets |
 | `~/.config/speckit-workbench/install.json` | Managed hashes/state |
@@ -134,7 +134,7 @@ speckit-workbench commands
 
 Only unchanged managed assets update; manual edits stop even with `--update`. Identical reruns skip; SpecKit itself is not automatically upgraded. Releases/backups remain. Restart Codex and check `$upstream-` candidates plus installed version/path in doctor.
 
-2.0.6 uses the single Research entry, research workstreams/integration, and v2 new/change design. New templates have three documents. Existing documents/approval history do not migrate on attach or Skill update; use [optional migration](usage.md#migrate-existing-material-to-three-documents). Content/requirement/evidence changes need normal review. Research [installation/update](../design-research/installation.md) is separate.
+2.1.0 adds the project overview, brief flow, and v3 bindings to published research evidence. It retains the single Research entry, workstream/integration contracts, and existing v1/v2 bindings. New templates have three primary documents plus generated navigation. Existing documents/approval history do not migrate on attach or Skill update; use [optional migration](usage.md#migrate-existing-material-to-three-documents). Content/requirement/evidence changes need normal review. Research [installation/update](../design-research/installation.md) is separate. See [outputs and review order](../upstream-research-workflow.md).
 
 From 1.2.0 or earlier, approvals not bound to ordinary Markdown become `LEGACY_APPROVAL_UNBOUND`. Keep history, review actual content, explicitly approve, then gate. `gate --write` alone cannot repair this, and reattach is unnecessary.
 

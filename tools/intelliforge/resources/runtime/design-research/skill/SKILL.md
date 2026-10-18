@@ -37,3 +37,4 @@ description: Research and improve the core logic contributing to a project's mai
 Upstreamは出力されたv3 bindingを要件・設計IDに結び、統合結果と未確認事項を別に記録する。
 文書更新後は`overview --write`で確認ページを更新し、最後はそのリンクと対象ID・次の操作を示す。
 記録の整合性は科学的な有効性やユーザー承認の証明ではない。未実行・失敗・不明点を保持する。
+日本語は利用可能なkotonohaを優先し、未導入ならyomiyasu互換入口を使う。同じ原稿に両方を重ねず、なければ追加導入せず続行する。公開済みの台帳・ログ・保存版は保持する。

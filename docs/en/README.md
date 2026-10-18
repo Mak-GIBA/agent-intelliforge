@@ -26,6 +26,8 @@ Use UX Stack to organize objects, actions, and states, then kotonoha to polish J
 
 ### Design Research and Upstream
 
+Start with [outputs and review order](upstream-research-workflow.md) for the overview, primary documents, research reports, and selected evidence. It includes review targets for all eight entries and booking/search examples.
+
 Use `$upstream-new` / `$upstream-change` for system requirements and overall design, and `$design-research` for a specific technical question. The workflow connects goals, concerns, use cases, requirements, research workstreams, integrated design, and verification plans.
 
 - [Upstream usage](speckit-upstream/usage.md): workflow, diagrams, screen examples, reviews, and explicit approval.

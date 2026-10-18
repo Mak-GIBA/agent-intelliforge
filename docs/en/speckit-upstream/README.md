@@ -4,9 +4,11 @@
 
 [Documentation](../README.md) · [Installation](installation.md) · [Usage](usage.md) · [Reassessment](reassessment.md)
 
-Clarify user goals, concerns, use cases, and requirements before implementation, then create overall design and verification plans using technical research. This guide covers Workbench 2.0.6 in [install_speckit_upstream.sh](../../../install_speckit_upstream.sh), which verifies a pinned base and applies embedded upgrades.
+Clarify user goals, concerns, use cases, and requirements before implementation, then create overall design and verification plans using technical research. This guide covers Workbench 2.1.0 in [install_speckit_upstream.sh](../../../install_speckit_upstream.sh), which verifies a pinned base and applies embedded upgrades.
 
 ## Read these documents first
+
+Open the target app's `docs/upstream/README.md` first. It lists the current stage, documents and IDs to review, pending approval, research status, and next action. [Outputs and review order](../upstream-research-workflow.md) covers all eight entries and examples.
 
 New projects use three primary documents, plus one report per executed research theme. Lead each with conclusions, requested decisions, and unknowns before detail.
 
@@ -59,6 +61,6 @@ First install shared CLI/assets/Skills; then `attach` project documents/settings
 
 ## Inspect detailed references
 
-Installed `releases/2.0.6/README_COMMANDS.md` and `assets/references/` contain commands and guidance, including `RESEARCH_FIRST.md` / `RESEARCH_WORKSTREAMS.md`. `--extract-bundle` exposes upgrade sources offline; `--extract` exposes assembled assets. See [installation](installation.md) and [output locations](reassessment.md#output-locations-and-review-targets).
+Installed `releases/2.1.0/README_COMMANDS.md` and `assets/references/` contain commands and guidance, including `RESEARCH_FIRST.md` / `RESEARCH_WORKSTREAMS.md`. `--extract-bundle` exposes upgrade sources offline; `--extract` exposes assembled assets. See [installation](installation.md) and [output locations](reassessment.md#output-locations-and-review-targets).
 
 The guide follows bundled upgrades/pinned implementation. General Spec Kit information was checked on 2026-09-29; do not assume latest upstream operations apply unchanged to the pinned version.

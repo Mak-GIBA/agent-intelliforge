@@ -21,7 +21,7 @@ description: "仕様変更の理由と既存要件・設計・テストへの影
    更新後は`overview --write`。読み取り依頼では書かず最新のoverviewを表示する。
 最後は確認ページ1つと対象ID・確認箇所・承認待ち・次の操作を示す。
 上流整理だけではアプリ実装・DB変更・デプロイを開始しない。計画と実行PASSを混同しない。
-日本語の文書は利用可能なyomiyasuで仕上げ、意味・ID・数値・条件を保持する。
+日本語は利用可能なkotonohaを優先し、未導入ならyomiyasu互換入口を使う。同じ原稿に両方を重ねず、意味・ID・数値・条件を保持する。
 
 ## 配布環境の呼び出し
 このPluginの管理ソースは `tools/speckit-upstream/kit.json`。導入先は `intelliforge locate --only speckit --agent codex` で確認する。Pythonヘルパーは `intelliforge kit-run speckit --agent codex --tool <ファイル名> -- <引数>`、研究・UXハーネスは `intelliforge kit-run speckit --agent codex -- <引数>` から実行する。Windowsではこの入口を使い、Bashやpython3という実行名を前提にしない。

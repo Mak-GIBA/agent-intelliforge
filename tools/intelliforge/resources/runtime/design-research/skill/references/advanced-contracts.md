@@ -60,7 +60,7 @@ Use the real [gan-harness.sh](../scripts/gan-harness.sh). Report its command, ru
 7. Apply [memory-workgraph.md](../references/memory-workgraph.md) only when permitted by the current persistence policy. Harness children never write Memory. Include a saved reference only when it adds value to this answer.
 8. Finish with the conclusion, changes, remaining decisions/unexecuted work, and one actual report link with the relevant section. Do not routinely list JSON ledgers, logs, state or separate decision/fix reports. Explain whether `research_complete`, `reviewed`, or a stopped outcome occurred; audit completion does not establish passing behavior or human acceptance.
 
-For Japanese research, review and verification report drafts, reading the available yomiyasu
+For Japanese research, review and verification report drafts, reading the available kotonoha (or yomiyasu as a compatibility fallback)
 skill and polishing the prose once is recommended. Preserve claims, terminology, IDs, numbers,
 conditions, outcomes, evidence, quotations and certainty. Children polish narrative fields
 before returning structured results, retaining JSON keys/enums, receipt references and code.

@@ -154,7 +154,8 @@ Abstracts/snippets are insufficient. Preprint/publication versions of one study 
 If access/budget prevents adequate reading, explain the gap and keep affected conclusions
 provisional/deferred. Follow skill_directory/references/protocol.md within existing limits.
 Use the user's language for findings and concise explanations. For Japanese research, review
-and verification report drafts, reading the available yomiyasu skill and polishing narrative
+and verification report drafts, prefer available kotonoha, falling back to the yomiyasu compatibility entry.
+Use one writing entry per draft; polishing narrative
 fields before returning JSON is recommended. Preserve claims, terms, IDs, numbers, conditions,
 outcomes, evidence links, quotations and certainty. Keep schema keys/enums, receipts, code and
 raw records unchanged. If unavailable, continue writing checks without installing the skill.

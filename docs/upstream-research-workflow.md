@@ -1,5 +1,7 @@
 # UpstreamとDesign Research：出力先と確認の順序
 
+[English](en/upstream-research-workflow.md) | **日本語**
+
 対象アプリで最初に開くのは、`docs/upstream/README.md`の確認ページです。今の段階、今回確認する文書とID、承認待ち、研究の状態、次の操作をまとめています。Upstream 2.1.0 / Design Research 2.6.0以降では、文書・研究・レビュー・承認の更新後にこのページを更新します。保存先を変更したプロジェクトでは、設定された`docs_dir`の`README.md`が入口です。
 
 ページの内容を最新状態で読むには、対象アプリのターミナルで次を実行します。通常の表示はファイルを書き換えません。

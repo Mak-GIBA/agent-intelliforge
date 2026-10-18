@@ -6,6 +6,8 @@
 
 ## First request
 
+Use the target app's `docs/upstream/README.md` as the entry point. `speckit-workbench overview --project .` reads the latest state; add `--write` after editing documents to refresh the saved page. Custom projects use their configured `docs_dir`. See [outputs and review order](../upstream-research-workflow.md).
+
 After user-wide installation, open the app in Codex. New development starts with `$upstream-new`; existing apps with `$upstream-existing`. Missing project setup triggers [attach guidance](installation.md).
 
 ```text
@@ -150,7 +152,7 @@ speckit-workbench gate --project . --verify
 
 Gate checks required upstream items, requirements/design/verification plans, and selected approval stages. Goals alone or empty/heading-only required docs cannot be READY. A complete verification **plan** may still have `not_run` test results; this is not app test success.
 
-New/change design uses `upstream-design-contract:v2`: requirements/plan SHA-256, theme run state/archived reports, choices, standard evidence, integration, UI Skill application. Distinguish `planned`, `verified`, and `inconclusive`; files alone cannot establish valid measurement. v1 remains readable but does not replace new theme decomposition. Semantic review is separate from CLI checks, which fail nonzero without automatically configuring CI/merge rules. `gate --verify` detects stale snapshots, not malicious same-user tampering.
+New/change design retains `upstream-design-contract:v2` for workstream requirements and uses a schema-version-3 binding to selected published evidence: requirements/plan SHA-256, fixed run state/report/manifest, choices, standard evidence, integration, and UI Skill application. Distinguish `planned`, `verified`, and `inconclusive`; files alone cannot establish valid measurement. Existing v1/v2 bindings remain readable. Semantic review is separate from CLI checks, which fail nonzero without automatically configuring CI/merge rules. `gate --verify` detects stale snapshots, not malicious same-user tampering.
 
 <a id="成果物の保存先"></a>
 
@@ -160,12 +162,15 @@ Defaults below follow configured `--docs-dir`:
 
 | Document | Content |
 |---|---|
+| `docs/upstream/README.md` | Generated stage, review targets/IDs, pending decisions, next action |
 | `docs/upstream/requirements.md` | Goals/users/scope/features/quality/constraints/current/desired state/unknowns |
 | `docs/upstream/design.md` | Architecture/behavior/data/API/operations/choices/impact |
 | `docs/upstream/verification.md` | Acceptance/methods/results/unexecuted checks/evidence |
 | `docs/design-research/<slug>/report.md` | Executed research comparison/results/changes/gaps |
+| `docs/design-research/<slug>/evidence/<run-id>/` | Fixed report and required evidence for a selected run |
+| `.artifacts/design-research/<slug>/` | New topic's local execution records and working copies |
 
-Internal reviews/approval summaries/indexes live in `.specify/workbench/`; Research JSON in `.internal/`. Readers normally follow primary sections/conclusions, plus one fixed review-packet link and item IDs when approval is pending. Official `specs/<feature>/spec.md`, `plan.md`, and `tasks.md` remain detailed references.
+Internal reviews/approval summaries/indexes live in `.specify/workbench/`; Research JSON lives in `.internal/` within the local workspace, or the original workspace for existing topics. Read the overview, then primary sections/conclusions and fixed evidence. Pending approval also links one fixed review packet and item IDs. Official `specs/<feature>/spec.md`, `plan.md`, and `tasks.md` remain detailed references.
 
 Content sections use unique `<!-- upstream:section ID -->` / `<!-- /upstream:section -->` markers. Section edits require that section reviewed; shared conditions outside sections affect the whole document; upstream dependency changes affect related lower items. Old unsectioned documents bind the whole body. Updates alone do not invalidate otherwise valid old approvals.
 

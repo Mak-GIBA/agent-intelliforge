@@ -6,6 +6,8 @@ import re
 def apply(repo):
     skill=repo/'tools/design-research/skill'
     original=(skill/'SKILL.md').read_text('utf-8')
+    original=original.replace('available yomiyasu','available kotonoha (or yomiyasu as a compatibility fallback)')
+    original=original.replace('If yomiyasu is unavailable','If neither writing entry is available')
     front=re.match(r'---\n.*?\n---\n',original,re.S).group()
     advanced=re.sub(r'(\]\()(?=(?:references|scripts|templates|agents)/)',r'\1../',original[len(front):])
     (skill/'references/advanced-contracts.md').write_text(advanced,encoding='utf-8')
@@ -44,6 +46,7 @@ def apply(repo):
 Upstreamは出力されたv3 bindingを要件・設計IDに結び、統合結果と未確認事項を別に記録する。
 文書更新後は`overview --write`で確認ページを更新し、最後はそのリンクと対象ID・次の操作を示す。
 記録の整合性は科学的な有効性やユーザー承認の証明ではない。未実行・失敗・不明点を保持する。
+日本語は利用可能なkotonohaを優先し、未導入ならyomiyasu互換入口を使う。同じ原稿に両方を重ねず、なければ追加導入せず続行する。公開済みの台帳・ログ・保存版は保持する。
 ''',encoding='utf-8')
     upstream=repo/'tools/speckit-upstream'
     p=upstream/'workbench/command_skills.py';text=p.read_text('utf-8')
@@ -88,7 +91,7 @@ STALE_REVIEW等は再レビューへ戻す。記録は本人性の暗号認証�
    更新後は`overview --write`。読み取り依頼では書かず最新のoverviewを表示する。
 最後は確認ページ1つと対象ID・確認箇所・承認待ち・次の操作を示す。
 上流整理だけではアプリ実装・DB変更・デプロイを開始しない。計画と実行PASSを混同しない。
-日本語の文書は利用可能なyomiyasuで仕上げ、意味・ID・数値・条件を保持する。
+日本語は利用可能なkotonohaを優先し、未導入ならyomiyasu互換入口を使う。同じ原稿に両方を重ねず、意味・ID・数値・条件を保持する。
 """
 
 ''' +text[end:]
