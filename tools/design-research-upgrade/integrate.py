@@ -8,7 +8,7 @@ import re
 from command_assets import assets, COMMANDS
 
 ROOT = Path(__file__).resolve().parent
-VERSION_D, VERSION_U = '2.5.0', '2.0.6'
+VERSION_D, VERSION_U = '2.7.0', '2.1.0'
 
 
 def module(path, name):
@@ -38,7 +38,8 @@ def patch_installer(text):
                '    "scripts/codex_interface.py", "scripts/workflow_overview.py", "references/codex-interface.md",\n'
                '    "references/workflow-guide.md", "scripts/evaluation_contract.py",\n'
                '    "references/effectiveness-evaluation.md", "scripts/execution_units.py",\n'
-               '    "references/execution-units.md"')
+               '    "references/execution-units.md", "scripts/workspace_paths.py",\n'
+               '    "scripts/published_evidence.py", "scripts/role_runtime.py", "references/advanced-contracts.md"')
     text = re.sub(r'(?m)^VERSION = "[0-9.]+"$', 'VERSION = "' + VERSION_D + '"', text)
     compile(text, 'install_design_research.py', 'exec')
     return text
@@ -129,6 +130,8 @@ upstreamは全体ワークフロー（ストーリー→要件→方式比較→
     for rel in ('build_single.py', 'workbench/__init__.py'):
         p = repo/'tools/speckit-upstream'/rel
         p.write_text(p.read_text('utf-8').replace('2.0.3', VERSION_U), 'utf-8')
+    module(ROOT/'navigation_upgrade.py','navigation_upgrade').apply(repo)
+    module(ROOT/'skill_compaction.py','skill_compaction').apply(repo)
     for p in (repo/'tools/design-research').rglob('*.py'):
         compile(p.read_text('utf-8'), str(p), 'exec')
     for p in (repo/'tools/speckit-upstream').rglob('*.py'):

@@ -44,8 +44,18 @@ prompt=args[-1]; data=json.loads(prompt.split("\nINPUT:\n",1)[1])
 role=prompt.split("\nROLE: ",1)[1].splitlines()[0]
 output=Path(args[args.index("--output-last-message")+1])
 (output.parent/"fixture-argv.json").write_text(json.dumps(args))
+(output.parent/"fixture-env.json").write_text(json.dumps({k:os.environ.get(k) for k in ("HOME","CODEX_HOME","TMPDIR","UV_CACHE_DIR")}))
 directory=Path(data["screenshots_directory"]);directory.mkdir(parents=True,exist_ok=True)
 project=Path(data["project"]);case=os.getenv("UX_FAKE_CASE","")
+if case=="mcp_startup" and data["browser_backend"]!="local-playwright":
+ print('MCP playwright failed to initialize: EROFS read-only file system',file=sys.stderr);sys.exit(1)
+if case=="auth_failure":
+ print('401 authentication required',file=sys.stderr);sys.exit(1)
+if case=="approval_failure":
+ print('MCP playwright tool call requires approval, but approval policy is never',file=sys.stderr);sys.exit(1)
+if case=="model_capacity":
+ print(json.dumps({'type':'item.completed','item':{'type':'mcp_tool_call','server':'ux_gan_browser','status':'completed'}}))
+ print(json.dumps({'type':'turn.failed','error':{'message':'Selected model is at capacity. Please try a different model.'}}));sys.exit(1)
 iteration=int(output.parent.name.split("-")[0])
 evidence=[]
 def png(w,h):
@@ -425,9 +435,78 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(self.invoke("audit"),0)
         _,folder=self.state()
         inv=json.loads((folder/"000-reviewer/invocation.json").read_text())
-        self.assertEqual(inv["sandbox"],"read-only")
+        self.assertEqual(inv["sandbox"],"workspace-write")
         self.assertTrue(inv["attached_images"])
         self.assertNotIn("ignore-rules",(folder/"000-reviewer/prompt.txt").read_text())
+
+    def test_explicit_readonly_does_not_restrict_the_fixer(self):
+        self.assertEqual(self.invoke("run", "--role-sandbox", "read-only"), 0)
+        _, folder = self.state()
+        for path in folder.glob("*/invocation.json"):
+            value = json.loads(path.read_text())
+            self.assertEqual(value["sandbox"], "workspace-write" if value["role"] == "fixer" else "read-only")
+
+    def test_new_roles_keep_authentication_home_and_use_private_temp(self):
+        self.assertEqual(self.invoke("audit"), 0)
+        state, folder = self.state()
+        self.assertEqual(state["config"]["role_sandbox"], "workspace-write")
+        env = json.loads((folder/"000-planner/fixture-env.json").read_text())
+        self.assertEqual(env["HOME"], os.environ.get("HOME"))
+        self.assertEqual(env["CODEX_HOME"], os.environ.get("CODEX_HOME"))
+        self.assertTrue(Path(env["TMPDIR"]).is_relative_to(folder))
+        argv = json.loads((folder/"000-planner/fixture-argv.json").read_text())
+        self.assertIn("--add-dir", argv)
+        self.assertIn("sandbox_workspace_write.network_access=true", argv)
+        self.assertIn('mcp_servers.ux_gan_browser.default_tools_approval_mode="approve"', argv)
+        self.assertNotIn('mcp_servers.playwright.default_tools_approval_mode="approve"', argv)
+
+    def test_browser_startup_failure_without_output_falls_back_once(self):
+        os.environ["UX_FAKE_CASE"] = "mcp_startup"
+        with patch.object(h, "select_backend", return_value=("playwright-mcp", "")):
+            self.assertEqual(self.invoke("audit"), 0)
+        state, folder = self.state()
+        self.assertEqual(state["backend"], "local-playwright")
+        self.assertEqual(len(state["history"]), 1)
+        self.assertEqual(json.loads((folder/"000-planner/diagnostic.json").read_text())["kind"], "browser_permission")
+
+    def test_authentication_failure_does_not_switch_browser_or_retry(self):
+        os.environ["UX_FAKE_CASE"] = "auth_failure"
+        with patch.object(h, "select_backend", return_value=("playwright-mcp", "")):
+            self.assertEqual(self.invoke("audit"), 1)
+        state, folder = self.state()
+        self.assertEqual(state["backend"], "playwright-mcp")
+        self.assertEqual(state["history"], [])
+        self.assertEqual(json.loads((folder/"000-planner/diagnostic.json").read_text())["kind"], "authentication")
+
+    def test_native_tool_approval_failure_is_not_bypassed_with_a_fallback(self):
+        os.environ["UX_FAKE_CASE"] = "approval_failure"
+        with patch.object(h, "select_backend", return_value=("playwright-mcp", "")):
+            self.assertEqual(self.invoke("audit"), 1)
+        state, folder = self.state()
+        self.assertEqual(state["backend"], "playwright-mcp")
+        self.assertEqual(state["history"], [])
+        self.assertEqual(json.loads((folder/"000-planner/diagnostic.json").read_text())["kind"], "tool_approval")
+
+    def test_model_capacity_is_not_misattributed_to_a_successful_mcp(self):
+        os.environ["UX_FAKE_CASE"] = "model_capacity"
+        with patch.object(h, "select_backend", return_value=("playwright-mcp", "")):
+            self.assertEqual(self.invoke("audit"), 1)
+        state, folder = self.state()
+        self.assertEqual(state["history"], [])
+        self.assertEqual(json.loads((folder/"000-planner/diagnostic.json").read_text())["kind"], "model_capacity")
+
+    def test_legacy_resume_override_does_not_change_frozen_config(self):
+        os.environ["UX_FAKE_CASE"] = "pending_review"
+        self.assertEqual(self.invoke(), 1)
+        state, folder = self.state()
+        state["config"].pop("role_sandbox")
+        before = dict(state["config"])
+        (folder/"state.json").write_text(json.dumps(state))
+        self.assertEqual(self.invoke("resume", state["run_id"], "--role-sandbox", "workspace-write"), 0)
+        resumed, _ = self.state()
+        self.assertEqual(resumed["config"], before)
+        self.assertEqual(resumed["role_runtime_history"][0]["previous"], "read-only")
+        self.assertEqual(resumed["role_runtime"]["sandbox"], "workspace-write")
 
 
 if __name__=="__main__":

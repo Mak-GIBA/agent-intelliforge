@@ -7,12 +7,20 @@ import unittest
 from unittest.mock import patch
 import zipfile
 import sys
+import os
+import re
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 import bootstrap as b
 import integrate
 
 
 class PackagingTests(unittest.TestCase):
+    @unittest.skipUnless(os.environ.get('CODEX_INTERFACE_SOURCE_ROOT'),'Requires assembled assets')
+    def test_retained_advanced_contract_links_resolve_from_the_new_location(self):
+        p=Path(os.environ['CODEX_INTERFACE_SOURCE_ROOT'])/'tools/design-research/skill/references/advanced-contracts.md'
+        for target in re.findall(r'\]\(([^)]+)\)',p.read_text()):
+            if target.startswith(('http:','https:','#')):continue
+            self.assertTrue((p.parent/target.split('#',1)[0]).is_file(),target)
     def test_unknown_flag_rejected_before_download(self):
         with patch.object(b,'COMPONENT','design-research'), self.assertRaises(SystemExit):
             b.parse(['--updtae'])

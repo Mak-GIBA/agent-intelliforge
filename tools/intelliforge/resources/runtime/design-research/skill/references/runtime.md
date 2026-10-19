@@ -10,7 +10,7 @@ Run the installed `scripts/gan-harness.sh` with Bash. It delegates to Python sta
 | `audit` | Inspect core logic and relevant backend behavior; execute checks and report problems/unknowns | Preserved |
 | `run` | Improve requested core logic/backend behavior, then execute checks and an independent review | Only the scoped fixer may edit |
 | `resume RUN_ID` | Continue an unfinished run after checking identity, source, evidence and test environment | Original mode applies |
-| `doctor` | Check structured Codex exec capabilities and a read-only command sandbox smoke test | Preserved; no report workspace |
+| `doctor` | Check structured Codex exec capabilities and the selected command sandbox smoke test | Preserved; no report workspace |
 
 Choose research for method/evaluation comparisons and non-app research targets. Use audit/run when the request is to inspect/improve existing application logic, whether or not it has a server. An API, database or agent framework is not required.
 Start from the main purpose, the core logic contributing to it and the intended outcome. Keep the current/minimal baseline and hard constraints visible; backend checks support the requested goal and relevant constraints.
@@ -71,12 +71,13 @@ The current report is published at start and on early failures, even without a r
 
 Finish with a conclusion, changes/remaining work and one existing report link with relevant sections. Add representative raw evidence or internal state only to investigate a result or blockage. Retained Memory references are optional and follow [memory-workgraph.md](memory-workgraph.md); the harness never writes Memory.
 
-For Japanese research, review and verification report drafts, reading available yomiyasu and
+For Japanese research, review and verification report drafts, prefer available kotonoha,
+falling back to the yomiyasu compatibility entry. Use one writing entry per draft;
 polishing the narrative once is recommended. Children apply it to explanatory fields before
 returning structured results, preserving claims, terms, IDs, numbers, conditions, outcomes,
 evidence, quotations and certainty. Keep keys/enums, code and raw records intact. Reports are
 rendered from these validated results; do not edit generated reports or archived snapshots
-after publication. If yomiyasu is unavailable, continue writing checks without installing it.
+after publication. If neither writing entry is available, continue writing checks without installing one.
 
 Legacy topics without `.internal/layout.json` retain their former report/record locations and behavior. Check root `status.json` against legacy report IDs. Update/install alone does not transform them. Run `gan-harness.sh migrate --project PROJECT --slug SLUG` to preview consolidated content, link changes and backups; `--apply` applies it. Active runs, corrupt records, unknown headings, incoming custom links and existing destination files block migration. Historical runs/snapshots stay byte-identical. Migration does not rerun research or grant adoption approval.
 
@@ -95,6 +96,10 @@ The standalone ledger CLI preserves its schema-v1 structural mode. Use `validate
 | `plateau` / `limit_reached` | Improvement stopped or iteration budget exhausted | 2 |
 
 A doctor exit of 0 means capability/sandbox checks succeeded, not model authentication or end-to-end workflow success.
+
+New runs from 2.7.0 use workspace-write for model roles, including research and review. `--role-sandbox read-only|workspace-write` selects non-fixer permissions; fixers remain workspace-write. Non-fixers must still preserve application source, and changes stop the run without resetting the diff. Model permissions do not change the separate PoC/test sandbox.
+
+Resume retains saved policy; a legacy run without a policy keeps read-only non-fixers. `resume RUN_ID --role-sandbox workspace-write` records an override outside frozen config/checkpoints and affects future invocations. The Codex-facing prepare/run interface also forwards this option. Each invocation records effective permissions, command networking and transient runtime location. HOME/CODEX_HOME are retained for authentication/configuration. Failure diagnostics distinguish observed authentication, permission, timeout and MCP/browser errors; offline research is not a firewall for MCP traffic.
 
 Use `resume RUN_ID --project PROJECT` only for unfinished work with unchanged source, evidence and explicit environment file. Pending review resumes from existing check results. An interrupted check/experiment uses a new iteration and scratch workspace, preserving prior receipts; commands can execute again and must safely initialize/reset test state. Interrupted source fixing is refused: inspect the preserved diff and start a fresh audit/run. Completed, plateaued or budget-exhausted runs need a new execution. Never reset user changes to make resume pass.
 

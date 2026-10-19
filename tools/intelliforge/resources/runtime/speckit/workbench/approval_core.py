@@ -66,6 +66,7 @@ def semantic_payload(row: dict) -> dict:
 
 
 def hash_version(row: dict) -> int:
+    if '_evidence_hashes' in row:return 4
     return 3 if row.get('_section') is not None else HASH_VERSION
 
 
@@ -76,8 +77,9 @@ def item_hash(row: dict) -> str:
         'document': {'file': row.get('_file'),
                      'prose_sha256': row.get('_prose_sha256')},
     }
-    if hash_version(row) == 3:
+    if row.get('_section') is not None:
         payload['document'].update(section=row['_section'], shared_prose_sha256=row['_shared_prose_sha256'])
+    if '_evidence_hashes' in row:payload['evidence']=row['_evidence_hashes']
     body = json.dumps(payload, ensure_ascii=False, sort_keys=True,
                       separators=(',', ':')).encode('utf-8')
     return sha(body)

@@ -4,6 +4,15 @@
 
 [概要](README.md) · [使い方](usage.md) · [検証範囲](validation.md) · [docs一覧](../README.md)
 
+## 管理対象だけを更新する
+
+```bash
+bash install_codex_ux_stack.sh --update
+ux-gan-harness doctor --project /path/to/app --check-mcp
+```
+
+`--update`は導入済みの管理対象だけを更新し、未導入のPlugin・MCP・任意Skillを追加しません。旧版をバックアップし、手動編集済みの資材は保持して未完了を報告します。新規導入は従来の引数なし、未導入分を含めた再適用は`--force`を使います。モデルを使わないMCP診断と、実際の追加UX監査を更新後に確認してください。
+
 ## 前提条件と導入
 
 Linux / WSL2、Bash、Python 3.10以上、Node.js 20以上、npm、構造化exec出力・plugin・MCPに対応する認証済みCodex CLIが必要です。
@@ -27,6 +36,7 @@ bash install_codex_ux_stack.sh --doctor
 |---|---|
 | なし | 不足する標準構成を導入 |
 | --deep | 固定コミットのux-critiqueも導入 |
+| --update | 導入済みの管理対象だけを更新し、未導入のPlugin・MCPは追加しない |
 | --force | このインストーラーが導入した未編集の対象を再配置・再登録 |
 | --dry-run | 導入・解除の予定表示 |
 | --status | 資材と登録の検査。ブラウザーは起動しない |
@@ -46,11 +56,11 @@ bash install_codex_ux_stack.sh --doctor
 
 | 対象 | 取得・版 | 新規の保存先 |
 |---|---|---|
-| ooui-design・参照資料 | 配布物1.1.2。OOUIと認知負荷の基準を同梱 | ~/.agents/skills/ooui-design/ |
+| ooui-design・参照資料 | 配布物1.2.0。OOUIと認知負荷の基準を同梱 | ~/.agents/skills/ooui-design/ |
 | Product Design / Build Web Apps | openai-curated-remoteのCodex管理版。実際の版を記録 | Codexのplugin環境 |
 | web-design-guidelines | vercel-labs/agent-skillsのコミット063bee94c3f4df8453406c830b0a7df0f2860278 | ~/.agents/skills/web-design-guidelines/ |
 | ux-critique | Thecsiz/ux-critiqueのコミット3da293cafb639195bf71797590081d4ffb0045ba | ~/.agents/skills/ux-critique/ |
-| ハーネス・専用Skill・共通設計基準 | 配布物1.1.2 | ~/.agents/skills/ux-gan-harness/ |
+| ハーネス・専用Skill・共通設計基準 | 配布物1.2.0 | ~/.agents/skills/ux-gan-harness/ |
 | ブラウザー環境 | Playwright 1.63.0 / Playwright MCP 0.0.83、埋め込みnpm lockfile | CODEX_HOME/ux-stack/runtime/ |
 | 起動コマンド | ハーネスのBashへ渡すラッパー | ~/.local/bin/ux-gan-harness |
 | 導入記録・バックアップ | ハッシュ、版、処理結果、旧資材 | CODEX_HOME/ux-stack/ |
@@ -80,7 +90,7 @@ bash install_codex_ux_stack.sh --force
 bash install_codex_ux_stack.sh --deep --force
 ~~~
 
-1.0.0・1.1.0から更新する場合は`--force`を使います。引数なしでは不足するooui-designが追加されますが、
+既存の管理対象だけを更新する場合は`--update`を使います。引数なしでは不足するooui-designが追加されますが、
 既存の未編集ハーネスはそのままです。status / doctorは新スキルとハーネスの参照資料も確認するため、
 旧ハーネスのままでは未準備として報告します。未管理・編集済みの同名Skillは保護します。
 

@@ -4,9 +4,17 @@
 
 [Documentation](../README.md) · [Overview](README.md) · [Installation](installation.md) · [Validation (Japanese)](../../design-research/validation.md)
 
+## Child write permissions
+
+New runs from 2.7.0 launch research, proposal and review roles with `workspace-write`. Transient tool data lives inside the run while HOME and CODEX_HOME retain authentication and configuration. Research and audit keep their existing task scope: unexpected source edits by non-fixer roles stop the run.
+
+Use `--role-sandbox read-only` for read-only non-fixer roles. Resume retains recorded policy, with read-only as the legacy default when no policy was saved. `resume RUN_ID --role-sandbox workspace-write` changes future invocations and records the override outside frozen research config, preserving completed checkpoint hashes. The single-entry `codex_interface.py prepare/run` commands also accept this option.
+
+Role `invocation.json` records effective permissions and command networking; failed child CLI execution also writes `diagnostic.json`. Existing `--allow-network` / `--offline` research limits remain, separately from MCP-specific networking. Offline is not a firewall for all MCP traffic. PoC and test isolation remains separate from model-role permissions.
+
 ## Focus on the project's core logic
 
-2.5.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
+2.7.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
 
 ```text
 $design-research Investigate ways to improve this project's search accuracy.
@@ -37,11 +45,11 @@ $design-research Audit the API and storage for invalid input, duplicate submissi
 $design-research Fix duplicate saves in this project. Preserve existing edits and report before/after verification and independent review.
 ```
 
-`audit` is read-only app review; `run` handles explicitly requested local fixes. Research/status alone does not authorize app changes. Confirm actual commands/run IDs/state rather than treating prose as execution. Skills resolve their own paths in new or legacy installations; record missing prerequisites and stop reasons if unavailable.
+`audit` preserves app source; `run` handles explicitly requested local fixes. Research/status alone does not authorize app changes. Confirm actual commands/run IDs/state rather than treating prose as execution. Skills resolve their own paths in new or legacy installations; record missing prerequisites and stop reasons if unavailable.
 
 ## Combine with SpecKit requirements and design
 
-Start with `$upstream-new` / `$upstream-change` for overall system work. Upstream 2.0.6 handles stories, concerns, use cases, requirements, and integrated design; Research handles core questions, candidates, PoCs, and evidence. They install separately; standalone Research needs no SpecKit documents.
+Start with `$upstream-new` / `$upstream-change` for overall system work. Upstream 2.1.0 handles stories, concerns, use cases, requirements, and integrated design; Research handles core questions, candidates, PoCs, and evidence. They install separately; standalone Research needs no SpecKit documents.
 
 ```text
 $upstream-new I want an app that searches internal documents and answers with supporting evidence.
@@ -131,9 +139,13 @@ Completion is neither universal effectiveness nor human adoption approval; `run`
 
 A new topic has one human-facing `docs/design-research/<slug>/report.md`: conclusion/status/run ID/recommendation/decisions/gaps, problem/constraints/comparison, proposed-method detail, actual experiments, fixes/rechecks where applicable, and remaining work/receipts. A proposed method needs a separate section with mechanism, overall/module/difference diagrams, equations/pseudocode as needed, assumptions/limits. Choosing an existing method does not require invented novelty. Explain diagram questions and reading; preserve measurements versus literature, inference, hypotheses, and unknowns. A finished report/figure is not experimental evidence.
 
-Final conversation centers on conclusions and the report link, adding JSON/logs when diagnosing. Japanese drafts may use available yomiyasu, preserving meaning and certainty; child narrative is polished before JSON, never by rewriting published ledgers/logs/archives. With SpecKit, put adoption rationale/conditions into `design.md` and measurements into `verification.md`, linking rather than copying research.
+Final conversation centers on conclusions and the report link, adding JSON/logs when diagnosing. Japanese drafts prefer available kotonoha, falling back to the yomiyasu compatibility entry; use one entry per draft and preserve meaning/certainty. Child narrative is polished before JSON, never by rewriting published ledgers/logs/archives. With SpecKit, put adoption rationale/conditions into `design.md` and measurements into `verification.md`, linking rather than copying research.
 
-Machine records are `.internal/status.json`, `.internal/evidence.json`, and `.internal/research-log.json`. Evidence has IDs/hashes/iterations/source and is checked before review/resumption. Receipts expose stdout/stderr/outputs. `runs/<run-id>/` retains state, roles, PoC, logs, evidence, and archived `reports/report.md`; long-lived design links use `docs/design-research/<slug>/runs/<run-id>/reports/report.md` and its run ID. Initial material goes in `inputs/`. Latest `report.md` also reflects start/stop state to avoid presenting a prior success as current. Declare generated JSON/figures/images in `artifact_paths`, save real files, and embed images in reports.
+From 2.6.0, new topics keep complete execution records in `.artifacts/design-research/<slug>/` and publish human reports/figures under `docs/design-research/<slug>/`. Existing topics retain their original locations. [Outputs and review order](../upstream-research-workflow.md) explains what to commit.
+
+Inside the workspace, machine records are `.internal/status.json`, `.internal/evidence.json`, and `.internal/research-log.json`. Evidence has IDs/hashes/iterations/source and is checked before review/resumption. Receipts expose stdout/stderr/outputs. `runs/<run-id>/` retains state, roles, PoC, logs, evidence, and archived `reports/report.md`. Initial material goes in `inputs/`. Latest `report.md` also reflects start/stop state to avoid presenting a prior success as current. Declare generated JSON/figures/images in `artifact_paths`, save real files, and embed images in reports.
+
+For long-lived design rationale, preview `export-evidence` with the selected topic/run ID, then add `--apply` to publish the fixed report and dependencies under `docs/design-research/<slug>/evidence/<run-id>/`. `verify-evidence --package <path>` checks completeness and hashes in a clone without local execution records. Old `runs/<run-id>/reports/` references remain readable.
 
 ## Migrate older material into one report
 

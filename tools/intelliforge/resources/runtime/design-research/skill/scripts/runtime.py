@@ -88,7 +88,7 @@ def checked_command(argv, *, cwd=None, timeout=20):
         raise Blocked(f"Cannot execute {argv[0]}: {exc}") from exc
 
 
-def codex_capabilities(project=None, *, smoke=True):
+def codex_capabilities(project=None, *, smoke=True, mode="workspace-write"):
     checks = {"python": True, "codex": bool(shutil.which("codex"))}
     errors = []
     if checks["codex"]:
@@ -98,7 +98,7 @@ def codex_capabilities(project=None, *, smoke=True):
             ("--json", "--output-schema", "--output-last-message", "--sandbox", "--ephemeral"))
         if smoke and checks["structured_exec"]:
             try:
-                command = sandbox_command("read-only", False, ["/bin/true"])
+                command = sandbox_command(mode, False, ["/bin/true"])
                 result = checked_command(command, cwd=project, timeout=15)
                 checks["sandbox"] = result.returncode == 0
                 if result.returncode:
@@ -142,7 +142,10 @@ def fingerprint(project, output):
     excluded = output.relative_to(project).as_posix() + "/"
     files = {}
     for name in names:
-        if name.startswith(excluded) or name == "docs/design-research/.gan.lock":
+        from workspace_paths import split, public_topic
+        public_excluded = public_topic(output).relative_to(project).as_posix()+"/" if split(output) else excluded
+        from workspace_paths import generated_navigation
+        if name.startswith((excluded, public_excluded)) or name == "docs/design-research/.gan.lock" or generated_navigation(project, name):
             continue
         path = project / relative(name)
         if path.is_symlink():

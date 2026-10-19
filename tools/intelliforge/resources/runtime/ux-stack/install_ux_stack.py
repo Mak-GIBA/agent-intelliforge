@@ -19,7 +19,7 @@ import urllib.request
 import uuid
 
 ROOT = Path(__file__).resolve().parent
-VERSION = "1.1.2"
+VERSION = "1.2.0"
 PLUGINS = ["product-design@openai-curated-remote", "build-web-apps@openai-curated-remote"]
 
 
@@ -504,19 +504,40 @@ class Installer:
         return 1 if self.failed else 0
 
     def apply(self):
+        if self.args.update:
+            if not self.manifest_path.is_file() or not self.manifest["components"]:
+                raise InstallError("--update requires an existing managed UX Stack installation")
+            # Reuse ownership/hash/backup checks; never install a missing component.
+            self.args.force = True
         tasks = [(ref, lambda ref=ref: self.install_plugin(ref)) for ref in PLUGINS]
         tasks += [("ooui-design", self.install_design),
                   ("web-design-guidelines", lambda: self.install_remote_skill("web-design-guidelines", "guidelines")),
                   ("browser-runtime", self.install_runtime), ("ux-gan-harness", self.install_harness),
                   ("playwright-mcp", self.install_mcp)]
-        if self.args.deep:
+        if self.args.deep or self.args.update and self.owned("ux-critique"):
             tasks.append(("ux-critique", lambda: self.install_remote_skill("ux-critique", "critique")))
         runtime_failed = False
         for name, task in tasks:
+            if self.args.update and not self.owned(name):
+                continue
             if name in ("ux-gan-harness", "playwright-mcp") and runtime_failed:
                 self.record(name, "failed", message="Browser runtime failed; not registering broken paths")
                 continue
             try:
+                if self.args.update and name in PLUGINS:
+                    plugin_name, market = name.split("@", 1)
+                    installed = any(p.get("installed", True) and
+                                    (p.get("pluginId") == name or p.get("name") == plugin_name and
+                                     (p.get("marketplaceName") or p.get("marketplace_name")) == market)
+                                    for p in self.plugin_list())
+                    if not installed:
+                        self.record(name, "skip", message="Removed plugin registration preserved")
+                        continue
+                if self.args.update and name == "playwright-mcp":
+                    server = next((s for s in self.mcp_list() if s.get("name") == self.owned(name)["name"]), None)
+                    if not server or not server.get("enabled", True):
+                        self.record(name, "skip", message="Missing/disabled MCP registration preserved")
+                        continue
                 task()
             except (InstallError, OSError, ValueError, tarfile.TarError) as e:
                 self.failed = True
@@ -548,6 +569,7 @@ def parse(argv=None):
     modes.add_argument("--doctor", action="store_true", help="Inspect installed items and launch Chromium on a blank page")
     modes.add_argument("--status", action="store_true", help="Inspect installed items without launching a browser")
     modes.add_argument("--uninstall", action="store_true", help="Remove only owned unchanged items")
+    modes.add_argument("--update", action="store_true", help="Update existing managed components only; never add missing plugins/MCP servers")
     modes.add_argument("--extract", type=Path, help="Extract embedded sources without installing")
     p.add_argument("--codex-home")
     p.add_argument("--skills-root")
@@ -575,6 +597,8 @@ def main(argv=None):
         return installer.inspect(launch=args.doctor)
     if args.dry_run:
         return installer.uninstall() if args.uninstall else installer.apply()
+    if args.update and (not installer.manifest_path.is_file() or not installer.manifest["components"]):
+        raise InstallError("--update requires an existing managed UX Stack installation")
     installer.state_root.mkdir(parents=True, exist_ok=True)
     with (installer.state_root / ".install.lock").open("a+") as lock:
         try:

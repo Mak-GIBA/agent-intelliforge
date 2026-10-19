@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Bounded core-logic research/improvement and independent verifier (stdlib only)."""
 from __future__ import annotations
+from workspace_paths import topic_workspace
+from runtime import atomic_bytes
 
 import argparse
 import collections
@@ -29,6 +31,7 @@ from runtime import (Blocked, Cancelled, assert_source, atomic_json, capture,
                      load_test_env, local_url, log, now, regular_path, relative,
                      sandbox_command, scrub, sensitive_path, sha256, terminate_owned,
                      test_environment, sanitize_tree)
+from role_runtime import child_environment, event_errors, failure_kind, override_sandbox, role_sandbox
 
 # proposed-method-report-v1
 from proposal_report import require_method_report, prepare_preview
@@ -39,7 +42,7 @@ from reassessment import snapshot_requirements
 from research_workstreams import snapshot_task, role_instructions as workstream_instructions
 
 HERE = Path(__file__).resolve().parent
-VERSION = "2.5.0"
+VERSION = "2.7.0"
 SEVERITIES = ["Critical", "High", "Medium", "Low"]
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}")
 
@@ -154,7 +157,8 @@ Abstracts/snippets are insufficient. Preprint/publication versions of one study 
 If access/budget prevents adequate reading, explain the gap and keep affected conclusions
 provisional/deferred. Follow skill_directory/references/protocol.md within existing limits.
 Use the user's language for findings and concise explanations. For Japanese research, review
-and verification report drafts, reading the available yomiyasu skill and polishing narrative
+and verification report drafts, prefer available kotonoha, falling back to the yomiyasu compatibility entry.
+Use one writing entry per draft; polishing narrative
 fields before returning JSON is recommended. Preserve claims, terms, IDs, numbers, conditions,
 outcomes, evidence links, quotations and certainty. Keep schema keys/enums, receipts, code and
 raw records unchanged. If unavailable, continue writing checks without installing the skill.
@@ -252,8 +256,7 @@ Do not run checks yourself; the parent executes them in an isolated workspace.""
         inputs.pop("proposal_design", None)
     for key in ("reassessment_context", "requirements_context", "workstream_context"):
         inputs[key] = state.get(key)
-    inputs["workspace"] = str(Path(state["config"]["project"]) / "docs/design-research" /
-                              state["config"]["slug"])
+    inputs["workspace"] = str(topic_workspace(state["config"]["project"], state["config"]["slug"]))
     inputs["skill_directory"] = str(HERE.parent)
     inputs["ledger_contract"] = str(HERE.parent / "references/evidence-format.md")
     from evaluation_contract import instructions as evaluation_instructions
@@ -273,19 +276,25 @@ def run_role(role, schema, state, workspace, run_dir):
     atomic_json(schema_path, schema)
     prompt = role_prompt(role, state, role_dir)
     (role_dir / "prompt.txt").write_text(scrub(prompt), "utf-8")
+    mode = role_sandbox(state, role)
+    env = child_environment(role_dir, "DR_GAN_CHILD")
+    network = bool(state["config"]["allow_network"] and role != "fixer")
     argv = ["codex", "exec", "-C", state["config"]["project"], "--sandbox",
-            "workspace-write" if role == "fixer" else "read-only", "--json", "--ephemeral",
+            mode, "--add-dir", str(role_dir), "--json", "--ephemeral",
             "--output-schema", str(schema_path), "--output-last-message", str(output),
             "-c", 'web_search="' + ("live" if state["config"]["allow_network"] and role != "fixer"
-                                   else "disabled") + '"']
+                                   else "disabled") + '"', "-c",
+            "sandbox_workspace_write.network_access=" + str(network).lower()]
     if not state["expected_source"]["head"]:
         argv.append("--skip-git-repo-check")
     if state["config"].get("model"):
         argv.extend(["--model", state["config"]["model"]])
     # Codex reads '-' from stdin; large dossiers must not become one OS argument.
     argv.extend(["--", "-"])
+    atomic_bytes(role_dir / "prompt.txt", scrub(prompt).encode("utf-8"))
     atomic_json(role_dir / "invocation.json", {"role": role, "started_at": now(),
-                "sandbox": "workspace-write" if role == "fixer" else "read-only",
+                "sandbox": mode, "network_access": network,
+                "runtime_directory": str(role_dir / ".runtime"),
                 "model": state["config"].get("model") or "inherited Codex configuration",
                 "prompt_bytes": len(prompt.encode()), "execution_contract_version": state.get("execution_contract_version", 1)})
     invocation = {"role": role, "iteration": state["iteration"],
@@ -296,7 +305,7 @@ def run_role(role, schema, state, workspace, run_dir):
     log(f"iteration {state['iteration']}: {role}")
     try:
         result = capture(argv, cwd=state["config"]["project"],
-                         env=dict(os.environ, DR_GAN_CHILD="1"),
+                         env=env,
                          directory=role_dir, input_text=prompt, timeout=max(0.001, min(state["config"]["phase_timeout"],
                          state.get("_role_deadline", time.monotonic() + state["config"]["phase_timeout"]) - time.monotonic())), label=role)
     except OSError as exc:
@@ -317,13 +326,18 @@ def run_role(role, schema, state, workspace, run_dir):
     if role != "fixer":
         assert_source(state["expected_source"], state["config"]["project"], workspace)
     if result["exit_code"] != 0 or result["timed_out"] or result["truncated"]:
+        detail = event_errors(result["paths"]["stdout"]) or Path(result["paths"]["stderr"]).read_text("utf-8")[-16000:]
+        atomic_json(role_dir / "diagnostic.json", {"kind": failure_kind(detail),
+                    "exit_code": result["exit_code"], "sandbox": mode,
+                    "timed_out": result["timed_out"], "truncated": result["truncated"],
+                    "message": scrub(detail[-1000:])})
         if result["timed_out"] and (state.get("role_contract_version") or state.get("evaluation_contract_version")):
             executed = sum(r["kind"] in {"test", "experiment"} for r in state["evidence"].values())
             raise Blocked(f"{role} のモデル処理が制限時間に達しました（経過 {result['duration_seconds']} 秒、"
                           f"設定上限 {state['config']['phase_timeout']} 秒）。親が実行した検証は {executed} 件です。"
                           "この停止は方式の精度・効果の不合格を意味しません。"
                           "実行記録: " + invocation["receipt"])
-        tail = Path(result["paths"]["stderr"]).read_text("utf-8")[-500:].strip()
+        tail = scrub(detail[-500:].strip())
         raise Blocked(f"Codex {role} failed or exceeded its execution/output limit" +
                       (": " + tail if tail else "; see " + invocation["diagnostics"]))
     if output.is_symlink() or not output.is_file() or output.stat().st_size > 5 * 1024 * 1024:
@@ -382,7 +396,7 @@ def design_format(value, state):
             raise Blocked("Comparison design format: candidate IDs/baseline differ from frozen evaluation")
     if not state.get("execution_contract_version"):
         require_method_report(draft, state)
-        require_contract(draft, state, Path(state["config"]["project"]) / "docs/design-research" / state["config"]["slug"])
+        require_contract(draft, state, topic_workspace(state["config"]["project"], state["config"]["slug"]))
 
 
 def bounded_instructions(role, state):
@@ -827,6 +841,10 @@ def experiments(state, workspace, run_dir):
                     raise Blocked("PoC input would overwrite generated code")
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, dest)
+                archived = regular_path(directory / "inputs" / name)
+                archived.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, archived)
+                add_record(state, workspace, archived, kind="experiment_input", description=f"Frozen experiment input: {name}")
             env = test_environment(scratch)
             execute_check(experiment["command"], experiment["check_ids"], state, workspace,
                           directory, scratch, env, experiment_id=experiment["id"],
@@ -1418,9 +1436,7 @@ def scoped_review_format(value, state):
         scoped["review"]["issues"] = [r for r in scoped["review"]["issues"]
             if set(r["check_ids"]) & set(state["unit_task"]["criterion_ids"])]
     try:
-        validate_review(value, scoped, Path(state["config"]["project"]) / "docs/design-research" /
-                        state["config"]["slug"], Path(state["config"]["project"]) / "docs/design-research" /
-                        state["config"]["slug"] / "runs" / state["run_id"])
+        validate_review(value, scoped, topic_workspace(state["config"]["project"], state["config"]["slug"]), topic_workspace(state["config"]["project"], state["config"]["slug"]) / "runs" / state["run_id"])
     except Blocked as exc:
         raise Blocked("Scoped review format: " + str(exc)) from exc
     # The parent now owns captured passages. Subsequent assembly cites those
@@ -1563,7 +1579,8 @@ def config_from(args, project):
             "requested_mode": "reassess" if getattr(args, "reassessment_context", None) else args.mode,
             "report_profile": getattr(args, "report_profile", "comparison"),
             "target_methods": getattr(args, "target_methods", 5),
-            "evaluation_purpose": getattr(args, "evaluation_purpose", "auto")}
+            "evaluation_purpose": getattr(args, "evaluation_purpose", "auto"),
+            "role_sandbox": getattr(args, "role_sandbox", None) or "workspace-write"}
 
 
 def execution(args):
@@ -1572,6 +1589,7 @@ def execution(args):
     project = regular_path(args.project)
     if not project.is_dir():
         raise Blocked("Project directory does not exist")
+    from workspace_paths import topic_workspace, state_paths
     parent = regular_path(project / "docs/design-research")
     parent.mkdir(parents=True, exist_ok=True)
     lock_path = regular_path(parent / ".gan.lock")
@@ -1585,7 +1603,7 @@ def execution(args):
         if args.mode == "resume":
             if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", args.run_id):
                 raise Blocked("Invalid run ID")
-            matches = list(parent.glob("*/runs/" + args.run_id + "/state.json"))
+            matches = state_paths(project, args.run_id)
             if len(matches) != 1:
                 raise Blocked("Run ID was not found uniquely in this project")
             state_path = regular_path(matches[0])
@@ -1614,6 +1632,7 @@ def execution(args):
                         raise Blocked("Producer checkpoint changed after validation")
             from execution_units import assert_inputs, enabled
             assert_inputs(state)
+            override_sandbox(state, getattr(args, "role_sandbox", None), now())
             if state["phase"] in {"experiments", "checks"} and not enabled(state):
                 if state["iteration"] >= state["config"]["max_iterations"]:
                     raise Blocked("Interrupted execution reached the limit; start a fresh research/audit/run")
@@ -1628,7 +1647,7 @@ def execution(args):
                 else:
                     state["phase"] = "proposal" if state["config"]["mode"] == "research" else "checks"
         else:
-            workspace = regular_path(parent / args.slug)
+            workspace = regular_path(topic_workspace(project, args.slug, create=True))
             workspace.mkdir(parents=True, exist_ok=True)
             from layout import initialize
             initialize(workspace)
@@ -1688,7 +1707,7 @@ def execution(args):
             publish(state, workspace, run_dir)
             if state["config"]["test_env_file"] and sha256(state["config"]["test_env_file"]) != state["test_env_hash"]:
                 raise Blocked("Test environment changed; start a fresh audit/run")
-            capabilities = codex_capabilities(project)
+            capabilities = codex_capabilities(project, mode=role_sandbox(state, "reviewer"))
             if not capabilities["ready"]:
                 raise Blocked("Codex structured exec/sandbox is not ready: " +
                               "; ".join(capabilities["errors"]))
@@ -1732,6 +1751,8 @@ def parser():
             sub.add_argument("--slug", required=True)
             sub.add_argument("--apply", action="store_true")
             continue
+        sub.add_argument("--role-sandbox", choices=("read-only", "workspace-write"),
+                         help="Non-fixer role permissions; new runs default to workspace-write; resume preserves recorded policy")
         if mode == "doctor":
             continue
         if mode == "resume":
@@ -1769,6 +1790,10 @@ def parser():
 
 
 def main(argv=None):
+    argv=list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] and argv[0] in {"export-evidence","verify-evidence"}:
+        from published_evidence import main as evidence_main
+        return evidence_main(argv)
     args = parser().parse_args(argv)
     if args.mode == "migrate":
         from migration import migrate
@@ -1782,8 +1807,9 @@ def main(argv=None):
             signal.signal(signal.SIGTERM,previous)
     if args.mode == "doctor":
         project = regular_path(args.project)
-        result = codex_capabilities(project if project.is_dir() else None)
-        print(json.dumps({"version": VERSION, "project": str(project), **result}, ensure_ascii=False, indent=2))
+        mode = args.role_sandbox or "workspace-write"
+        result = codex_capabilities(project if project.is_dir() else None, mode=mode)
+        print(json.dumps({"version": VERSION, "project": str(project), "role_sandbox": mode, **result}, ensure_ascii=False, indent=2))
         return 0 if result["ready"] else 2
     if args.mode != "resume":
         if (not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", args.slug)

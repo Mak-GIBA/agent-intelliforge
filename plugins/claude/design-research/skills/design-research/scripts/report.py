@@ -42,6 +42,11 @@ def write(root, name, lines):
 
 
 def publish(state, workspace, run_dir):
+    _publish_local(state, workspace, run_dir)
+    from workspace_paths import publish_public
+    publish_public(state, workspace)
+
+def _publish_local(state, workspace, run_dir):
     if not compact(workspace):
         return publish_legacy(state, workspace, run_dir)
     from runtime import Blocked

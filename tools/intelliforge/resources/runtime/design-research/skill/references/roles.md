@@ -3,7 +3,8 @@
 Use these as perspectives in one session or as prompts for native subagents if the host actually supports them.
 They are not executable agent registrations. Do not assume parallelism, independent runs, or improved accuracy without evidence.
 Share the same user goal, hard constraints, allowed tools, privacy rules, evaluation criteria, and budget with every role.
-For Japanese report drafts, reading the available yomiyasu skill and polishing narrative fields
+For Japanese report drafts, prefer available kotonoha, or the yomiyasu compatibility entry if unavailable.
+Use one writing entry per draft; polishing narrative fields
 before returning structured results is recommended. Preserve claims, terms, IDs, numbers,
 conditions, outcomes, evidence, quotations and certainty, along with keys/enums and code.
 If unavailable, continue writing checks without installing it. Preserve generated reports and archives.

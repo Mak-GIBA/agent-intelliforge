@@ -29,7 +29,11 @@ def overview(root: Path, plan_name: str=DEFAULT_PLAN) -> dict:
     if not plan_path.exists():
         # The requirements may live under a non-default docs_dir. Do not guess
         # a canonical document when no frozen plan identifies it.
-        result['workflow_stage']='needs_plan' if (root/'docs/upstream/requirements.md').is_file() else 'standalone'
+        from codex_interface import requirements_path
+        try:canonical=requirements_path(root)
+        except (ValueError,OSError,TypeError,KeyError) as exc:
+            result['warnings'].append(str(exc));canonical=None
+        result['workflow_stage']='needs_plan' if canonical else 'standalone'
         result['next_action']=('Decompose requirements into core logic before full-system research'
                                if result['workflow_stage']=='needs_plan'
                                else 'Standalone research or inspect existing run; choose upstream for whole-system requirements')

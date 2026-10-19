@@ -95,6 +95,10 @@ def _review_dir(root:Path)->Path:
 
 
 def _packet_markdown(packet:dict)->str:
+    from .overview import review_markdown
+    return review_markdown(packet)
+
+def _technical_packet_markdown(packet:dict)->str:
     out=[f"# Upstream Review — {packet['review_id']}",'',
          f"- System: `{packet['system']}`",f"- Approval profile: `{packet['profile']}`",
          f"- Checkpoint: `{packet['checkpoint']}`",f"- Created: `{packet['created_at']}`",'',

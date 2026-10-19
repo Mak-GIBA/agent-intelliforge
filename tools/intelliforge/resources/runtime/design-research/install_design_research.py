@@ -20,7 +20,7 @@ import zlib
 
 NAME = "design-research"
 OWNER = "basic-memory-workgraph/design-research"
-VERSION = "2.5.0"
+VERSION = "2.7.0"
 MANIFEST = ".design-research-install.json"
 PAYLOAD_MARKER = b"\n__DESIGN_RESEARCH_PAYLOAD__\n"
 PAYLOAD_SHA256 = "__PAYLOAD_SHA256__"
@@ -32,7 +32,8 @@ REQUIRED_FILES = frozenset({
     "scripts/codex_interface.py", "scripts/workflow_overview.py", "references/codex-interface.md",
     "references/workflow-guide.md", "scripts/evaluation_contract.py",
     "references/effectiveness-evaluation.md", "scripts/execution_units.py",
-    "references/execution-units.md"
+    "references/execution-units.md", "scripts/workspace_paths.py",
+    "scripts/published_evidence.py", "scripts/role_runtime.py", "references/advanced-contracts.md"
 })
 
 class InstallError(Exception):

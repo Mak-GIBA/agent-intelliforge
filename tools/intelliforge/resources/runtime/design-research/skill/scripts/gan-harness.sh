@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 DR_GAN_SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+if [[ "${1:-}" == "export-evidence" || "${1:-}" == "verify-evidence" ]]; then
+  exec "${PYTHON_BIN:-python3}" -B "$DR_GAN_SCRIPT_DIR/published_evidence.py" "$@"
+fi
 if [[ "${1:-}" == "reassess" ]]; then
   shift
   exec "${PYTHON_BIN:-python3}" -B "$DR_GAN_SCRIPT_DIR/reassessment.py" "$@"

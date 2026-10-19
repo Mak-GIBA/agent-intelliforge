@@ -6,6 +6,8 @@
 
 ## 最初の操作
 
+作業中の入口は、対象アプリの`docs/upstream/README.md`です。`speckit-workbench overview --project .`で最新状態を読み、文書更新後は`--write`でページも更新します。保存先を変更した場合は設定された`docs_dir`を使います。[出力先と確認の順序](../upstream-research-workflow.md)で、正本と研究記録の役割を確認できます。
+
 グローバル導入後、対象アプリのフォルダーでCodexを開きます。
 新規開発なら`$upstream-new`、既存アプリなら`$upstream-existing`から開始します。
 プロジェクトの準備がまだなら、Skillが[attachによる準備](installation.md)を案内します。
@@ -45,7 +47,7 @@ $upstream-existing このリポジトリの予約管理機能を整理して。
 
 ## ストーリーから研究を経て設計する
 
-Workbench 2.0.6では、次の順序で新規設計や実現方式を変えるTo-Be設計を進めます。
+Workbench 2.1.0では、次の順序で新規設計や実現方式を変えるTo-Be設計を進めます。
 
 ```mermaid
 flowchart LR

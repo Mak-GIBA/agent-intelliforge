@@ -3,7 +3,7 @@
 [導入手順](cross-platform.md) · [開発手順](cross-platform-development.md)
 
 2026-10-13にLinux環境で確認しました。既存のCodex経路を互換性の基準にし、追加経路は一時ホーム・一時設定・一時Skillディレクトリで検証しています。
-この検証では、PCに既存のSkill、フック、MCP、AGENTS.mdを更新していません。以後の実装と日本語Skillの評価は[kotonohaの検証記録](codex-yomiyasu/kotonoha-validation.md)を参照してください。
+本ページの追加配布経路の検証では、このPCの既存Skill、フック、MCP、AGENTS.mdを更新していません。後続のDesign Research 2.6.0 / Upstream 2.1.0の変更と通常経路でのPC更新は[同版の検証記録](design-research/validation.md)、日本語Skillの実装と評価は[kotonohaの検証記録](codex-yomiyasu/kotonoha-validation.md)にまとめています。
 
 ## 確認済み
 

@@ -31,7 +31,7 @@ TBD: RESEARCH_WORKSTREAMS.mdに従い、研究上の依存を図で示す。ア�
 ## テーマ別の方式検討の根拠と要件への対応
 
 TBD: 実際の研究run ID、実行コマンド、アーカイブreport.md、各テーマで約5候補の比較、選定/不採用理由、適用条件をまとめる。
-TBD: RESEARCH_WORKSTREAMS.mdのv2 bindingに従い、実SHA-256と設計IDを含むdesign-research JSONブロックを記載する。
+TBD: RESEARCH_WORKSTREAMS.mdの計画・統合契約とPUBLISHED_EVIDENCE.mdのv3 bindingに従い、実SHA-256と設計IDを含むdesign-research JSONブロックを記載する。
 
 | ユースケース・懸念 | 要件ID | 設計ID | 研究の候補・根拠 | 検証ID |
 |---|---|---|---|---|

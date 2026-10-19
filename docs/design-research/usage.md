@@ -4,9 +4,17 @@
 
 [docs一覧](../README.md) · [概要](README.md) · [導入手順](installation.md) · [検証結果](validation.md)
 
+## 子プロセスの書き込み権限
+
+2.7.0以降の新規runは、調査・提案・レビュー役も`workspace-write`で起動します。MCPや補助ツールの起動に必要な一時データはrun内へ分離し、HOMEとCODEX_HOMEは認証・設定の継承のため維持します。研究とauditの作業範囲は従来どおりで、修正役以外によるソース変更は検知して停止します。
+
+`--role-sandbox read-only`で修正役以外をread-onlyに指定できます。既存runは保存済みの設定を維持し、権限記録のない旧runには従来のread-onlyを適用します。再開する工程を変更する場合は`resume RUN_ID --role-sandbox workspace-write`を指定します。この上書きは実行履歴へ記録し、研究configや完了済みcheckpointのハッシュは変更しません。単一入口の`codex_interface.py prepare/run`でも同じオプションを使えます。
+
+ロールの`invocation.json`には実効権限と通信設定を記録し、子CLIが失敗した場合は`diagnostic.json`へ障害の種類を残します。`--allow-network`／`--offline`は既存の研究範囲を維持します。MCP独自の通信制御とは別の設定であり、offlineをMCP全体の遮断と解釈しないでください。PoCとテストの隔離条件は、モデルの権限変更とは別に維持します。
+
 ## 調査の中心はコアロジックの改善
 
-Design Research 2.5.0の入口は`$design-research`に統一されています。
+Design Research 2.7.0の入口は`$design-research`に統一されています。
 対象プロジェクトをCodexで開き、目的を短く伝えます。モード名・候補数・図・CLI引数を依頼文に列挙する必要はありません。
 
 ```text
@@ -59,7 +67,7 @@ Skillは自身の配置先を使うため、新規の`.agents/skills`と既存�
 ## SpecKitの要件・設計見直しと組み合わせる
 
 機能やシステム全体を整理したい場合は、`$upstream-new`または`$upstream-change`から始めます。
-SpecKit Upstream Workbench 2.0.6がストーリー・懸念・ユースケース・要件と全体設計を担当し、
+SpecKit Upstream Workbench 2.1.0がストーリー・懸念・ユースケース・要件と全体設計を担当し、
 Design Researchが方式を左右するコアロジックの問い、候補比較、PoCと研究報告を担当します。
 各キットは別途導入します。Design Researchだけを使う場合、SpecKitの導入や文書は必須ではありません。
 
@@ -254,11 +262,13 @@ Skillの最終回答は結論と報告へのリンクを中心に案内します
 JSONや生ログは、結果・停止理由を調べる必要がある場合だけ補足します。日本語の文章には利用可能なyomiyasuを使います。
 SpecKitと併用する場合は、採用理由・適用条件を`design.md`へ、評価条件・実際の結果を`verification.md`へ戻し、報告の全文は複製しません。
 
-機械用の状態・証拠台帳・検索記録は`.internal/status.json`・`.internal/evidence.json`・`.internal/research-log.json`です。
+2.6.0以降の新規テーマでは、完全な実行記録を`.artifacts/design-research/<slug>/`へ保存します。報告と図は`docs/design-research/<slug>/`へ公開します。既存テーマは元の場所を維持します。[出力先と確認の順序](../upstream-research-workflow.md)で、Gitへ残す証拠の選び方も説明しています。
+
+実行記録内の機械用の状態・証拠台帳・検索記録は`.internal/status.json`・`.internal/evidence.json`・`.internal/research-log.json`です。
 証拠にはID・ハッシュ・反復・対象ソースを残し、評価前と再開時に照合します。
 実際のreceiptから標準出力・標準エラー・生成結果を確認できます。
 `runs/<run-id>/`に状態・役割出力・PoC・生ログ・証拠を残します。同じ実行の`reports/report.md`が報告の保存版です。
-仕様から長期参照する場合は、`docs/design-research/<slug>/runs/<run-id>/reports/report.md`と実行IDを使います。
+仕様から長期参照する場合は、`export-evidence`で採用runの報告・入力・出力・必要な実行記録を`docs/design-research/<slug>/evidence/<run-id>/`へ固定します。プレビューが既定で、`--apply`で出力します。`verify-evidence --package <path>`はローカルの実行記録がないcloneでも欠落・改変を確認できます。旧形式の`runs/<run-id>/reports/`への参照も引き続き読めます。
 実行開始前の資料は`inputs/`へ保存します。
 最新の`report.md`は実行開始時と停止時にも今回の状態を表示し、前回の成功報告と取り違えないようにします。
 生成するJSON・図・画像は確認計画の`artifact_paths`に宣言し、実ファイルを保存します。画像は報告にも埋め込みます。
