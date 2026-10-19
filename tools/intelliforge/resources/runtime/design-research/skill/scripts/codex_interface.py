@@ -209,6 +209,8 @@ def prepare(args):
                 or args.report_profile is not None or args.evaluation_purpose is not None):
             raise ValueError('Resume preserves frozen inputs; changed requirements need fresh research/reassess')
         argv = ['bash', str(HERE/'gan-harness.sh'), 'resume', row['run_id'], '--project', str(root)]
+        if args.role_sandbox:
+            argv += ['--role-sandbox', args.role_sandbox]
         bound[row['state_path']] = row['sha256']
         return {'status': 'ready', 'executed': False, 'project': str(root), 'mode': mode, 'argv': argv,
                 'inputs_sha256': bound, 'selected_run': public(row), 'scope': 'Resume the same frozen run'}
@@ -297,6 +299,8 @@ def prepare(args):
     argv += extras + (['--allow-network'] if args.allow_network else ['--offline'])
     if args.model:
         argv += ['--model', args.model]
+    if args.role_sandbox:
+        argv += ['--role-sandbox', args.role_sandbox]
     return {'status': 'ready', 'executed': False, 'project': str(root), 'mode': mode,
             'argv': argv, 'inputs_sha256': bound, 'selected_run': public(prior) if prior else None,
             'context': context, 'target_methods': target, 'report_profile': profile, 'evaluation_purpose': purpose,
@@ -331,6 +335,7 @@ def parser():
         q.add_argument('--max-iterations', type=int, choices=range(1, 6), default=5)
         q.add_argument('--phase-timeout', type=int, default=1800)
         q.add_argument('--model')
+        q.add_argument('--role-sandbox', choices=('read-only', 'workspace-write'))
         q.add_argument('--expect-dispatch', help='SHA-256 from prepare; required by run')
         n = q.add_mutually_exclusive_group()
         n.add_argument('--allow-network', action='store_true')

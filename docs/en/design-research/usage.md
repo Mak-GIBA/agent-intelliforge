@@ -4,9 +4,17 @@
 
 [Documentation](../README.md) · [Overview](README.md) · [Installation](installation.md) · [Validation (Japanese)](../../design-research/validation.md)
 
+## Child write permissions
+
+New runs from 2.7.0 launch research, proposal and review roles with `workspace-write`. Transient tool data lives inside the run while HOME and CODEX_HOME retain authentication and configuration. Research and audit keep their existing task scope: unexpected source edits by non-fixer roles stop the run.
+
+Use `--role-sandbox read-only` for read-only non-fixer roles. Resume retains recorded policy, with read-only as the legacy default when no policy was saved. `resume RUN_ID --role-sandbox workspace-write` changes future invocations and records the override outside frozen research config, preserving completed checkpoint hashes. The single-entry `codex_interface.py prepare/run` commands also accept this option.
+
+Role `invocation.json` records effective permissions and command networking; failed child CLI execution also writes `diagnostic.json`. Existing `--allow-network` / `--offline` research limits remain, separately from MCP-specific networking. Offline is not a firewall for all MCP traffic. PoC and test isolation remains separate from model-role permissions.
+
 ## Focus on the project's core logic
 
-2.6.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
+2.7.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
 
 ```text
 $design-research Investigate ways to improve this project's search accuracy.
@@ -37,7 +45,7 @@ $design-research Audit the API and storage for invalid input, duplicate submissi
 $design-research Fix duplicate saves in this project. Preserve existing edits and report before/after verification and independent review.
 ```
 
-`audit` is read-only app review; `run` handles explicitly requested local fixes. Research/status alone does not authorize app changes. Confirm actual commands/run IDs/state rather than treating prose as execution. Skills resolve their own paths in new or legacy installations; record missing prerequisites and stop reasons if unavailable.
+`audit` preserves app source; `run` handles explicitly requested local fixes. Research/status alone does not authorize app changes. Confirm actual commands/run IDs/state rather than treating prose as execution. Skills resolve their own paths in new or legacy installations; record missing prerequisites and stop reasons if unavailable.
 
 ## Combine with SpecKit requirements and design
 

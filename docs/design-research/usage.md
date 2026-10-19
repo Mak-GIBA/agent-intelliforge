@@ -4,9 +4,17 @@
 
 [docs一覧](../README.md) · [概要](README.md) · [導入手順](installation.md) · [検証結果](validation.md)
 
+## 子プロセスの書き込み権限
+
+2.7.0以降の新規runは、調査・提案・レビュー役も`workspace-write`で起動します。MCPや補助ツールの起動に必要な一時データはrun内へ分離し、HOMEとCODEX_HOMEは認証・設定の継承のため維持します。研究とauditの作業範囲は従来どおりで、修正役以外によるソース変更は検知して停止します。
+
+`--role-sandbox read-only`で修正役以外をread-onlyに指定できます。既存runは保存済みの設定を維持し、権限記録のない旧runには従来のread-onlyを適用します。再開する工程を変更する場合は`resume RUN_ID --role-sandbox workspace-write`を指定します。この上書きは実行履歴へ記録し、研究configや完了済みcheckpointのハッシュは変更しません。単一入口の`codex_interface.py prepare/run`でも同じオプションを使えます。
+
+ロールの`invocation.json`には実効権限と通信設定を記録し、子CLIが失敗した場合は`diagnostic.json`へ障害の種類を残します。`--allow-network`／`--offline`は既存の研究範囲を維持します。MCP独自の通信制御とは別の設定であり、offlineをMCP全体の遮断と解釈しないでください。PoCとテストの隔離条件は、モデルの権限変更とは別に維持します。
+
 ## 調査の中心はコアロジックの改善
 
-Design Research 2.6.0の入口は`$design-research`に統一されています。
+Design Research 2.7.0の入口は`$design-research`に統一されています。
 対象プロジェクトをCodexで開き、目的を短く伝えます。モード名・候補数・図・CLI引数を依頼文に列挙する必要はありません。
 
 ```text

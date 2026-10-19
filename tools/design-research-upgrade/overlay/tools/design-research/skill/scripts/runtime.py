@@ -88,7 +88,7 @@ def checked_command(argv, *, cwd=None, timeout=20):
         raise Blocked(f"Cannot execute {argv[0]}: {exc}") from exc
 
 
-def codex_capabilities(project=None, *, smoke=True):
+def codex_capabilities(project=None, *, smoke=True, mode="workspace-write"):
     checks = {"python": True, "codex": bool(shutil.which("codex"))}
     errors = []
     if checks["codex"]:
@@ -98,7 +98,7 @@ def codex_capabilities(project=None, *, smoke=True):
             ("--json", "--output-schema", "--output-last-message", "--sandbox", "--ephemeral"))
         if smoke and checks["structured_exec"]:
             try:
-                command = sandbox_command("read-only", False, ["/bin/true"])
+                command = sandbox_command(mode, False, ["/bin/true"])
                 result = checked_command(command, cwd=project, timeout=15)
                 checks["sandbox"] = result.returncode == 0
                 if result.returncode:

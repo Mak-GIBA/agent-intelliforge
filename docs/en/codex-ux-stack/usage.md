@@ -4,6 +4,24 @@
 
 [Overview](README.md) · [Installation](installation.md) · [Validation (Japanese)](../../codex-ux-stack/validation.md) · [Documentation](../README.md)
 
+## Child permissions and MCP diagnostics
+
+New audits and improvement runs from 1.2.0 launch roles with `workspace-write`. This permits MCP startup and evidence writes; audit roles are still instructed not to edit the app. Unexpected source changes stop the run and remain available for inspection. `audit` describes the task scope, not an OS read-only boundary.
+
+```bash
+ux-gan-harness doctor --project /path/to/app --check-mcp
+ux-gan-harness audit --project /path/to/app --url http://localhost:3000 --browser local-playwright --role-sandbox workspace-write
+ux-gan-harness resume RUN_ID --project /path/to/app --role-sandbox workspace-write
+```
+
+`doctor --check-mcp` uses no model. It initializes the bundled local MCP, lists tools, performs three operations, and verifies saved images and receipts before deleting the temporary probe. Availability of a configured Browser Plugin or Playwright MCP in the child CLI is checked separately during the real audit.
+
+The private bridge waits for initialization and receives invocation-only tool approval for the requested audit/run. Personal settings and existing MCP approval policies are unchanged. A `tool_approval` failure requires checking the selected server's approval settings. Direct doctor probes do not establish child Codex tool-approval or model-authentication readiness.
+
+Resume retains recorded permissions. Legacy runs without a policy use read-only non-fixer roles; the resume example explicitly switches future roles without changing completed records. Use `--role-sandbox read-only` to select that policy for a new run. Fixers always use workspace-write.
+
+Each `invocation.json` records effective permissions, command networking and the temporary directory. If structured output is missing, inspect the adjacent `diagnostic.json` and `events.jsonl`. Authentication failures do not trigger browser retries; only recognized browser failures switch to the recorded local fallback. HOME and CODEX_HOME remain unchanged while transient data is isolated inside the run.
+
 ## Design and implement a new app
 
 Open the app in Codex and select `$ooui-design`; automatic selection is also allowed.

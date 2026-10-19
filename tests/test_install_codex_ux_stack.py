@@ -118,6 +118,42 @@ class InstallerTests(unittest.TestCase):
             self.assertEqual(self.invoke("--dry-run","--deep"),0)
         self.assertEqual(before,set(self.home.rglob("*")))
 
+    def test_update_requires_managed_installation(self):
+        with self.assertRaisesRegex(mod.InstallError, "existing managed"):
+            self.invoke("--update")
+
+    def test_update_does_not_add_missing_plugins_or_mcp(self):
+        self.assertEqual(self.invoke(), 0)
+        manifest = self.manifest()
+        # Simulate an installation that owns only the local harness/design/runtime.
+        for name in [*mod.PLUGINS, "playwright-mcp", "web-design-guidelines"]:
+            manifest["components"].pop(name, None)
+        path = self.home/".codex/ux-stack/manifest.json"
+        path.write_text(json.dumps(manifest))
+        before = self.mock_state()
+        with patch.object(mod.Installer, "install_plugin", side_effect=AssertionError("plugin added")), \
+             patch.object(mod.Installer, "install_mcp", side_effect=AssertionError("MCP changed")), \
+             patch.object(mod.Installer, "download_source", side_effect=AssertionError("optional skill fetched")):
+            self.assertEqual(self.invoke("--update"), 0)
+        self.assertEqual(self.mock_state(), before)
+        self.assertEqual(set(self.manifest()["components"]), set(manifest["components"]))
+
+    def test_update_preserves_manually_edited_harness(self):
+        self.assertEqual(self.invoke(), 0)
+        path = self.home/".agents/skills/ux-gan-harness/scripts/harness.py"
+        path.write_text(path.read_text()+"\n# user customization\n")
+        before = path.read_bytes()
+        self.assertEqual(self.invoke("--update"), 1)
+        self.assertEqual(path.read_bytes(), before)
+
+    def test_update_does_not_restore_removed_native_registrations(self):
+        self.assertEqual(self.invoke(), 0)
+        before=self.mock_state()
+        before['installed']=[];before['servers']=[]
+        (self.home/'.codex/mock.json').write_text(json.dumps(before))
+        self.assertEqual(self.invoke('--update'), 0)
+        self.assertEqual(self.mock_state(), before)
+
     def test_install_idempotent_and_launcher_calls_bash_from_any_cwd(self):
         self.assertEqual(self.invoke("--deep"),0)
         manifest=self.manifest()

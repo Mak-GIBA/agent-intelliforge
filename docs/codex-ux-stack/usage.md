@@ -4,6 +4,24 @@
 
 [概要](README.md) · [導入手順](installation.md) · [検証範囲](validation.md) · [docs一覧](../README.md)
 
+## 子プロセスの権限とMCPの診断
+
+1.2.0以降の新しい監査・改善では、各ロールを`workspace-write`で起動します。MCPの起動や画像保存に必要な書き込みを許可し、監査役にはアプリを編集しないよう指示します。監査中にソースが変わると停止し、差分を保持します。`audit`は作業範囲を表すモードであり、OS上のread-onlyを意味しません。
+
+```bash
+ux-gan-harness doctor --project /path/to/app --check-mcp
+ux-gan-harness audit --project /path/to/app --url http://localhost:3000 --browser local-playwright --role-sandbox workspace-write
+ux-gan-harness resume RUN_ID --project /path/to/app --role-sandbox workspace-write
+```
+
+`doctor --check-mcp`はモデルを呼ばず、専用のローカルMCPを初期化し、ツール一覧の取得、3回の操作、画像とreceiptの保存まで確認します。証拠は一時領域で照合してから削除します。登録済みのBrowser PluginやPlaywright MCPが子CLIで使えることは、実際の監査で別途確認します。
+
+専用MCPは子CLIの起動時に初期化を待ち、依頼された監査・改善の操作をその呼び出し内で実行できる承認設定を渡します。個人設定や既存MCPの承認ルールは変更しません。`tool_approval`で止まる場合は、使ったMCPの承認設定を確認してください。MCPへ直接接続するdoctorだけでは、子Codexのツール承認やモデル認証までは確認できません。
+
+既存runは保存済みの権限を引き継ぎます。権限の記録がない旧runは修正役以外をread-onlyとして扱い、上のresume例で切り替えられます。新しく実行する工程だけに適用し、完了済みの記録は変更しません。新規runをread-onlyにする場合は`--role-sandbox read-only`を指定します。修正役は常にworkspace-writeです。
+
+起動ごとの`invocation.json`に実効権限・通信設定・一時領域を記録します。構造化出力を得られずに止まった場合は、同じ場所の`diagnostic.json`と`events.jsonl`を確認してください。認証失敗をブラウザーの障害として再試行せず、ブラウザー経路の失敗だけを記録してローカルMCPへ切り替えます。HOMEとCODEX_HOMEは維持し、一時データをrun内へ分離します。
+
 ## 新規アプリを設計・実装する
 
 アプリのフォルダーでCodexを開き、$ooui-designを指定します。自動選択の候補にもなります。

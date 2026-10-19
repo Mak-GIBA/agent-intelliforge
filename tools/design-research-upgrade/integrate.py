@@ -8,7 +8,7 @@ import re
 from command_assets import assets, COMMANDS
 
 ROOT = Path(__file__).resolve().parent
-VERSION_D, VERSION_U = '2.6.0', '2.1.0'
+VERSION_D, VERSION_U = '2.7.0', '2.1.0'
 
 
 def module(path, name):
@@ -39,7 +39,7 @@ def patch_installer(text):
                '    "references/workflow-guide.md", "scripts/evaluation_contract.py",\n'
                '    "references/effectiveness-evaluation.md", "scripts/execution_units.py",\n'
                '    "references/execution-units.md", "scripts/workspace_paths.py",\n'
-               '    "scripts/published_evidence.py", "references/advanced-contracts.md"')
+               '    "scripts/published_evidence.py", "scripts/role_runtime.py", "references/advanced-contracts.md"')
     text = re.sub(r'(?m)^VERSION = "[0-9.]+"$', 'VERSION = "' + VERSION_D + '"', text)
     compile(text, 'install_design_research.py', 'exec')
     return text

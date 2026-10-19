@@ -7,6 +7,7 @@ import collections
 import contextlib
 import datetime as dt
 from agent_intelliforge import fcntl_compat as fcntl
+import functools
 import hashlib
 import json
 import os
@@ -18,6 +19,7 @@ import signal
 import struct
 from agent_intelliforge import subprocess_bridge as subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -26,7 +28,11 @@ import uuid
 import zlib
 
 HERE = Path(__file__).resolve().parent
-VERSION = "1.1.2"
+sys.path.insert(0, str(HERE))
+from role_runtime import (browser_failure, child_environment, event_errors, failure_kind,
+                          override_sandbox, role_sandbox)
+
+VERSION = "1.2.0"
 VIEWPORTS = {"desktop": (1440, 900), "tablet": (768, 1024), "mobile": (390, 844)}
 PERSPECTIVES = ["first_time", "mistake", "hurried", "skips_explanation"]
 STATES = ["normal", "empty", "invalid_input", "cancel", "back", "double_click",
@@ -148,11 +154,35 @@ def browser_smoke():
     return json.loads(r.stdout)
 
 
-def sandbox_smoke(project=None):
+def browser_launch_environment():
+    """Keep installed browser discovery stable when child caches are isolated."""
+    values = {key: os.environ[key] for key in ("UX_GAN_BROWSER_EXECUTABLE", "PLAYWRIGHT_BROWSERS_PATH")
+              if os.environ.get(key)}
+    package = runtime_root() / "node_modules/playwright"
+    if not values and (package / "package.json").is_file():
+        cache = installed_browser_cache(str(package), str(Path.home()), os.environ.get("XDG_CACHE_HOME", ""))
+        if cache:
+            values["PLAYWRIGHT_BROWSERS_PATH"] = cache
+    return values
+
+
+@functools.lru_cache(maxsize=8)
+def installed_browser_cache(package, home, xdg_cache):
+    # Home and XDG are part of the cache key; explicit browser locations bypass it.
+    result = command(["node", "-p", "require(process.argv[1]).chromium.executablePath()", package])
+    if result.returncode:
+        raise Blocked("Cannot resolve the installed Playwright browser: " + scrub(result.stderr[-500:]))
+    for parent in Path(result.stdout.strip()).parents:
+        if re.fullmatch(r"chromium(?:_headless_shell)?-\d+", parent.name):
+            return str(parent.parent)
+    return None
+
+
+def sandbox_smoke(project=None, mode="workspace-write"):
     help_result = command(["codex", "sandbox", "--help"])
     # Current CLI selects the OS backend; older versions expose 'linux'.
     suffix = ["linux"] if "Commands:" in help_result.stdout and "linux" in help_result.stdout else []
-    r = command(["codex", "-c", 'sandbox_mode="read-only"', "sandbox", *suffix,
+    r = command(["codex", "-c", f'sandbox_mode="{mode}"', "sandbox", *suffix,
                  "--", "/bin/true"], cwd=project, timeout=15)
     if r.returncode:
         raise Blocked("Codex command sandbox cannot start on this host. "
@@ -173,14 +203,51 @@ def doctor(args):
         checks["browser_error"] = str(e)
     if checks["codex_exec"]:
         try:
-            checks["codex_sandbox"] = sandbox_smoke(Path(args.project).resolve())
+            checks["codex_sandbox"] = sandbox_smoke(Path(args.project).resolve(),
+                                                     args.role_sandbox or "workspace-write")
         except Blocked as e:
             checks["codex_sandbox"] = False
             checks["sandbox_error"] = str(e)
+    probe = {"status": "not_requested", "backend": "local-playwright"}
+    if args.check_mcp:
+        try:
+            probe = mcp_probe(args.role_sandbox or "workspace-write")
+            checks["mcp_probe"] = probe.get("ready") is True
+        except Blocked as exc:
+            probe = {"status": "failed", "backend": "local-playwright",
+                     "kind": failure_kind(str(exc)), "error": scrub(str(exc))}
+            checks["mcp_probe"] = False
     good = all(v for k, v in checks.items() if not k.endswith("_error"))
     print(json.dumps({"version": VERSION, "ready": good, "checks": checks,
+                      "role_sandbox": args.role_sandbox or "workspace-write", "mcp_probe": probe,
                       "runtime": str(runtime_root())}, ensure_ascii=False, indent=2))
     return 0 if good else 1
+
+
+def mcp_probe(mode):
+    """Exercise the actual stdio bridge and disk evidence in a disposable sandbox."""
+    with tempfile.TemporaryDirectory(prefix="ux-mcp-doctor-") as temporary:
+        root = Path(temporary)
+        env = child_environment(root, "UX_GAN_CHILD")
+        env.update(UX_GAN_RUNTIME=str(runtime_root()), UX_GAN_SCREENSHOTS=str(root / "screenshots"))
+        env.update(browser_launch_environment())
+        help_result = command(["codex", "sandbox", "--help"])
+        suffix = ["linux"] if "Commands:" in help_result.stdout and "linux" in help_result.stdout else []
+        argv = ["codex", "-c", f'sandbox_mode="{mode}"', "-c",
+                "sandbox_workspace_write.network_access=true", "sandbox", *suffix,
+                "--", "node", str(HERE / "mcp-probe.cjs")]
+        result = command(argv, cwd=root, timeout=55, env=env)
+        if result.returncode:
+            raise Blocked("MCP probe failed: " + result.stderr[-1200:])
+        try:
+            probe = json.loads(result.stdout)
+        except ValueError as exc:
+            raise Blocked("MCP probe produced invalid diagnostics") from exc
+        receipt = root / "screenshots/browser-receipts.jsonl"
+        if not receipt.is_file() or not list((root / "screenshots").glob("*.png")):
+            raise Blocked("Browser evidence write failed: images or receipts missing")
+        return {**probe, "status": "passed", "backend": "local-playwright", "sandbox": mode,
+                "evidence_saved": True, "evidence_lifetime": "temporary probe only"}
 
 
 def fingerprint(project):
@@ -652,7 +719,10 @@ the target and what should NOT be copied. If a source is inaccessible record the
 Compare object/action context, navigation, memory support, information priority and recovery,
 not just styling. A pattern is a proposal for this audience, not proof it improves this app.
 Ready requires at least one genuinely image-observed app, with meaningful patterns and
-an attempted comparison of three candidates. Otherwise return partial/blocked.
+an attempted comparison of three candidates. If external sources are inaccessible, return
+partial with each limitation so target review can continue. Use blocked only when the
+target browser itself is unavailable. A navigation timeout may still leave a usable page;
+try ux_capture once before marking that reference unavailable.
 Use official_reference evidence. Do not copy an entire competitor UI into this app.""",
         "reviewer": """Operate ALL available major flows. Compare screenshots at desktop 1440x900,
 tablet 768x1024 and mobile 390x844. Cover applicable empty, invalid input, cancel, back,
@@ -721,10 +791,14 @@ def run_role(role, schema, state, run_dir, iteration):
         atomic_json(schema_path, schema)
         prompt = role_prompt(role, state, actual_dir)
         (actual_dir / "prompt.txt").write_text(prompt, encoding="utf-8")
+        mode = role_sandbox(state, role)
+        env = child_environment(actual_dir, "UX_GAN_CHILD")
+        env.update(browser_launch_environment())
         argv = ["codex", "exec", "-C", state["config"]["project"],
-                "--sandbox", "workspace-write" if role == "fixer" else "read-only",
+                "--sandbox", mode, "--add-dir", str(actual_dir),
                 "--json", "--ephemeral", "--output-schema", str(schema_path),
-                "--output-last-message", str(output_path), "-c", 'web_search="live"']
+                "--output-last-message", str(output_path), "-c", 'web_search="live"',
+                "-c", "sandbox_workspace_write.network_access=true"]
         if not state["expected_source"]["head"]:
             argv.append("--skip-git-repo-check")
         if state["config"].get("model"):
@@ -736,11 +810,14 @@ def run_role(role, schema, state, run_dir, iteration):
                 "env": {"UX_GAN_RUNTIME": str(runtime_root()),
                         "UX_GAN_SCREENSHOTS": str(actual_dir / "screenshots"),
                         "UX_GAN_TARGET": state["config"]["url"]},
-                "startup_timeout_sec": 60, "tool_timeout_sec": 60
+                "startup_timeout_sec": 60, "tool_timeout_sec": 60, "required": True,
+                # The explicit audit/run authorizes this isolated, target-scoped bridge.
+                # Do not change approvals for native/user-configured MCP servers.
+                "default_tools_approval_mode": "approve"
             }
-            for key in ("UX_GAN_BROWSER_EXECUTABLE", "PLAYWRIGHT_BROWSERS_PATH"):
-                if os.environ.get(key):
-                    bridge["env"][key] = os.environ[key]
+            for key in ("TMPDIR", "TMP", "TEMP", "XDG_CACHE_HOME", "UV_CACHE_DIR", "npm_config_cache"):
+                bridge["env"][key] = env[key]
+            bridge["env"].update(browser_launch_environment())
             def toml(v):
                 if isinstance(v, dict):
                     return "{" + ", ".join(json.dumps(k)+ " = " + toml(x) for k, x in v.items()) + "}"
@@ -751,18 +828,20 @@ def run_role(role, schema, state, run_dir, iteration):
                 argv += ["-c", f"mcp_servers.ux_gan_browser.{k}={toml(v)}"]
             if state.get("failed_native_backend") == "playwright-mcp":
                 argv += ["-c", "mcp_servers.playwright.enabled=false"]
+        elif state["backend"] == "playwright-mcp":
+            argv += ["-c", "mcp_servers.playwright.required=true"]
         attached = []
         if role in ("fixer", "reviewer") and state.get("evidence"):
             attached = [e["path"] for e in state["evidence"].values()
                         if e["source"] == "live"][:4]
             for p in attached:
                 argv += ["--image", p]
-        env = dict(os.environ, UX_GAN_CHILD="1")
         # Pass prompt through an argv element; never interpolate it into shell code.
         argv += ["--", prompt]
         atomic_json(actual_dir / "invocation.json",
                     {"role": role, "browser": state["backend"], "attached_images": attached,
-                     "sandbox": "workspace-write" if role == "fixer" else "read-only",
+                     "sandbox": mode, "network_access": True,
+                     "runtime_directory": str(actual_dir / ".runtime"),
                      "started_at": now()})
         log(f"{tag}: {state['backend']} / {state['config'].get('model') or 'Codex設定のモデル'}")
         code = stream_process(argv, state["config"]["project"], env,
@@ -770,13 +849,31 @@ def run_role(role, schema, state, run_dir, iteration):
         if role != "fixer":
             assert_source(state["expected_source"], Path(state["config"]["project"]))
         if not output_path.is_file():
-            raise Blocked(f"{tag}: Codex produced no structured output (exit {code})")
+            text = event_errors(actual_dir / "events.jsonl")
+            kind = failure_kind(text)
+            atomic_json(actual_dir / "diagnostic.json", {"kind": kind, "exit_code": code,
+                        "backend": state["backend"], "sandbox": mode, "message": scrub(text[-1000:])})
+            if role != "fixer" and browser_failure(kind) and state["backend"] != "local-playwright":
+                state["failed_native_backend"] = state["backend"]
+                state["backend"] = "local-playwright"
+                reason = f"{kind}: native browser failed before structured output"
+                state["fallback_reason"] += "; " + reason
+                state["history"].append({"phase": tag, "result": "blocked", "reason": reason,
+                                         "fallback": "local-playwright"})
+                browser_smoke()
+                continue
+            raise Blocked(f"{tag}: Codex produced no structured output (exit {code}, {kind}); see {actual_dir / 'diagnostic.json'}")
         try:
             result = json.loads(output_path.read_text(encoding="utf-8"))
         except ValueError as e:
             raise Blocked(f"{tag}: malformed JSON") from e
         validate_schema(result, schema)
-        if role != "fixer" and result["status"] == "blocked" and state["backend"] != "local-playwright":
+        if result["status"] == "blocked":
+            atomic_json(actual_dir / "diagnostic.json", {"kind": failure_kind(result["reason"]),
+                        "exit_code": code, "backend": state["backend"], "sandbox": mode})
+        if (role != "fixer" and result["status"] == "blocked"
+                and browser_failure(failure_kind(result["reason"]))
+                and state["backend"] != "local-playwright"):
             # Explicit recorded fallback, not an undocumented switch to code-only.
             reason = result["reason"]
             state["failed_native_backend"] = state["backend"]
@@ -1182,6 +1279,7 @@ def execution(args):
             if state["status"] in ("passed", "reviewed"):
                 log("Already complete: " + state["run_id"])
                 return 0
+            override_sandbox(state, args.role_sandbox, now())
         else:
             parsed = urllib.parse.urlparse(args.url or "")
             if parsed.scheme not in ("http", "https") or not parsed.netloc:
@@ -1194,6 +1292,7 @@ def execution(args):
                       "reference_urls": args.reference_url, "max_iterations": args.max_iterations,
                       "phase_timeout": args.phase_timeout, "model": args.model,
                       "browser": args.browser, "brief": args.brief}
+            config["role_sandbox"] = args.role_sandbox or "workspace-write"
             rule_paths = []
             for parent in [*reversed(project.parents), project]:
                 for name in ("AGENTS.md", "CONTRIBUTING.md"):
@@ -1215,7 +1314,7 @@ def execution(args):
             raise Blocked("Codex CLI with structured exec output is required")
         if not checks["design_references"]:
             raise Blocked(checks["design_error"])
-        sandbox_smoke(project)
+        sandbox_smoke(project, role_sandbox(state, "reviewer"))
         if "backend" not in state:
             state["backend"], state["fallback_reason"] = select_backend(state["config"])
         if state["backend"] == "local-playwright":
@@ -1270,7 +1369,10 @@ def parser():
     for mode in ("audit", "run", "resume", "doctor"):
         cmd = sub.add_parser(mode)
         cmd.add_argument("--project", default=".")
+        cmd.add_argument("--role-sandbox", choices=["read-only", "workspace-write"],
+                         help="Non-fixer role permissions; new runs default to workspace-write; resume preserves recorded policy")
         if mode == "doctor":
+            cmd.add_argument("--check-mcp", action="store_true", help="Probe the bundled browser MCP and saved images/receipts without a model")
             continue
         if mode == "resume":
             cmd.add_argument("run_id")

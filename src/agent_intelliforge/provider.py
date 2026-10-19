@@ -44,9 +44,12 @@ def role_request(argv: list[str]) -> dict:
     for index, argument in enumerate(options[:-1]):
         if argument == "-c": configurations.append(options[index + 1])
     images = [options[index + 1] for index, item in enumerate(options[:-1]) if item == "--image"]
+    writable = [options[index + 1] for index, item in enumerate(options[:-1]) if item == "--add-dir"]
+    network = not any(item == "sandbox_workspace_write.network_access=false" for item in configurations)
     return {"cwd": option("-C", os.getcwd()), "schema": schema, "schema_path": schema_path,
             "output": output, "prompt": sys.stdin.read() if prompt[0] == '-' else prompt[0], "mode": option("--sandbox", "read-only"),
-            "model": option("--model"), "configurations": configurations, "images": images}
+            "model": option("--model"), "configurations": configurations, "images": images,
+            "writable_directories": writable, "network": network}
 
 
 def claude_command(request: dict, *, windows: bool | None = None) -> list[str]:
@@ -134,8 +137,11 @@ def main(argv=None) -> int:
             if not check["ready"]: raise ForgeError(str(check))
             command = claude_command(request)
             writable = [Path(request["output"]).parent]
-            if request["mode"] == "workspace-write": writable.append(Path(request["cwd"]))
-            command = isolated_command(command, Path(request["cwd"]), writable, True)
+            if request["mode"] == "workspace-write":
+                writable += [Path(request["cwd"]), *map(Path, request["writable_directories"])]
+                writable += [Path(os.environ[name]) for name in ("TMPDIR", "TMP", "TEMP")
+                             if os.environ.get(name) and Path(os.environ[name]).is_dir()]
+            command = isolated_command(command, Path(request["cwd"]), writable, request["network"])
             prompt = request['prompt']
             if request['images']: prompt += '\nInspect screenshot files with Read:\n' + '\n'.join(request['images'])
             result = capture(command, cwd=request["cwd"], env=role_environment(), timeout=1800, input_text=prompt)

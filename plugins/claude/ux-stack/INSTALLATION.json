@@ -2,13 +2,13 @@
   "schema_version": 1,
   "id": "ux-stack",
   "name": "UX Stack",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "legacy": {
     "script": "install_codex_ux_stack.sh",
     "actions": {
       "install": [],
       "update": [
-        "--force"
+        "--update"
       ],
       "doctor": [
         "--doctor"

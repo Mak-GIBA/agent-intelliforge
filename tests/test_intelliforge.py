@@ -256,6 +256,24 @@ class ProcessTests(unittest.TestCase):
         self.assertNotIn('--dangerously-skip-permissions',command)
         self.assertNotIn('--bare',command)
 
+    def test_claude_workspace_role_enables_edits_without_bypassing_permissions(self):
+        request={'mode':'workspace-write','prompt':'test','schema':{'type':'object'},'images':[],
+                 'model':None,'configurations':['web_search="disabled"']}
+        command=provider.claude_command(request)
+        tools=command[command.index('--tools')+1].split(',')
+        self.assertIn('Edit',tools);self.assertIn('Write',tools)
+        self.assertNotIn('WebSearch',tools)
+        self.assertNotIn('--dangerously-skip-permissions',command)
+
+    def test_claude_request_retains_explicit_runtime_roots_and_network(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            schema=Path(temporary)/'schema.json';schema.write_text('{"type":"object"}')
+            request=provider.role_request(['exec','-C',temporary,'--sandbox','workspace-write',
+                '--add-dir',temporary,'--output-schema',str(schema),'--output-last-message',str(Path(temporary)/'result.json'),
+                '-c','sandbox_workspace_write.network_access=false','--','literal'])
+            self.assertEqual(request['writable_directories'],[temporary])
+            self.assertFalse(request['network'])
+
     def test_claude_isolation_never_falls_back(self):
         with tempfile.TemporaryDirectory() as temporary,patch.dict(os.environ,{'INTELLIFORGE_STATE_DIR':temporary}):
             with self.assertRaises(ForgeError): provider.isolated_command(['claude'],Path(temporary),[],True)
