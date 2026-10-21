@@ -24,7 +24,7 @@ description: Research and improve the core logic contributing to a project's mai
    提案手法の詳細設計が必要なら[提案手法](references/proposed-method-report.md)、
    条件変更なら[再検討](references/reassessment.md)、複数テーマなら[研究計画](references/workstreams.md)を読む。
    詳細な実行・証拠・役割契約は[実行契約](references/advanced-contracts.md)の該当節を使う。
-6. 最小設計→実行資材→実測・採点→原典確認→結論・説明→独立レビューを保存する。
+6. 最小設計→実行資材→実測・採点→原典確認→結論・説明→独立レビュー→公開前の全文推敲を保存する。
    必須単位が残る間は全体を完了としない。入力は通常16 KiB以内、超過は全文・ハッシュ付き参照へ。
    同一projectのロック・時間上限・sandbox・ネット利用・実装変更の境界を守る。
 
@@ -37,4 +37,7 @@ description: Research and improve the core logic contributing to a project's mai
 Upstreamは出力されたv3 bindingを要件・設計IDに結び、統合結果と未確認事項を別に記録する。
 文書更新後は`overview --write`で確認ページを更新し、最後はそのリンクと対象ID・次の操作を示す。
 記録の整合性は科学的な有効性やユーザー承認の証明ではない。未実行・失敗・不明点を保持する。
-日本語は利用可能なkotonohaを優先し、未導入ならyomiyasu互換入口を使う。同じ原稿に両方を重ねず、なければ追加導入せず続行する。公開済みの台帳・ログ・保存版は保持する。
+新規runの本文構成と公開前のkotonoha推敲は[報告工程](references/reporting.md)に従う。
+有望な論文の全文確認とOSS再利用の判断は[原典確認](references/source-review.md)で記録する。
+未読・利用条件不明の候補は採用保留にする。日本語Skillがなければ未適用を明記して完了できる。
+公開済みの台帳・ログ・保存版は保持する。

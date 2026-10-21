@@ -4,6 +4,18 @@
 
 [Documentation](../README.md) · [Overview](README.md) · [Installation](installation.md) · [Validation (Japanese)](../../design-research/validation.md)
 
+## Report structure, reading and adoption
+
+New 2.8.0 runs organize the main report as conclusion, background/problem/assumptions, candidate comparison, recommended approach and adoption, verification/results, and limitations/next actions. Proposed-method diagrams and formulas belong with adoption details. Unused sections are omitted; process tables, reading records and detailed stops move to the appendix. In-progress reports are explicitly drafts.
+
+After scientific review, a writer reads the whole Japanese draft and uses installed kotonoha, otherwise yomiyasu. The parent locks numbers, IDs, references, formulas, code and structure; a separate reader checks meaning, negation, conditions, causality and certainty. Available offline lint results are retained without requiring zero findings. If neither Skill exists, research can finish with an explicit unpolished notice; no Skill is installed during a run.
+
+Promising papers require complete main-text reading and relevant supplementary material, with actual sections/pages, findings and missing coverage. Partial/unavailable reading defers adoption of that candidate while other comparisons continue. Retrieval and a `full_text` label do not certify understanding.
+
+Fetched full text and relevant sections are retained with hashes under the local run's `sources/` directory. Failed retrieval or storage cannot count as complete reading. These response bodies are excluded from automatic Evidence exports; reports contain analysis and references to originals.
+
+OSS choices document the exact version/ref, implementation and tests, API, dependencies, license conditions and integration. Prefer suitable reuse; compare direct use, wrapping, adaptation and custom implementation. Unknown/incompatible conditions defer adoption. Recommendations do not authorize app dependency or source changes. A stopped writing phase resumes without repeating completed experiments. Historical runs retain their saved contracts/layouts.
+
 ## Child write permissions
 
 New runs from 2.7.0 launch research, proposal and review roles with `workspace-write`. Transient tool data lives inside the run while HOME and CODEX_HOME retain authentication and configuration. Research and audit keep their existing task scope: unexpected source edits by non-fixer roles stop the run.
@@ -14,7 +26,7 @@ Role `invocation.json` records effective permissions and command networking; fai
 
 ## Focus on the project's core logic
 
-2.7.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
+2.8.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
 
 ```text
 $design-research Investigate ways to improve this project's search accuracy.

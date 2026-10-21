@@ -1,5 +1,7 @@
 # Bounded role prompts
 
+New report_contract_version=1 runs use [reporting.md](reporting.md) for final whole-document writing and [source-review.md](source-review.md) for candidate eligibility. Content roles preserve prose without repeating the final writing workflow. The recommendations below remain compatible with historical runs.
+
 Use these as perspectives in one session or as prompts for native subagents if the host actually supports them.
 They are not executable agent registrations. Do not assume parallelism, independent runs, or improved accuracy without evidence.
 Share the same user goal, hard constraints, allowed tools, privacy rules, evaluation criteria, and budget with every role.

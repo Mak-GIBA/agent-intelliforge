@@ -42,7 +42,7 @@ from reassessment import snapshot_requirements
 from research_workstreams import snapshot_task, role_instructions as workstream_instructions
 
 HERE = Path(__file__).resolve().parent
-VERSION = "2.7.0"
+VERSION = "2.8.0"
 SEVERITIES = ["Critical", "High", "Medium", "Low"]
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}")
 
@@ -278,11 +278,11 @@ def run_role(role, schema, state, workspace, run_dir):
     (role_dir / "prompt.txt").write_text(scrub(prompt), "utf-8")
     mode = role_sandbox(state, role)
     env = child_environment(role_dir, "DR_GAN_CHILD")
-    network = bool(state["config"]["allow_network"] and role != "fixer")
+    network = bool(state["config"]["allow_network"] and role != "fixer" and not role.startswith('report-'))
     argv = ["codex", "exec", "-C", state["config"]["project"], "--sandbox",
             mode, "--add-dir", str(role_dir), "--json", "--ephemeral",
             "--output-schema", str(schema_path), "--output-last-message", str(output),
-            "-c", 'web_search="' + ("live" if state["config"]["allow_network"] and role != "fixer"
+            "-c", 'web_search="' + ("live" if network
                                    else "disabled") + '"', "-c",
             "sandbox_workspace_write.network_access=" + str(network).lower()]
     if not state["expected_source"]["head"]:
@@ -401,6 +401,9 @@ def design_format(value, state):
 
 def bounded_instructions(role, state):
     """Child fast path: one responsibility, with conditional reference disclosure."""
+    if role.startswith('report-'):
+        from report_polish import instructions
+        return instructions(role)
     instructions = {
         "planner": "Inspect only relevant requirements/source/tests. Freeze a minimal executable evaluation plan, not a finished report. Return goal, baseline, constraints, criteria, safe test commands and optional queries. Each criterion covers one bounded question, primary outcome first. For research, read references/effectiveness-evaluation.md and return evaluation_json freezing purpose, candidate IDs, task inputs/expected outputs, primary graders and controls before execution. Research test_commands are existing PROJECT backend tests, never future generated experiment scripts. If no backend tests exist use test_commands=[]: runtime criteria are checked through producer-assets experiments and parent grading, not a duplicate backend invocation. Do not downgrade effectiveness to literature. Literature/design need no artificial experiment. About five substantive candidates when relevant; a smaller comparison needs an explained exception. Do not execute checks.",
         "producer-design": "Read references/evidence-format.md for the core dossier only. Return the smallest valid runnable comparison dossier: question, scope, constraints, candidate mechanisms, common comparison criteria, sources/claims and planned experiments. All unmeasured effects are unknown/hypothesis; provisional/deferred decision. No reader_guide, method_ideas, figures, full Methods chapter or additional literature survey in this unit. Follow frozen candidate IDs. Detailed evidence and presentation are separate later units. If saved sources/dossier/reason exist, preserve failed access history and reuse actually accessible originals; do not repeat failing URLs when a registered original mirror is available. Update support links to its actual source ID, never silently reidentify the old source. Do not implement or execute experiments.",
@@ -445,7 +448,7 @@ def checked_role(role, schema, state, workspace, run_dir, validator=None):
                     "Evaluation artifact needs a current matching parent record",
                     "Evaluation needs the frozen contract hash and actual paired-result artifacts",
                     "Primary effects measured, but independent review has not bound",
-                    "Decisive source unavailable:", "IDs must be unique",
+                    "Decisive source unavailable:", "Source review:", "Report polish:", "IDs must be unique",
                     "Sources need titles and exact locators", "Source needs a URL or real local artifact"))
                 if attempt or not repairable or time.monotonic() >= deadline:
                     raise
@@ -647,7 +650,13 @@ def collect_sources(rows, state, workspace, run_dir):
                       "evidence_id": match}
         else:
             path = regular_path(run_dir / "sources" / (source["id"] + "-" + uuid.uuid4().hex[:8] + ".json"))
-            result = source_receipt(source, path, state["config"]["allow_network"])
+            from report_contract import active as report_active
+            if report_active(state) and source['read_level'] in {'full_text', 'relevant_sections'}:
+                result = source_receipt(source, path, state["config"]["allow_network"], archive_body=True)
+            else:
+                result = source_receipt(source, path, state["config"]["allow_network"])
+            if result.get('original_name'):
+                result['original_path'] = (path.parent/result['original_name']).relative_to(workspace).as_posix()
             match = add_record(state, workspace, path, kind="source",
                                description=source["title"], url=source["url"],
                                access_status=result["status"])
@@ -1011,6 +1020,8 @@ def validate_review(value, state, workspace, run_dir):
         require_contract(dossier, state, workspace)
         from evaluation_contract import evaluate
         evaluate(dossier, state, workspace)
+        from report_contract import assess
+        state['candidate_adoption_holds'] = assess(dossier, state)
         state["dossier"] = dossier
         state["ledger_validation"] = result
     elif state["config"]["mode"] == "research":
@@ -1099,6 +1110,11 @@ def dossier_review_task(state, workspace):
     base = nested_dossier(state["proposal_design"])
     errors = list(verify_artifacts(base, workspace, state["evidence"])["errors"])
     errors.extend(decisive_source_errors(base, state))
+    from report_contract import assess
+    try:
+        assess(base, state)
+    except Blocked as exc:
+        errors.append(str(exc))
     try:
         evaluate(copy.deepcopy(base), copy.deepcopy(state), workspace)
     except Blocked as exc:
@@ -1125,6 +1141,14 @@ def bounded_loop(state, workspace, run_dir):
     from execution_units import unit, digest
     from evaluation_contract import assert_frozen, checkpoint_results
     from report import publish
+    if state.get('report_finalization'):
+        from report_polish import finish, assert_artifacts
+        assert_artifacts(state, workspace)
+        finish(state, workspace, run_dir, checked_role)
+        state['status'] = state['report_finalization']['target_status']
+        state['phase'] = 'complete'
+        save(state, run_dir)
+        return
     def prerequisites(role):
         if role == "planner":
             return ()
@@ -1239,6 +1263,10 @@ def bounded_loop(state, workspace, run_dir):
                     validated = validate_dossier(preview)
                     if not validated["valid"]:
                         raise Blocked("Comparison design format: " + "; ".join(validated["errors"][:6]))
+                    from report_contract import assess
+                    # This format gate runs before the parent collects newly
+                    # declared sources. Access is required by the final review.
+                    assess(preview, s, require_all=False, verify_access=False)
                 value = call("producer-evidence", PATCH, candidate_format, name="evidence-" + cid)
                 patch_candidate(draft, value, cid)
                 collect_sources(value["sources"], state, workspace, run_dir)
@@ -1326,6 +1354,17 @@ def bounded_loop(state, workspace, run_dir):
         incomplete = [r["id"] for r in state["units"].values() if r["required"] and r["status"] != "complete"]
         reasons.extend("Required unit incomplete: " + key for key in incomplete)
         state["reason"] = "; ".join(reasons) if reasons else "Required evidence, reporting and independent review complete"
+        from report_contract import active as report_active
+        if report_active(state) and (state['config']['mode'] == 'audit' or not reasons):
+            from report_document import substantive_signature
+            from report_polish import finish
+            target = 'reviewed' if state['config']['mode'] == 'audit' else ('research_complete' if research else 'passed')
+            state['report_finalization'] = {'target_status': target, 'science_sha256': substantive_signature(state)}
+            save(state, run_dir)
+            finish(state, workspace, run_dir, checked_role)
+            state['status'] = target
+            state['phase'] = 'complete'
+            return
         if state["config"]["mode"] == "audit":
             state["status"] = "reviewed"; return
         if not reasons:
@@ -1632,6 +1671,8 @@ def execution(args):
                         raise Blocked("Producer checkpoint changed after validation")
             from execution_units import assert_inputs, enabled
             assert_inputs(state)
+            from report_polish import assert_artifacts
+            assert_artifacts(state, workspace)
             override_sandbox(state, getattr(args, "role_sandbox", None), now())
             if state["phase"] in {"experiments", "checks"} and not enabled(state):
                 if state["iteration"] >= state["config"]["max_iterations"]:
@@ -1658,6 +1699,7 @@ def execution(args):
             state = {"schema_version": 1, "version": VERSION, "run_id": run_id,
                      "role_contract_version": 1,
                      "execution_contract_version": 2,
+                     "report_contract_version": 1,
                      "status": "running", "phase": "planning", "iteration": 1,
                      "created_at": now(), "config": config, "evidence": {}, "sources": {},
                      "plateau": 0, "expected_source": fingerprint(project, workspace)}
@@ -1733,7 +1775,8 @@ def execution(args):
             from report import publish
             publish(state, workspace, run_dir)
         print(json.dumps({"run_id": state["run_id"], "status": state["status"],
-                          "reason": state.get("reason", ""), "workspace": str(workspace)},
+                          "reason": state.get("reason", ""), "workspace": str(workspace),
+                          "report_writing": state.get('report_polish', {}).get('status', 'legacy')},
                          ensure_ascii=False))
         return 0 if state["status"] in {"passed", "research_complete", "reviewed"} else 2
     finally:

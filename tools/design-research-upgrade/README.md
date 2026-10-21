@@ -1,4 +1,4 @@
-# Design Research 2.7.0 — single-entry workflow
+# Design Research 2.8.0 — single-entry workflow
 
 **Codexで使うのは `$design-research` だけです。** `$upstream-new` / `$upstream-change` はシステム全体の要件→設計→検証を担当し、その途中で本Skillの研究機能を使います。
 
@@ -10,7 +10,9 @@
 
 従来2.3.0でインストールした5つのショートカットSkillは、次の更新時に **改変のない所有済みフォルダだけ** バックアップへ退避してSkill一覧を簡潔にします。個別に編集したもの・所有者不明な同名フォルダは保存します。機能は共通Skillから使えます。
 
-2.7.0ではモデルの調査・レビュー役も既定でworkspace-writeとし、`--role-sandbox`で変更できます。旧runの権限変更は凍結済みconfigの外に記録し、検証済みcheckpointを維持します。権限解決と終了時エラーの分類は`overlay/tools/design-research/skill/scripts/role_runtime.py`です。モデル混雑とMCP・承認の失敗を分けて診断します。
+2.7.0以降はモデルの調査・レビュー役も既定でworkspace-writeとし、`--role-sandbox`で変更できます。旧runの権限変更は凍結済みconfigの外に記録し、検証済みcheckpointを維持します。権限解決と終了時エラーの分類は`overlay/tools/design-research/skill/scripts/role_runtime.py`です。モデル混雑とMCP・承認の失敗を分けて診断します。
+
+2.8.0の新規runは、結論から採用方法・検証結果へ進む本文と、精読・工程記録の付録に分けます。科学的レビュー後にkotonoha（なければyomiyasu）で全文を推敲し、意味を別工程で照合します。両Skillがない環境は未適用を明記して完了できます。論文の全文確認不足、OSSの条件・互換性不明は候補ごとの採用保留理由として保持します。契約は`references/reporting.md`と`references/source-review.md`、保守元は`overlay/`のreport系モジュールです。旧runは移行しません。
 
 ## インストール
 

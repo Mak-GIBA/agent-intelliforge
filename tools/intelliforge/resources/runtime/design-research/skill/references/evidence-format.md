@@ -1,5 +1,7 @@
 # Evidence ledger contract (schema_version: 1)
 
+New report_contract_version=1 runs add candidate.source_review, documented in [source-review.md](source-review.md). The base schema and historical ledgers remain unchanged. Independent review verifies the actual coverage and OSS adoption conditions; reading/access metadata alone cannot certify interpretation.
+
 Use `evidence.json` as the machine-checkable companion to the report, not as a replacement for readable analysis.
 The default `validate` command checks structure and selected consistency rules. Add `--check-artifacts` to require actual local files and verify optional SHA-256 values. Neither mode verifies scientific interpretation or authenticates a human's approval.
 

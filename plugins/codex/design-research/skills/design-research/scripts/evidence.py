@@ -11,7 +11,7 @@ import urllib.parse
 import urllib.request
 
 from dossier import validate_dossier
-from runtime import Blocked, atomic_json, now, regular_path, relative, scrub, sha256
+from runtime import Blocked, atomic_json, atomic_bytes, now, regular_path, relative, scrub, sha256
 
 
 def existing_artifact(root, value):
@@ -100,6 +100,11 @@ def assert_records(state, workspace):
                 target = regular_path(Path(workspace) / relative(output["path"]))
                 if not target.is_file() or sha256(target) != output["sha256"]:
                     raise Blocked(f"Execution output changed: {record['id']}")
+    for source in state.get('sources', {}).values():
+        if source.get('original_path'):
+            target = existing_artifact(workspace, source['original_path'])
+            if sha256(target) != source.get('original_sha256'):
+                raise Blocked('Private source original changed: ' + source['original_path'])
 
 
 def public_url(value):
@@ -123,8 +128,8 @@ class PublicRedirect(urllib.request.HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-def source_receipt(source, destination, allow_network):
-    """Archive access metadata, avoiding redistribution of complete papers/webpages."""
+def source_receipt(source, destination, allow_network, *, archive_body=False):
+    """Record transport metadata; optionally retain a separate private response body."""
     result = {"source_id": source["id"], "title": source["title"], "url": source["url"],
               "locator": source.get("locator", ""), "checked_at": now(),
               "status": "unavailable", "reason": "Live source retrieval was not enabled",
@@ -144,7 +149,13 @@ def source_receipt(source, destination, allow_network):
                               final_url=response.geturl(), bytes=len(body),
                               content_sha256=hashlib.sha256(body).hexdigest(),
                               content_type=response.headers.get("Content-Type", ""))
+                if archive_body:
+                    original = Path(destination).with_suffix('.body')
+                    atomic_bytes(original, body)
+                    result.update(original_name=original.name, original_sha256=sha256(original),
+                                  original_scope='private local original; not automatically exported')
         except (Blocked, OSError, urllib.error.URLError, ValueError) as exc:
+            result["status"] = "unavailable"
             result["reason"] = scrub(str(exc))
     atomic_json(destination, result)
     return result

@@ -49,6 +49,11 @@ def closure(workspace,run_id):
     if not safe(workspace,report).is_file():
         report=f'runs/{run_id}/reports/design-research.md'
     add(report)
+    writing=state.get('report_polish',{})
+    writing_names=set()
+    if writing.get('status')=='complete':
+        for key,name in writing.get('artifacts',{}).items():
+            add(name,writing['artifact_hashes'][key]);writing_names.add(name)
     for row in state.get('evidence',{}).values():
         add(row['path'],row['sha256'])
     for key in ('requirements_context','workstream_context'):
@@ -89,7 +94,8 @@ def closure(workspace,run_id):
                 if target.startswith(('http:','https:','#','mailto:')):continue
                 target=target.split('#',1)[0]
                 if not target:continue
-                absolute=Path(os.path.abspath(workspace/path.parent/target))
+                origin=Path() if name in writing_names and writing.get('artifact_link_root')=='workspace' else path.parent
+                absolute=Path(os.path.abspath(workspace/origin/target))
                 if not absolute.is_relative_to(workspace):
                     raise ValueError('Archived report links outside workspace: '+target)
                 add(absolute.relative_to(workspace).as_posix())

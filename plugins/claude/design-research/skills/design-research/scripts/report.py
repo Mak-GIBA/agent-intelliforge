@@ -197,6 +197,11 @@ def _publish_local(state, workspace, run_dir):
             '## 残る確認と実行記録': '## 限界・次の実験と再現性',
         }
         lines = [headings.get(line, line) for line in lines]
+    if state.get('report_contract_version') == 1:
+        from report_document import assemble
+        from report_polish import assert_artifacts
+        assert_artifacts(state, workspace)
+        lines = assemble(state, lines, workspace)
     write(workspace,'report.md',lines)
     archive = regular_path(run_dir/'reports')
     archive.mkdir(exist_ok=True)
