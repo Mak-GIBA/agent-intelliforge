@@ -75,15 +75,33 @@ Abstract Memory and Cases qualify independently and are linked only if both exis
 
 ### Share through GitHub
 
-```text
-Share the reviewed team memory through GitHub and create the PR.
-```
+Follow the [sharing guide](github-sharing.md) to prepare both PCs and connect them to the same private repository.
+Enter these examples in Codex chat.
+
+First, ask for candidates:
 
 ```text
-Import the shared memory while preserving locally edited notes.
+Find memory notes suitable for sharing with my friend. List the candidates and proposed changes after removing personal or confidential information.
+Do not edit the originals, grant sharing permission, or send anything yet.
 ```
 
-A new session reads the shared AGENTS routing. Missing configuration/login triggers focused support. Sharing designation and content review are still required. See [setup](github-sharing.md).
+After checking the list and contents, approve the scope:
+
+```text
+I approve sharing the proposed candidates with the listed changes.
+Apply sharing designation and content review to those notes, then sync sending and receiving with OWNER/REPO.
+Do not authorize training use.
+```
+
+For normal use with a configured repository and reviewed notes:
+
+```text
+Sync shared memory.
+```
+
+Sync includes publishing, merging your own validated PR, and receiving friends' updates.
+Start with candidate review when sharing new or edited notes.
+See the [sharing guide](github-sharing.md) for initial connection, previews, and sending-only or receiving-only prompts.
 
 <a id="modes"></a>
 

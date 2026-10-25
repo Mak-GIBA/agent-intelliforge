@@ -221,7 +221,7 @@ Restart WSL and check `free -h` and `swapon --show` inside Linux. This setting a
 |---|---|
 | Requirements, selection, updates | [Bulk installation](docs/en/installation.md) |
 | Kit-specific installation and examples | [Documentation index](docs/en/README.md) |
-| Knowledge capture, sharing, and review | [Workgraph usage](docs/en/basic-memory-workgraph/usage.md), [sharing](docs/en/basic-memory-workgraph/sharing.md), [troubleshooting](docs/en/basic-memory-workgraph/troubleshooting.md) |
+| Knowledge capture, sharing, and review | [Workgraph usage](docs/en/basic-memory-workgraph/usage.md), [GitHub sharing and prompts](docs/en/basic-memory-workgraph/github-sharing.md), [file sharing](docs/en/basic-memory-workgraph/sharing.md), [troubleshooting](docs/en/basic-memory-workgraph/troubleshooting.md) |
 | Maintained sources, distribution builds, verification | [Development guide](docs/en/development.md) |
 
 Root-level `install_*.sh` files are the existing installation entry points. The shared CLI lives in `src/agent_intelliforge/`, maintained sources and kit definitions in `tools/`, generated Plugins in `plugins/`, guides and evaluation material in `docs/`, and regression tests in `tests/`. Edit maintained sources and regenerate distribution files; see [distribution development](docs/en/cross-platform-development.md).

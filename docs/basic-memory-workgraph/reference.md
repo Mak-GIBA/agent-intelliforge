@@ -147,3 +147,7 @@ GitHub共有CLIにはgit・ghも必要です。認証情報はgh・Gitの既存�
 設定がある場合、ユーザー設定より優先されることがあります。
 既存の `captureEvents` は保持します（未設定ならtrue）。公式pluginのイベント記録とは別に、
 本フックでは本文を記録しません。圧縮時の自動checkpointは無効です。
+
+`connect` / `sync` は共有先ごとの設定を `github-sharing.json` の `connections` に追加します。
+送信元別の受信プロジェクトと編集版の保存先は、個人メモリーの親にある `shared-memory/<repo-id>/` へ分離します。
+受信プロジェクトはユーザーの `secondaryProjects` に追加します。既存の送信profile、保存先、ほかの設定は維持します。

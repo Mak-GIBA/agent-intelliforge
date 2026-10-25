@@ -110,3 +110,7 @@ python3 "${CODEX_HOME:-$HOME/.codex}/basic-memory-workgraph/workgraph_tools.py" 
 Its Python still needs PyYAML; GitHub sharing needs git/gh. Existing authentication is reused and not saved in sharing state. There is no recurring/hook-driven send; see [GitHub sharing](github-sharing.md).
 
 Official Plugin configuration discovery follows its own rules; project `.codex/basic-memory.json` can take precedence. Existing `captureEvents` is preserved (default true when absent). Official event recording differs from these hooks, which do not record bodies. Automatic compaction checkpoints remain disabled.
+
+`connect` / `sync` store repository connections under `connections` in `github-sharing.json`.
+Received sources and preserved edits live under `shared-memory/<repo-id>/` beside the personal memory project.
+Receiving projects are appended to the user's `secondaryProjects`; existing publishing profiles, writing projects, and unrelated settings are preserved.
