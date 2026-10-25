@@ -2,7 +2,7 @@
 """Explicit, reviewed memory sharing through private GitHub repositories and PRs."""
 
 import argparse
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from agent_intelliforge import fcntl_compat as fcntl
 import json
 import os
@@ -39,6 +39,10 @@ def slug(value):
     if not isinstance(value, str) or not SLUG.fullmatch(value):
         raise wg.Invalid("Profile/source ID must use 1-64 lowercase letters, digits, _ or -")
     return value
+
+
+def repo_key(repo):
+    return wg.sha(repo.lower().encode())[:12]
 
 
 def command(args, cwd=None):
@@ -277,6 +281,219 @@ class Sharing:
         hub.git("check-ref-format", "--branch", profile["base"])
         return name, profile, root, hub
 
+    def connect(self, repo, project=None, source_id=None, dry_run=False):
+        """Opt into repository-wide discovery and merging only our reviewed PRs."""
+        hub = GitHub(repo, writable=True)
+        data = self.config()
+        matches = [(n, p) for n, p in data["profiles"].items()
+                   if p["role"] == "publish" and p["repo"].lower() == hub.repo.lower()
+                   and (project is None or p["project"] == project)
+                   and (source_id is None or p["source_id"] == source_id)]
+        if len(matches) > 1:
+            raise wg.Invalid("Multiple publishers; select --project and --source-id")
+        key = repo_key(hub.repo)
+        if matches:
+            name, profile = matches[0]
+            _, _, root, _ = self.context(name, "publish")
+        else:
+            if source_id is None:
+                source_id = wg.strict_json(command(["gh", "api", "--hostname", "github.com", "user"]))["login"].lower()
+            source_id = slug(source_id)
+            if project is None:
+                project = read_object(self.home.parent / "basic-memory.json").get("basicMemory", {}).get("primaryProject")
+            if project is None:
+                projects = read_object(self.registry).get("projects", {})
+                local = [n for n, p in projects.items() if isinstance(p, str) or
+                         isinstance(p, dict) and p.get("mode", "local") == "local"]
+                if len(local) != 1:
+                    raise wg.Invalid("Select a registered local project with --project")
+                project = local[0]
+            name = "send-" + key + "-" + wg.sha(source_id.encode())[:12]
+            args = argparse.Namespace(profile=name, repo=hub.repo, source_id=source_id, role="publish",
+                project=project, memory_dir=None, base=None, include_cases=True, dry_run=dry_run)
+            self.setup(args)
+            if dry_run:
+                entry = read_object(self.registry)["projects"][project]
+                root = wg.no_symlink(Path(entry if isinstance(entry, str) else entry["path"]))
+                profile = {"source_id": source_id}
+            else:
+                _, profile, root = self.profile(name)
+        connection = {"publish_profile": name, "storage_root": str(root.parent / "shared-memory" / key),
+                      "auto_merge": True}
+        existing = data.get("connections", {}).get(hub.repo)
+        if existing is not None and existing != connection:
+            raise wg.Invalid("Connection already has different settings; inspect configuration")
+        if not dry_run:
+            with self.lock("configuration"):
+                data = self.config()
+                existing = data.setdefault("connections", {}).get(hub.repo)
+                if existing is not None and existing != connection:
+                    raise wg.Invalid("Connection changed during setup")
+                data["connections"][hub.repo] = connection
+                if self.config() != data:
+                    wg.atomic_file(self.config_path, wg.json_text(data), replace=True)
+        return {"repo": hub.repo, "profile": name, "source_id": profile["source_id"],
+                "configured": not dry_run, "auto_merge": True, "dry_run": dry_run}
+
+    def add_references(self, projects, dry_run=False):
+        path = wg.no_symlink(self.home.parent / "basic-memory.json")
+        with self.lock("references") if not dry_run else nullcontext():
+            original = wg.read_text(path) if path.exists() else None
+            config = wg.strict_json(original) if original else {}
+            bm = config.setdefault("basicMemory", {})
+            secondary = bm.setdefault("secondaryProjects", [])
+            if not isinstance(secondary, list) or any(not isinstance(p, str) for p in secondary):
+                raise wg.Invalid("Invalid secondaryProjects; preserve and inspect configuration")
+            added = [p for p in projects if p not in secondary and p != bm.get("primaryProject")]
+            if added and not dry_run:
+                secondary.extend(added)
+                if (wg.read_text(path) if path.exists() else None) != original:
+                    raise wg.Invalid("Memory configuration changed during sync")
+                wg.atomic_file(path, wg.json_text(config), replace=True)
+            return added
+
+    def ensure_project(self, project, root):
+        """Register only dedicated, empty paths; never adopt unrelated content."""
+        wg.no_symlink(root)
+        entry = read_object(self.registry).get("projects", {}).get(project)
+        if entry is not None:
+            registered = entry if isinstance(entry, str) else entry.get("path") if entry.get("mode", "local") == "local" else None
+            if not registered or wg.no_symlink(Path(registered)) != root:
+                raise wg.Invalid("Shared project is already registered at a different location")
+        else:
+            if root.exists() and any(root.iterdir()):
+                raise wg.Invalid("Shared project destination is not empty")
+            command(["bm", "project", "add", project, str(root), "--local"])
+
+    def merge_reviewed(self, name, dry_run=False):
+        _, profile, root, hub = self.context(name, "publish")
+        history, opened = hub.prs("workgraph-share/" + profile["source_id"])
+        if not opened:
+            return {"status": "unchanged"}
+        if opened["baseRefName"] != profile["base"]:
+            raise wg.Invalid("Sharing PR has a different base branch")
+        # Revalidate actual PR contents, not its title, author, or a previous review.
+        with tempfile.TemporaryDirectory(prefix="workgraph-merge-") as temp:
+            temp = Path(temp)
+            bundle = temp / "bundle"
+            exported = wg.export_share(argparse.Namespace(memory_dir=root, output=bundle, scope="team",
+                include_cases=profile["include_cases"], dry_run=False))
+            if exported["skipped"]:
+                return {"status": "blocked", "skipped": exported["skipped"]}
+            repo = temp / "repo"
+            hub.clone(repo)
+            head = hub.git("rev-parse", "refs/remotes/origin/workgraph-share/" + profile["source_id"], cwd=repo)
+            if head != opened["head_sha"]:
+                raise wg.Invalid("Sharing PR changed before validation")
+            relative = "bundles/" + profile["source_id"]
+            changed = [p for p in hub.git("diff", "--name-only", "-z",
+                "refs/remotes/origin/" + profile["base"] + "..." + head, cwd=repo).split("\0") if p]
+            if not changed or any(not p.startswith(relative + "/") for p in changed):
+                raise wg.Invalid("Sharing PR contains unrelated changes or no changes")
+            hub.git("checkout", "--quiet", "--detach", head, cwd=repo)
+            if files(repo / relative) != files(bundle):
+                raise wg.Invalid("Sharing PR does not match the current reviewed export")
+            if dry_run:
+                return {"status": "planned", "pr_url": opened["url"], "commit": head}
+            request = temp / "merge.json"
+            request.write_text(wg.json_text({"sha": head, "merge_method": "merge"}), encoding="utf-8", newline="\n")
+            try:
+                result = hub.api(f"repos/{hub.repo}/pulls/{opened['number']}/merge", "PUT", request)
+                if result.get("merged") is not True:
+                    raise wg.Invalid("GitHub did not merge the sharing PR")
+            except wg.Invalid:
+                # A lost response may follow a successful merge. Observe before retry.
+                history, _ = hub.prs("workgraph-share/" + profile["source_id"])
+                if not any(p["number"] == opened["number"] and p["state"] == "MERGED"
+                           and p["head_sha"] == head for p in history):
+                    raise
+            history, _ = hub.prs("workgraph-share/" + profile["source_id"])
+            if not any(p["number"] == opened["number"] and p["state"] == "MERGED"
+                       and p["head_sha"] == head for p in history):
+                raise wg.Invalid("Merge read-back failed; inspect remote state")
+            return {"status": "merged", "pr_url": opened["url"], "commit": head}
+
+    def sync(self, repo=None, dry_run=False):
+        connections = self.config().get("connections", {})
+        selected = [r for r in connections if repo is None or r.lower() == repo.lower()]
+        if len(selected) != 1:
+            raise wg.Invalid("Run connect first, or select one connection with --repo OWNER/REPO")
+        repo = selected[0]
+        connection = connections[repo]
+        name, profile, _, hub = self.context(connection["publish_profile"], "publish")
+        if profile["repo"] != repo or connection.get("auto_merge") is not True:
+            raise wg.Invalid("Invalid sync connection; inspect configuration")
+        if not Path(connection["storage_root"]).is_absolute():
+            raise wg.Invalid("Shared storage must be absolute")
+        storage = wg.no_symlink(Path(connection["storage_root"]))
+        if storage == self.home or storage.is_relative_to(self.home) or self.home.is_relative_to(storage):
+            raise wg.Invalid("Shared storage must be outside Workgraph configuration")
+        if dry_run:
+            return self._sync(name, profile, hub, storage, True)
+        with self.lock("sync-" + repo_key(repo)):
+            return self._sync(name, profile, hub, storage, False)
+
+    def _sync(self, name, profile, hub, storage, dry_run):
+        result = {"repo": hub.repo, "dry_run": dry_run, "publish": {}, "merge": {"status": "not_attempted"}, "receive": []}
+        # Retry at most twice after an observed failure; each publish re-reads Git/PR state.
+        for attempt in range(3):
+            stage = "publish"
+            try:
+                result["publish"] = self.publish(name, dry_run)
+                if result["publish"]["status"] != "blocked":
+                    stage = "merge"
+                    result["merge"] = ({"status": "planned", "after_publish": True}
+                        if dry_run and result["publish"]["status"] == "planned" else self.merge_reviewed(name, dry_run))
+                break
+            except (OSError, ValueError):
+                result[stage] = {"status": "blocked", "reason": stage + "_failed", "attempts": attempt + 1}
+        key = repo_key(hub.repo)
+        try:
+            with tempfile.TemporaryDirectory(prefix="workgraph-discover-") as temp:
+                checkout = Path(temp) / "repo"
+                hub.clone(checkout)
+                hub.git("checkout", "--quiet", "--detach", "refs/remotes/origin/" + profile["base"], cwd=checkout)
+                bundles = wg.no_symlink(checkout / "bundles")
+                sources = sorted(bundles.iterdir()) if bundles.exists() else []
+                for bundle in sources:
+                    source = bundle.name
+                    if source == profile["source_id"]:
+                        continue
+                    item = {"source_id": source if SLUG.fullmatch(source) else "invalid-" + wg.sha(source.encode())[:12]}
+                    try:
+                        slug(source)
+                        validate_bundle(bundle, Path(temp) / ("validate-" + source))
+                        receive_name = "recv-" + key + "-" + wg.sha(source.encode())[:12]
+                        project = "shared-" + key + "-" + source
+                        destination = storage / "sources" / source
+                        if not dry_run:
+                            self.setup(argparse.Namespace(profile=receive_name, repo=hub.repo, source_id=source,
+                                role="receive", project=project, memory_dir=destination, base=profile["base"],
+                                include_cases=True, dry_run=False))
+                        receive_profile = {"repo": hub.repo, "source_id": source, "base": profile["base"],
+                            "project": project, "memory_dir": str(destination), "role": "receive", "scope": "team", "include_cases": True}
+                        edits_project = "shared-edits-" + key
+                        archive = {"root": storage / "local-edits", "project": edits_project}
+                        if dry_run:
+                            imported = self._pull(receive_name, receive_profile, destination, hub, True, archive)
+                        else:
+                            with self.lock(receive_name):
+                                imported = self._pull(receive_name, receive_profile, destination, hub, False, archive)
+                        item.update(imported)
+                        item["project"] = project
+                        if imported["status"] != "blocked":
+                            item["references_added"] = self.add_references([project], dry_run)
+                    except (OSError, ValueError, KeyError, TypeError):
+                        item.update(status="blocked", reason="receive_failed")
+                    result["receive"].append(item)
+        except (OSError, ValueError):
+            result["discovery"] = {"status": "blocked", "reason": "discovery_failed"}
+        blocked = (result["publish"].get("status") == "blocked" or result["merge"].get("status") == "blocked"
+                   or result.get("discovery", {}).get("status") == "blocked"
+                   or any(r["status"] == "blocked" for r in result["receive"]))
+        result["status"] = "blocked" if blocked else "planned" if dry_run else "synced"
+        return result
+
     def publish(self, name, dry_run=False):
         name, profile, root, hub = self.context(name, "publish")
         if dry_run:
@@ -311,7 +528,7 @@ class Sharing:
                 raise wg.Invalid("Sharing PR branch is missing")
             hub.git("checkout", "--quiet", "-b", branch, start, cwd=repo)
             # Only our managed directory may differ from the current base.
-            changed = hub.git("diff", "--name-only", base + "...HEAD", cwd=repo).splitlines()
+            changed = [p for p in hub.git("diff", "--name-only", "-z", base + "...HEAD", cwd=repo).split("\0") if p]
             if any(not path.startswith(relative + "/") for path in changed):
                 raise wg.Invalid("Sharing branch contains unrelated changes")
             hub.git("merge", "--quiet", "--no-edit", base, cwd=repo)
@@ -384,7 +601,7 @@ class Sharing:
         with self.lock(name):
             return self._pull(name, profile, root, hub, False)
 
-    def _pull(self, name, profile, root, hub, dry_run):
+    def _pull(self, name, profile, root, hub, dry_run, archive=None):
         state_path = wg.no_symlink(self.home / "github-state" / (name + ".json"))
         old_state = wg.strict_json(wg.read_text(state_path)) if state_path.exists() else None
         identity = {key: profile[key] for key in ("repo", "source_id", "memory_dir", "base")}
@@ -406,7 +623,7 @@ class Sharing:
             bundle = wg.no_symlink(repo / "bundles" / profile["source_id"])
             validate_bundle(bundle, staged)
             desired = files(staged)
-            pending, conflicts, unchanged = [], [], 0
+            pending, conflicts, unchanged, preserved = [], [], 0, []
             # Keep removed files in the baseline so later reappearance still detects local edits.
             next_files = dict(baseline)
             for rel, text in desired.items():
@@ -419,10 +636,13 @@ class Sharing:
                 digest = wg.sha(text.encode())
                 if original == text:
                     unchanged += 1
-                elif rel in baseline and (original is None or wg.sha(original.encode()) != baseline[rel]):
-                    conflicts.append(rel)
-                elif original is not None and rel not in baseline:
-                    conflicts.append(rel)
+                elif ((rel in baseline and (original is None or wg.sha(original.encode()) != baseline[rel]))
+                      or (original is not None and rel not in baseline)):
+                    if archive is None:
+                        conflicts.append(rel)
+                    else:
+                        preserved.append((rel, original, baseline.get(rel)))
+                        pending.append((target, text, original))
                 else:
                     pending.append((target, text, original))
                 next_files[rel] = digest
@@ -430,8 +650,36 @@ class Sharing:
             result = {"status": "blocked" if conflicts else "planned" if dry_run else "imported" if pending else "unchanged",
                       "imported": 0 if conflicts else len(pending), "unchanged": unchanged,
                       "conflicts": conflicts, "removed": removed, "commit": commit, "dry_run": dry_run}
+            if archive is not None:
+                result["preserved_edits"] = len(preserved)
+                result["edits_project"] = archive["project"] if preserved else None
             if conflicts or dry_run:
                 return result
+            if preserved:
+                archive_root = wg.no_symlink(archive["root"])
+                if archive_root == root or archive_root.is_relative_to(root) or root.is_relative_to(archive_root):
+                    raise wg.Invalid("Local edits require a separate project")
+                self.ensure_project(archive["project"], archive_root)
+                for rel, original, old_hash in preserved:
+                    # Retain malformed local edits too, but never inherit export permissions.
+                    archive_identity = {"repo": hub.repo, "source_id": profile["source_id"], "path": rel}
+                    digest = wg.sha((wg.json_text(archive_identity) + (original if original is not None else "deleted:" + str(old_hash))).encode())
+                    archive_rel = "notes/" + profile["source_id"] + "/" + digest + ".md"
+                    metadata = {"title": "Local edit: " + rel + " (" + profile["source_id"] + ")", "type": "note",
+                        "permalink": "local-edits/" + profile["source_id"] + "/" + digest,
+                        "sharing_scope": "private", "training_use": "excluded", "privacy_review": "pending",
+                        "import_source": archive_identity, "local_deletion": original is None}
+                    content = wg.Note(archive_rel, metadata, "\n" + (original if original is not None else
+                        "The local imported note was deleted before this shared update.\n")).render()
+                    target = wg.no_symlink(archive_root / archive_rel)
+                    if target.exists():
+                        if wg.read_text(target) != content:
+                            raise wg.Invalid("Preserved local edit was changed; keep both versions manually")
+                    else:
+                        wg.atomic_file(target, content)
+                    if wg.read_text(target) != content:
+                        raise wg.Invalid("Local edit preservation failed")
+                self.add_references([archive["project"]])
             state = {"version": 1, "identity": identity, "commit": commit, "files": next_files}
             state_text = wg.json_text(state)
             original_state = wg.read_text(state_path) if state_path.exists() else None
@@ -474,6 +722,14 @@ def main():
     parser.add_argument("--codex-dir", type=Path, default=Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")))
     parser.add_argument("--basic-memory-config", type=Path, default=basic_memory_config())
     commands = parser.add_subparsers(dest="action", required=True)
+    connect = commands.add_parser("connect", help="Connect once; enable source discovery and merge our reviewed PRs")
+    connect.add_argument("--repo", required=True)
+    connect.add_argument("--project")
+    connect.add_argument("--source-id")
+    connect.add_argument("--dry-run", action="store_true")
+    sync = commands.add_parser("sync", help="Publish, merge our reviewed PR, and receive shared memory")
+    sync.add_argument("--repo")
+    sync.add_argument("--dry-run", action="store_true")
     setup = commands.add_parser("setup", help="Configure an existing private sharing repository")
     setup.add_argument("--profile", required=True)
     setup.add_argument("--repo", required=True)
@@ -492,7 +748,11 @@ def main():
     args = parser.parse_args()
     try:
         sharing = Sharing(args.codex_dir, args.basic_memory_config)
-        if args.action == "setup":
+        if args.action == "connect":
+            result = sharing.connect(args.repo, args.project, args.source_id, args.dry_run)
+        elif args.action == "sync":
+            result = sharing.sync(args.repo, args.dry_run)
+        elif args.action == "setup":
             result = sharing.setup(args)
         elif args.action == "status":
             result = sharing.status(args.profile)

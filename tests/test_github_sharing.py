@@ -29,6 +29,8 @@ class FakeCLI:
         self.prs, self.calls = [], []
         self.fail_create_after = False
         self.fail_push_after = False
+        self.fail_merge_after = False
+        self.reject_merge = False
         self.before_push = None
         self.real = github.command
         self.git("init", "--bare", "--initial-branch=main", str(self.remote))
@@ -65,6 +67,8 @@ class FakeCLI:
                 raise wg.Invalid("Not authenticated")
             return ""
         if args[:2] == ["gh", "api"]:
+            if args[-1] == "user":
+                return json.dumps({"login": "Example-User"})
             endpoint = next(a for a in args if a.startswith("repos/"))
             method = args[args.index("--method") + 1] if "--method" in args else "GET"
             if "/pulls" not in endpoint:
@@ -83,6 +87,18 @@ class FakeCLI:
                 page = int(query["page"][0])
                 return json.dumps(matches[(page - 1) * 100:page * 100])
             payload = json.loads(Path(args[args.index("--input") + 1]).read_text())
+            if method == "PUT" and endpoint.endswith("/merge"):
+                if self.reject_merge:
+                    raise wg.Invalid("Merge rejected by protection")
+                number = int(endpoint.split("/")[-2])
+                p = next(p for p in self.prs if p["number"] == number)
+                if payload["sha"] != self.git("rev-parse", p["headRefName"], cwd=self.remote):
+                    raise wg.Invalid("Head changed")
+                self.merge(number)
+                if self.fail_merge_after:
+                    self.fail_merge_after = False
+                    raise wg.Invalid("Lost merge response")
+                return json.dumps({"merged": True})
             if method == "POST":
                 p = {"number": len(self.prs) + 1, "url": "https://github.com/example/memories/pull/" + str(len(self.prs) + 1),
                      "state": "OPEN", "mergedAt": None, "baseRefName": payload["base"],
@@ -103,8 +119,8 @@ class FakeCLI:
             return ""
         raise AssertionError(args)
 
-    def merge(self):
-        p = next(p for p in self.prs if p["state"] == "OPEN")
+    def merge(self, number=None):
+        p = next(p for p in self.prs if p["state"] == "OPEN" and (number is None or p["number"] == number))
         self.git("fetch", "origin", cwd=self.seed)
         self.git("merge", "--no-edit", "origin/" + p["headRefName"], cwd=self.seed)
         self.git("push", "origin", "main", cwd=self.seed)
@@ -514,6 +530,319 @@ class GitHubSharingTest(unittest.TestCase):
         with patch.dict(os.environ, {"HOME": str(home)}):
             self.sharing.pull("receive")
         self.assertFalse(marker.exists())
+
+    def friend_bundle(self, source="friend", body="Friend's verified reference."):
+        """A friend's separately merged, valid bundle; no friend's PR is auto-merged."""
+        self.server.git("fetch", "origin", cwd=self.server.seed)
+        self.server.git("merge", "--no-edit", "origin/main", cwd=self.server.seed)
+        note = wg.Note("rules/units.md", {"title": "Units", "type": "rule", "sharing_scope": "team",
+            "training_use": "excluded", "privacy_review": "pending"}, "\n" + body + "\n")
+        bundle = self.server.seed / "bundles" / source
+        (bundle / "rules").mkdir(parents=True, exist_ok=True)
+        (bundle / note.path).write_text(note.render())
+        (bundle / "manifest.json").write_text(wg.json_text({"version": 1, "scope": "team", "notes": [
+            {"path": note.path, "sha256": wg.sha(note.render().encode())}]}))
+        self.server.git("add", ".", cwd=self.server.seed)
+        self.server.git("commit", "-m", "Friend's shared knowledge", cwd=self.server.seed)
+        self.server.git("push", "origin", "main", cwd=self.server.seed)
+
+    def connect_sync(self):
+        self.setup()
+        return self.sharing.connect("example/memories")
+
+    def test_connect_reuses_publisher_and_is_idempotent(self):
+        self.setup()
+        before = self.snapshot()
+        self.sharing.connect("example/memories", dry_run=True)
+        self.assertEqual(before, self.snapshot())
+        result = self.sharing.connect("example/memories")
+        self.assertEqual(result["profile"], "publish")
+        before = self.snapshot()
+        self.sharing.connect("EXAMPLE/memories")
+        self.assertEqual(before, self.snapshot())
+        self.assertEqual(len(self.sharing.config()["profiles"]), 1)
+
+    def test_connect_fresh_defaults_and_requires_selection_if_ambiguous(self):
+        result = self.sharing.connect("example/memories")
+        self.assertEqual(result["source_id"], "example-user")
+        self.assertEqual(self.sharing.profile(result["profile"])[1]["project"], "source")
+        self.assertEqual(self.sharing.sync()["status"], "synced")
+
+    def test_sync_dry_run_leaves_configuration_registry_files_and_remote_unchanged(self):
+        self.note()
+        self.connect_sync()
+        self.friend_bundle()
+        before = self.snapshot()
+        registry = self.server.registry.read_bytes()
+        tree = self.server.git("show-ref", cwd=self.server.remote)
+        result = self.sharing.sync(dry_run=True)
+        self.assertEqual(result["status"], "planned")
+        self.assertEqual(result["merge"]["status"], "planned")
+        self.assertEqual(result["receive"][0]["imported"], 1)
+        self.assertEqual(before, self.snapshot())
+        self.assertEqual(registry, self.server.registry.read_bytes())
+        self.assertEqual(tree, self.server.git("show-ref", cwd=self.server.remote))
+        self.assertFalse((self.root / "shared-memory").exists())
+
+    def test_sync_merges_our_pr_discovers_friend_and_is_repeatable(self):
+        self.note()
+        self.connect_sync()
+        self.friend_bundle()
+        config = self.codex / "basic-memory.json"
+        config.write_text(wg.json_text({"unrelated": 42, "basicMemory": {"primaryProject": "source",
+            "secondaryProjects": ["existing"], "teamProjects": {"other": "preserved"}}}))
+        result = self.sharing.sync()
+        self.assertEqual(result["merge"]["status"], "merged")
+        self.assertEqual(result["receive"][0]["imported"], 1)
+        project = result["receive"][0]["project"]
+        self.assertEqual(self.server.prs[0]["state"], "MERGED")
+        updated = json.loads(config.read_text())
+        self.assertEqual(updated["unrelated"], 42)
+        self.assertEqual(updated["basicMemory"]["primaryProject"], "source")
+        self.assertEqual(updated["basicMemory"]["secondaryProjects"], ["existing", project])
+        self.assertEqual(updated["basicMemory"]["teamProjects"], {"other": "preserved"})
+        self.assertEqual(self.sharing.sync()["receive"][0]["unchanged"], 1)
+        self.assertEqual(len(self.server.prs), 1)
+        self.assertFalse(any("--force" in c or "--admin" in c for c in self.server.calls))
+
+    def test_sync_preserves_local_edits_privately_then_updates_shared_copy(self):
+        self.connect_sync()
+        self.friend_bundle()
+        initial = self.sharing.sync()
+        project = initial["receive"][0]["project"]
+        root = Path(json.loads(self.server.registry.read_text())["projects"][project]["path"])
+        target = root / "rules/units.md"
+        target.write_text("My own local edit without valid frontmatter.\n")
+        self.friend_bundle(body="Friend's updated reference.")
+        before = target.read_bytes()
+        planned = self.sharing.sync(dry_run=True)
+        self.assertEqual(planned["receive"][0]["preserved_edits"], 1)
+        self.assertEqual(target.read_bytes(), before)
+        result = self.sharing.sync()
+        self.assertEqual(result["receive"][0]["preserved_edits"], 1)
+        self.assertIn("Friend's updated", target.read_text())
+        edits = result["receive"][0]["edits_project"]
+        archive = Path(json.loads(self.server.registry.read_text())["projects"][edits]["path"])
+        saved = list(archive.rglob("*.md"))
+        self.assertEqual(len(saved), 1)
+        note = wg.parse_note(saved[0].read_text(), saved[0].relative_to(archive).as_posix())
+        self.assertIn(before.decode(), note.body)
+        self.assertEqual(note.metadata["sharing_scope"], "private")
+        self.assertEqual(note.metadata["privacy_review"], "pending")
+        self.assertEqual(note.metadata["training_use"], "excluded")
+        self.assertIn(edits, json.loads((self.codex / "basic-memory.json").read_text())["basicMemory"]["secondaryProjects"])
+        self.sharing.sync()
+        self.assertEqual(len(list(archive.rglob("*.md"))), 1)
+
+    def test_sync_records_local_deletion_and_keeps_remote_deletion_locally(self):
+        self.connect_sync()
+        self.friend_bundle()
+        result = self.sharing.sync()
+        project = result["receive"][0]["project"]
+        root = Path(json.loads(self.server.registry.read_text())["projects"][project]["path"])
+        (root / "rules/units.md").unlink()
+        result = self.sharing.sync()
+        self.assertEqual(result["receive"][0]["preserved_edits"], 1)
+        archive = Path(json.loads(self.server.registry.read_text())["projects"][result["receive"][0]["edits_project"]]["path"])
+        self.assertTrue(any("local_deletion: true" in p.read_text() for p in archive.rglob("*.md")))
+        (self.server.seed / "bundles/friend/rules/units.md").unlink()
+        (self.server.seed / "bundles/friend/manifest.json").write_text(wg.json_text({"version": 1, "scope": "team", "notes": []}))
+        self.server.git("add", ".", cwd=self.server.seed)
+        self.server.git("commit", "-m", "Remove remote note", cwd=self.server.seed)
+        self.server.git("push", "origin", "main", cwd=self.server.seed)
+        result = self.sharing.sync()
+        self.assertEqual(result["receive"][0]["removed"], ["rules/units.md"])
+        self.assertTrue((root / "rules/units.md").exists())
+
+    def test_sync_stale_review_blocks_sending_but_still_receives(self):
+        note = self.note()
+        self.connect_sync()
+        note.write_text(note.read_text() + "Unreviewed addition.\n")
+        self.friend_bundle()
+        result = self.sharing.sync()
+        self.assertEqual(result["status"], "blocked")
+        self.assertEqual(result["publish"]["status"], "blocked")
+        self.assertEqual(result["merge"]["status"], "not_attempted")
+        self.assertEqual(result["receive"][0]["imported"], 1)
+        self.assertFalse(self.server.prs)
+
+    def test_sync_merge_protection_blocks_only_sending_and_never_bypasses(self):
+        self.note()
+        self.connect_sync()
+        self.friend_bundle()
+        self.server.reject_merge = True
+        result = self.sharing.sync()
+        self.assertEqual(result["merge"]["status"], "blocked")
+        self.assertEqual(result["merge"]["attempts"], 3)
+        self.assertEqual(result["receive"][0]["imported"], 1)
+        self.assertEqual(len(self.server.prs), 1)
+        self.assertEqual(self.server.prs[0]["state"], "OPEN")
+
+    def test_sync_recovers_lost_push_create_and_merge_responses(self):
+        for failure in ("fail_push_after", "fail_create_after", "fail_merge_after"):
+            self.note(body="Reviewed update: " + failure)
+            if not self.sharing.config().get("connections"):
+                self.connect_sync()
+            setattr(self.server, failure, True)
+            result = self.sharing.sync()
+            self.assertEqual(result["status"], "synced", result)
+            self.assertEqual(self.server.prs[-1]["state"], "MERGED")
+        self.assertEqual(len(self.server.prs), 3)
+
+    def test_sync_one_invalid_friend_does_not_block_other_sources(self):
+        self.connect_sync()
+        self.friend_bundle(source="good")
+        self.friend_bundle(source="broken")
+        (self.server.seed / "bundles/broken/rules/units.md").write_text("Tampered data.")
+        self.server.git("add", ".", cwd=self.server.seed)
+        self.server.git("commit", "-m", "Bad bundle", cwd=self.server.seed)
+        self.server.git("push", "origin", "main", cwd=self.server.seed)
+        result = self.sharing.sync()
+        by_source = {p["source_id"]: p for p in result["receive"]}
+        self.assertEqual(by_source["broken"]["status"], "blocked")
+        self.assertEqual(by_source["good"]["imported"], 1)
+
+    def test_sync_preservation_failure_leaves_local_edit_untouched(self):
+        self.connect_sync()
+        self.friend_bundle()
+        result = self.sharing.sync()
+        project = result["receive"][0]["project"]
+        root = Path(json.loads(self.server.registry.read_text())["projects"][project]["path"])
+        target = root / "rules/units.md"
+        target.write_text("Keep my private edit.\n")
+        original = wg.atomic_file
+        def fail_archive(path, *args, **kwargs):
+            if "local-edits" in Path(path).parts:
+                raise OSError("Disk failure")
+            return original(path, *args, **kwargs)
+        with patch.object(wg, "atomic_file", side_effect=fail_archive):
+            result = self.sharing.sync()
+        self.assertEqual(result["receive"][0]["status"], "blocked")
+        self.assertEqual(target.read_text(), "Keep my private edit.\n")
+        self.assertEqual(self.sharing.sync()["receive"][0]["preserved_edits"], 1)
+
+    def test_sync_external_edit_during_preservation_is_not_overwritten(self):
+        self.connect_sync()
+        self.friend_bundle()
+        result = self.sharing.sync()
+        project = result["receive"][0]["project"]
+        root = Path(json.loads(self.server.registry.read_text())["projects"][project]["path"])
+        target = root / "rules/units.md"
+        target.write_text("First edit.\n")
+        original = wg.atomic_file
+        changed = False
+        def race(path, *args, **kwargs):
+            nonlocal changed
+            result = original(path, *args, **kwargs)
+            if not changed and "local-edits" in Path(path).parts:
+                changed = True
+                target.write_text("Concurrent second edit.\n")
+            return result
+        with patch.object(wg, "atomic_file", side_effect=race):
+            result = self.sharing.sync()
+        self.assertEqual(result["receive"][0]["status"], "blocked")
+        self.assertEqual(target.read_text(), "Concurrent second edit.\n")
+        result = self.sharing.sync()
+        archive = Path(json.loads(self.server.registry.read_text())["projects"][result["receive"][0]["edits_project"]]["path"])
+        copies = [p.read_text() for p in archive.rglob("*.md")]
+        self.assertTrue(any("First edit." in x for x in copies))
+        self.assertTrue(any("Concurrent second edit." in x for x in copies))
+
+    def test_sync_same_named_notes_from_multiple_sources_and_own_source_exclusion(self):
+        self.note()
+        self.connect_sync()
+        self.friend_bundle(source="friend-a", body="Author A")
+        self.friend_bundle(source="friend-b", body="Author B")
+        result = self.sharing.sync()
+        self.assertEqual({p["source_id"] for p in result["receive"]}, {"friend-a", "friend-b"})
+        registry = json.loads(self.server.registry.read_text())["projects"]
+        for item in result["receive"]:
+            root = Path(registry[item["project"]]["path"])
+            self.assertIn("Author " + item["source_id"][-1].upper(), (root / "rules/units.md").read_text())
+        self.assertIn("Preserve denominator", (self.memory / "rules/units.md").read_text())
+
+    def test_sync_retries_non_force_push_after_concurrent_branch_update(self):
+        self.note()
+        self.connect_sync()
+        self.sharing.publish("publish")
+        def concurrent():
+            self.server.git("fetch", "origin", cwd=self.server.seed)
+            self.server.git("checkout", "workgraph-share/source", cwd=self.server.seed)
+            (self.server.seed / "bundles/source/rules/units.md").write_text("Concurrent sender data")
+            self.server.git("add", ".", cwd=self.server.seed)
+            self.server.git("commit", "-m", "Concurrent sender", cwd=self.server.seed)
+            self.server.git("push", "origin", "workgraph-share/source", cwd=self.server.seed)
+            self.server.git("checkout", "main", cwd=self.server.seed)
+        self.note(body="Current reviewed source.")
+        # Use a valid remote bundle so the second attempt can safely inspect it.
+        def valid_concurrent():
+            concurrent()
+            self.server.git("checkout", "workgraph-share/source", cwd=self.server.seed)
+            p = self.server.seed / "bundles/source/rules/units.md"
+            p.write_text(wg.Note("rules/units.md", {"title": "Units", "type": "rule"}, "\nConcurrent sender.\n").render())
+            manifest = self.server.seed / "bundles/source/manifest.json"
+            manifest.write_text(wg.json_text({"version": 1, "scope": "team", "notes": [
+                {"path": "rules/units.md", "sha256": wg.sha(p.read_bytes())}]}))
+            self.server.git("add", ".", cwd=self.server.seed)
+            self.server.git("commit", "-m", "Valid concurrent bundle", cwd=self.server.seed)
+            self.server.git("push", "origin", "workgraph-share/source", cwd=self.server.seed)
+            self.server.git("checkout", "main", cwd=self.server.seed)
+        self.server.before_push = valid_concurrent
+        result = self.sharing.sync()
+        self.assertEqual(result["status"], "synced", result)
+        self.assertEqual(len(self.server.prs), 1)
+        self.assertEqual(self.server.prs[0]["state"], "MERGED")
+
+    def test_connect_fresh_dry_run_and_ambiguous_sync(self):
+        before = self.snapshot()
+        registry = self.server.registry.read_bytes()
+        self.sharing.connect("example/memories", dry_run=True)
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(self.server.registry.read_bytes(), registry)
+        self.connect_sync()
+        config = self.sharing.config()
+        config["connections"]["other/memories"] = dict(config["connections"]["example/memories"])
+        wg.atomic_file(self.sharing.config_path, wg.json_text(config), replace=True)
+        with self.assertRaises(wg.Invalid):
+            self.sharing.sync()
+        self.assertEqual(self.sharing.sync("example/memories")["status"], "synced")
+
+    def test_sync_discovery_failure_reports_completed_publish(self):
+        self.note()
+        self.connect_sync()
+        original = github.GitHub.clone
+        def fail_discovery(hub, path):
+            if "workgraph-discover-" in str(path):
+                raise wg.Invalid("Connection lost")
+            return original(hub, path)
+        with patch.object(github.GitHub, "clone", fail_discovery):
+            result = self.sharing.sync()
+        self.assertEqual(result["status"], "blocked")
+        self.assertEqual(result["merge"]["status"], "merged")
+        self.assertEqual(result["discovery"]["status"], "blocked")
+        self.assertEqual(self.sharing.sync()["status"], "synced")
+
+    def test_sync_japanese_and_quoted_note_names_merge_and_update(self):
+        self.note('rules/日本語の検証 "例".md')
+        self.connect_sync()
+        self.assertEqual(self.sharing.sync()["status"], "synced")
+        self.note('rules/日本語の検証 "例".md', body="Updated Japanese filename note.")
+        self.sharing.publish("publish")
+        self.assertEqual(self.sharing.sync()["merge"]["status"], "merged")
+
+    def test_merge_rejects_unreviewed_or_unrelated_pr_content(self):
+        self.note()
+        self.connect_sync()
+        self.sharing.publish("publish")
+        self.server.git("fetch", "origin", cwd=self.server.seed)
+        self.server.git("checkout", "workgraph-share/source", cwd=self.server.seed)
+        (self.server.seed / "unrelated.txt").write_text("Not shared notes")
+        self.server.git("add", ".", cwd=self.server.seed)
+        self.server.git("commit", "-m", "Unrelated change", cwd=self.server.seed)
+        self.server.git("push", "origin", "workgraph-share/source", cwd=self.server.seed)
+        with self.assertRaises(wg.Invalid):
+            self.sharing.merge_reviewed("publish")
+        self.assertEqual(self.server.prs[0]["state"], "OPEN")
 
     def test_malformed_agents_block_stops_configuration_before_any_changes(self):
         for text in (configure.SHARING_END + configure.SHARING_BEGIN, configure.SHARING_BEGIN,
