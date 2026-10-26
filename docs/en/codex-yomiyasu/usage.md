@@ -10,7 +10,7 @@ $kotonoha Diagnose the paragraph structure without rewriting it.
 
 One entry handles full writing/revision and narrower tasks. Preserve terminology, quotations, code, numeric values, negation, conditions, actors, causality and certainty. Do not invent evidence or actors. Brevity and lint scores alone are not the goal.
 
-SKILL.md carries the core workflow. Read references/long-form.md for substantial structure or technical explanations, references/file-review.md for file edits, and maintenance/provenance only when relevant.
+SKILL.md carries the core workflow. Ordinary revision reads the reader-boundary, clarity, finish and reader-review references once. Paragraph design, insufficient explanations and caveats use their own detailed references under the v3 conditions. File edits run checks before and after revision. Maintenance/provenance are read only when relevant.
 
 ```bash
 python ~/.agents/skills/kotonoha/scripts/writing_lint.py before.md

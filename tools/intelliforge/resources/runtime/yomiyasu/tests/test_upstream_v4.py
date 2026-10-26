@@ -36,11 +36,38 @@ class UpstreamCandidateTests(unittest.TestCase):
         self.u.save(self.candidate/'review.json',{'reviewed':True,'capabilities':[c['id'] for c in caps],
             'unintegrated':[],'source_changes':['Synthetic test record; no real review claimed']})
         result=self.candidate/'synthetic-result.json';self.u.save(result,{'synthetic':True})
-        self.u.save(self.candidate/'quality.json',{'status':'passed',
+        quality={'status':'passed',
             'case_ids':['E'+str(i).zfill(2) for i in range(1,13)]+['K'+str(i).zfill(2) for i in range(1,7)],
             'critical_errors':[],'unresolved_regressions':[],
             'adapter_sha256':{k:v for k,v in self.u.digest(adapter).items() if k not in {'UPSTREAMS.json','resources.json'}},
-            'artifacts':{'synthetic-result.json':I.sha(result.read_bytes())}})
+            'artifacts':{'synthetic-result.json':I.sha(result.read_bytes())}}
+        if (adapter/'FLOW.json').is_file():
+            tasks=json.loads(A['evals/flow-tasks.json'])['tasks']
+            directory=self.candidate/'native-r1';directory.mkdir()
+            (directory/'runner.py').write_text('# Synthetic evaluator fixture\n', encoding="utf-8", newline="\n")
+            self.u.save(directory/'contract.json',{'tasks':tasks,'adapter_sha256':quality['adapter_sha256'],
+                'runner_sha256':I.sha((directory/'runner.py').read_bytes())})
+            # Synthetic transaction fixtures. These are never exported as real model evidence.
+            for task in tasks:
+                required=[] if task['id'] in {'W21','W22','W23','W24'} else ['audience','clarity','finish','review']
+                required+=task['conditional']
+                outputs='\n'.join((adapter/'references'/(n+'.md')).read_text(encoding="utf-8") for n in required)
+                record={'status':'completed','text':'synthetic fixture','draft_unchanged':True,'skills_unchanged':True,
+                        'final_file_present':True,'diagnosis_has_no_result_file':True,
+                        'tools':[{'exit_code':0,'aggregated_output':outputs,'command':'synthetic writing_lint.py check.py'}]}
+                for arm in ('baseline','candidate'):self.u.save(directory/(task['id']+'-'+arm+'.json'),record)
+            for batch in range(6):
+                selected=tasks[batch*4:(batch+1)*4]
+                rated={'cases':[
+                    {'id':t['id'],'X_errors':[],'Y_errors':[],'regressions_X':[],'regressions_Y':[]}
+                    for t in selected]}
+                self.u.save(directory/('review-'+str(batch)+'.json'),{'result':rated,
+                    'receipt':{'status':'completed','tools':[],'output':json.dumps(rated)},
+                    'pairs':[{**{k:t[k] for k in ('id','instruction','input','requirements')},
+                              'versions':{'X':'synthetic fixture','Y':'synthetic fixture'}} for t in selected]})
+            quality.update(protocol='native-flow-v1',completed_pairs=24,route_failures=[],case_ids=[t['id'] for t in tasks])
+            quality['artifacts'].update({p.relative_to(self.candidate).as_posix():I.sha(p.read_bytes()) for p in directory.iterdir() if p.is_file()})
+        self.u.save(self.candidate/'quality.json',quality)
     def test_prepare_does_not_change_active_source(self):
         before=self.u.digest(self.source);r=self.prepare()
         self.assertFalse(r['applied']);self.assertEqual(before,self.u.digest(self.source))
@@ -86,6 +113,39 @@ class UpstreamCandidateTests(unittest.TestCase):
             self.u.promote(self.candidate,self.source)
         self.assertEqual(self.u.digest(self.source),before)
         self.assertFalse((self.candidate/'previous').exists())
+
+    def test_native_pass_summary_cannot_replace_missing_receipts(self):
+        self.prepare();self.quality_fixture()
+        path=self.candidate/'quality.json';value=json.loads(path.read_text(encoding="utf-8"))
+        if not (self.candidate/'adapter/FLOW.json').is_file():return
+        name='native-r1/W01-candidate.json';value['artifacts'].pop(name);(self.candidate/name).unlink()
+        self.u.save(path,value)
+        with self.assertRaisesRegex(ValueError,'Missing paired native output'):self.u.verify(self.candidate)
+
+    def test_native_reference_receipt_and_review_must_support_summary(self):
+        self.prepare();self.quality_fixture()
+        if not (self.candidate/'adapter/FLOW.json').is_file():return
+        path=self.candidate/'native-r1/W01-candidate.json';record=json.loads(path.read_text(encoding="utf-8"));record['tools']=[]
+        self.u.save(path,record)
+        quality=self.candidate/'quality.json';value=json.loads(quality.read_text(encoding="utf-8"));value['artifacts']['native-r1/W01-candidate.json']=I.sha(path.read_bytes());self.u.save(quality,value)
+        with self.assertRaisesRegex(ValueError,'required reference not observed'):self.u.verify(self.candidate)
+
+    def test_removing_flow_cannot_reuse_supplied_guide_quality(self):
+        self.prepare();self.quality_fixture()
+        (self.candidate/'adapter/FLOW.json').unlink()
+        with self.assertRaisesRegex(ValueError,'Missing preserved flow contract'):self.u.verify(self.candidate)
+
+    def test_answer_changed_outside_skill_run_cannot_keep_earlier_rating(self):
+        self.prepare();self.quality_fixture()
+        p=self.candidate/'native-r1/W01-candidate.json';record=json.loads(p.read_text(encoding="utf-8"));record['text']='manually repaired answer';self.u.save(p,record)
+        p=self.candidate/'quality.json';quality=json.loads(p.read_text(encoding="utf-8"));quality['artifacts']['native-r1/W01-candidate.json']=I.sha((self.candidate/'native-r1/W01-candidate.json').read_bytes());self.u.save(p,quality)
+        with self.assertRaisesRegex(ValueError,'reviewed texts differ'):self.u.verify(self.candidate)
+
+    def test_returned_reference_remains_visible_when_later_search_fails(self):
+        self.prepare();self.quality_fixture()
+        p=self.candidate/'native-r1/W01-candidate.json';record=json.loads(p.read_text(encoding="utf-8"));record['tools'][0]['exit_code']=2;self.u.save(p,record)
+        p=self.candidate/'quality.json';quality=json.loads(p.read_text(encoding="utf-8"));quality['artifacts']['native-r1/W01-candidate.json']=I.sha((self.candidate/'native-r1/W01-candidate.json').read_bytes());self.u.save(p,quality)
+        self.assertEqual(self.u.verify(self.candidate)['status'],'verified')
 
 
 

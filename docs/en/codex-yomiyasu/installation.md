@@ -22,10 +22,10 @@ cp -a tools/codex-yomiyasu/assets/kotonoha /tmp/kotonoha-baseline
 python3 tools/codex-yomiyasu/update_upstreams.py prepare --source all --candidate /tmp/kotonoha-candidate
 ```
 
-prepare freezes stable releases, commits, hashes, original files, adapter rules and differences in a separate candidate. Select one source with --source yomiyasu|meiseki and optionally --ref TAG. Active installations stay unchanged. Review normative changes and capability coverage, update the candidate adapter, and record reasons in review.json. Run the explicit paired model comparison through evals/v4_compare.py to create quality.json. Installers never invoke a model automatically.
+prepare freezes stable releases, commits, hashes, original files, adapter rules and differences in a separate candidate. Select one source with --source yomiyasu|meiseki and optionally --ref TAG. Active installations stay unchanged. Review normative changes and capability coverage, update the candidate adapter, and record reasons in review.json. Run the native 24-use comparison through evals/flow_native.py to create quality.json with reference, checker and final-output receipts. The shared budget is 60 minutes. Installers never invoke a model automatically.
 
 ```bash
-python3.11 tools/codex-yomiyasu/evals/v4_compare.py --candidate /tmp/kotonoha-candidate --baseline /tmp/kotonoha-baseline
+python3.11 tools/codex-yomiyasu/evals/flow_native.py --candidate /tmp/kotonoha-candidate --baseline /tmp/kotonoha-baseline --runtime "$HOME/.agents/.kotonoha-runtime"
 python3 tools/codex-yomiyasu/update_upstreams.py verify --candidate /tmp/kotonoha-candidate
 python3 tools/codex-yomiyasu/update_upstreams.py promote --candidate /tmp/kotonoha-candidate
 ```
@@ -37,3 +37,5 @@ The comparison runner needs Python 3.11+ and an authenticated Codex CLI. It fixe
 ## Removal and sharing
 
 Preview with --uninstall --dry-run; apply with --uninstall --apply. Edited or extra files prevent removal; backups remain. A shared copy needs only the kotonoha folder, including resources.json for source integrity. Installation ownership .installer.json may be omitted from manual copies. Prepare the optional lint runtime on the recipient machine; exclude private settings, credentials and caches.
+
+Version 4.1 requires the preserved FLOW.json rules and all paired native records/reviews. Supplied-guide v4.0 studies are historical evidence. Later rounds (--round 2, then at most --round 3) rerun every candidate case within the original deadline; answers edited outside the actual Skill run cannot replace its outputs.

@@ -74,6 +74,8 @@ def main():
     p.add_argument('--budget-from',type=Path)
     a=p.parse_args()
     root=a.candidate.resolve();adapter=root/'adapter';baseline=a.baseline.resolve()
+    if (adapter/'FLOW.json').is_file():
+        p.error('Preserved-flow candidates require flow_native.py and actual reference receipts')
     config=tomllib.loads((Path.home()/'.codex/config.toml').read_text('utf-8'))
     tasks=json.loads((HERE/'explanation-tasks.json').read_text('utf-8'))['tasks']+json.loads((HERE/'kotonoha-holdout.json').read_text('utf-8'))['tasks']
     outputs=root/'model';outputs.mkdir(exist_ok=False)

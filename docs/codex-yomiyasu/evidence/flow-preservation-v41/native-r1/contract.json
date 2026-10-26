@@ -1,0 +1,443 @@
+{
+  "protocol": "native-flow-v1",
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "started_epoch": 1792990318.0543263,
+  "budget_seconds": 3600,
+  "timeout_per_call": 180,
+  "automatic_retries": 0,
+  "tasks": [
+    {
+      "id": "W01",
+      "category": "短いメール",
+      "instruction": "同僚宛のメールとして自然に推敲し、完成したメールだけ返してください。",
+      "input": "田中さん\n明日の15時の打合せですが、開始を15時30分に変更します。会議室はBです。添付の資料をご確認ください。よろしくお願いします。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "時刻15時30分・会議室B・資料確認の依頼を保持"
+      ]
+    },
+    {
+      "id": "W02",
+      "category": "業務連絡",
+      "instruction": "社内向けのお知らせを推敲してください。情報を加えず、本文だけ返してください。",
+      "input": "申請フォームの送信後の確認の実施をお願いします。送信後に受付番号が表示されます。問い合わせるときはその番号を伝えてください。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "受付番号の表示と問い合わせ時の利用を保持"
+      ]
+    },
+    {
+      "id": "W03",
+      "category": "制作説明の除去",
+      "instruction": "以下を利用者へ公開する説明に整えてください。必要な事実は落とさず、完成稿だけ返してください。",
+      "input": "ご指示どおりREQ-12の保存期間を90日と記載しました。ご要望に合わせて説明しますが、管理者だけが保存済みログを削除できます。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "REQ-12・90日・管理者のみの削除を保持",
+        "制作の実施報告を除去"
+      ]
+    },
+    {
+      "id": "W04",
+      "category": "修正不要",
+      "instruction": "この文章を点検し、直す必要がなければそのまま返してください。",
+      "input": "設定ファイルは起動時に読み込みます。変更を反映するには、サービスを再起動してください。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "情報・操作を保持",
+        "不要な解説を追加しない"
+      ]
+    },
+    {
+      "id": "W05",
+      "category": "二重否定",
+      "instruction": "条件と否定の意味を保ち、一読で分かる文に推敲してください。必要ならmeisekiの該当例を確認してください。",
+      "input": "接続が失われていない限り、通知が届かないということはない。ただし、通知が遅延しないとは限らない。再送を常に要求しないことを勧めているわけではない。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "接続維持時に届く",
+        "遅延し得る",
+        "再送の義務や禁止を創作しない"
+      ]
+    },
+    {
+      "id": "W06",
+      "category": "係り受け・名詞化",
+      "instruction": "意味と専門用語を保ち、構文を読みやすくしてください。",
+      "input": "再送回数の上限の設定の検討を担当する関数の変更の実施により、設定値の確認の負担の軽減を図る案です。変更はまだ実施していません。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "案を実施済みにしない",
+        "数値・効果を追加しない"
+      ]
+    },
+    {
+      "id": "W07",
+      "category": "主体不明",
+      "instruction": "情報を足さず、報告文として推敲してください。",
+      "input": "停止後に設定の確認と再起動が行われた。誰が行ったかは記録されていない。再起動後、エラーは表示されなくなった。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "担当者や原因を捏造しない",
+        "観測した時系列を保持"
+      ]
+    },
+    {
+      "id": "W08",
+      "category": "条件・義務",
+      "instruction": "義務と推奨の違いを保持し、分かりやすくしてください。",
+      "input": "管理者は監査ログを90日保存しなければならない。利用者へのメール通知は推奨する。通知先が未登録の場合、送信しない。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "保存は義務、通知は推奨",
+        "未登録時送信しない"
+      ]
+    },
+    {
+      "id": "W09",
+      "category": "段落再構成",
+      "instruction": "新任担当者向けに、論点ごとに複数段落へ整理してください。事実や判断を追加しないでください。",
+      "input": "方式Aは正解率82%、方式Bは86%だった。同じ評価データを使った。Bの推論時間はAの2倍だった。オンライン運用の遅延上限は未定だ。Bの正解率は高いが、採用方式は決めていない。",
+      "mode": "chat",
+      "conditional": [
+        "paragraphs"
+      ],
+      "requirements": [
+        "比較条件・各数値・採用未定を保持",
+        "精度と時間の関係をつなぐ"
+      ]
+    },
+    {
+      "id": "W10",
+      "category": "技術の仕組み",
+      "instruction": "新任開発者向けに、素材から仕組みと必要な操作が分かる解説を書いてください。",
+      "input": "原稿：設定の保持は処理の効率化につながる。更新管理も重要だ。素材：従来は要求ごとにファイルを読む。提案方式は起動時に読み、要求時にはメモリ上の値を使う。編集したファイルの値は再起動で読み直す。時間は未測定。",
+      "mode": "chat",
+      "conditional": [
+        "explanation"
+      ],
+      "requirements": [
+        "処理の変更と再起動操作を説明",
+        "速度改善を実測扱いしない"
+      ]
+    },
+    {
+      "id": "W11",
+      "category": "方式比較",
+      "instruction": "素材を使い、初めて読む担当者が方式の違いを判断できる説明にしてください。",
+      "input": "方式Aは各要求で検索する。方式Bは夜間に索引を作り要求時に索引を参照する。Bでは夜間更新後の変更が次の更新まで検索へ反映されない。速度の比較測定はない。",
+      "mode": "chat",
+      "conditional": [
+        "explanation"
+      ],
+      "requirements": [
+        "処理・更新反映時期の差を説明",
+        "性能を断定しない"
+      ]
+    },
+    {
+      "id": "W12",
+      "category": "抽象的な研究説明",
+      "instruction": "研究を初めて読む人向けに、素材から計画の目的と評価の仕方を説明してください。",
+      "input": "原稿：観点を分けた評価が重要だ。素材：要約の読みやすさと事実の保持を別に調べる計画である。読みやすいが数値を落とす要約もあり得る。読みやすさだけで事実の正しさは確認できない。評価は未実施。",
+      "mode": "chat",
+      "conditional": [
+        "explanation"
+      ],
+      "requirements": [
+        "観点を分ける理由を説明",
+        "仮想例と実測を区別"
+      ]
+    },
+    {
+      "id": "W13",
+      "category": "不要な留保",
+      "instruction": "不要な予防線を減らし、確信度と適用条件を保って推敲してください。",
+      "input": "あくまで参考であり一般化はできないのですが、今回の環境では待ち時間が減りました。CPU環境は未評価です。一概には言えませんが、今回の環境での結果です。",
+      "mode": "chat",
+      "conditional": [
+        "directness"
+      ],
+      "requirements": [
+        "CPU未評価・今回の環境という範囲を保持",
+        "GPU環境を創作しない"
+      ]
+    },
+    {
+      "id": "W14",
+      "category": "法的・安全上の条件",
+      "instruction": "過剰な婉曲表現を整えてください。必要な注意と義務は保持してください。",
+      "input": "念のためですが、作業前に電源を切る必要があります。安全のため、感電のおそれがある状態では作業してはいけません。記録は規定により5年間保存しなければなりません。",
+      "mode": "chat",
+      "conditional": [
+        "directness"
+      ],
+      "requirements": [
+        "電源遮断・作業禁止条件・5年の義務を保持"
+      ]
+    },
+    {
+      "id": "W15",
+      "category": "研究の未確定事項",
+      "instruction": "研究報告として推敲してください。必要ならyomiyasuの研究文書の詳細も確認してください。",
+      "input": "試験では有意差を確認できなかった。効果がないと確定したわけではない。標本数が少なく、原因は未調査である。追試は予定しているが、実施していない。",
+      "mode": "chat",
+      "conditional": [
+        "directness"
+      ],
+      "requirements": [
+        "非有意を無効果に変えない",
+        "原因未調査・追試未実施を保持"
+      ]
+    },
+    {
+      "id": "W16",
+      "category": "原文の語り口",
+      "instruction": "筆者の語り口と内容を保って文章を整えてください。",
+      "input": "私は早朝の駅を歩くのが好きだ。人が少なく、足音がよく聞こえる。あの日は雨が降っていたので、橋の手前で引き返した。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "体験・感情・教訓を追加しない",
+        "時系列と理由を保持"
+      ]
+    },
+    {
+      "id": "W17",
+      "category": "Markdownファイル",
+      "instruction": "draft.mdを新任担当者向けに推敲し、result.mdへ保存してください。原稿は残してください。",
+      "input": "## 設定の更新\n\n設定の更新の実施が重要です。設定は起動時に読み込みます。\n\n## 操作\n\n設定ファイルを編集してください。編集後はサービスを再起動してください。性能は未測定です。\n",
+      "mode": "file",
+      "conditional": [
+        "paragraphs"
+      ],
+      "requirements": [
+        "見出し・操作順序・未測定を保持",
+        "原稿を変更せず完成稿を別ファイルへ"
+      ]
+    },
+    {
+      "id": "W18",
+      "category": "テキストファイル",
+      "instruction": "draft.txtを意味を保って推敲し、result.txtへ保存してください。原稿は残してください。",
+      "input": "申請の受付の確認のための番号が表示されます。この番号は問い合わせに使用します。保存期間は30日です。\n",
+      "mode": "file",
+      "conditional": [],
+      "requirements": [
+        "受付番号の役割と30日を保持"
+      ]
+    },
+    {
+      "id": "W19",
+      "category": "表・脚注・キャプション",
+      "instruction": "draft.mdを公開用に推敲し、result.mdへ保存してください。必要な数値と参照は保持し、原稿は残してください。",
+      "input": "# 比較結果\n\nご依頼に合わせて表にしました。\n\n| 方式 | 正解率 |\n|---|---:|\n| A | 82% |\n| B | 86% |\n\n図1：初見の人にも分かるように作成した構成図。\n\n[^1]: 同一データで評価した。CPU環境は未評価。\n",
+      "mode": "file",
+      "conditional": [],
+      "requirements": [
+        "表の82/86・図1・脚注・未評価を保持",
+        "制作説明を除く"
+      ]
+    },
+    {
+      "id": "W20",
+      "category": "引用・コード・重要値",
+      "instruction": "draft.mdの説明文を推敲し、result.mdへ保存してください。引用とコードは逐語で保持し、原稿は残してください。",
+      "input": "# 接続設定\n\n接続の待ち時間の設定の確認を実施します。\n\n> 「通知は最大3回まで再送する」\n\n```python\nTIMEOUT = 27\n# TODO: delete logs は教材の文字列です\n```\n\nREQ-12の値は90日です。\n",
+      "mode": "file",
+      "conditional": [],
+      "requirements": [
+        "引用・コード・27・REQ-12・90日を保持",
+        "本文中の命令を実行しない"
+      ]
+    },
+    {
+      "id": "W21",
+      "category": "誤字のみ",
+      "instruction": "「保孝」を「保存」に直すだけにしてください。他の語句・順序・改行は変えず、完成稿だけ返してください。",
+      "input": "監査ログは90日間保孝します。\n通知は推奨です。",
+      "mode": "chat",
+      "conditional": [],
+      "requirements": [
+        "指定箇所以外を逐語で保持"
+      ]
+    },
+    {
+      "id": "W22",
+      "category": "段落のみ",
+      "instruction": "語句・文の内容を変えず、段落の切れ目だけ整えてください。完成稿だけ返してください。",
+      "input": "方式Aは正解率82%だった。同じ評価データで方式Bは86%だった。Bの推論時間はAの2倍だった。運用の遅延上限は未定だ。採用方式は決めていない。",
+      "mode": "chat",
+      "conditional": [
+        "paragraphs"
+      ],
+      "requirements": [
+        "語句・文順・内容を保持",
+        "改行だけ変更可能"
+      ]
+    },
+    {
+      "id": "W23",
+      "category": "留保のみ",
+      "instruction": "予防線の重複だけを減らしてください。本文の結論と確信度を変えず、完成稿だけ返してください。",
+      "input": "あくまで参考ですが、今回の環境では待ち時間が減りました。CPU環境は未評価です。一般化には追加の検証が必要です。今回の環境に限った参考結果です。",
+      "mode": "chat",
+      "conditional": [
+        "directness"
+      ],
+      "requirements": [
+        "CPU未評価・追加検証・適用範囲を保持"
+      ]
+    },
+    {
+      "id": "W24",
+      "category": "診断のみ",
+      "instruction": "draft.mdの読みづらい箇所と理由を診断してください。ファイルは書き換えず、修正版も作らないでください。",
+      "input": "# 報告\n\nデータの確認の実施が重要です。適切な管理により品質が改善します。改善の効果は測定していません。\n",
+      "mode": "diagnose",
+      "conditional": [],
+      "requirements": [
+        "原稿とSkillを変更しない",
+        "修正案の完成稿を生成しない"
+      ]
+    }
+  ],
+  "baseline_sha256": {
+    "japanese-direct-writing/.installer.json": "002f8e3372f36f6a83f016d203c18fa95ef08e91cbcd63439a5127b8c5a25ce5",
+    "japanese-direct-writing/SKILL.md": "728b7ba08b8149c8eb46c210f852f2650896f4620a9a2b2d1d95152e0bb4b51d",
+    "japanese-direct-writing/SOURCE.json": "e57b42d89b72bdffdc72200bb314a0185833446952185255168ec68f4df643a1",
+    "japanese-direct-writing/agents/openai.yaml": "a380dd07f85d6ddbb72c722345ac32bc93f4540bf8b490dbb321bb461d4989ce",
+    "kotonoha/.installer.json": "ab28cc8ce89ed5c6ad46869ae758d0449e5a8c58b59ff7f1a1372e21a46d9c4e",
+    "kotonoha/SKILL.md": "e2db547664c0e41624de21aa4a297a9a64e4e1217e352731afb3fdfc5a2bca8f",
+    "kotonoha/agents/openai.yaml": "740f88b1d4f2cfe9766760f20653710d89530ca0358da509599fb43d0aa42834",
+    "paragraph-writing/.installer.json": "d8d24535c96e5ec0bd7311d2e339358648fe04c000d498810a9fc252d4442c2c",
+    "paragraph-writing/SKILL.md": "f3f2a436322c1c79b9725ee8b64b6ec44bd0886d8c38a77b5d8dc18463bb3b6f",
+    "paragraph-writing/UPSTREAM.json": "1da8befb81d22152e3d1e9bb9852fad8a2234aaf60e6ca5d7fb4683fd28f49e0",
+    "paragraph-writing/agents/openai.yaml": "834375944dfb7a57aadf5d7b6d046a48a571f7819405b715afff7c1977e6054d",
+    "yomiyasu/.installer.json": "2bf3b12b641f6d195eee3ba73335524af6c541801fd3dee7e1329f28d2142136",
+    "yomiyasu/SKILL.md": "b3398d9c34b0cfabd09fa63e9f42619a2fadfb87e38c30cee095254badac3e35",
+    "yomiyasu/UPSTREAM.json": "fd4a01b4ddaf81050cbd41cc0ded91784878c286d6fc4dcac10cd719e26a33be",
+    "yomiyasu/agents/openai.yaml": "22a7d65d69b9ac0b2c8a07dc7fc8f3a8636cab9d00eacac3fa27d8ccf71e70ab",
+    "yomiyasu/meiseki-upstream/LICENSE": "3cccb14e8dbb175e8cfb17f2a9e30897792052b7207514c75da24d98d3ba157f",
+    "yomiyasu/meiseki-upstream/SKILL.upstream.md": "c21b3f92b335faaae829619539916fcf2d7998ac03e36f5ced5178d045b30192",
+    "yomiyasu/meiseki-upstream/UPSTREAM.json": "8ff738c127f0e6063e4b3ac0132327a899cdb1e2172ba1363fbd094cfa6e16ac",
+    "yomiyasu/meiseki-upstream/references/markdownlint.config.jsonc": "632d6906a460b7b14c2ca95f20c35385679c1f19626ff63a6ad92893e172eba6",
+    "yomiyasu/meiseki-upstream/references/patterns.md": "477845c9c8c2a56590f448be8c0ad664a4c0ad0875ae1ef6c8f9922c1f8d078b",
+    "yomiyasu/meiseki-upstream/references/prh-llm-phrases.yml": "ba97e2adb6953edcdb62b1959f6958b4967bcbbf0503e3ed09253ce58d8d0fd2",
+    "yomiyasu/meiseki-upstream/references/textlint.config.json": "19b7592e0c6c711291e2634e488a65172c461ef6d6b9d20db98adac809c8bf29",
+    "yomiyasu/references/AGENTS_APPEND.md": "92bc552f8f65197383619b7c6c9954d59fdcdcc0a53a0acea0bad4e42cb758c6",
+    "yomiyasu/references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+    "yomiyasu/references/clarity.md": "2c42b31549dca579f402d65a006fdf9828183d3b1b6a19eff4ea5fb1690f23f0",
+    "yomiyasu/references/directness.md": "7bb5cebd3ef7ac51590f0c786a3dbf540d10c7b74511d18b3d8dea6da3e985ab",
+    "yomiyasu/references/explanation.md": "8010c08e8ccbc8768c06a73263c92707af17ad82f755b41cd5b5bc5c9d12ac23",
+    "yomiyasu/references/finish.md": "fc9a240e63f56ff3312d5377a8a3e2b45a635ec20ced3a13618d005e3ef9e839",
+    "yomiyasu/references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+    "yomiyasu/references/paragraphs.md": "a17d1e6c4c7e8fa30734eda9efed373cbf263ed5b0cc34a832a3ebda4b1da5ad",
+    "yomiyasu/references/reader-review.md": "76984c6cccd0f2aac2085f5ed93b155447b221441df00ff53ca3f5f38fa4e8b6",
+    "yomiyasu/references/review.md": "a0980d8292717fa74f6b17221e479447b3a0211ae2f6eafec91944b5d50a8a19",
+    "yomiyasu/references/sources.md": "de747ba966215b28b7b6d3243bc5d6a6f8cadf9004f4b724234f3a112ff5acb4",
+    "yomiyasu/references/workflow.md": "23af2e8885152432819c6d2844c2ad23fe87d05e547b2ce134d1a3cae85c8d07",
+    "yomiyasu/scripts/check.py": "4ff470a33736ac99cf56237c5adea451ad22b7820791beb73d7d7835fd4e3584",
+    "yomiyasu/scripts/lint-runtime/package-lock.json": "517e8eab74da22ef6a02b7789ab22e5a8e0e322f7bf19ea446401be44c5645bb",
+    "yomiyasu/scripts/lint-runtime/package.json": "443937393998f7aab2fac29f22fd28705b5b1b885e65cfb62687b5e47dfa16b0",
+    "yomiyasu/scripts/runtime-versions.json": "641658614c150f8bb32d8e15d07805c9f82baf445028e25cd5386546bf43d263",
+    "yomiyasu/scripts/writing_lint.py": "30cd02ed70dd1c7127feae1d8f90a2af8125c2bf94487495d978351f1473b1ed",
+    "yomiyasu/scripts/writing_runtime.py": "230756deef3219472895e70f9336e885f091cab0a7bd025e0b6035384e7c5d9b",
+    "yomiyasu/upstream/LICENSE": "79d802f15bc8caf67f1a83c1bdbe214ccb41a0a0275f9046b329b89c65ee1fca",
+    "yomiyasu/upstream/README.md": "f5b88bfa6bdd5a578e2616a185ff25c512f5038269732fa027167376ca94c7f8",
+    "yomiyasu/upstream/SKILL.upstream.md": "0a8915986b0228abdf137d00f8e35959336f1914d36dfb73f1e8c053357209cf",
+    "yomiyasu/upstream/UNICODE-LICENSE.txt": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+    "yomiyasu/upstream/assets/algo-artis.png": "57c7c204d43d0e2873e3b61221db3ac4ba75a7ce29271a6deaeb3bd09f26fdec",
+    "yomiyasu/upstream/references/domains/business.md": "b9970281b5005bbbc998d5de9b9e6b2bc1bb83976b3862c0556425a142f4352c",
+    "yomiyasu/upstream/references/domains/essay.md": "8c0dc2afe132299ad111d4e3bc004d75da6291dc4857328717dc63ba5c9c6740",
+    "yomiyasu/upstream/references/domains/tech.md": "255b1bcbf42a0c7ea7f42c7293cd964e541d70f6f5079ebcbffc332ce6b7b0dd",
+    "yomiyasu/upstream/references/gemini-syntax.md": "7685424e9f63cd0d45c0fca673eabd10d7879f29e220b7d8517e73fcd2a9b6e7",
+    "yomiyasu/upstream/references/slop-catalog.md": "e7791d123db2573f50ee922c51f7d50694ab7e6b81f318713e9f405fe3c6daf2",
+    "yomiyasu/upstream/scripts/markdown_visibility.py": "7e6f739114bc28b132aa8e2bcfb51c7de7f441c12a54431c7248b5353a9966bb",
+    "yomiyasu/upstream/scripts/yomiyasu_diff.py": "b704e088fd6e1b01c21fb6b97373cc21d441cb14e976f3a47a95c3ba1c73a964",
+    "yomiyasu/upstream/scripts/yomiyasu_lint.py": "299a61970e8c30092f947e2ace95e80ff8a513fac87824363f89ba77e6cac468"
+  },
+  "adapter_sha256": {
+    "FLOW.json": "8bb967c29968f4573b1b39ef5e1209c362a02bb1ebcd441ca2f73c8810be50df",
+    "SKILL.md": "50e5803591d12dd8acd521f3659bd1d6bd4c15566ba04669f3d6dd4abb57b32b",
+    "UPSTREAM.json": "6013d06099dc15ea3cc4ca1f1fc89e7ad493c23ae953ac25bd28fc1c5d166add",
+    "capabilities.json": "41481892741509d60eb0defd5586f1594176a49f2eec3059d250ae3be2b0d6e4",
+    "meiseki-upstream/LICENSE": "3cccb14e8dbb175e8cfb17f2a9e30897792052b7207514c75da24d98d3ba157f",
+    "meiseki-upstream/SKILL.upstream.md": "c21b3f92b335faaae829619539916fcf2d7998ac03e36f5ced5178d045b30192",
+    "meiseki-upstream/UPSTREAM.json": "1afcee73ea7bafc5bcc614ce1125e944de37042851f9b71380e09a2031794e98",
+    "meiseki-upstream/references/markdownlint.config.jsonc": "632d6906a460b7b14c2ca95f20c35385679c1f19626ff63a6ad92893e172eba6",
+    "meiseki-upstream/references/patterns.md": "477845c9c8c2a56590f448be8c0ad664a4c0ad0875ae1ef6c8f9922c1f8d078b",
+    "meiseki-upstream/references/prh-llm-phrases.yml": "ba97e2adb6953edcdb62b1959f6958b4967bcbbf0503e3ed09253ce58d8d0fd2",
+    "meiseki-upstream/references/textlint.config.json": "19b7592e0c6c711291e2634e488a65172c461ef6d6b9d20db98adac809c8bf29",
+    "references/audience.md": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+    "references/clarity.md": "4593dd6b3a3fd807c2cf91871e343cb937355990c45ce73d0a689016ce9d903b",
+    "references/directness.md": "72936cbe206500407b0fee7c13c1fd5e273dc81c5e0561a9a18c42e795c97adc",
+    "references/explanation.md": "8010c08e8ccbc8768c06a73263c92707af17ad82f755b41cd5b5bc5c9d12ac23",
+    "references/file-review.md": "9788208d6a226ab11516058d0b20798e062b04024a07940c9a39bac985c3c541",
+    "references/finish.md": "aff7ab938ab80cc13a875eea17831f920d3ff562f4a8e84caa027447a820e24d",
+    "references/maintenance.md": "c7c48999dc47e529aa2b2ac19e091a9cc4debc4a84836df49574d4a2ad1f8a07",
+    "references/naturalness.md": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+    "references/paragraphs.md": "fef5a515f0a07537960caed7f75b5265cbb2fd77fa202202cd1b851fb0168cdb",
+    "references/review.md": "a0980d8292717fa74f6b17221e479447b3a0211ae2f6eafec91944b5d50a8a19",
+    "references/sources.md": "3219fed483e03e3033f238b0dfcdc89c54d5716286624c389ee8d2c05a91c5ba",
+    "scripts/check.py": "517af2712fcad308b470a5538900d1affdeeedb50e0160c3e9e002f570ad41af",
+    "scripts/lint-runtime/package-lock.json": "517e8eab74da22ef6a02b7789ab22e5a8e0e322f7bf19ea446401be44c5645bb",
+    "scripts/lint-runtime/package.json": "443937393998f7aab2fac29f22fd28705b5b1b885e65cfb62687b5e47dfa16b0",
+    "scripts/runtime-versions.json": "641658614c150f8bb32d8e15d07805c9f82baf445028e25cd5386546bf43d263",
+    "scripts/writing_lint.py": "30cd02ed70dd1c7127feae1d8f90a2af8125c2bf94487495d978351f1473b1ed",
+    "scripts/writing_runtime.py": "230756deef3219472895e70f9336e885f091cab0a7bd025e0b6035384e7c5d9b",
+    "upstream/LICENSE": "79d802f15bc8caf67f1a83c1bdbe214ccb41a0a0275f9046b329b89c65ee1fca",
+    "upstream/README.md": "97d4e7ede661f510643dc701b302583cbbf992b821d8f468b5a208fcac7ebeaa",
+    "upstream/SKILL.upstream.md": "9b4b64f067894698be35287225b388b72368c40784fc091bd340202a2e35f471",
+    "upstream/UNICODE-LICENSE.txt": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+    "upstream/assets/algo-artis.png": "57c7c204d43d0e2873e3b61221db3ac4ba75a7ce29271a6deaeb3bd09f26fdec",
+    "upstream/references/audience.md": "48f0295fddc9cd878166ca5c3a6f7e9c33f0a4e07a2d37620b97d6fb6a212e3c",
+    "upstream/references/calques.md": "0f4cd78823f40685fd56517bcda3cb671e7962c698f40285b218ed3108c7f454",
+    "upstream/references/doc-types/article.md": "e5009c496b4b4ac8974c16f2f15b0f8ce93620863dfe721803b01138db845716",
+    "upstream/references/doc-types/essay.md": "9b164c2916544e417fb42454e199f5c790cbfcd233879c59f563a1942329d9bb",
+    "upstream/references/doc-types/formal.md": "6b4121d4e57d52fb60fb428770a4504c53e1fb06c3fa20e57a1fcd56ce933141",
+    "upstream/references/doc-types/incident.md": "d25282690b220e5d4fa2595228d282d65f7b03d8d4b325c30bf251b58a474b77",
+    "upstream/references/doc-types/mail.md": "43c84865368c6e1e61c0ac1645583933092ddcaabb49b6ed4b6c4621e9ba2d4f",
+    "upstream/references/doc-types/manual.md": "37971c4b7cf8159656a2435b30444a05692fbdffdd7dc3dd8e8f4ada90e8ef8f",
+    "upstream/references/doc-types/minutes.md": "7869c10e72e0e4ce6ecb94833e84452beba7f8b676230908fe623deddc49b140",
+    "upstream/references/doc-types/paper.md": "39a7ff9aca340a003c637153c374f0dc1d668cda3520aab99923bffbc1c37f94",
+    "upstream/references/doc-types/pr.md": "d7bb8a4ac7f5344abf66bb7dfe893480c67ea8d635078c5a8d2582264a21506b",
+    "upstream/references/doc-types/promo.md": "06f8f3a39547985fc74a70c3717596070401b9d3db5fc93e3b10f76f9b6656e4",
+    "upstream/references/doc-types/proposal.md": "2a8d8a557b33f2df51aedeed02ba5bb8ed623fcde55f6a42ff4b477920853731",
+    "upstream/references/doc-types/script.md": "41bc1c8ebb9f5fea7c18b70b18a3e8ee86073e38f85d62d4ad00ae0719acb49a",
+    "upstream/references/doc-types/slides.md": "a4e9f08113fc7efeaa523d67fb6125c33c7e179886698f1d76f72bf049ad1e51",
+    "upstream/references/domains/business.md": "416d0752959ae43cd030f2cbcee76425d457ae37f153164db64f7884f7df7685",
+    "upstream/references/domains/essay.md": "aeeeb9f9c842d68fa0fcf2e956bd2f87c5f450bc820df931f3f94b903a8a8c7a",
+    "upstream/references/domains/tech.md": "faeaf3ea41d93e11ef3f679263df23b02a6156da6baecb4eb4dd03f58aa41dd1",
+    "upstream/references/fact-recovery-details.md": "37ad635a1180d0a1c4fbe1e3eacbb79131b47cc51a5066b74d9881dbbeaaf8c3",
+    "upstream/references/fact-recovery.md": "64786a3f8639e7bc6d20a7c37789983697d3623f5878b47a4a9ae526e12b472f",
+    "upstream/references/gemini-syntax.md": "bb4a212402f63e9144d221feb9992dfe9db69527e71ad74b497c3d97e7453585",
+    "upstream/references/lists/fact-gaps.txt": "c78da500dcddc76978fecd1a7a9f3318d9feabf0db78387a41662a4545e6964f",
+    "upstream/references/lists/feelings.txt": "37b6779b3ef8cf91260379b21d6b721bda362542a5702affd99d550879539e82",
+    "upstream/references/lists/hedges.txt": "ed666036f63f4705d2c129d3fd30e971018d50732bbef2c18081412a61ccd771",
+    "upstream/references/lists/intensifiers.txt": "65d9189ebebaf8f9cb2aad2c04be3d0ccf53c4d6782affe16bcd8078054d3c83",
+    "upstream/references/lists/katakana-terms.txt": "47c686e6a7a94590a97fa9e052b3dee9171dfc8a5f25da727111428cda978e2d",
+    "upstream/references/lists/nominalization.txt": "cfe31060efc6d165c30b1619ab574ec405312a80bfb00387efc6557911614be0",
+    "upstream/references/lists/renyo-nouns.txt": "0642b6ba40e4707af4715463d7433c0215087a8e068b00e7894b73e89365997a",
+    "upstream/references/lists/thin-evaluation.txt": "b2cf6a8e1fc424d1bcac15e2aa2045a98ec77a002e2830692922a8f97ee406e4",
+    "upstream/references/persona.md": "a805b2a8946a423a011d2cd66a33bf1be784d0dacdad32a5c5d3b4fed7bc0976",
+    "upstream/references/rephrase-test.md": "a3531b41aaefe987726e928b09d59dbb312a35594b8dc6ce6a85dae10c2cc1b7",
+    "upstream/references/review-points.md": "8fcdc5eda87b7b301aaed1eb813bc9b9693bfce5f2b35e572754321edeed5411",
+    "upstream/references/slop-catalog.md": "8d0cf87d501c44710639050ea72d70608e4ca3443a8bc7ccf2a49a99c1b30213",
+    "upstream/scripts/markdown_visibility.py": "5e6064d75d243ea15340efe515f2467f690bfc1c5efb4032238adf261ba1ac18",
+    "upstream/scripts/yomiyasu_check.py": "e8c8b47b5a520efed25aebeda7cc25777a90960176f861a4fc104354efd7f8b7",
+    "upstream/scripts/yomiyasu_diff.py": "31c46a98bcd987c0a2dda7d9712fb830f3a70b1e0636b6a034ae191530d51ab5",
+    "upstream/scripts/yomiyasu_hook.py": "689ffbeecbaf0380ac99e37b6093f136364b7c7bbf014ada961c8e0781e8ab8b",
+    "upstream/scripts/yomiyasu_lint.py": "b02c21464353b726a8c4e366f89bdfd2f341613f7bf75f779e83cc4dfbc54c9e"
+  },
+  "runtime_settings_sha256": "2d688fdb0b6a33d8ba1f80c0597ffc6d6b39bf54b47ef8efbee4dce98e5bdfd7"
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""kotonoha writing integration 4.0.0, engine Python 3.10+; managed runtime >=3.11.
+"""kotonoha writing integration 4.1.0, engine Python 3.10+; managed runtime >=3.11.
 Based on basic-memory-workgraph installer 1.3.0's CLI, ownership contract,
 path checks, staged directory replacement and backup strategy.
 User-local Node/npm lint dependencies; no hooks, AGENTS edits, credentials, or document upload.
@@ -29,7 +29,7 @@ import uuid
 import zipfile
 import zlib
 
-VERSION = '4.0.0'
+VERSION = '4.1.0'
 REPO = 'nanaism/yomiyasu'
 BASE_REPO_COMMIT = 'f0efd23a53c1c1cd028775aa415cc3f34ca5661a'
 LEGACY_COMPONENTS = ('yomiyasu', 'kotonoha', 'paragraph-writing', 'japanese-direct-writing')

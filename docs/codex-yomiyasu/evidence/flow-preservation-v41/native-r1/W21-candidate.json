@@ -1,0 +1,26 @@
+{
+  "status": "completed",
+  "elapsed_seconds": 5.78,
+  "prompt_sha256": "6cda19928ebd3b3ad4bac93c78022af3cad59df732d3ff5b834f2d4ed8834a38",
+  "output": "監査ログは90日間保存します。\n通知は推奨です。",
+  "usage": {
+    "input_tokens": 13517,
+    "cached_input_tokens": 9856,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 69,
+    "reasoning_output_tokens": 46
+  },
+  "tools": [],
+  "text": "監査ログは90日間保存します。\n通知は推奨です。",
+  "draft_unchanged": true,
+  "skills_unchanged": true,
+  "final_file_present": false,
+  "full_reads": [],
+  "checker_commands": {
+    "writing_lint.py": 0,
+    "check.py": 0
+  },
+  "diagnosis_has_no_result_file": true,
+  "id": "W21",
+  "arm": "candidate"
+}

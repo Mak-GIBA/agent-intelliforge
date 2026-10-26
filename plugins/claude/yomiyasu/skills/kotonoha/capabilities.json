@@ -5,77 +5,86 @@
       "id": "meaning",
       "rules": "SKILL.md; references/file-review.md",
       "cases": [
-        "E10",
-        "K03"
+        "W07",
+        "W08",
+        "W14",
+        "W16",
+        "W20"
       ]
     },
     {
       "id": "clarity",
       "rules": "SKILL.md",
       "cases": [
-        "E09",
-        "K03"
+        "W05",
+        "W06",
+        "W07",
+        "W08"
       ]
     },
     {
       "id": "paragraphs",
-      "rules": "references/long-form.md",
+      "rules": "references/paragraphs.md; references/explanation.md",
       "cases": [
-        "E12",
-        "K02"
+        "W09",
+        "W22"
       ]
     },
     {
       "id": "explanation",
-      "rules": "references/long-form.md",
+      "rules": "references/paragraphs.md; references/explanation.md",
       "cases": [
-        "E01",
-        "E02",
-        "E03",
-        "E04",
-        "E05",
-        "K01",
-        "K02"
+        "W10",
+        "W11",
+        "W12"
       ]
     },
     {
       "id": "certainty",
       "rules": "SKILL.md",
       "cases": [
-        "E08",
-        "E10",
-        "K06"
+        "W08",
+        "W13",
+        "W14",
+        "W15"
       ]
     },
     {
       "id": "naturalness",
       "rules": "SKILL.md; upstream/references",
       "cases": [
-        "E07",
-        "E09",
-        "K04"
+        "W01",
+        "W02",
+        "W04",
+        "W16"
       ]
     },
     {
       "id": "reader-boundary",
       "rules": "SKILL.md",
       "cases": [
-        "E11"
+        "W03",
+        "W19"
       ]
     },
     {
       "id": "scoped-edit",
       "rules": "SKILL.md",
       "cases": [
-        "native:diagnosis"
+        "W21",
+        "W22",
+        "W23",
+        "W24"
       ]
     },
     {
       "id": "file-checks",
       "rules": "references/file-review.md; scripts/check.py; scripts/writing_lint.py",
       "cases": [
-        "offline:checker",
-        "offline:lint"
+        "W17",
+        "W18",
+        "W19",
+        "W20"
       ]
     }
   ]

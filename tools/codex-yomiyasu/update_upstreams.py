@@ -87,13 +87,23 @@ def inspect(candidate):
 
 def verify(candidate):
     state,actual=inspect(candidate); adapter=candidate/'adapter'
+    if 'FLOW.json' not in actual:
+        raise ValueError('Missing preserved flow contract')
     review=json.loads((candidate/'review.json').read_text('utf-8'))
     capabilities=json.loads((adapter/'capabilities.json').read_text('utf-8'))['capabilities']
     if review.get('reviewed') is not True or review.get('unintegrated') or set(review.get('capabilities',[]))!={x['id'] for x in capabilities}:
         raise ValueError('Capability/source review is incomplete')
     if not review.get('source_changes'):raise ValueError('Explain adopted and excluded upstream changes')
     quality=json.loads((candidate/'quality.json').read_text('utf-8'))
-    expected={'E'+str(n).zfill(2) for n in range(1,13)}|{'K'+str(n).zfill(2) for n in range(1,7)}
+    if (adapter/'FLOW.json').is_file():
+        namespace={}
+        exec(compile(I.assets()['engine/flow_contract.py'], 'flow_contract.py', 'exec'), namespace)
+        namespace['verify_flow'](adapter,json.loads(I.assets()['evals/flow-v3-baseline.json']))
+        expected={'W'+str(n).zfill(2) for n in range(1,25)}
+        if quality.get('protocol')!='native-flow-v1' or quality.get('route_failures') or quality.get('completed_pairs')!=24:
+            raise ValueError('Native flow comparison is incomplete or failed')
+    else:
+        expected={'E'+str(n).zfill(2) for n in range(1,13)}|{'K'+str(n).zfill(2) for n in range(1,7)}
     if quality.get('status')!='passed' or len(quality.get('case_ids',[]))!=len(expected) or set(quality.get('case_ids',[]))!=expected or quality.get('critical_errors') or quality.get('unresolved_regressions'):
         raise ValueError('Paired quality comparison is incomplete or failed')
     # The model runner binds evidence to the exact normative text, scripts and originals.
@@ -104,6 +114,8 @@ def verify(candidate):
     for name,expected_hash in artifacts.items():
         path=candidate/I.safe_rel(name);I.safe_path(path)
         if not path.is_file() or I.sha(path.read_bytes())!=expected_hash:raise ValueError('Quality artifact changed')
+    if (adapter/'FLOW.json').is_file():
+        namespace['verify_native_records'](candidate,quality,adapter,json.loads(I.assets()['evals/flow-tasks.json'])['tasks'])
     for path in adapter.rglob('*.py'):ast.parse(path.read_text('utf-8'),filename=str(path))
     I.upstream_contract(I.inventory(adapter))
     resources(adapter)

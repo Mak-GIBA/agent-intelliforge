@@ -267,7 +267,7 @@
   "integration": {
     "status": "verified",
     "scope": "recorded capability and quality tests",
-    "quality_sha256": "39ab8c30e11656966f7a502af4055d25fb2da194ff6d39e63ea50f6bdfd14863",
-    "review_sha256": "f495100bbedee73cfa857dbc3e412377acc9ad9e3e7d2157a8d280aa99756765"
+    "quality_sha256": "51a9552725cc15cd4dcc4c65c7e3085336a538f08a0481a0ea5c7aec5f071888",
+    "review_sha256": "d9a608fc8551541aced4cf8cffb4ebf663fb08b5149446335a0bc4586e4a3080"
   }
 }

@@ -9,6 +9,8 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--candidate',type=Path,required=True)
     p.add_argument('--budget-from',type=Path,required=True);a=p.parse_args()
     root=a.candidate.resolve();quality=json.loads((root/'quality.json').read_text('utf-8'))
+    if (root/'adapter/FLOW.json').is_file():
+        raise ValueError('Native-flow outputs require a new Skill run; historical answer repair is unsupported')
     if quality.get('status')!='held' or quality.get('critical_errors') or not quality.get('unresolved_regressions'):
         raise ValueError('Repair requires only recorded reader regressions, not missing/critical evidence')
     directory=root/'reader-repair';directory.mkdir(exist_ok=False)
