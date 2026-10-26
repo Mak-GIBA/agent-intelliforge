@@ -56,6 +56,23 @@ class FlowContractTests(unittest.TestCase):
         p.write_text(json.dumps(value), encoding="utf-8", newline="\n")
         with self.assertRaisesRegex(ValueError,'approved wiring-only'):self.verify()
 
+    def test_unknown_editorial_revision_cannot_bypass_rule_checks(self):
+        p=self.root/'FLOW.json';value=json.loads(p.read_text(encoding="utf-8"))
+        value['editorial_revision']='unreviewed'
+        p.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+        with self.assertRaisesRegex(ValueError,'Unknown editorial revision'):self.verify()
+
+    def test_editorial_revision_cannot_authorize_a_new_meaning_change(self):
+        p=self.root/'references/directness.md'
+        p.write_text(p.read_text(encoding="utf-8").replace('「予定」を「実施済み」に変えない。','「予定」を「実施済み」に変える。'), encoding="utf-8", newline="\n")
+        # Even updating the candidate's own digest cannot change the external allowlist.
+        import hashlib
+        manifest=self.root/'FLOW.json';value=json.loads(manifest.read_text(encoding="utf-8"))
+        row=next(r for r in value['preserved'] if r['destination']=='references/directness.md')
+        row['preserved_sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+        manifest.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+        with self.assertRaisesRegex(ValueError,'legacy rule changed'):self.verify()
+
     def test_original_detail_and_deduplicated_wrappers_have_explicit_coverage(self):
         contract=json.loads((self.root/'FLOW.json').read_text(encoding="utf-8"))
         self.assertEqual({r['source'] for r in contract['deduplicated']},

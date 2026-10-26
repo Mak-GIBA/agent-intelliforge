@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "yomiyasu",
   "name": "kotonoha Japanese writing",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "legacy": {
     "script": "install_codex_yomiyasu.sh",
     "actions": {
@@ -72,7 +72,7 @@
   "editable_sources": [
     "tools/codex-yomiyasu"
   ],
-  "compatibility": "One self-contained kotonoha preserving the v3 writing flow and conditional detailed references; owned legacy migration and CLI aliases retained.",
+  "compatibility": "One self-contained kotonoha with conditional detailed references; owned legacy migration and CLI aliases retained.",
   "package_version": "0.1.0",
   "version_kind": "local kit version; upstream versions are resolved and recorded separately",
   "aliases": [

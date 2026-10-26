@@ -17,7 +17,15 @@ def verify_flow(root, baseline):
     if len(contract['preserved']) != 9:
         raise ValueError('Incomplete preserved flow')
     wiring=[{k:row[k] for k in ('source','destination','replacements')} for row in contract['preserved']]
-    if wiring!=baseline['allowed_wiring']:
+    revision = contract.get('editorial_revision')
+    if revision is not None:
+        revisions = baseline.get('editorial_wiring', {})
+        if revision not in revisions:
+            raise ValueError('Unknown editorial revision')
+        allowed = revisions[revision]
+    else:
+        allowed = baseline['allowed_wiring']
+    if wiring!=allowed:
         raise ValueError('Flow changes exceed the approved wiring-only moves')
     for row in contract['preserved']:
         original = baseline['files'][row['source']]

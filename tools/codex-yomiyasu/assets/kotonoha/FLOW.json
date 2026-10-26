@@ -20,7 +20,8 @@
       "source_sha256": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
       "replacements": [],
       "preserved_bytes": 4557,
-      "preserved_sha256": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c"
+      "preserved_sha256": "60a73676eca2c295ef91a8df67e1386ef1f3c6c8f04b3ef2efe13ef20ddfbb6c",
+      "offset": 0
     },
     {
       "source": "references/clarity.md",
@@ -28,7 +29,8 @@
       "source_sha256": "2c42b31549dca579f402d65a006fdf9828183d3b1b6a19eff4ea5fb1690f23f0",
       "replacements": [],
       "preserved_bytes": 1967,
-      "preserved_sha256": "2c42b31549dca579f402d65a006fdf9828183d3b1b6a19eff4ea5fb1690f23f0"
+      "preserved_sha256": "2c42b31549dca579f402d65a006fdf9828183d3b1b6a19eff4ea5fb1690f23f0",
+      "offset": 0
     },
     {
       "source": "references/explanation.md",
@@ -36,15 +38,34 @@
       "source_sha256": "8010c08e8ccbc8768c06a73263c92707af17ad82f755b41cd5b5bc5c9d12ac23",
       "replacements": [],
       "preserved_bytes": 4694,
-      "preserved_sha256": "8010c08e8ccbc8768c06a73263c92707af17ad82f755b41cd5b5bc5c9d12ac23"
+      "preserved_sha256": "8010c08e8ccbc8768c06a73263c92707af17ad82f755b41cd5b5bc5c9d12ac23",
+      "offset": 0
     },
     {
       "source": "references/finish.md",
       "destination": "references/finish.md",
       "source_sha256": "fc9a240e63f56ff3312d5377a8a3e2b45a635ec20ced3a13618d005e3ef9e839",
-      "replacements": [],
+      "replacements": [
+        [
+          "# yomiyasuによる仕上げ",
+          "# 自然さの点検"
+        ],
+        [
+          "意味保持と読者境界は共通フローに従い、",
+          "意味保持と読者境界は[SKILL.md](../SKILL.md)の手順に従い、"
+        ],
+        [
+          "現在の `../upstream/references/`",
+          "`../upstream/references/`"
+        ],
+        [
+          "上流の目安とこの独自工程が異なる場合は、ユーザーの依頼、意味保持、読者・媒体、この共通フローの順に優先する。",
+          "上流資料の目安とSKILL.mdの手順が異なる場合は、ユーザーの依頼、意味保持、読者・媒体、SKILL.mdの手順の順に優先する。"
+        ]
+      ],
       "preserved_bytes": 1057,
-      "preserved_sha256": "fc9a240e63f56ff3312d5377a8a3e2b45a635ec20ced3a13618d005e3ef9e839"
+      "preserved_sha256": "b880d7b978e98c3d73b2844dc46c761b48cfc10b12165d6ea4ad73492be66337",
+      "offset": 0
     },
     {
       "source": "references/review.md",
@@ -52,7 +73,8 @@
       "source_sha256": "a0980d8292717fa74f6b17221e479447b3a0211ae2f6eafec91944b5d50a8a19",
       "replacements": [],
       "preserved_bytes": 2670,
-      "preserved_sha256": "a0980d8292717fa74f6b17221e479447b3a0211ae2f6eafec91944b5d50a8a19"
+      "preserved_sha256": "a0980d8292717fa74f6b17221e479447b3a0211ae2f6eafec91944b5d50a8a19",
+      "offset": 0
     },
     {
       "source": "references/naturalness.md",
@@ -60,7 +82,8 @@
       "source_sha256": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
       "replacements": [],
       "preserved_bytes": 1909,
-      "preserved_sha256": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024"
+      "preserved_sha256": "c703e99bf822288118eb70d37e457030816936cf0c6cb9804fef0559e72ea024",
+      "offset": 0
     },
     {
       "source": "paragraph-writing/SKILL.md",
@@ -74,10 +97,31 @@
         [
           "yomiyasuの工程として読まれた場合や、同時に選択された場合は",
           "kotonohaの工程として読まれた場合は"
+        ],
+        [
+          "# paragraph-writing",
+          "# 段落構成の点検"
+        ],
+        [
+          "kotonohaの工程として読まれた場合は構成の点検を一度だけ行い、再帰的に呼び合わない。",
+          "構成の点検は一度だけ行い、資料やSkillを再帰的に呼び出さない。"
+        ],
+        [
+          "# 論点から段落を組み立てる",
+          "## 論点から段落を組み立てる"
+        ],
+        [
+          "。本文・例文・検査手順はこの提案用に作成した。",
+          "。"
+        ],
+        [
+          "このスキルを読んだら対象の段落・留保の工程を適用し、同じ下書きを次の工程へ渡す。",
+          "この資料に沿って段落構成を点検し、同じ下書きを次の工程へ渡す。"
         ]
       ],
-      "preserved_bytes": 4403,
-      "preserved_sha256": "fef5a515f0a07537960caed7f75b5265cbb2fd77fa202202cd1b851fb0168cdb"
+      "preserved_bytes": 4285,
+      "preserved_sha256": "0d23350ff6cdc3b7eac04777646a74cf0bc98f334068cdaf080944d85421a451",
+      "offset": 0
     },
     {
       "source": "japanese-direct-writing/SKILL.md",
@@ -95,10 +139,27 @@
         [
           "yomiyasuや他の文体スキルを追加で起動しない。",
           "他の文体スキルを追加で起動しない。"
+        ],
+        [
+          "# japanese-direct-writing",
+          "# 留保の点検"
+        ],
+        [
+          "kotonohaの工程として読まれた場合は同じ下書きの留保を一度だけ点検し、",
+          "同じ下書きの留保を一度だけ点検し、"
+        ],
+        [
+          "# 留保を減らし、確信度は変えない",
+          "## 留保を減らし、確信度は変えない"
+        ],
+        [
+          "このスキルを読んだら対象の段落・留保の工程を適用し、同じ下書きを次の工程へ渡す。",
+          "この資料に沿って留保を点検し、同じ下書きを次の工程へ渡す。"
         ]
       ],
-      "preserved_bytes": 1988,
-      "preserved_sha256": "72936cbe206500407b0fee7c13c1fd5e273dc81c5e0561a9a18c42e795c97adc"
+      "preserved_bytes": 1901,
+      "preserved_sha256": "15a1811414be39f225725d7f7973d0d306b439a28dd6d661800ad40658b29405",
+      "offset": 0
     },
     {
       "source": "references/workflow.md",
@@ -107,7 +168,7 @@
       "replacements": [
         [
           "# kotonohaの共通フロー",
-          "# kotonoha — 旧版の推敲フローを保つ日本語執筆"
+          "# kotonoha — 明晰で自然な日本語を書く"
         ],
         [
           "このフローはkotonohaとyomiyasu互換入口の共通規範。",
@@ -148,28 +209,30 @@
         [
           "intelliforge kit-run yomiyasu",
           "intelliforge kit-run kotonoha"
+        ],
+        [
+          "専門入口を既に適用した工程は繰り返さない。",
+          "既に適用した工程は繰り返さない。"
         ]
       ],
       "offset": 311,
-      "preserved_bytes": 4232,
-      "preserved_sha256": "f64b301f44ac83246044b2b73ac0afe805312c793d0164474aed208f95425f1d"
+      "preserved_bytes": 4205,
+      "preserved_sha256": "2b6efb3b91773b614146ff8d2437b766395e71af53fe4ffa5fb76f8e24763f2f"
     }
   ],
   "deduplicated": [
     {
       "source": "references/paragraphs.md",
-      "covered_by": "paragraph-writing/SKILL.md",
-      "reason": "同じ段落規範の重複。説明資料への参照は入口に保持。"
+      "covered_by": "paragraph-writing/SKILL.md"
     },
     {
       "source": "references/directness.md",
-      "covered_by": "japanese-direct-writing/SKILL.md",
-      "reason": "同じ留保規範の重複。独立Skill版の例と例外も保持。"
+      "covered_by": "japanese-direct-writing/SKILL.md"
     },
     {
       "source": "references/reader-review.md",
-      "covered_by": "references/review.md",
-      "reason": "旧版自身がレビューへの転送だけを持つ。入口から正本を一度読む。"
+      "covered_by": "references/review.md"
     }
-  ]
+  ],
+  "editorial_revision": "4.1.1"
 }

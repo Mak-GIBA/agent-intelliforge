@@ -266,8 +266,14 @@
   },
   "integration": {
     "status": "verified",
-    "scope": "recorded capability and quality tests",
+    "scope": "4.1.0 recorded capability and 24-use native-flow-v1 tests; upstream sources unchanged",
     "quality_sha256": "51a9552725cc15cd4dcc4c65c7e3085336a538f08a0481a0ea5c7aec5f071888",
-    "review_sha256": "d9a608fc8551541aced4cf8cffb4ebf663fb08b5149446335a0bc4586e4a3080"
+    "review_sha256": "d9a608fc8551541aced4cf8cffb4ebf663fb08b5149446335a0bc4586e4a3080",
+    "evaluated_adapter_version": "4.1.0",
+    "editorial_revision": {
+      "version": "4.1.1",
+      "evidence_path": "docs/codex-yomiyasu/evidence/editorial-v411",
+      "scope": "editorial preservation and four paired native uses; separate from the 4.1.0 full study"
+    }
   }
 }
