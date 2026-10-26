@@ -67,13 +67,10 @@
 # Inspect: intelliforge inspect --only office
 # Regenerate: python tools/intelliforge/build.py
 # Kit: yomiyasu — kotonoha Japanese writing
-# Skills: kotonoha, yomiyasu, paragraph-writing, japanese-direct-writing
+# Skills: kotonoha
 # Source: https://github.com/nanaism/yomiyasu (latest stable upstream release; local writing rules have independent version)
 # Source: https://github.com/bamboo-nova/meiseki (latest stable release; normative changes require reviewed adapter)
 # Destination: {skills_home}/kotonoha
-# Destination: {skills_home}/yomiyasu
-# Destination: {skills_home}/paragraph-writing
-# Destination: {skills_home}/japanese-direct-writing
 # Destination: {skills_home}/../.kotonoha-runtime
 # Settings: none
 # Edit: tools/codex-yomiyasu/kit.json

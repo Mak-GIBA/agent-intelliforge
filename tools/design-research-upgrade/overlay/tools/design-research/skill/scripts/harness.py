@@ -40,7 +40,7 @@ from reassessment import snapshot_requirements
 from research_workstreams import snapshot_task, role_instructions as workstream_instructions
 
 HERE = Path(__file__).resolve().parent
-VERSION = "2.8.0"
+VERSION = "2.8.1"
 SEVERITIES = ["Critical", "High", "Medium", "Low"]
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}")
 

@@ -1,111 +1,37 @@
-# kotonohaで文章を整える
+# kotonohaの使い方
 
-[English](../en/codex-yomiyasu/usage.md) | **日本語**
+[概要](README.md) · [導入](installation.md) · [検証](validation.md)
 
-[概要](README.md) · [導入手順](installation.md)
-
-## 対象と条件を指定する
-
-導入後に新しいCodexセッションを開き、会話欄でSkillを指定します。
+## 目的と範囲を伝える
 
 ```text
-$kotonoha docs/usage.mdを初めて使う人向けに整えて。
-コマンド、設定名、既定値、例外条件は変えず、読みにくい説明だけ直して。
+$kotonoha この報告書を、初めて読む技術者にも仕組みが分かるように推敲して。数値・条件・確信度は保って。
+$kotonoha このメールを必要な箇所だけ整えて、本文だけ返して。
+$kotonoha この文書の段落構成だけ点検して。今は書き換えず、問題を教えて。
+$kotonoha 不要な予防線を減らして。未測定の結果は未測定のままにして。
 ```
 
-```text
-$kotonoha このPR説明を、開発者と非開発者が追える文章にして。
-変更の目的、確認した結果、未確認の範囲を保持して。
-```
+文書全体の作成・推敲、段落だけの整理、留保だけの整理、診断を同じ入口で扱います。専門用語・引用・コード・数値・否定・条件・主体・因果・確信度を保ち、資料にない事実や担当者を足しません。詳しさや短さ、検査スコアの改善だけを目的にしません。
 
-新しく文章を書く場合は、下書きを作ってから一度推敲します。
-既存ファイルでは対象と範囲を指定し、原文と差分を確認します。
-法令や引用など逐語保持が必要な本文は書き換えません。
+## 読み込むもの
 
-通常の執筆・推敲には`$kotonoha`を使います。`auto`では、説明に合う依頼から自動選択することも許可します。コードだけの作業、単純な事実照会、逐語引用は対象外です。
+基本条件はSKILL.mdにまとまっています。長文・技術説明ではreferences/long-form.md、ファイルの推敲ではreferences/file-review.mdを必要に応じて読みます。出典と保守の資料は通常の執筆では不要です。原典の全量読込や他Skillの呼び出しはしません。
 
-| 呼び出し | 用途 |
-|---|---|
-| `$kotonoha` | 日本語文書全体の執筆・推敲 |
-| `$yomiyasu` | kotonohaと同じ工程への互換入口。明示呼び出し用 |
-| `$paragraph-writing` | 段落構成だけの点検・改善 |
-| `$japanese-direct-writing` | 過剰な留意書き・予防線・婉曲表現だけの整理 |
+## ファイルの検査
 
-補助Skillは対象を限定した依頼で使います。通常の推敲では、利用者が全ての名前を列挙する必要はありません。
-
-## 仕組みと実際の変化を説明する
-
-```text
-$kotonoha この技術説明を、新任の担当者が仕組みと操作を理解できる文章にして。
-原稿と補足資料にある事実を使い、理由、実際の処理、方式の違いが不足する箇所だけ補って。
-原因が未調査の箇所と、実測していない効果は断定しないで。
-```
-
-重要な主張が「効率化できる」のような抽象語で止まり、理由や処理を追えない場合だけ説明資料を参照します。「何が何を処理するか」「どの条件で何が変わるか」を資料から説明します。主張・説明・具体化・帰結は文章を考える役割で、4文のテンプレートではありません。読者が既に知ることや、十分な説明は増やしません。
-
-推敲では、原稿と提供資料にない方式・原因・数値を作りません。新規解説に仮想例を使う場合は、「仮に」のように実測と区別します。原因が不明なら不明のまま残し、接続詞や例の数を目標にしません。短いメールや語句修正には重い説明工程を適用しません。
-
-[新旧の比較と具体例](kotonoha-validation.md)では、生成品質と参照の読込、インストーラーの成功を分けて報告します。
-
-## 段落と論旨を整理する
-
-```text
-$paragraph-writing この報告を、導入を判断する人向けに組み替えて。
-結論と根拠の関係を追える構成にし、数値、条件、未測定の範囲は保持して。
-```
-
-段落ごとの要点、説明・根拠の位置、段落間のつながりを整理します。報告・Issue/PRでは判断に必要な結論や状態を早めに示し、技術解説では理解に必要な前提を順に置きます。
-通常の執筆・推敲では、kotonohaが段落設計の工程でparagraph-writingの実ファイルを読んで適用します。使い手が補助スキルを追加指定する必要はありません。同じ下書きを次の工程へ渡します。
-
-短い語句の訂正や既存の順序を維持する依頼には、段落の並べ替えを加えません。コード・表・手順・IDの対応関係、比較条件、否定や推量も保持します。
-paragraph-writingだけでも使えます。過去の併用比較と、現在の導入・検査の確認範囲は[検証結果](validation.md)を参照してください。
-
-## 不要な留意書きを点検する
-
-```text
-$japanese-direct-writing この説明から不要な留意書き・予防線・免責を削って。
-根拠、説明の詳しさ、重要な条件、未検証の範囲は保持して。
-```
-
-主張の意味や確信度を変えず、判断に役立たない但し書きを削ります。必要な条件や不確実性は、その条件が掛かる主張の近くに具体的に記します。引用、数値、保持指定の注記、具体的な安全条件は残します。
-
-kotonohaは留保の工程でjapanese-direct-writingの実ファイルを読んで適用します。複数のスキルを指定しても同じ工程を重ねず、構成、留保、表現を一続きで扱います。補助スキルが未導入なら、同梱の段落・留保の参照資料で処理を続けます。代替を使った点は、完成稿の外で短く伝えます。
-
-## AI的な定型と文の宛先を点検する
-
-定型的な対比、根拠のない意義づけ、同じ段落構造の反復、抽象語による水増しを、内容と用途に照らして見直します。主観・体験・感情を付け加えたり、文長や語尾を人工的にばらつかせたりはしません。
-
-完成稿の読者と、AIへ執筆を頼んだ人を区別します。「ご指定どおり分かりやすく構成しました」は本文に含めず、執筆条件として反映します。メールの実際の受信者への「ご確認ください」、研究目的、操作手順、引用中の表現は文書の内容として保持します。見出し、図表、脚注、HTMLコメントも対象です。
-
-提出前に、制作の会話を知らない読者の立場で下書きを一度読み、混入・脱落・創作・定型表現を点検します。問題がある箇所だけ最大一回改稿します。点検メモや自己採点は完成稿へ出しません。
-
-## 保存する文章を検査する
-
-修正前のUTF-8コピーを作業先の外に残し、編集前後をローカルの検査ツールで比べます。
-以下の`before.md`と`after.md`は、用意した原文と修正文に置き換えてください。
-
-ファイル推敲では編集前後にtextlintを実行し、Markdownの場合はmarkdownlintも実行します。指摘は文脈で判断し、文字数やスコアのためだけに修正しません。`writing_lint.py`は原稿を変更しません。
+原稿のコピーを納品先の外へ残し、前後の本文と意味・構造を照合します。以下のpythonには、導入時に用意した専用Pythonを使えます。
 
 ```bash
-# 専用環境のPythonは .kotonoha-runtime/settings.json に記録
-<Pythonのパス> <skills-dir>/yomiyasu/scripts/writing_lint.py after.md --before before.md
-# Plugin利用時
-intelliforge kit-run yomiyasu --agent codex --tool writing_lint.py -- after.md --before before.md
+python ~/.agents/skills/kotonoha/scripts/writing_lint.py before.md
+python ~/.agents/skills/kotonoha/scripts/writing_lint.py after.md --before before.md
+python ~/.agents/skills/kotonoha/scripts/check.py outline after.md
+python ~/.agents/skills/kotonoha/scripts/check.py compare before.md after.md --protect=--apply
 ```
 
-検査済みと実行不能はJSONのstatusで区別します。実行不能時は文章の推敲を続け、検査を省略したことを完成稿の外で知らせます。本文を外部判定APIへ送信せず、Jevや自動フックは導入しません。
+最新版の統合検査はcheck.py source-check run|verifyから使います。--state-dirで作業用記録先を明示します。詳細は同梱のfile-review.mdにあります。検査器は本文を変更せず、文章中の指摘と実行不能を区別します。数値やハッシュの一致だけで意味保持や人の承認を証明しません。
 
-### 意味の保持と段落構成を確認する
+共通CLIでは `intelliforge kit-run kotonoha --tool writing_lint.py -- after.md --before before.md` を使えます。互換名yomiyasuも同じキットを指します。
 
-```bash
-python3 ~/.agents/skills/yomiyasu/scripts/check.py lint after.md --genre manual
-python3 ~/.agents/skills/yomiyasu/scripts/check.py outline after.md
-python3 ~/.agents/skills/yomiyasu/scripts/check.py compare before.md after.md --protect=--apply --stance 説明
-```
+## 上流の更新
 
-`--genre`は`report / research / email / manual / article / template`です。`--protect`は複数指定できます。数値・ID・コード・リンクの変化と、lintの見直し候補を確認します。`outline`は段落の冒頭を抽出する補助であり、論旨の正しさを判定しません。
-検査はファイルを変更せず、外部へ文章を送信しません。
-検出が0件でも意味の一致は証明できません。否定、条件、因果、断定の強さは本文を読んで確認します。
-
-GitHubへの投稿権限や、Office文書のレイアウト確認は、それぞれの作業手順に従います。
-kotonohaを使ったことだけで投稿・共有・commit・pushを自動実行することはありません。
+普段の執筆では通信・更新しません。更新を調べるにはインストーラーの--check-update、原典の新規統合にはリポジトリのupdate_upstreams.pyを使います。[導入と更新](installation.md)を参照してください。

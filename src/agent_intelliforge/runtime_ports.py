@@ -39,7 +39,7 @@ def apply_ports(namespace: dict) -> None:
                     raise namespace["Blocked"]("The selected vendor browser is unavailable in the Claude portable runtime")
                 return "local-playwright", "Explicit Claude runtime uses the bundled local Playwright bridge"
             namespace["select_backend"] = select_backend
-    if os.environ.get('INTELLIFORGE_KIT_HOME') and Path(namespace.get('__file__','')).name=='check.py' and 'upstream' in namespace:
+    if os.environ.get('INTELLIFORGE_KIT_HOME') and Path(namespace.get('__file__','')).name=='check.py' and 'upstream' in namespace and not (Path(namespace['__file__']).parent.parent/'resources.json').is_file():
         def upstream(name, args):
             from .ownership import verify
             from .runtime import owner

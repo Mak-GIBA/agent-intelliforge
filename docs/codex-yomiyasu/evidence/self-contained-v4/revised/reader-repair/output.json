@@ -1,0 +1,22 @@
+{
+  "result": {
+    "cases": [
+      {
+        "id": "K03",
+        "text": "接続が維持されていれば、通知は届きます。ただし、遅れる可能性があります。再送については、「毎回は要求しない」という対応を勧めているわけではありません。"
+      }
+    ]
+  },
+  "receipt": {
+    "elapsed_seconds": 13.02,
+    "usage": {
+      "input_tokens": 13076,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 292,
+      "reasoning_output_tokens": 218
+    },
+    "prompt_sha256": "e38bec515a7eafd4a8d0fec6cb864caedabc2e956b52374047223fb42fcebca1",
+    "tools": []
+  }
+}

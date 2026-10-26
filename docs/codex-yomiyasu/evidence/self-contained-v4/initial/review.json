@@ -1,0 +1,31 @@
+{
+  "reviewed": true,
+  "capabilities": [
+    "meaning",
+    "clarity",
+    "paragraphs",
+    "explanation",
+    "certainty",
+    "naturalness",
+    "reader-boundary",
+    "scoped-edit",
+    "file-checks"
+  ],
+  "unintegrated": [],
+  "source_changes": [
+    {
+      "source": "yomiyasu v2.4.0",
+      "adopted": "Terminology, unsupported actor detection, slide punctuation, stance and document-kind exceptions; original checker/modules and reference rules retained; source-check exposes run/verify.",
+      "rules": "SKILL.md; references/file-review.md; upstream/references/doc-types/"
+    },
+    {
+      "source": "meiseki v0.10.0",
+      "adopted": "Writing assets are byte-identical to the prior reviewed writing snapshot; before/after lint and semantic guard retained.",
+      "rules": "SKILL.md; scripts/writing_lint.py"
+    },
+    {
+      "excluded": "Jev external sending, hooks, quizzes, PDF plugin; original-specific output boilerplate and mandatory score decrease",
+      "reason": "Outside writing scope or conflicts with faithful editing and the selected unified workflow."
+    }
+  ]
+}

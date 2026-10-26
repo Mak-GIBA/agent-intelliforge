@@ -1,0 +1,15 @@
+{
+  "reason": "Correct non-normative capability-to-case mapping against actual task instructions; diagnosis proves no rewrite, not every scoped edit.",
+  "changed_files": [
+    "capabilities.json"
+  ],
+  "before_sha256": "574473875ea9a77e68ccc9ba1b29498b2cc938902649b161fbec6a2029be92d1",
+  "after_sha256": "c3b26e4759b4ca4da48c4a211f185d4f349ff93ceb26fd8c2638440e3e9173a2",
+  "model_inputs_unchanged": true,
+  "guide_sha256": {
+    "SKILL.md": "56eeb6f7413772a7321dada32f7292390940bf4355a1be8be6e89f573a73d2d8",
+    "references/long-form.md": "337bf9768dd18ddd15e90e13305c91ed6142365830d4601e9b0fa2e181c2b788"
+  },
+  "retained_original_quality": "quality-before-metadata.json",
+  "new_model_calls": 0
+}

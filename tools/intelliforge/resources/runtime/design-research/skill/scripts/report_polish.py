@@ -34,18 +34,20 @@ def resolve_entry(project):
         for root in roots:
             path = root/name/'SKILL.md'
             if path.is_file():
-                workflow = root/'yomiyasu/references/workflow.md'
+                base = root/name
+                modern = name == 'kotonoha' and (base/'scripts/writing_lint.py').is_file()
+                workflow = base/'references/file-review.md' if modern else root/'yomiyasu/references/workflow.md'
                 files = [path] + ([workflow] if workflow.is_file() else [])
                 return {'name': name, 'path': str(path),
                         'files': [{'path': str(p), 'sha256': sha256(p)} for p in files],
-                        'scripts': str(root/'yomiyasu/scripts'),
+                        'scripts': str(base/'scripts' if modern else root/'yomiyasu/scripts'),
                         'runtime': str(root.parent/'.kotonoha-runtime/settings.json')}
     return None
 
 
 def instructions(role):
     if role == 'report-writer':
-        return ('Read writing_entry.path and its workflow, applying kotonoha (or the selected yomiyasu entry) '
+        return ('Read writing_entry.path and only its relevant references, applying kotonoha (or the selected yomiyasu entry) '
                 'to the ENTIRE draft as one document. Read all hashed input files. Preserve the report order and '
                 'scientific content. Improve paragraph connections, clarity and natural Japanese once; do not '
                 'summarize away mechanisms, conditions, negative results or uncertainty. Return only replacements '

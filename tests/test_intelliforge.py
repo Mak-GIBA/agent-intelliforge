@@ -5,6 +5,7 @@ import contextlib
 import argparse
 import importlib.util
 import io
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -12,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -98,8 +100,16 @@ class DistributionTests(unittest.TestCase):
 
 
 class WritingDistributionTests(unittest.TestCase):
+    def test_original_resources_keep_their_portable_integrity_hashes(self):
+        for agent in ('codex','claude'):
+            root=ROOT/'plugins'/agent/'yomiyasu/skills/kotonoha'
+            resources=json.loads((root/'resources.json').read_text())['files']
+            for name,expected in resources.items():
+                with self.subTest(agent=agent,resource=name):
+                    self.assertEqual(hashlib.sha256((root/name).read_bytes()).hexdigest(),expected)
+
     def test_only_intended_skills_are_discoverable(self):
-        expected={'kotonoha','yomiyasu','paragraph-writing','japanese-direct-writing'}
+        expected={'kotonoha'}
         for agent in ('codex','claude'):
             root=ROOT/'plugins'/agent/'yomiyasu/skills'
             discovered=list(root.rglob('SKILL.md'))
@@ -107,7 +117,8 @@ class WritingDistributionTests(unittest.TestCase):
             self.assertTrue(all(p.parent.parent==root for p in discovered))
         root=ROOT/'plugins/codex/yomiyasu/skills'
         self.assertIn('allow_implicit_invocation: true',(root/'kotonoha/agents/openai.yaml').read_text())
-        self.assertIn('allow_implicit_invocation: false',(root/'yomiyasu/agents/openai.yaml').read_text())
+        self.assertTrue((root/'kotonoha/scripts/check.py').is_file())
+        self.assertTrue((root/'kotonoha/resources.json').is_file())
 
 
 class OwnershipTests(unittest.TestCase):
@@ -127,12 +138,75 @@ class OwnershipTests(unittest.TestCase):
                 self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 args.action='update';self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 bundle=state/'claude/yomiyasu/bundle';before=ownership.inventory(bundle)
-                args.upstream_only=True;self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
+                args.upstream_only=True
+                checker=SimpleNamespace(check_updates=lambda *args: {'status':'review_required','applied':False})
+                with patch.object(runtime,'load',return_value=checker):
+                    self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 self.assertEqual(ownership.inventory(bundle),before)
                 self.assertEqual(runtime.diagnose(kit,'claude',state)['exit_code'],0)
-                self.assertIn('disable-model-invocation: true',(state/'claude/marketplace/plugins/yomiyasu/skills/yomiyasu/SKILL.md').read_text(encoding='utf-8').split('---',2)[1])
+                self.assertIn('disable-model-invocation: true',(state/'claude/marketplace/plugins/yomiyasu/skills/kotonoha/SKILL.md').read_text(encoding='utf-8').split('---',2)[1])
                 args.action='uninstall';self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 self.assertFalse(bundle.exists());self.assertTrue((state/'claude/yomiyasu/upstream/SKILL.upstream.md').exists())
+
+    def native_migration(self, temporary):
+        kit,state,args,plan=self.lifecycle(temporary,'codex')
+        plan['operations'][0]['method']='native';args.action='update'
+        originals={}
+        for name in ('kotonoha','yomiyasu','paragraph-writing','japanese-direct-writing'):
+            target=args.skills_dir/name
+            ownership.replace_tree(target,runtime.owner(name,'codex'),{'SKILL.md':(name+' original').encode()})
+            originals[name]=ownership.inventory(target)
+        return kit,state,args,plan,originals
+
+    def test_native_migration_retires_owned_entries_outside_discovery(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            kit,state,args,plan,originals=self.native_migration(temporary)
+            with patch.object(runtime,'prepare_dependencies'),contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
+            self.assertEqual({p.parent.name for p in args.skills_dir.rglob('SKILL.md')},{'kotonoha'})
+            backups=list((state/'codex/yomiyasu/backups').iterdir())
+            self.assertEqual(len(backups),4)
+            for name,before in originals.items():
+                saved=next(p for p in backups if p.name.startswith(name+'-') or p.name.startswith(name+'.backup-'))
+                self.assertEqual(ownership.inventory(saved),before)
+            with patch.object(runtime,'prepare_dependencies'),contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
+
+    def test_native_migration_failure_restores_all_previous_entries(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            kit,state,args,plan,originals=self.native_migration(temporary)
+            def replace(target,owner,data):
+                if target==args.skills_dir/'kotonoha':raise OSError('injected canonical switch failure')
+                return ownership.replace_tree(target,owner,data)
+            with patch.object(runtime,'prepare_dependencies'),patch.object(runtime,'replace_tree',side_effect=replace),contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(OSError):runtime.portable_action(ROOT,[kit],plan,args,state)
+            for name,before in originals.items():
+                self.assertEqual(ownership.inventory(args.skills_dir/name),before)
+                ownership.verify(args.skills_dir/name,runtime.owner(name,'codex'))
+            self.assertFalse((state/'codex/yomiyasu/bundle').exists())
+            self.assertFalse((state/'codex/yomiyasu/settings.json').exists())
+
+            self.assertEqual({p.parent.name for p in args.skills_dir.rglob('SKILL.md')},set(originals))
+
+    def test_native_migration_manual_edit_blocks_before_dependencies(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            kit,state,args,plan,originals=self.native_migration(temporary)
+            edited=args.skills_dir/'paragraph-writing/SKILL.md';edited.write_bytes(b'manual edit')
+            with patch.object(runtime,'prepare_dependencies',side_effect=AssertionError('dependencies before preflight')),contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(ForgeError):runtime.portable_action(ROOT,[kit],plan,args,state)
+            self.assertEqual(edited.read_bytes(),b'manual edit')
+            self.assertEqual(ownership.inventory(args.skills_dir/'yomiyasu'),originals['yomiyasu'])
+            self.assertFalse(state.exists())
+
+    def test_native_archive_failure_rolls_back_switch_and_settings(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            kit,state,args,plan,originals=self.native_migration(temporary)
+            with patch.object(runtime,'prepare_dependencies'),patch.object(runtime.shutil,'move',side_effect=OSError('injected backup archive failure')),contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(OSError):runtime.portable_action(ROOT,[kit],plan,args,state)
+            for name,before in originals.items():
+                self.assertEqual(ownership.inventory(args.skills_dir/name),before)
+            self.assertFalse((state/'codex/yomiyasu/bundle').exists())
+            self.assertFalse((state/'codex/yomiyasu/settings.json').exists())
 
     def test_plugin_failure_rolls_back_runtime_and_upstream(self):
         with tempfile.TemporaryDirectory() as temporary:

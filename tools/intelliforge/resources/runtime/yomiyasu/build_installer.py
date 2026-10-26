@@ -15,12 +15,16 @@ OUTPUT = ROOT.parents[1]/'install_codex_yomiyasu.sh'
 
 def build() -> str:
     assets = {}
-    for prefix, folder in [('', ROOT/'assets'), ('tests/', ROOT/'tests'), ('evals/', ROOT/'evals')]:
+    for prefix, folder in [('', ROOT/'assets'), ('tests/', ROOT/'tests'), ('evals/', ROOT/'evals'), ('engine/', ROOT/'engine')]:
         for p in sorted(folder.rglob('*')):
             if p.is_symlink():
                 raise ValueError('Symlink in source assets: '+str(p))
             if p.is_file() and '__pycache__' not in p.parts:
-                assets[prefix+p.relative_to(folder).as_posix()] = p.read_text(encoding='utf-8')
+                raw_file = p.read_bytes()
+                try: value = raw_file.decode('utf-8')
+                except UnicodeDecodeError: value = {'base64': base64.b64encode(raw_file).decode()}
+                assets[prefix+p.relative_to(folder).as_posix()] = value
+    assets['engine/update_upstreams.py'] = (ROOT/'update_upstreams.py').read_text(encoding='utf-8')
     raw = zlib.compress(json.dumps(assets, ensure_ascii=False, sort_keys=True,
                                   separators=(',', ':')).encode(), 9)
     source = (ROOT/'installer.py').read_text(encoding='utf-8')
@@ -33,7 +37,7 @@ def build() -> str:
 
 
 def shell_header():
-    versions=json.loads((ROOT/'assets/scripts/runtime-versions.json').read_text(encoding='utf-8'))
+    versions=json.loads((ROOT/'assets/kotonoha/scripts/runtime-versions.json').read_text(encoding='utf-8'))
     cases=[]
     for key,label in [('linux-x64','Linux-x86_64'),('linux-arm64','Linux-aarch64'),('darwin-x64','Darwin-x86_64'),('darwin-arm64','Darwin-arm64')]:
         spec=versions['platforms'][key]['uv']
@@ -43,7 +47,7 @@ def shell_header():
 
 def powershell(shell):
     source=shell.split("<<'YOMI_INSTALL_PY'\n",1)[1].rsplit('\nYOMI_INSTALL_PY',1)[0]
-    versions=json.loads((ROOT/'assets/scripts/runtime-versions.json').read_text(encoding='utf-8'))
+    versions=json.loads((ROOT/'assets/kotonoha/scripts/runtime-versions.json').read_text(encoding='utf-8'))
     cases=[]
     for key,label in [('win32-x64','X64'),('win32-arm64','Arm64')]:
         spec=versions['platforms'][key]['uv']

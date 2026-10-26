@@ -6,7 +6,7 @@
 
 See [Upstream and Research: outputs and review order](../upstream-research-workflow.md) for the project overview, primary documents, reports, and selected evidence.
 
-Compare approaches for core logic—search, extraction, classification, reasoning—and report improvements grounded in sources and verification. This guide covers [install_design_research.sh](../../../install_design_research.sh) 2.8.0.
+Compare approaches for core logic—search, extraction, classification, reasoning—and report improvements grounded in sources and verification. This guide covers [install_design_research.sh](../../../install_design_research.sh) 2.8.1.
 
 For effectiveness/accuracy/performance claims, freeze metrics, scoring, comparison conditions, and adoption criteria before experiments. Save baseline/candidate final outputs for the same inputs and recalculate reported scores from execution records. Unmeasured main effects leave effectiveness evaluation incomplete; design/literature studies may complete with explicitly conditional, unmeasured conclusions.
 

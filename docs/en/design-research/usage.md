@@ -6,9 +6,11 @@
 
 ## Report structure, reading and adoption
 
-New 2.8.0 runs organize the main report as conclusion, background/problem/assumptions, candidate comparison, recommended approach and adoption, verification/results, and limitations/next actions. Proposed-method diagrams and formulas belong with adoption details. Unused sections are omitted; process tables, reading records and detailed stops move to the appendix. In-progress reports are explicitly drafts.
+New 2.8.1 runs organize the main report as conclusion, background/problem/assumptions, candidate comparison, recommended approach and adoption, verification/results, and limitations/next actions. Proposed-method diagrams and formulas belong with adoption details. Unused sections are omitted; process tables, reading records and detailed stops move to the appendix. In-progress reports are explicitly drafts.
 
 After scientific review, a writer reads the whole Japanese draft and uses installed kotonoha, otherwise yomiyasu. The parent locks numbers, IDs, references, formulas, code and structure; a separate reader checks meaning, negation, conditions, causality and certainty. Available offline lint results are retained without requiring zero findings. If neither Skill exists, research can finish with an explicit unpolished notice; no Skill is installed during a run.
+
+Version 2.8.1 resolves references and checkers inside self-contained kotonoha 4.0.0 without a sibling yomiyasu Skill. The older kotonoha/yomiyasu combination remains supported.
 
 Promising papers require complete main-text reading and relevant supplementary material, with actual sections/pages, findings and missing coverage. Partial/unavailable reading defers adoption of that candidate while other comparisons continue. Retrieval and a `full_text` label do not certify understanding.
 
@@ -26,7 +28,7 @@ Role `invocation.json` records effective permissions and command networking; fai
 
 ## Focus on the project's core logic
 
-2.8.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
+2.8.1 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
 
 ```text
 $design-research Investigate ways to improve this project's search accuracy.

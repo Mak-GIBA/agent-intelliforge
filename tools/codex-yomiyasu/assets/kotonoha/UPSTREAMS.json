@@ -1,0 +1,273 @@
+{
+  "schema": 1,
+  "sources": {
+    "yomiyasu": {
+      "repository": "nanaism/yomiyasu",
+      "tag": "v2.4.0",
+      "commit": "ae258d7a57b335673e30b88a018ae08d4f72c449",
+      "published_at": "2026-10-25T02:00:18Z",
+      "release_url": "https://github.com/nanaism/yomiyasu/releases/tag/v2.4.0",
+      "files": {
+        "LICENSE": {
+          "repo_path": "skills/yomiyasu/LICENSE",
+          "git_blob_sha1": "f0d06f87f9b209d47c7f7963321ff71bab68c1e8",
+          "size": 1064
+        },
+        "README.md": {
+          "repo_path": "README.md",
+          "git_blob_sha1": "39b4f98ad4fc2a3bc02b399c2612652712352922",
+          "size": 65312
+        },
+        "UNICODE-LICENSE.txt": {
+          "repo_path": "skills/yomiyasu/UNICODE-LICENSE.txt",
+          "git_blob_sha1": "56da58912807030b451a4700687d5bd02c72d6ed",
+          "size": 1995
+        },
+        "SKILL.md": {
+          "repo_path": "skills/yomiyasu/SKILL.md",
+          "git_blob_sha1": "5de07cc4a3616ac7431abace4eaf12388305445e",
+          "size": 121722
+        },
+        "assets/algo-artis.png": {
+          "repo_path": "skills/yomiyasu/assets/algo-artis.png",
+          "git_blob_sha1": "21f28805968be9191621b00d64efe6b5f70c1ec6",
+          "size": 29045
+        },
+        "references/audience.md": {
+          "repo_path": "skills/yomiyasu/references/audience.md",
+          "git_blob_sha1": "9d5225499745346d48a2fb51cd72ec3fa04a0c4e",
+          "size": 22864
+        },
+        "references/calques.md": {
+          "repo_path": "skills/yomiyasu/references/calques.md",
+          "git_blob_sha1": "891994cb79fc214e816013cba02a493c80c55816",
+          "size": 11395
+        },
+        "references/doc-types/article.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/article.md",
+          "git_blob_sha1": "5555ad6fac4139c443c30bcc71bd31b90b126787",
+          "size": 1338
+        },
+        "references/doc-types/essay.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/essay.md",
+          "git_blob_sha1": "b7759e424621f7e79bc3aee052fbd54b65b5dce2",
+          "size": 4896
+        },
+        "references/doc-types/formal.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/formal.md",
+          "git_blob_sha1": "38b2060b773b5a1c24e4e37926afd4c0ae5ccf76",
+          "size": 2933
+        },
+        "references/doc-types/incident.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/incident.md",
+          "git_blob_sha1": "287165f83caa12e08065a187d9c5754a91aee3c5",
+          "size": 1841
+        },
+        "references/doc-types/mail.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/mail.md",
+          "git_blob_sha1": "6f6300df44e8203b5764f67ab07106b3726200ea",
+          "size": 6329
+        },
+        "references/doc-types/manual.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/manual.md",
+          "git_blob_sha1": "72685c6d34b023e3d22a7814ef360c20a2e7fd32",
+          "size": 1567
+        },
+        "references/doc-types/minutes.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/minutes.md",
+          "git_blob_sha1": "0e21a3edb43c7b3ecc1c613d1a6294322570e093",
+          "size": 1356
+        },
+        "references/doc-types/paper.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/paper.md",
+          "git_blob_sha1": "44c20162f3802b4de97db71beb28700a3f8aa716",
+          "size": 5738
+        },
+        "references/doc-types/pr.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/pr.md",
+          "git_blob_sha1": "a49dccda870f97f8e2bbf3b437c1b5910f8fe00b",
+          "size": 1736
+        },
+        "references/doc-types/promo.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/promo.md",
+          "git_blob_sha1": "8c39d48e968faa7aa134f2d865c6258fff77badb",
+          "size": 6197
+        },
+        "references/doc-types/proposal.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/proposal.md",
+          "git_blob_sha1": "cc03100c37ec983afc3cdc69cb48223a39c28fe2",
+          "size": 1408
+        },
+        "references/doc-types/script.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/script.md",
+          "git_blob_sha1": "7d1f4b1de06a4670ff290f80e311df17fb9180bb",
+          "size": 3864
+        },
+        "references/doc-types/slides.md": {
+          "repo_path": "skills/yomiyasu/references/doc-types/slides.md",
+          "git_blob_sha1": "60f4b6b05a5df5d0f192f0b5793db532241790aa",
+          "size": 4288
+        },
+        "references/domains/business.md": {
+          "repo_path": "skills/yomiyasu/references/domains/business.md",
+          "git_blob_sha1": "15158385647366a52a9736b2f59d470f151df9dd",
+          "size": 9162
+        },
+        "references/domains/essay.md": {
+          "repo_path": "skills/yomiyasu/references/domains/essay.md",
+          "git_blob_sha1": "1450f9fec4a986eb8fc734853d997addbeef0976",
+          "size": 4696
+        },
+        "references/domains/tech.md": {
+          "repo_path": "skills/yomiyasu/references/domains/tech.md",
+          "git_blob_sha1": "1727e8c34ecce7ce6bb30e1a991949064996125c",
+          "size": 6202
+        },
+        "references/fact-recovery-details.md": {
+          "repo_path": "skills/yomiyasu/references/fact-recovery-details.md",
+          "git_blob_sha1": "e37590d4c1f03c8df48fa90c009f54b1d557f400",
+          "size": 18715
+        },
+        "references/fact-recovery.md": {
+          "repo_path": "skills/yomiyasu/references/fact-recovery.md",
+          "git_blob_sha1": "3f05677b4fe5cac0090504337796bd00d5fe8a4d",
+          "size": 18030
+        },
+        "references/gemini-syntax.md": {
+          "repo_path": "skills/yomiyasu/references/gemini-syntax.md",
+          "git_blob_sha1": "62750b5081dad379c36fe3863821d2302fd7e4c4",
+          "size": 57907
+        },
+        "references/lists/fact-gaps.txt": {
+          "repo_path": "skills/yomiyasu/references/lists/fact-gaps.txt",
+          "git_blob_sha1": "2a178e536400ac3a8d0e356a5f73a40ae00a51fd",
+          "size": 4115
+        },
+        "references/lists/feelings.txt": {
+          "repo_path": "skills/yomiyasu/references/lists/feelings.txt",
+          "git_blob_sha1": "c6066da2f3d0eb0838ff92a329a5a26a1664cb7b",
+          "size": 4229
+        },
+        "references/lists/hedges.txt": {
+          "repo_path": "skills/yomiyasu/references/lists/hedges.txt",
+          "git_blob_sha1": "2a20cefc2886ce03116eef8743d84b62523e911e",
+          "size": 303
+        },
+        "references/lists/intensifiers.txt": {
+          "repo_path": "skills/yomiyasu/references/lists/intensifiers.txt",
+          "git_blob_sha1": "6433f1e4334133714ec7569c43d7fefca2dbcaa2",
+          "size": 1388
+        },
+        "references/lists/katakana-terms.txt": {
+          "repo_path": "skills/yomiyasu/references/lists/katakana-terms.txt",
+          "git_blob_sha1": "1db55310330d55604d40caccdaa4765193b550a2",
+          "size": 1967
+        },
+        "references/lists/nominalization.txt": {
+          "repo_path": "skills/yomiyasu/references/lists/nominalization.txt",
+          "git_blob_sha1": "68ea6918ea1e09efa6a4baad7918a492d937dd29",
+          "size": 2253
+        },
+        "references/lists/renyo-nouns.txt": {
+          "repo_path": "skills/yomiyasu/references/lists/renyo-nouns.txt",
+          "git_blob_sha1": "158c9f7eee9f3e768228cf6fbd97e7e9a93c2802",
+          "size": 2663
+        },
+        "references/lists/thin-evaluation.txt": {
+          "repo_path": "skills/yomiyasu/references/lists/thin-evaluation.txt",
+          "git_blob_sha1": "a89b3600c90dcb787ce84d61fee5a8aaf82d0767",
+          "size": 3413
+        },
+        "references/persona.md": {
+          "repo_path": "skills/yomiyasu/references/persona.md",
+          "git_blob_sha1": "24a835c32f3b0c27f67f0bf086232c085bf2dfb0",
+          "size": 23926
+        },
+        "references/rephrase-test.md": {
+          "repo_path": "skills/yomiyasu/references/rephrase-test.md",
+          "git_blob_sha1": "664c269c5331cad2f4207954d48fcb3d0580385d",
+          "size": 9050
+        },
+        "references/review-points.md": {
+          "repo_path": "skills/yomiyasu/references/review-points.md",
+          "git_blob_sha1": "d9c8f33294374fd03c606de61c7549001010dd0a",
+          "size": 36326
+        },
+        "references/slop-catalog.md": {
+          "repo_path": "skills/yomiyasu/references/slop-catalog.md",
+          "git_blob_sha1": "47034b1efad818a5f26c3cccb088d92f0f718f7e",
+          "size": 43232
+        },
+        "scripts/markdown_visibility.py": {
+          "repo_path": "skills/yomiyasu/scripts/markdown_visibility.py",
+          "git_blob_sha1": "446f5862342561dc45b443c75763b707697f9f31",
+          "size": 41904
+        },
+        "scripts/yomiyasu_check.py": {
+          "repo_path": "skills/yomiyasu/scripts/yomiyasu_check.py",
+          "git_blob_sha1": "2e66714d36e7deaa1ede6a7cd77befda63e916fd",
+          "size": 316337
+        },
+        "scripts/yomiyasu_diff.py": {
+          "repo_path": "skills/yomiyasu/scripts/yomiyasu_diff.py",
+          "git_blob_sha1": "b7367a4adf9e70eafa8bff127304d9c6d7b856f0",
+          "size": 731164
+        },
+        "scripts/yomiyasu_hook.py": {
+          "repo_path": "skills/yomiyasu/scripts/yomiyasu_hook.py",
+          "git_blob_sha1": "73f50c2540b653a987d12a4b2f8fd0f05b0c0915",
+          "size": 44355
+        },
+        "scripts/yomiyasu_lint.py": {
+          "repo_path": "skills/yomiyasu/scripts/yomiyasu_lint.py",
+          "git_blob_sha1": "288b9526d2c176540fd45e1d419e4bb1eb23e107",
+          "size": 348647
+        }
+      }
+    },
+    "meiseki": {
+      "repository": "bamboo-nova/meiseki",
+      "tag": "v0.10.0",
+      "commit": "9750d9262c949aa3919b05b9dff1ba9ef502da03",
+      "files": {
+        "SKILL.md": {
+          "repo_path": ".agents/skills/meiseki/SKILL.md",
+          "size": 19525,
+          "git_blob_sha1": "1954db4326e6e2f243497e6216be6ddc7304a803"
+        },
+        "references/markdownlint.config.jsonc": {
+          "repo_path": ".agents/skills/meiseki/references/markdownlint.config.jsonc",
+          "size": 1958,
+          "git_blob_sha1": "86b696f2f4d69d9a660e0a06fe4b6cca6bff1336"
+        },
+        "references/patterns.md": {
+          "repo_path": ".agents/skills/meiseki/references/patterns.md",
+          "size": 18793,
+          "git_blob_sha1": "8c3f5dc13f5aedd47dce869b289d1a316250d2e6"
+        },
+        "references/prh-llm-phrases.yml": {
+          "repo_path": ".agents/skills/meiseki/references/prh-llm-phrases.yml",
+          "size": 7064,
+          "git_blob_sha1": "80b23a3ce2116151486c3eb98dea2b0e525bfdd5"
+        },
+        "references/textlint.config.json": {
+          "repo_path": ".agents/skills/meiseki/references/textlint.config.json",
+          "size": 1176,
+          "git_blob_sha1": "7327b495383ac39943b42f0489bc618aa166f216"
+        },
+        "LICENSE": {
+          "repo_path": "LICENSE",
+          "size": 1068,
+          "git_blob_sha1": "46f6c00e8728369d0bcdcab2866ad66c666736a7"
+        }
+      },
+      "release_url": "https://github.com/bamboo-nova/meiseki/releases/tag/v0.10.0"
+    }
+  },
+  "integration": {
+    "status": "verified",
+    "scope": "recorded capability and quality tests",
+    "quality_sha256": "39ab8c30e11656966f7a502af4055d25fb2da194ff6d39e63ea50f6bdfd14863",
+    "review_sha256": "f495100bbedee73cfa857dbc3e412377acc9ad9e3e7d2157a8d280aa99756765"
+  }
+}

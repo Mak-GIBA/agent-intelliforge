@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""kotonoha writing integration 3.0.0, engine Python 3.10+; managed runtime >=3.11.
+"""kotonoha writing integration 4.0.0, engine Python 3.10+; managed runtime >=3.11.
 Based on basic-memory-workgraph installer 1.3.0's CLI, ownership contract,
 path checks, staged directory replacement and backup strategy.
 User-local Node/npm lint dependencies; no hooks, AGENTS edits, credentials, or document upload.
@@ -29,10 +29,11 @@ import uuid
 import zipfile
 import zlib
 
-VERSION = '3.0.0'
+VERSION = '4.0.0'
 REPO = 'nanaism/yomiyasu'
 BASE_REPO_COMMIT = 'f0efd23a53c1c1cd028775aa415cc3f34ca5661a'
-COMPONENTS = ('yomiyasu', 'kotonoha', 'paragraph-writing', 'japanese-direct-writing')
+LEGACY_COMPONENTS = ('yomiyasu', 'kotonoha', 'paragraph-writing', 'japanese-direct-writing')
+COMPONENTS = ('kotonoha',)
 OWNERS = {'kotonoha': 'basic-memory-workgraph/kotonoha', 'yomiyasu': 'basic-memory-workgraph/codex-yomiyasu',
           'paragraph-writing': 'basic-memory-workgraph/paragraph-writing',
           'japanese-direct-writing': 'basic-memory-workgraph/japanese-direct-writing'}
@@ -106,11 +107,20 @@ def emit(out: dict) -> None:
     print(json.dumps(out, ensure_ascii=False, indent=2))
 
 
+def asset_aliases(out):
+    # Legacy helpers/tests address these bytes; the on-disk source has one owner.
+    out = dict(out)
+    for key, raw in list(out.items()):
+        if key.startswith("kotonoha/"):
+            out.setdefault(key.removeprefix("kotonoha/"), raw)
+    return out
+
+
 def assets() -> dict[str, bytes]:
     if ASSET_B64 == '@ASSET_B64@':
         root = Path(__file__).parent
         out = {}
-        for prefix, directory in [('', root/'assets'), ('tests/', root/'tests'), ('evals/', root/'evals')]:
+        for prefix, directory in [('', root/'assets'), ('tests/', root/'tests'), ('evals/', root/'evals'), ('engine/', root/'engine')]:
             if not directory.is_dir():
                 continue
             for p in sorted(directory.rglob('*')):
@@ -120,7 +130,8 @@ def assets() -> dict[str, bytes]:
                     raise InstallError('同梱資材のsymlinkを拒否しました。')
                 if p.is_file():
                     out[safe_rel(prefix+p.relative_to(directory).as_posix())] = p.read_bytes()
-        return out
+        out['engine/update_upstreams.py'] = (root/'update_upstreams.py').read_bytes()
+        return asset_aliases(out)
     raw = base64.b64decode(ASSET_B64, validate=True)
     if sha(raw) != ASSET_SHA256:
         raise InstallError('同梱資材のhashが一致しません。')
@@ -133,10 +144,11 @@ def assets() -> dict[str, bytes]:
         raise InstallError('同梱資材の形式が不正です。')
     out = {}
     for key, value in data.items():
-        if not isinstance(value, str):
-            raise InstallError('同梱資材はUTF-8テキストに限ります。')
-        out[safe_rel(key)] = value.encode('utf-8')
-    return out
+        if isinstance(value, str): raw = value.encode("utf-8")
+        elif isinstance(value, dict) and set(value) == {"base64"}: raw = base64.b64decode(value["base64"], validate=True)
+        else: raise InstallError("Invalid bundled file encoding")
+        out[safe_rel(key)] = raw
+    return asset_aliases(out)
 
 
 def inventory(directory: Path) -> dict[str, bytes]:
@@ -232,7 +244,15 @@ def download(url: str) -> bytes:
 
 
 def json_download(url: str) -> dict:
-    value = json.loads(download(url))
+    try:
+        raw = download(url)
+    except urllib.error.HTTPError as exc:
+        if exc.code not in (403, 429) or not shutil.which('gh') or not url.startswith('https://api.github.com/repos/'):
+            raise
+        validate_url(url)
+        raw = subprocess.check_output(['gh', 'api', url.removeprefix('https://api.github.com/')], timeout=25)
+        if len(raw) > MAX_FILE: raise InstallError('API response exceeds limit')
+    value = json.loads(raw)
     if not isinstance(value, dict):
         raise InstallError('GitHubの応答形式が不正です。')
     return value
@@ -370,7 +390,7 @@ def source_upstream(source: Path) -> tuple[dict, dict[str, bytes]]:
         raise InstallError('--source-dirが存在しません。')
     if (source/'UPSTREAM.json').is_file() and (source/'upstream').is_dir():
         all_files = inventory(source)
-        marker = manifest_for(all_files)
+        marker = manifest_for(all_files, json.loads(all_files[MANIFEST]).get('component','yomiyasu'))
         if edited(all_files, marker):
             raise InstallError('ローカルsnapshotが編集されています。')
         if any(k.startswith('upstream/') and k not in marker['files'] for k in all_files):
@@ -561,137 +581,12 @@ def plan(target: Path, component: str, mode: str | None, refresh: bool,
     return result, marker, files
 
 
-def install_selected(root: Path, names: tuple[str, ...], mode: str | None = None,
-                     force: bool = False, apply: bool = False, source: Path | None = None,
-                     project: Path | None = None, update: bool = False,
-                     upstream_only: bool = False, upstream_ref: str | None = None) -> dict:
-    if source and upstream_ref:
-        raise InstallError('--source-dirと--upstream-refは併用できません。')
-    if upstream_only and (not update or names != ('yomiyasu',) or mode is not None or force):
-        raise InstallError('--upstream-onlyはyomiyasuの--update専用です。mode/forceは指定しません。')
-    if upstream_ref and not update:
-        raise InstallError('--upstream-refは--updateと併用してください。')
-    safe_path(root)
-    states = {}
-    inherited = mode
-    for name in names:
-        state = plan(root/name, name, inherited if not (root/name).exists() else mode, force or update, project)
-        states[name] = state
-        if name == 'yomiyasu' and mode is None:
-            inherited = state[0]['mode']
-    results = {name: state[0].copy() for name, state in states.items()}
-    if upstream_only and states['yomiyasu'][1] is None:
-        raise InstallError('--upstream-onlyは既存の管理済みyomiyasuに対して使います。')
-    pending = [name for name in names if results[name]['action'] != 'skip']
-    for name in names:
-        if results[name]['conflicts']['duplicate_skill']:
-            raise InstallError('別の場所に同名Skillがあります。二重登録しません: '+', '.join(results[name]['conflicts']['duplicate_skill']))
-        results[name]['upstream_policy'] = ('update-selected-release' if update else 'preserve-installed-or-latest-on-new') if name == 'yomiyasu' else 'bundled'
-        if upstream_ref:
-            results[name]['requested_upstream_tag'] = upstream_ref
-    if not apply or not pending:
-        return summarize(results)
-    # All downloads/validation finish before mutating installed skill directories.
-    meiseki_files = None
-    if 'yomiyasu' in pending and not upstream_only:
-        if source:
-            meiseki_files = {k:v for k,v in assets().items() if k.startswith('meiseki-upstream/')}
-        elif update or states['yomiyasu'][1] is None:
-            _, meiseki_files = fetch_meiseki()
-        else:
-            meiseki_files = {k:v for k,v in states['yomiyasu'][2].items() if k.startswith('meiseki-upstream/')}
-            if not meiseki_files: _, meiseki_files = fetch_meiseki()
-    runtime = None
-    if not upstream_only and any(n in pending for n in ('yomiyasu', 'kotonoha')):
-        runtime = prepare_writing_runtime(root)
-    prepared = {}
-    for name in pending:
-        result, marker, old = states[name]
-        expected = own_bundle(name, result['mode'])
-        if name == 'yomiyasu' and meiseki_files is not None:
-            expected.update(meiseki_files)
-        upstream_meta = None
-        version = VERSION
-        if name == 'yomiyasu':
-            if source:
-                upstream_meta, upstream_files = source_upstream(source)
-            elif update or marker is None:
-                upstream_meta = resolve_release(upstream_ref)
-                upstream_files = fetch_release(upstream_meta)
-                results[name]['network'] = True
-            else:
-                upstream_meta = json.loads(old['UPSTREAM.json'])
-                upstream_files = {k: v for k, v in old.items() if k.startswith('upstream/')}
-                upstream_contract(upstream_files)
-            if upstream_only:
-                # Deliberately preserve even an older wrapper: byte-for-byte and version.
-                expected = {k: old[k] for k in marker['files'] if not k.startswith('upstream/') and k != 'UPSTREAM.json'}
-                version = marker['version']
-            expected.update(upstream_files)
-            expected['UPSTREAM.json'] = (json.dumps(upstream_meta, ensure_ascii=False, indent=2)+'\n').encode('utf-8')
-            results[name].update(upstream_tag=upstream_meta['tag'], upstream_commit=upstream_meta['commit'],
-                                 upstream_compatibility=upstream_contract(expected))
-        extras = {k: v for k, v in old.items() if marker and k not in marker['files'] and k != MANIFEST}
-        if set(extras) & set(expected):
-            raise InstallError('ユーザー追加ファイルが新資材と競合します。')
-        if any(k.startswith('upstream/') for k in extras):
-            raise InstallError('上流配下の未管理ファイルは自動更新しません。別の場所へ退避してください。')
-        # Reject file-vs-directory collisions before staging any component.
-        all_names = set(expected) | set(extras)
-        for rel in all_names:
-            safe_rel(rel)
-            if any(str(parent) in all_names for parent in PurePosixPath(rel).parents if str(parent) != '.'):
-                raise InstallError('ファイルとディレクトリのパスが競合しています。')
-        new_marker = {'owner': OWNERS[name], 'component': name, 'schema': 1, 'version': version,
-                      'mode': result['mode'], 'files': {k: sha(v) for k, v in sorted(expected.items())},
-                      'publisher_signature_verified': False}
-        if upstream_meta:
-            new_marker.update(upstream_tag=upstream_meta['tag'], upstream_commit=upstream_meta['commit'])
-        else:
-            new_marker['upstream_revision'] = VERSION
-        prepared[name] = {**expected, **extras, MANIFEST: (json.dumps(new_marker, ensure_ascii=False, indent=2)+'\n').encode('utf-8')}
-        if runtime: results[name]['writing_runtime'] = runtime['versions']
-        results[name].update(version=version, preserved_extra_files=sorted(extras), applied=True,
-                             implicit_invocation=result['mode'] == 'auto',
-                             next='Codexの新しいセッションで $'+name+' を確認してください。')
-    root.mkdir(parents=True, exist_ok=True)
-    staged = []
-    def check_snapshots():
-        for name in names:
-            target = root/name
-            now = inventory(target) if target.exists() else {}
-            if now != states[name][2]:
-                raise InstallError('準備中に既存Skillが変更されました。配置せず終了します。')
-            if conflict_scan(target, project)['duplicate_skill']:
-                raise InstallError('準備中に同名Skillが追加されました。')
-    with lock(root/names[0]):
-        try:
-            check_snapshots()
-            for name in pending:
-                stage = Path(tempfile.mkdtemp(prefix='.'+name+'-stage-', dir=root))
-                staged.append((stage, root/name))
-                for rel, data in prepared[name].items():
-                    p = stage/safe_rel(rel)
-                    p.parent.mkdir(parents=True, exist_ok=True)
-                    p.write_bytes(data); p.chmod(0o644)
-            check_snapshots()
-            for name in pending:
-                archive = backup(root/name, states[name][2]) if states[name][1] else None
-                results[name]['backup'] = str(archive) if archive else None
-            check_snapshots()
-            replace_directories(staged)
-        finally:
-            for stage, _ in staged:
-                if stage.exists():
-                    shutil.rmtree(stage)
-    return summarize(results)
-
 
 def install(target: Path, mode=None, force=False, apply=False, source=None, project=None, update=False) -> dict:
     return install_selected(target.parent, ('yomiyasu',), mode, force, apply, source, project, update)
 
 
-def uninstall_selected(root: Path, names: tuple[str, ...], apply: bool) -> dict:
+def legacy_uninstall_selected(root: Path, names: tuple[str, ...], apply: bool) -> dict:
     states, results = {}, {}
     for name in names:
         target = root/name; safe_path(target)
@@ -724,7 +619,7 @@ def uninstall(target: Path, apply: bool) -> dict:
     return uninstall_selected(target.parent, ('yomiyasu',), apply)
 
 
-def doctor(target: Path, project=None, component='yomiyasu') -> tuple[dict, int]:
+def legacy_doctor(target: Path, project=None, component='yomiyasu') -> tuple[dict, int]:
     out = {'component': component, 'target': str(target), 'codex_on_path': bool(shutil.which('codex')),
            'python': sys.version.split()[0], 'conflicts': conflict_scan(target, project)}
     try:
@@ -754,7 +649,7 @@ def doctor(target: Path, project=None, component='yomiyasu') -> tuple[dict, int]
         return out, 2
 
 
-def check_updates(root: Path, names: tuple[str, ...], ref=None) -> dict:
+def legacy_check_updates(root: Path, names: tuple[str, ...], ref=None) -> dict:
     results = {}
     for name in names:
         target = root/name; safe_path(target)
@@ -782,6 +677,7 @@ def extract(destination: Path) -> dict:
         raise InstallError('展開先は空または未作成のディレクトリにしてください。')
     destination.mkdir(parents=True, exist_ok=True)
     for name, data in assets().items():
+        if not name.startswith(('kotonoha/','tests/','evals/','engine/')): continue
         p = destination/safe_rel(name); p.parent.mkdir(parents=True, exist_ok=True)
         with p.open('xb') as stream:
             stream.write(data)
@@ -798,7 +694,7 @@ def extract(destination: Path) -> dict:
         (destination/'installer.py').write_text(source, encoding='utf-8')
     else:
         source = Path(__file__).read_text(encoding='utf-8')
-        raw = zlib.compress(json.dumps({k: v.decode('utf-8') for k, v in assets().items()}, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8'), 9)
+        raw = zlib.compress(json.dumps({k: {'base64':base64.b64encode(v).decode()} for k, v in assets().items() if k.startswith(('kotonoha/','tests/','evals/','engine/'))}, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8'), 9)
         source = re.sub(r"^ASSET_B64 = .*$", 'ASSET_B64 = '+repr(base64.b64encode(raw).decode('ascii')), source, count=1, flags=re.M)
         source = re.sub(r"^ASSET_SHA256 = .*$", 'ASSET_SHA256 = '+repr(sha(raw)), source, count=1, flags=re.M)
         (destination/'installer.py').write_text(source, encoding='utf-8')
@@ -834,7 +730,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument('--upstream-only', action='store_true', help='--update時、yomiyasuの上流だけを更新。独自ルールと版を維持')
     p.add_argument('--upstream-ref', metavar='TAG', help='--update/--check-updateの取得対象を安定releaseのtagに固定')
     p.add_argument('--mode', choices=('auto', 'explicit'))
-    p.add_argument('--only', choices=('all', *COMPONENTS), default='all')
+    p.add_argument('--only', choices=('all', *LEGACY_COMPONENTS), default='all')
     actions = p.add_mutually_exclusive_group()
     actions.add_argument('--doctor', '--status', action='store_true')
     actions.add_argument('--check-update', action='store_true')
@@ -854,12 +750,12 @@ def main(argv: list[str] | None = None) -> int:
         if args.uninstall and (args.force or args.update or args.mode or args.source_dir or args.upstream_only or args.upstream_ref):
             raise InstallError('解除と更新のオプションは併用できません。')
         root = abs_path(args.skills_dir or Path.home()/'.agents/skills')
-        names = COMPONENTS if args.only in ('all', 'kotonoha') else (args.only,)
+        names = COMPONENTS
         if args.upstream_only:
-            if args.only not in ('all', 'yomiyasu'):
+            if args.only not in ('all', 'yomiyasu', 'kotonoha'):
                 raise InstallError('--upstream-onlyの対象はyomiyasuです。')
-            names = ('yomiyasu',)
-        if args.upstream_ref and 'yomiyasu' not in names:
+            names = COMPONENTS
+        if args.upstream_ref and args.only not in ('all', 'yomiyasu', 'kotonoha'):
             raise InstallError('--upstream-refの対象はyomiyasuです。')
         project = abs_path(args.project) if args.project else None
         if args.self_test:
@@ -875,16 +771,20 @@ def main(argv: list[str] | None = None) -> int:
             emit(summarize({n: v[0] for n, v in results.items()}))
             return max(v[1] for v in results.values())
         if args.check_update:
-            emit(check_updates(root, names, args.upstream_ref)); return 0
+            result=check_updates(root, names, args.upstream_ref)
+            emit(result); return 2 if any(v['status']=='check_failed' for v in result['upstreams'].values()) else 0
         if args.uninstall:
             emit(uninstall_selected(root, names, args.apply)); return 0
-        emit(install_selected(root, names, args.mode, args.force, args.apply,
+        result=install_selected(root, names, args.mode, args.force, args.apply,
                               abs_path(args.source_dir) if args.source_dir else None, project,
-                              args.update, args.upstream_only, args.upstream_ref))
-        return 0
+                              args.update, args.upstream_only, args.upstream_ref)
+        emit(result)
+        return 2 if result.get('status')=='UPSTREAM_REVIEW_REQUIRED' else 0
     except (RuntimeError, OSError, ValueError, KeyError, SyntaxError, subprocess.SubprocessError) as exc:
         emit({'status': 'ERROR', 'message': str(exc), 'note': '不明な状態で上書きせず停止しました。'})
         return 2
+
+exec(compile(assets()['engine/layout_v4.py'], str(Path(__file__).parent/'engine/layout_v4.py'), 'exec'), globals())
 
 
 from agent_intelliforge.runtime_ports import apply_ports as _apply_ports, portable_link as _portable_link

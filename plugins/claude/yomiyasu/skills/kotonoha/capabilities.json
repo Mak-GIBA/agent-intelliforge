@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "capabilities": [
+    {
+      "id": "meaning",
+      "rules": "SKILL.md; references/file-review.md",
+      "cases": [
+        "E10",
+        "K03"
+      ]
+    },
+    {
+      "id": "clarity",
+      "rules": "SKILL.md",
+      "cases": [
+        "E09",
+        "K03"
+      ]
+    },
+    {
+      "id": "paragraphs",
+      "rules": "references/long-form.md",
+      "cases": [
+        "E12",
+        "K02"
+      ]
+    },
+    {
+      "id": "explanation",
+      "rules": "references/long-form.md",
+      "cases": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05",
+        "K01",
+        "K02"
+      ]
+    },
+    {
+      "id": "certainty",
+      "rules": "SKILL.md",
+      "cases": [
+        "E08",
+        "E10",
+        "K06"
+      ]
+    },
+    {
+      "id": "naturalness",
+      "rules": "SKILL.md; upstream/references",
+      "cases": [
+        "E07",
+        "E09",
+        "K04"
+      ]
+    },
+    {
+      "id": "reader-boundary",
+      "rules": "SKILL.md",
+      "cases": [
+        "E11"
+      ]
+    },
+    {
+      "id": "scoped-edit",
+      "rules": "SKILL.md",
+      "cases": [
+        "native:diagnosis"
+      ]
+    },
+    {
+      "id": "file-checks",
+      "rules": "references/file-review.md; scripts/check.py; scripts/writing_lint.py",
+      "cases": [
+        "offline:checker",
+        "offline:lint"
+      ]
+    }
+  ]
+}

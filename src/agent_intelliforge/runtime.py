@@ -116,7 +116,7 @@ def prepare_dependencies(kit, agent, home, bundle, config, state):
     """Explicit dependency policies, kept here instead of opaque shell payloads."""
     identity = kit['id']
     if identity == 'yomiyasu':
-        helper = load(bundle / 'assets/scripts/writing_runtime.py', '_kotonoha_runtime')
+        helper = load(bundle / 'assets/kotonoha/scripts/writing_runtime.py', '_kotonoha_runtime')
         try: writing = helper.prepare(home / 'dependencies/kotonoha')
         except RuntimeError as error: raise ForgeError(str(error)) from error
         config['writing_runtime'] = str(home / 'dependencies/kotonoha')
@@ -200,17 +200,15 @@ def prepare_dependencies(kit, agent, home, bundle, config, state):
 
 
 def meiseki_assets(bundle):
-    engine = load(bundle / 'installer.py', '_kotonoha_upstream')
-    try: _, data = engine.fetch_meiseki()
-    except RuntimeError as error: raise ForgeError(str(error)) from error
-    return {'assets/'+name:raw for name,raw in data.items()}
+    # Reviewed originals are part of the canonical payload; install never adopts an unreviewed release.
+    return {}
 
 
 def upstream_update(bundle, home, agent):
     engine = load(bundle / 'installer.py', '_intelliforge_yomiyasu')
-    metadata = engine.resolve_release()
-    data = {name.removeprefix('upstream/'): value for name, value in engine.fetch_release(metadata).items()}
-    data['UPSTREAM.json'] = (json.dumps(metadata, ensure_ascii=False, indent=2) + '\n').encode()
+    data = {name.removeprefix('upstream/'):raw for name,raw in engine.own_bundle('kotonoha','auto').items()
+            if name.startswith('upstream/')}
+    data['UPSTREAM.json'] = engine.own_bundle('kotonoha','auto')['UPSTREAM.json']
     return replace_tree(home / 'upstream', owner('yomiyasu-upstream', agent), data)
 
 
@@ -260,7 +258,7 @@ def diagnose(kit, agent, state, legacy=False):
         for key in ('python', 'binary', 'specify'):
             if config.get(key) and not Path(config[key]).is_file(): missing.append(key)
         if config.get('writing_runtime'):
-            helper=load(home/'bundle/assets/scripts/writing_runtime.py','_kotonoha_health')
+            helper=load(home/'bundle/assets/kotonoha/scripts/writing_runtime.py','_kotonoha_health')
             result['writing_runtime']=helper.diagnose(Path(config['writing_runtime']))
             if result['writing_runtime']['status']!='READY':missing.append('writing runtime')
         for key in ('browser',):
@@ -304,7 +302,7 @@ def portable_action(root, kits, plan, args, state):
                 if destination.exists(): verify(destination, owner('marketplace', item['agent']))
             else:
                 destination = args.skills_dir or Path.home() / '.agents/skills'
-                for name in skill_roots(root, kit, item['agent']):
+                for name in (set(skill_roots(root, kit, item['agent'])) | ({'yomiyasu','paragraph-writing','japanese-direct-writing'} if kit['id']=='yomiyasu' else set())):
                     if (destination / name).exists(): verify(destination / name, owner(name, item['agent']))
     for item in plan['operations']:
         kit = catalog[item['kit']]; agent = item['agent']; home = state / agent / item['kit']
@@ -327,13 +325,19 @@ def portable_action(root, kits, plan, args, state):
                 results.append({'kit': kit['id'], 'agent': agent, 'uninstalled': True, 'retained': 'settings, backups, dependency environments, upstream originals'}); continue
             bundle = home / 'bundle'
             if getattr(args, 'upstream_only', False):
-                verify(bundle, owner(kit['id'], agent)); upstream_update(bundle, home, agent)
-                results.append({'kit': kit['id'], 'agent': agent, 'upstream_only': True}); continue
+                verify(bundle, owner(kit['id'], agent))
+                engine = load(bundle / 'installer.py', '_kotonoha_check_update')
+                checked = engine.check_updates(Path('/nonexistent-kotonoha-preview'))
+                results.append({'kit':kit['id'],'agent':agent,'upstream_only':True,'applied':False,**checked}); continue
             bundle_data = files(root / 'tools/intelliforge/resources/runtime' / kit['id'])
             if kit['id'] == 'yomiyasu':
                 bundle_data.update(meiseki_assets(root / 'tools/intelliforge/resources/runtime/yomiyasu'))
+            if kit['id']=='yomiyasu':
+                lock_data=json.loads(bundle_data['assets/kotonoha/UPSTREAMS.json'])
+                if lock_data['integration']['status']!='verified':raise ForgeError('Upstream integration is pending verification')
             backup = replace_tree(bundle, owner(kit['id'], agent), bundle_data)
             skill_backups = []; upstream_backup = None; upstream_changed = False; market_backup = None; market_target = None
+            retired_backups = []
             old_config = (home / 'settings.json').read_bytes() if (home / 'settings.json').exists() else None
             try:
                 config.update(owner=owner(kit['id'], agent), version=kit['version'], method=item['method'], installed=True)
@@ -343,6 +347,16 @@ def portable_action(root, kits, plan, args, state):
                     upstream_backup = upstream_update(bundle, home, agent); upstream_changed = True
                 if item['method'] == 'native':
                     destination = args.skills_dir or Path.home() / '.agents/skills'
+                    if kit['id']=='yomiyasu':
+                        for legacy_name in ('yomiyasu','paragraph-writing','japanese-direct-writing'):
+                            old=destination/legacy_name
+                            if old.exists():
+                                verify(old,owner(legacy_name,agent))
+                                saved=home/'backups'/(legacy_name+'-'+__import__('uuid').uuid4().hex)
+                                saved.parent.mkdir(parents=True,exist_ok=True)
+                                shutil.copytree(old,saved);verify(saved,owner(legacy_name,agent))
+                                retired_backups.append((old,saved))
+                                remove_tree(old,owner(legacy_name,agent))
                     config['skills'] = []
                     for name, data in skill_roots(root, kit, agent).items():
                         target = destination / name
@@ -355,6 +369,11 @@ def portable_action(root, kits, plan, args, state):
                 if item['method'] == 'plugin':
                     market_target, market_backup = marketplace(root, kit, agent, state, config.get('mode', 'auto'))
                     plugins.manage(market_target, kit, agent, 'update' if args.action == 'update' else 'install', state, args.skills_dir)
+                for index,(target,saved) in enumerate(skill_backups):
+                    if saved and kit['id']=='yomiyasu':
+                        archive=home/'backups'/saved.name;archive.parent.mkdir(parents=True,exist_ok=True)
+                        shutil.move(str(saved),str(archive))
+                        skill_backups[index]=(target,archive)
             except BaseException:
                 if market_target:
                     remove_tree(market_target, owner('marketplace', agent))
@@ -364,7 +383,13 @@ def portable_action(root, kits, plan, args, state):
                     if upstream_backup: upstream_backup.rename(home / 'upstream')
                 for target, saved in reversed(skill_backups):
                     remove_tree(target, owner(target.name, agent))
-                    if saved: saved.rename(target)
+                    if saved:
+                        if kit['id']=='yomiyasu':
+                            shutil.copytree(saved,target)
+                            if saved.parent==target.parent:remove_tree(saved,owner(target.name,agent))
+                        else:saved.rename(target)
+                for old,saved in reversed(retired_backups):
+                    if not old.exists():shutil.copytree(saved,old)
                 remove_tree(bundle, owner(kit['id'], agent))
                 if backup: backup.rename(bundle)
                 if old_config is None: (home / 'settings.json').unlink(missing_ok=True)
@@ -377,10 +402,11 @@ def portable_action(root, kits, plan, args, state):
 
 ENTRIES = {'ux-stack': 'skill/scripts/harness.py', 'design-research': 'skill/scripts/harness.py',
            'speckit': 'swb.py', 'github-pm': 'skills/github-project-director/scripts/github_inspect.py',
-           'office': 'office.py', 'yomiyasu': 'assets/scripts/check.py'}
+           'office': 'office.py', 'yomiyasu': 'assets/kotonoha/scripts/check.py'}
 
 
 def kit_run(identity, agent, arguments, state):
+    identity = 'yomiyasu' if identity == 'kotonoha' else identity
     kit = definitions(distribution_root()).get(identity)
     if not kit: raise ForgeError('Unknown kit: ' + identity)
     home = state / agent / identity; bundle = home / 'bundle'

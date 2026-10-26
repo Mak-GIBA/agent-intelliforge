@@ -1,0 +1,34 @@
+[
+  {
+    "case": "mail",
+    "status": "completed",
+    "full_reads": [
+      "SKILL.md"
+    ],
+    "source_unchanged": true,
+    "usage": {
+      "input_tokens": 32537,
+      "cached_input_tokens": 27776,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 215,
+      "reasoning_output_tokens": 92
+    },
+    "elapsed_seconds": 15.17
+  },
+  {
+    "case": "diagnosis",
+    "status": "completed",
+    "full_reads": [
+      "SKILL.md"
+    ],
+    "source_unchanged": true,
+    "usage": {
+      "input_tokens": 57653,
+      "cached_input_tokens": 49536,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 857,
+      "reasoning_output_tokens": 445
+    },
+    "elapsed_seconds": 22.67
+  }
+]

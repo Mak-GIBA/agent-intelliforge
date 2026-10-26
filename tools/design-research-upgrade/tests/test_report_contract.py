@@ -96,6 +96,20 @@ class ReportTests(unittest.TestCase):
         self.assertIn('source_review', text)
         self.assertNotIn('kotonoha', h.role_prompt('producer-assets', self.state, self.run/'assets'))
 
+    def test_self_contained_writing_entry_resolves_without_yomiyasu(self):
+        import os
+        skill=self.project/'.agents/skills/kotonoha'
+        (skill/'scripts').mkdir(parents=True)
+        (skill/'references').mkdir()
+        (skill/'SKILL.md').write_text('Self-contained writing fixture')
+        (skill/'scripts/writing_lint.py').write_text('# synthetic helper')
+        (skill/'references/file-review.md').write_text('File review fixture')
+        with patch.dict(os.environ,{'CODEX_HOME':str(self.project/'.empty-codex')}),patch.object(polish.Path,'home',return_value=self.project/'.empty-home'):
+            entry=polish.resolve_entry(self.project)
+        self.assertEqual(entry['name'],'kotonoha')
+        self.assertEqual(entry['scripts'],str(skill/'scripts'))
+        self.assertEqual({r['path'] for r in entry['files']},{str(skill/'SKILL.md'),str(skill/'references/file-review.md')})
+
     def paper(self, status='partial'):
         d = self.state['dossier']; d['decision']['candidate_id'] = 'B'
         d['sources'] = [{'id': 'PAPER', 'title': 'Fixture paper', 'source_type': 'paper', 'read_level': 'full_text'}]
