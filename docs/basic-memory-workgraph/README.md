@@ -47,7 +47,8 @@ Basic Memoryが保存・検索の基盤、Workgraphが「何を、どの形で�
 
 1. [導入・更新・解除](installation.md)：環境を準備し、Codex側の反映を確認する。
 2. [使い方と設定](usage.md)：依頼例を試し、必要な保存モードを選ぶ。
-3. [共有・学習用出力](sharing.md)：レビューした知識を外へ渡す。
+3. [GitHub共有と指示例](github-sharing.md)：自分と友人のPCを接続し、確認した知識を送受信する。
+4. [ファイル共有・学習用出力](sharing.md)：レビューした知識をファイルで渡す。
 
 保存や更新で困ったら[トラブルシューティング](troubleshooting.md)、
 保存基準・内部構成は[リファレンス](reference.md)を参照してください。

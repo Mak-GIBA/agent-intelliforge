@@ -34,7 +34,8 @@ Reuse conditional rules and verified procedures, retain contextual corrections, 
 
 1. [Installation, updates, removal](installation.md).
 2. [Usage and capture modes](usage.md).
-3. [Sharing and training exports](sharing.md).
+3. [GitHub sharing and prompts](github-sharing.md): connect both PCs and exchange reviewed knowledge.
+4. [File sharing and training exports](sharing.md).
 
 For problems, use [troubleshooting](troubleshooting.md); for policies and internals, use [reference](reference.md).
 

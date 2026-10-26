@@ -247,7 +247,7 @@ WSLを起動し直し、Linux側で`free -h`と`swapon --show`を確認してく
 |---|---|
 | 導入対象・前提条件・更新方法 | [一括インストール](docs/installation.md) |
 | キット別の導入手順・使用例 | [ドキュメント一覧](docs/README.md) |
-| 知識の保存・共有・点検 | [Workgraphの使い方](docs/basic-memory-workgraph/usage.md) · [共有](docs/basic-memory-workgraph/sharing.md) · [点検](docs/basic-memory-workgraph/troubleshooting.md) |
+| 知識の保存・共有・点検 | [Workgraphの使い方](docs/basic-memory-workgraph/usage.md) · [GitHub共有と指示例](docs/basic-memory-workgraph/github-sharing.md) · [ファイル共有](docs/basic-memory-workgraph/sharing.md) · [点検](docs/basic-memory-workgraph/troubleshooting.md) |
 | 正本の編集・配布物の生成・検証 | [開発ガイド](docs/development.md) |
 
 ルートの`install_*.sh`は従来の導入入口です。共通CLIは`src/agent_intelliforge/`、正本とキット定義は`tools/`で管理します。生成するPluginは`plugins/`、利用ガイドと評価資料は`docs/`、回帰テストは`tests/`にあります。

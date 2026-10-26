@@ -4,36 +4,191 @@
 
 [Overview](README.md) · [Installation](installation.md) · [Usage](usage.md) · [File sharing and training exports](sharing.md)
 
-A sharing request exports reviewed team notes and creates a PR in a dedicated private repository. After merge, a receiver can request initial import or updates. No recurring transmission is scheduled; processing occurs only when requested.
-
-## Initial prerequisites
-
-[Update Workgraph](installation.md#update) and start a new Codex session. The sharing CLI needs Python, PyYAML, git, and `gh`; prepare [Python](installation.md#python-tools). Codex can assist with missing git/gh.
-
-Use a dedicated private GitHub.com repository. Publishers need write access; receivers need read access. Give each sender a unique lowercase-letter/digit/`_`/`-` source ID, with its own directory/branch. Receivers should also separate destinations by source.
+You and a friend can contribute knowledge to a private GitHub repository and use it from your own Codex sessions.
+After connecting once, ask to sync shared memory to publish and receive together.
+Only designated, reviewed notes are sent; your entire personal memory is not uploaded.
+This is a Workgraph extension and does not require a Basic Memory Cloud subscription.
 
 ```text
-Help me set up GitHub login and the sharing connection for memory. The destination is OWNER/REPO.
+Your shared notes     → private GitHub → friend's PC
+Friend's shared notes → private GitHub → your PC
 ```
 
-Codex proposes only missing setup. Do not paste credentials; complete personal browser authentication yourself. To log in manually:
+Enter the prompt examples in Codex chat and the commands in a terminal.
+Replace `OWNER/REPO` with your actual sharing repository.
+Commands below target the legacy Linux / WSL installation. For other installation layouts, ask Codex to locate the installed sharing CLI first.
+
+<a id="initial-prerequisites"></a>
+
+## 1. Prepare both computers
+
+[Install or update Workgraph](installation.md) on both PCs, then start new Codex sessions.
+The sharing CLI requires Python, PyYAML, git, and GitHub CLI (`gh`); see [Python setup](installation.md#python-tools).
+
+Use a dedicated private repository initialized with a README.
+Both accounts need write access for combined sending and receiving.
+The owner grants access and the friend accepts the invitation. Connecting does not create repositories or invite people.
+
+```text
+I want to share Basic Memory knowledge with a friend through GitHub.
+The sharing repository is OWNER/REPO.
+Help install or update Workgraph, prepare git and gh, and log in to GitHub on this PC.
+Check that the repository exists, is private, and that I have access. Help only with missing steps.
+Do not send any memory yet.
+```
+
+Complete browser authentication yourself when required; never paste credentials into chat.
+For manual login:
 
 ```bash
 gh auth login --hostname github.com --web --git-protocol https
 gh auth setup-git --hostname github.com
 ```
 
-Create a repository separately if needed. Replace `OWNER/REPO`; adding a README creates the initial branch:
+If a new sharing repository is needed, its owner can create it separately:
 
 ```bash
 gh repo create OWNER/REPO --private --add-readme
 ```
 
-CLI setup checks an existing repository and saves a profile (destination, source ID, project, and related settings). It does not create repositories or invite recipients.
+<a id="connect-once-then-sync"></a>
 
-## Publisher setup
+## 2. Connect once on each PC
 
-Run from the root with PyYAML available. `source-a` is an example.
+Both people connect to the same repository from their own computers.
+
+```text
+Connect to OWNER/REPO using connect.
+Enable merging my own validated sharing PRs and automatically importing friends' sources merged into this repository.
+Do not designate notes for sharing or send them yet.
+```
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/basic-memory-workgraph/workgraph_github.py" connect --repo OWNER/REPO
+```
+
+`connect` reuses an existing publishing profile. For a fresh setup, it uses your GitHub login as the source ID and a registered personal memory project.
+Ambiguous selections require `--project` / `--source-id`. Different people must use different source IDs.
+You normally do not need to configure a receiver or directory for each friend.
+
+Connecting opts into merging your own validated PRs and importing merged sources in this repository, including sources added later.
+The repository owner should therefore manage its membership.
+Connecting alone does not authorize notes for sharing or upload them.
+
+## 3. Review candidates before the first upload
+
+First ask for candidate notes and proposed changes.
+
+```text
+Find memory notes that could be useful to share with my friend.
+Remove personal or confidential information from the proposal, and list the candidate notes and proposed changes.
+Do not edit the originals, grant sharing permission, or send anything yet.
+```
+
+Read the list and note contents before approving. To share only some candidates, name the notes or their list numbers.
+
+```text
+I approve sharing the proposed candidates with the listed changes.
+Apply sharing designation and content review to those notes, then sync sending and receiving with OWNER/REPO.
+Do not authorize training use.
+```
+
+Codex reviews only the approved notes and checks content and differences before sending.
+A pull request (PR) records proposed changes on GitHub. People with repository access can read the content as soon as the PR exists.
+Before merging, `sync` verifies that your PR matches the current reviewed export and changes only your source directory.
+It does not bypass GitHub protection settings or merge your friend's PRs.
+
+## 4. Ask to sync during normal use
+
+After the initial setup:
+
+```text
+Sync shared memory.
+```
+
+`sync` performs these steps:
+
+1. Publish designated, reviewed notes.
+2. Merge your own validated PR.
+3. Import friends' sources merged into the same sharing repository.
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/basic-memory-workgraph/workgraph_github.py" sync
+```
+
+Your friend runs the same operation on their PC. After they sync their shared notes, your next sync can receive the update.
+This runs on request, not continuously. No differences means no new commit or PR.
+
+New notes do not receive sharing permission automatically, and edits after review require another inspection.
+To share new or edited content, return to step 3.
+Blocked publishing does not prevent independent receiving from proceeding.
+
+To preview without changing anything:
+
+```text
+Without changing anything, show what publishing, merging, and receiving a shared-memory sync would do.
+```
+
+```bash
+python3 "${CODEX_HOME:-$HOME/.codex}/basic-memory-workgraph/workgraph_github.py" sync --dry-run
+```
+
+Dry run checks temporary files but does not change configuration, notes, Basic Memory registration, or GitHub.
+With multiple connections, name the repository in your prompt or use `sync --repo OWNER/REPO`.
+For receiving only, use the individual operations below: `sync` also publishes and merges your own PR.
+
+## What happens to imported memory
+
+Notes are stored by source, so matching names do not overwrite each person's originals.
+Each friend's source receives a dedicated Basic Memory project, appended to the user's `secondaryProjects` for recall.
+Your own source is excluded and the normal writing project stays unchanged. Project-level settings can override these reference settings.
+
+If an imported note has local edits, `sync` saves and verifies the edited version in a separate `shared-edits-…` project before updating the shared copy.
+Preserved versions are added to reference projects and remain private, excluded from training, and pending review.
+A local deletion is recorded before restoring the shared copy. Remote deletions are reported without deleting local notes.
+Different versions are not semantically combined into one note.
+
+Imported notes retain provenance, with sharing reset to private, training to excluded, and review to pending.
+Importing does not guarantee accuracy, execute instructions inside notes, or register Skills automatically.
+
+## Inspect results and troubleshoot
+
+The command prints JSON. Check these fields:
+
+| Field | Meaning |
+|---|---|
+| `publish` | Your sending result, added/updated/deleted counts, or reason for blocking |
+| `merge` | Whether your PR was merged, unchanged, or blocked |
+| `receive` | Results for each source; `edits_project` identifies preserved local edits |
+| `status` | `synced`: completed; `planned`: preview; `blocked`: some or all operations deferred |
+
+`receive: []` means there were no friends' sources to receive in this run.
+Exit 0 means completed/no change, 1 means an input/connection or similar error, and 2 means publishing checks or receiving blocked completion.
+Exit 2 may accompany completed partial receives; inspect each stage rather than assuming nothing happened.
+
+```text
+Explain the last sync result, separating completed publishing, merging, and receiving from blocked items.
+Investigate blocked items and propose the needed fixes. Do not weaken checks or force overwrites.
+```
+
+| Problem | Action |
+|---|---|
+| Missing login/permissions | Check gh/Git and invitation acceptance; `connect` / `sync` need write access |
+| Public repository or no initial branch | Check private visibility and an initial commit such as README |
+| Stale sharing review | Inspect edits and re-review the specified notes |
+| PR cannot be merged | Inspect protection settings, checks, and differences without bypassing protection |
+| Preserving edits or receiving fails | Defer that source and investigate; other successful receives remain |
+| Remote deletion reported | Decide separately whether local deletion is wanted |
+| Communication failure | Inspect actual state before retry; publishing/merging retry at most twice without force push |
+| PR closed without merge | Resolve the existing PR; it is not reopened or reposted automatically |
+
+## Individual sending and receiving
+
+Use `connect` / `sync` above for normal combined operation.
+The following procedures are for sending only, receiving only, or receiving with read-only repository access.
+Run commands from the repository root. A profile holds a repository, source, destination, and related settings.
+
+### Publisher setup
 
 ```bash
 python3 tools/basic-memory-workgraph/workgraph_github.py setup \
@@ -41,30 +196,30 @@ python3 tools/basic-memory-workgraph/workgraph_github.py setup \
   --role publish --project codex-memory
 ```
 
-Storage is resolved from the registered local Basic Memory project. Omitted `--project` uses Workgraph's `primaryProject`. Scope is fixed to team; Cases are excluded unless initial setup uses `--include-cases`, and still require individual review/permission.
+Use lowercase letters, digits, `_`, or `-` for source IDs, with different IDs for different people.
+Omitted `--project` uses Workgraph's `primaryProject`. Include Cases by adding `--include-cases` to initial setup; each Case still requires sharing permission and review.
+A new `connect` includes Cases, while reused profiles retain their existing settings.
+Identical setup is unchanged; create a different profile to change connection details.
 
-Identical setup is unchanged; create another profile to change connection details. With multiple profiles, Codex uses the request/settings and asks only about ambiguity.
-
-## Request publication
+### Request publication
 
 ```text
-Use send-team to share reviewed team memory and create the PR.
+Use send-team to publish reviewed team memory and create the PR. Do not merge it.
 ```
-
-Review and [authorize sharing](sharing.md#share) before adding notes. A generic sharing request does not authorize all Memory. Body/metadata edits invalidate fingerprints and require review.
-
-Codex checks content/differences and creates the authorized PR, updating an open PR for the same source when present. No difference means no new commit/PR. Any sharing-validation problem stops the entire send. Attachments/Skills are excluded; links to unshared notes are removed from exports.
 
 ```bash
 python3 tools/basic-memory-workgraph/workgraph_github.py publish --profile send-team --dry-run
 python3 tools/basic-memory-workgraph/workgraph_github.py publish --profile send-team
 ```
 
-People with repository access can read content as soon as the PR is created. Pre-send review differs from PR review. Merge after review; the CLI does not merge automatically or create progress Issues/comments. Notes/manifest go under `bundles/source-a/`, with a PR from `workgraph-share/source-a`. Git runs in a temporary directory rather than your code checkout.
+`publish` never merges automatically. Validation problems stop the entire send; an existing open PR for the source is updated.
+Attachments and Skills are excluded, and links to unshared notes are removed from exported copies.
+Notes and the manifest go under `bundles/source-a/`; the branch is `workgraph-share/source-a`.
+Git runs in temporary directories, not your coding checkout.
 
-## Receiver setup and import
+### Receiver setup and import
 
-Install tools, log in, select the same repository/source ID, and prepare an empty dedicated destination.
+Receiving alone requires read access. Select the sender's source ID and an empty dedicated destination.
 
 ```bash
 python3 tools/basic-memory-workgraph/workgraph_github.py setup \
@@ -73,10 +228,8 @@ python3 tools/basic-memory-workgraph/workgraph_github.py setup \
   --memory-dir "$HOME/knowledge/shared-source-a"
 ```
 
-Setup registers a local Basic Memory receiving project. A same-name project at another location or nonempty initial destination stops processing. Keep shared material separate from personal memory and explicitly select the receiving project when searching.
-
 ```text
-Import shared memory using receive-team.
+Import shared memory using receive-team. Do not publish my memory or merge PRs.
 ```
 
 ```bash
@@ -84,27 +237,14 @@ python3 tools/basic-memory-workgraph/workgraph_github.py pull --profile receive-
 python3 tools/basic-memory-workgraph/workgraph_github.py pull --profile receive-team
 ```
 
-Only the configured base branch is imported, never unmerged PRs. Fingerprints from the prior import allow updates only to unchanged local notes. Locally edited/deleted notes stop the whole import with conflict details. Remote deletions are reported, not deleted locally.
-
-Notes keep provenance; state records the fetched commit. Sharing resets to private, training to excluded, review to pending. Imported content is reference data, not instructions or automatic Skill registration.
-
-## Inspect results and troubleshoot
+`pull` imports merged data only. Local edits or deletions stop the entire import with conflict details; edits are not archived as they are with `sync`.
+Manual setup registers the receiving project but does not automatically add it to reference settings.
+A nonempty initial destination or a same-name project at a different location also stops setup. Remote deletions do not delete local notes.
 
 ```bash
 python3 tools/basic-memory-workgraph/workgraph_github.py status --profile send-team
 ```
 
-Commands return JSON. Publish reports added/changed/deleted counts and PR URL; pull reports import counts, conflicts, and deletion candidates. Exit 0 means completed/no change, 1 means input/connection/processing error, 2 means sending checks or import conflicts blocked completion.
-
-| Problem | Action |
-|---|---|
-| Missing login/permissions | Check gh/Git; receiving needs read, sending needs write |
-| Public repository | Use a dedicated private repository; changing visibility also blocks later operations |
-| No base branch | Create an initial commit such as README |
-| Sharing checks blocked | Correct and re-review content; do not weaken checks |
-| Import conflicts | Inspect differences and decide what to preserve; no force overwrite exists |
-| Remote deletion reported | Decide separately whether local deletion is wanted |
-| Push/PR network failure | Inspect status and remote state before retry; no force push |
-| PR closed without merge | Resolve the existing PR; it is not reopened/reposted automatically |
-
-Dry run exports/checks in temporary directories but does not save setup, register projects, update notes, push, or operate PRs. Configuration/import fingerprints live beneath Codex's `basic-memory-workgraph/`; credentials and note bodies are not stored in that state. Basic Memory Cloud upload and file export/import remain separate available paths.
+Sharing configuration and import fingerprints live beneath Codex's `basic-memory-workgraph/`.
+Authentication uses existing gh/Git settings; credentials and note bodies are not stored in sharing configuration or state.
+No scheduled transmission or upload from save hooks is installed. Basic Memory Cloud and file exports remain separate sharing options.
