@@ -26,9 +26,11 @@ class CompositionTests(unittest.TestCase):
     def candidate(self, pack=None):
         pack = pack or self.pack
         block = {'text': '効果は未測定であり、採用は保留する。', 'evidence_ids': ['dossier.decision'], 'asset_ids': []}
-        return {'status': 'proposed', 'reason': 'synthetic fixture', 'evidence_sha256': c.digest(pack),
+        value = {'status': 'proposed', 'reason': 'synthetic fixture', 'evidence_sha256': c.digest(pack),
                 'title': '比較方式の設計調査', 'abstract': block,
                 'sections': [{'heading': h, 'blocks': [copy.deepcopy(block)]} for h in c.HEADINGS]}
+        value['sections'][1]['blocks'][0]['asset_ids'] = [a['id'] for a in pack['assets'] if a.get('required')]
+        return value
 
     def invoke(self, role, schema, state, workspace, run_dir, validator):
         self.calls.append(role)
@@ -187,6 +189,110 @@ class CompositionTests(unittest.TestCase):
         frozen.write_text('changed style input')
         with self.assertRaisesRegex(rt.Blocked, 'input changed'):
             c.assert_artifacts(self.state, self.workspace)
+
+    def diagram_fixture(self):
+        from readable_report import figure_lines
+        figures = []
+        for fid, kind in [('F1', 'overview'), ('F2', 'detail')]:
+            f = {'id': fid, 'kind': kind, 'title': fid+'の処理', 'caption': '入力から出力への処理の流れ。実測結果を示さない。',
+                 'reading_guide': '矢印は渡す情報を表す。', 'alt': '入力から処理を経て出力へ渡す。',
+                 'nodes': [{'id': 'Input', 'label': '入力'}, {'id': 'Core', 'label': '処理'}],
+                 'edges': [{'from': 'Input', 'to': 'Core', 'label': '入力データ'}]}
+            if kind == 'detail': f.update(parent_figure='F1', expanded_component='Core')
+            figures.append(f)
+        self.state['config']['reader_friendly'] = True
+        self.state['report_diagram_contract_version'] = 1
+        self.state['dossier']['reader_guide'] = {'diagram_source': 'reader-guide', 'figures': figures}
+        reference = '# 比較\n\n'+'\n'.join(line for i,f in enumerate(figures,1) for line in figure_lines(f,i,direction='TD' if f['kind']=='detail' else 'LR'))
+        return figures, reference
+
+    def test_diagram_and_explanations_are_one_required_asset(self):
+        figures, reference = self.diagram_fixture()
+        pack = c.evidence_pack(self.state, reference)
+        self.assertEqual(len(pack['assets']), 2)
+        self.assertEqual([a['figure_id'] for a in pack['assets']], ['F1', 'F2'])
+        self.assertIn('flowchart LR', pack['assets'][0]['text'])
+        self.assertIn('flowchart TD', pack['assets'][1]['text'])
+        text = c.render_document(self.candidate(pack), pack)
+        for a,f in zip(pack['assets'], figures):
+            self.assertIn(f['caption'], a['text']); self.assertIn(f['reading_guide'], a['text'])
+            self.assertIn(f['alt'], a['text']); self.assertEqual(text.count(a['text']),1)
+        self.assertLess(text.index('```mermaid'), text.index('## 結果'))
+
+    def test_required_diagram_cannot_be_omitted_duplicated_or_put_in_abstract(self):
+        _, reference = self.diagram_fixture(); pack = c.evidence_pack(self.state, reference)
+        for change in ('omit', 'duplicate', 'abstract'):
+            value = self.candidate(pack)
+            ids = value['sections'][1]['blocks'][0]['asset_ids']
+            if change == 'omit': ids.pop()
+            elif change == 'duplicate': ids.append(ids[0])
+            else: value['abstract']['asset_ids'] = ids[:]
+            with self.subTest(change=change), self.assertRaisesRegex(rt.Blocked, 'diagram'):
+                c.validate_document(value, pack)
+
+    def test_missing_caption_or_figure_is_rejected_before_freezing(self):
+        figures, reference = self.diagram_fixture()
+        reference = reference.replace(figures[0]['caption'], '', 1)
+        with self.assertRaisesRegex(rt.Blocked, 'explanation missing'):
+            c.evidence_pack(self.state, reference)
+
+    def test_saved_v2_without_flag_keeps_identical_asset_representation(self):
+        _, reference = self.diagram_fixture()
+        for flag in (None, 0):
+            self.state['report_diagram_contract_version'] = flag
+            pack = c.evidence_pack(self.state, reference)
+            self.assertNotIn('diagram_contract_version', pack)
+            self.assertEqual(pack['assets'], c.extract_assets(reference))
+            self.assertTrue(all(set(a)=={'id','text'} for a in pack['assets']))
+            c.validate_document(self.candidate(pack), pack)
+
+    def test_legacy_diagram_direction_stays_horizontal(self):
+        import readable_report
+        _, reference = self.diagram_fixture()
+        guide = self.state['dossier']['reader_guide']
+        guide.update(purpose='synthetic purpose', scope='synthetic scope', takeaway='unmeasured',
+                     walkthrough='synthetic example', glossary='synthetic terms', limitations='unmeasured')
+        with patch.object(readable_report, 'quality_issues', return_value=[]):
+            self.state.pop('report_diagram_contract_version')
+            previous = '\n'.join(readable_report.sections(self.state))
+            self.state['report_diagram_contract_version'] = 1
+            current = '\n'.join(readable_report.sections(self.state))
+        self.assertEqual(previous.count('flowchart LR'), 2)
+        self.assertNotIn('flowchart TD', previous)
+        self.assertEqual(current.count('flowchart LR'), 1)
+        self.assertEqual(current.count('flowchart TD'), 1)
+
+    def test_new_contract_does_not_invent_diagrams_for_audit(self):
+        self.state['report_diagram_contract_version'] = 1
+        self.state['config'].update(mode='audit', reader_friendly=True)
+        pack = c.evidence_pack(self.state, '# 検証\n\n実施済みの確認のみ。')
+        self.assertEqual(pack['assets'], [])
+        c.validate_document(self.candidate(pack), pack)
+
+    def test_proposed_method_svg_retains_caption_explanation_and_editable_source(self):
+        from test_narrow_method_scope import fixture
+        import proposal_report
+        self.state['dossier'] = fixture()
+        self.state['config'].update(reader_friendly=True, report_profile='proposed-method')
+        self.state['report_diagram_contract_version'] = 1
+        self.state['dossier']['reader_guide'] = {'diagram_source':'proposed-method','figures':[]}
+        reference = '\n'.join(proposal_report.render_chapter(self.state['dossier'], self.workspace, self.run/'figures'))
+        pack = c.evidence_pack(self.state, reference)
+        diagrams = [a for a in pack['assets'] if a.get('required')]
+        self.assertEqual(len(diagrams), 3)
+        for a in diagrams:
+            self.assertIn('.svg)', a['text']); self.assertIn('.json)', a['text'])
+            self.assertIn('**図', a['text'])
+        c.validate_document(self.candidate(pack), pack)
+        self.state['report_finalization']['science_sha256'] = legacy.substantive_signature(self.state)
+        self.finish()
+        self.state.update(status='research_complete', schema_version=1)
+        report.publish(self.state, self.workspace, self.run)
+        rt.atomic_json(self.run/'state.json', self.state)
+        from published_evidence import closure
+        _, _, files = closure(self.workspace, self.state['run_id'])
+        self.assertTrue(any(n.endswith('.svg') for n in files))
+        self.assertTrue(any(n.endswith('.json') and 'figures/' in n for n in files))
 
     def test_legacy_paragraph_flow_remains_separate(self):
         self.state['report_contract_version'] = 1

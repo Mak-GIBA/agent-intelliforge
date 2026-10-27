@@ -6,7 +6,7 @@
 
 ## Report structure, reading and adoption
 
-New 2.9.0 runs compose a technical report in this default order: abstract, background and research question, compared methods and verification methods, results, discussion and recommendation, conclusion, references and appendix. Explain mechanisms and comparison conditions before interpreting results. Keep relevant conditions beside claims; move secondary mechanisms, version tables, reading logs and run/retry details to the appendix. Literature/design studies report actual findings without inventing experiments. Audit/run reports describe actual checks and changes.
+New 2.9.1 runs compose a technical report in this default order: abstract, background and research question, compared methods and verification methods, results, discussion and recommendation, conclusion, references and appendix. Explain compared methods with diagrams and prose, showing inputs, processing, intermediate representations and outputs. Keep each required figure with its caption, reading guide and alternative text, exactly once near the method explanation. Explain mechanisms and comparison conditions before interpreting results. Keep relevant conditions beside claims; move secondary mechanisms, version tables, reading logs and run/retry details to the appendix. Literature/design studies report actual findings without inventing experiments. Audit/run reports describe actual checks and changes.
 
 After scientific review, freeze the records and reference draft, compose the whole report, and apply kotonoha once (otherwise yomiyasu). Headings, paragraph boundaries, order and existing-asset placement may change. The parent checks numeric tokens and support references; an independent reader checks metric/value associations, denominators, evidence relationships, negation, scope, certainty, adoption status, omissions and readability. Numeric equality alone cannot establish semantic preservation. Allow one repair, then stop with saved candidates if review still fails. Offline lint findings are retained without requiring zero findings.
 
@@ -28,7 +28,7 @@ Role `invocation.json` records effective permissions and command networking; fai
 
 ## Focus on the project's core logic
 
-2.9.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
+2.9.1 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
 
 ```text
 $design-research Investigate ways to improve this project's search accuracy.

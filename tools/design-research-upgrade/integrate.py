@@ -8,7 +8,7 @@ import re
 from command_assets import assets, COMMANDS
 
 ROOT = Path(__file__).resolve().parent
-VERSION_D, VERSION_U = '2.9.0', '2.1.0'
+VERSION_D, VERSION_U = '2.9.1', '2.1.0'
 
 
 def module(path, name):

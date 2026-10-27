@@ -129,8 +129,8 @@ def mermaid_label(value):
     return "".join(f"#{ord(c)};" if c in '&<>"|`\\\n\r' else c for c in str(value))
 
 
-def figure_lines(figure, number):
-    lines = [f"### 図{number}. {figure['title']}", "", figure["caption"], "", "```mermaid", "flowchart LR"]
+def figure_lines(figure, number, *, direction="LR"):
+    lines = [f"### 図{number}. {figure['title']}", "", figure["caption"], "", "```mermaid", "flowchart " + direction]
     for node in figure["nodes"]:
         lines.append(f'  {node["id"]}["{mermaid_label(node["label"])}"]')
     for edge in figure["edges"]:
@@ -193,7 +193,8 @@ def sections(state):
     if guide.get("diagram_source") == "proposed-method":
         out += ["全体構成・内部処理・既存法との違いは、後続の「提案手法」章の図で順に説明します。", ""]
     for i, figure in enumerate(figures, 1):
-        out += figure_lines(figure, i)
+        direction = "TD" if state.get("report_diagram_contract_version") == 1 and figure["kind"] == "detail" else "LR"
+        out += figure_lines(figure, i, direction=direction)
     out += ["図と説明の適用範囲：" + guide["limitations"], ""]
     context, reassessment = state.get("reassessment_context"), dossier.get("reassessment")
     if context and isinstance(reassessment, dict):

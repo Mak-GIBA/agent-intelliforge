@@ -51,6 +51,9 @@ def instructions(role):
             'Default order: abstract, background/research question, compared methods/verification methods, '
             'results, discussion/recommendation, conclusion. Headings, paragraph boundaries, order and asset '
             'placement may change. Explain the problem and mechanism before interpreting a comparison. '
+            'Explain compared methods with the supplied diagrams and prose: input, processing, intermediate '
+            'representations and output. Place every required diagram asset exactly once in the body near '
+            'the method explanation, with its frozen caption, reading guide and alternative text intact. '
             'For literature/design, report actual source findings and explicitly unmeasured effects; never '
             'invent experiments. For audit/run, use actual checks/changes rather than fictional research. '
             'State what was learned, why the evidence warrants it, and what decision follows. Put relevant '
@@ -76,8 +79,10 @@ def instructions(role):
         'does not establish matching meaning. Reject invented experiments, superiority for unmeasured or '
         'equal results, missing decisive limitations, or proposed adoption described as implemented. '
         'Question, methods, results, support, adoption, limits and readability checks must all pass. Can an '
-        'initial technical reader explain the question, mechanisms, actual result, grounds for recommendation '
-        'and its limits? Judge explanation and coherence, not length or heading/keyword counts. Return '
+        'initial technical reader explain the question, mechanisms, actual result, recommendation and its limits, '
+        'and follow each method through its diagram and prose? Check figure placement, captions, arrow '
+        'meaning and scope: branches must not falsely imply concurrent execution or measured superiority. '
+        'Judge explanation and coherence, not length or heading/keyword counts. Return '
         'accepted only if all checks pass and issues=[]; otherwise name concrete repairs. Copy supplied '
         'evidence_sha256 and candidate_sha256 exactly. Do not fix the scientific records. No network or edits.')
 
@@ -122,8 +127,12 @@ def evidence_pack(state, reference):
         add('reference.'+str(len(rows)), {'heading': heading, 'text': chunk.strip(), 'kind': 'draft_reference'})
     if not rows:
         raise Blocked('Report composition: no frozen evidence')
-    return {'schema_version': 2, 'science_sha256': substantive_signature(state),
+    pack = {'schema_version': 2, 'science_sha256': substantive_signature(state),
             'mode': state['config']['mode'], 'records': rows, 'assets': extract_assets(reference)}
+    if state.get('report_diagram_contract_version') == 1:
+        pack['diagram_contract_version'] = 1
+        pack['assets'] = diagram_assets(state, reference, pack['assets'])
+    return pack
 
 
 def extract_assets(text):
@@ -132,6 +141,51 @@ def extract_assets(text):
                r'^\|[^\n]*\n(?:\|[^\n]*(?:\n|$))+|^\$\$\n.*?^\$\$$|'
                r'!\[[^\]]*\]\([^)]+\)')
     return [{'id': 'asset.'+str(i), 'text': m.group(0)} for i, m in enumerate(re.finditer(pattern, text))]
+
+
+def diagram_assets(state, reference, ordinary):
+    """Bundle validated diagrams with their explanation, without regenerating evidence.
+
+    Only new runs opt into this representation. Existing v2 pack bytes stay stable.
+    """
+    dossier = state.get('dossier') or {}
+    guide = dossier.get('reader_guide') or {}
+    groups = []
+    def add(fid, text):
+        text = text.rstrip()
+        if text not in reference:
+            raise Blocked('Report composition: validated diagram/explanation missing from reference: '+fid)
+        groups.append({'text': text, 'kind': 'diagram', 'figure_id': fid, 'required': True})
+    if state['config']['mode'] == 'research' and state['config'].get('reader_friendly'):
+        if guide.get('diagram_source') == 'proposed-method':
+            from proposal_report import md
+            ideas = dossier.get('method_ideas') or {}
+            selected = ideas.get('selection', {}).get('leading_candidate_id')
+            candidate = next((c for c in ideas.get('candidates', []) if c['id'] == selected), {})
+            figures = candidate.get('presentation', {}).get('figures', [])
+            order = {'architecture': 0, 'module_detail': 1, 'baseline_comparison': 2}
+            for number, figure in enumerate(sorted(figures, key=lambda f: (order[f['kind']], f['id'])), 1):
+                image = re.search(r'!\[[^\]]*\]\(([^)\n]*'+re.escape(figure['id'])+r'\.svg)\)', reference)
+                if not image:
+                    raise Blocked('Report composition: validated SVG missing: '+figure['id'])
+                source = str(Path(image[1]).with_suffix('.json')).replace('\\', '/')
+                add(figure['id'], '\n'.join([image[0], '',
+                    f"**図{number}．{md(figure['title'])}**　{md(figure['caption'])}", '',
+                    md(figure['explanation']), '', f'[図{number}の編集用定義]({source})', '']))
+            if not figures:
+                raise Blocked('Report composition: validated method diagrams are required')
+        else:
+            from readable_report import figure_lines
+            figures = guide.get('figures', [])
+            for number, figure in enumerate(sorted(figures, key=lambda f: (f['kind'] != 'overview', f['kind'] != 'detail')), 1):
+                add(figure['id'], '\n'.join(figure_lines(figure, number,
+                    direction='TD' if figure['kind'] == 'detail' else 'LR')))
+            if not figures:
+                raise Blocked('Report composition: reader-friendly research needs validated diagrams')
+    # Suppress the inner Mermaid fence/image when its complete figure is bundled.
+    assets = [a for a in ordinary if not any(a['text'] in group['text'] for group in groups)] + groups
+    assets.sort(key=lambda a: reference.index(a['text']))
+    return [{**a, 'id': 'asset.'+str(i)} for i, a in enumerate(assets)]
 
 
 def difference(left, right, *, places=1, unit='percentage points'):
@@ -169,6 +223,13 @@ def validate_document(value, pack):
         support = json.dumps([records[i] for i in ids], ensure_ascii=False)
         if tokens(text) - tokens(support):
             raise Blocked('Report composition: unsupported number/denominator in cited records')
+    if pack.get('diagram_contract_version') == 1:
+        required = {a['id'] for a in pack['assets'] if a.get('required')}
+        placed = [i for s in value['sections'] for b in s['blocks'] for i in b['asset_ids']]
+        if any(i in required for i in value['abstract']['asset_ids']):
+            raise Blocked('Report composition: required diagrams belong in the body')
+        if any(placed.count(i) != 1 for i in required):
+            raise Blocked('Report composition: required diagram missing or duplicated')
     # A separate reviewer checks metric/value association, omissions and semantic change.
 
 

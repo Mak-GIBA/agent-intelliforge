@@ -7,7 +7,7 @@
 [Upstreamとの併用：出力先と確認の順序](../upstream-research-workflow.md)に、確認ページ、正本、研究報告、採用した証拠の読み方をまとめています。
 
 検索・抽出・分類・推論など、プロジェクトの目的を支えるコアロジックの方式を比較し、根拠と検証結果から改善案をまとめるCodex用キットです。
-このガイドは[install_design_research.sh](../../install_design_research.sh)の2.9.0を対象にしています。
+このガイドは[install_design_research.sh](../../install_design_research.sh)の2.9.1を対象にしています。
 
 効果・精度・性能の検証では、実験前に主要指標、採点、比較条件、採用条件を固定します。
 報告には同じ入力に対する基準案・候補案の最終出力と採点を載せ、実行記録から数値を再計算します。
