@@ -9,7 +9,7 @@ def text(value):
 
 
 def active(state):
-    return state.get('report_contract_version') == 1
+    return state.get('report_contract_version') in (1, 2)
 
 
 def instruction(role, state):

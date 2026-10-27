@@ -6,7 +6,7 @@
 
 ## Requirements
 
-Requires Linux / WSL2 / macOS, Bash, Python 3.11+, write access, and normally network access to pinned GitHub scripts. Harness execution needs authenticated Codex, a working command sandbox, and project-specific verification tools. Version 2.8.1 assembly/custom assets use the Python standard library; no GitHub login is needed. Codex, app dependencies, browsers, MCP, and other LLM API keys are not installed. macOS real-machine checks remain unperformed. Select Python with `PYTHON_BIN` if necessary.
+Requires Linux / WSL2 / macOS, Bash, Python 3.11+, write access, and normally network access to pinned GitHub scripts. Harness execution needs authenticated Codex, a working command sandbox, and project-specific verification tools. Version 2.9.0 assembly/custom assets use the Python standard library; no GitHub login is needed. Codex, app dependencies, browsers, MCP, and other LLM API keys are not installed. macOS real-machine checks remain unperformed. Select Python with `PYTHON_BIN` if necessary.
 
 Assembly failures were corrected on 2026-10-10, followed by offline builds, both self-tests, and machine update/diagnosis. See [separate validation scopes (Japanese)](../../design-research/validation.md).
 
@@ -77,7 +77,7 @@ bash install_design_research.sh --status --json
 bash install_design_research.sh --doctor --json
 ```
 
-For offline diagnosis use built ordinary installers or `--base-dir PATH --offline`. Check `state: "installed"`, `version: "2.8.1"`, `modified: false`. New 2.5.0 runs add saved responsibility stages, post-measurement explanation, and itemized review alongside metric contracts; existing run contracts/archives/edit protection remain. Ordinary update handles unchanged managed assets. No MCP/model/hook settings change.
+For offline diagnosis use built ordinary installers or `--base-dir PATH --offline`. Check `state: "installed"`, `version: "2.9.0"`, `modified: false`. New 2.5.0 runs add saved responsibility stages, post-measurement explanation, and itemized review alongside metric contracts; existing run contracts/archives/edit protection remain. Ordinary update handles unchanged managed assets. No MCP/model/hook settings change.
 
 2.6.0 separates new topics' local execution records from published reports and adds export/verification of selected evidence. See [outputs and review order](../upstream-research-workflow.md). Existing topics and earlier execution contracts are preserved.
 

@@ -10,7 +10,7 @@ def apply(repo):
     original=original.replace('If yomiyasu is unavailable','If neither writing entry is available')
     front=re.match(r'---\n.*?\n---\n',original,re.S).group()
     advanced=re.sub(r'(\]\()(?=(?:references|scripts|templates|agents)/)',r'\1../',original[len(front):])
-    advanced = ('新規runのreport_contract_version=1では[報告工程](reporting.md)と'
+    advanced = ('新規runのreport_contract_version=2と保存済みのversion=1では[報告工程](reporting.md)と'
                 '[原典確認](source-review.md)を適用する。以下の旧執筆推奨は旧run向けの互換契約として残す。\n\n' + advanced)
     (skill/'references/advanced-contracts.md').write_text(advanced,encoding='utf-8')
     (skill/'SKILL.md').write_text(front+'''
@@ -48,7 +48,7 @@ def apply(repo):
 Upstreamは出力されたv3 bindingを要件・設計IDに結び、統合結果と未確認事項を別に記録する。
 文書更新後は`overview --write`で確認ページを更新し、最後はそのリンクと対象ID・次の操作を示す。
 記録の整合性は科学的な有効性やユーザー承認の証明ではない。未実行・失敗・不明点を保持する。
-新規runの本文構成と公開前のkotonoha推敲は[報告工程](references/reporting.md)に従う。
+新規runは固定した根拠から論文型の技術報告を構成し、全文にkotonohaを適用して意味を独立確認する。詳細は[報告工程](references/reporting.md)に従う。
 有望な論文の全文確認とOSS再利用の判断は[原典確認](references/source-review.md)で記録する。
 未読・利用条件不明の候補は採用保留にする。日本語Skillがなければ未適用を明記して完了できる。
 公開済みの台帳・ログ・保存版は保持する。

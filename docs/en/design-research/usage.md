@@ -6,11 +6,11 @@
 
 ## Report structure, reading and adoption
 
-New 2.8.1 runs organize the main report as conclusion, background/problem/assumptions, candidate comparison, recommended approach and adoption, verification/results, and limitations/next actions. Proposed-method diagrams and formulas belong with adoption details. Unused sections are omitted; process tables, reading records and detailed stops move to the appendix. In-progress reports are explicitly drafts.
+New 2.9.0 runs compose a technical report in this default order: abstract, background and research question, compared methods and verification methods, results, discussion and recommendation, conclusion, references and appendix. Explain mechanisms and comparison conditions before interpreting results. Keep relevant conditions beside claims; move secondary mechanisms, version tables, reading logs and run/retry details to the appendix. Literature/design studies report actual findings without inventing experiments. Audit/run reports describe actual checks and changes.
 
-After scientific review, a writer reads the whole Japanese draft and uses installed kotonoha, otherwise yomiyasu. The parent locks numbers, IDs, references, formulas, code and structure; a separate reader checks meaning, negation, conditions, causality and certainty. Available offline lint results are retained without requiring zero findings. If neither Skill exists, research can finish with an explicit unpolished notice; no Skill is installed during a run.
+After scientific review, freeze the records and reference draft, compose the whole report, and apply kotonoha once (otherwise yomiyasu). Headings, paragraph boundaries, order and existing-asset placement may change. The parent checks numeric tokens and support references; an independent reader checks metric/value associations, denominators, evidence relationships, negation, scope, certainty, adoption status, omissions and readability. Numeric equality alone cannot establish semantic preservation. Allow one repair, then stop with saved candidates if review still fails. Offline lint findings are retained without requiring zero findings.
 
-Version 2.8.1 resolves references and checkers inside self-contained kotonoha 4.0.0 without a sibling yomiyasu Skill. The older kotonoha/yomiyasu combination remains supported.
+If no writing Skill is available, still compose and independently review the report, with an explicit style-unavailable notice. No automatic installation occurs. Selected Skill resources, evidence, candidates and reviews are hash-bound and included in Evidence exports. Missing/0/1 historical contracts retain their existing layout and workflow. Report-only resume does not rerun scientific work. Snapshot report inputs separately; never register the mutable publication target as its own frozen source.
 
 Promising papers require complete main-text reading and relevant supplementary material, with actual sections/pages, findings and missing coverage. Partial/unavailable reading defers adoption of that candidate while other comparisons continue. Retrieval and a `full_text` label do not certify understanding.
 
@@ -28,7 +28,7 @@ Role `invocation.json` records effective permissions and command networking; fai
 
 ## Focus on the project's core logic
 
-2.8.1 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
+2.9.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
 
 ```text
 $design-research Investigate ways to improve this project's search accuracy.

@@ -40,7 +40,7 @@ def select_inputs(role, state):
         keys = ["plan", "proposal_design", "evaluation_contract", "evaluation_contract_sha256",
                 "evaluation_summary", "evidence", "sources", "unit_task"]
     elif role.startswith('report-'):
-        keys = ['report_task', 'dossier', 'review']
+        keys = ['report_task'] if state.get('report_contract_version') == 2 else ['report_task', 'dossier', 'review']
     elif role.startswith("reviewer"):
         keys = common + ["plan", "proposal_design", "review", "evidence", "sources", "evaluation_contract",
                 "evaluation_contract_sha256", "evaluation_summary", "method_report_preview", "unit_task"]
@@ -132,6 +132,8 @@ def unit(role, schema, state, workspace, run_dir, invoke, validator=None, *, nam
     units = state.setdefault("units", {})
     old = units.get(key)
     if old and old.get("status") == "complete":
+        if state.get("report_contract_version") == 2 and role.startswith("report-") and old["input_sha256"] != signature:
+            raise Blocked("Report composition: cached unit input changed: " + key)
         if (digest(old["input"]) != old["input_sha256"] or digest(old["result"]) != old["result_sha256"]
                 or old["source_sha256"] != digest(state["expected_source"])
                 or old["config_sha256"] != digest(state["config"])):

@@ -45,6 +45,28 @@ def closure(workspace,run_id):
             or state.get('config',{}).get('mode')!='research' or state.get('status')!='research_complete'
             or not isinstance(state.get('dossier'),dict)):
         raise ValueError('Export requires an exact completed research run')
+    if state.get('report_contract_version') == 2:
+        # This verifier is also distributed in Upstream without the harness modules.
+        def digest(value):
+            return sha(json.dumps(value, sort_keys=True, ensure_ascii=False).encode())
+        writing=state.get('report_polish',{})
+        science=digest({k:state.get(k) for k in ('dossier','review','evaluation_summary',
+                                               'expected_source','iteration','config')})
+        required={'question','methods','results','support','adoption','limits','readability'}
+        review=writing.get('review',{})
+        if (writing.get('status')!='complete' or writing.get('science_sha256')!=science
+                or review.get('status')!='reviewed' or review.get('accepted') is not True
+                or review.get('issues') or set(review.get('checks',{}))!=required
+                or not all(v is True for v in review['checks'].values())):
+            raise ValueError('Report composition has no matching complete semantic review')
+        paths=writing.get('artifacts',{})
+        candidate=safe(workspace,paths.get('after')).read_text('utf-8')
+        pack=json.loads(safe(workspace,paths.get('evidence')).read_text('utf-8'))
+        if (candidate!=writing.get('approved_document') or sha(candidate.encode())!=writing.get('candidate_sha256')
+                or digest(pack)!=writing.get('evidence_sha256') or pack.get('science_sha256')!=science
+                or review.get('candidate_sha256')!=writing.get('candidate_sha256')
+                or review.get('evidence_sha256')!=writing.get('evidence_sha256')):
+            raise ValueError('Report composition approval/evidence changed')
     report=f'runs/{run_id}/reports/report.md'
     if not safe(workspace,report).is_file():
         report=f'runs/{run_id}/reports/design-research.md'

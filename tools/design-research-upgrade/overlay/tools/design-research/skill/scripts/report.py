@@ -42,6 +42,9 @@ def write(root, name, lines):
 
 
 def publish(state, workspace, run_dir):
+    if state.get('report_contract_version') == 2:
+        from report_composition import reject_output_sources
+        reject_output_sources(state, workspace)
     if not compact(workspace):
         return publish_legacy(state, workspace, run_dir)
     from runtime import Blocked
@@ -196,6 +199,9 @@ def publish(state, workspace, run_dir):
         from report_document import assemble
         from report_polish import assert_artifacts
         assert_artifacts(state, workspace)
+        lines = assemble(state, lines, workspace)
+    elif state.get('report_contract_version') == 2:
+        from report_composition import assemble
         lines = assemble(state, lines, workspace)
     write(workspace,'report.md',lines)
     archive = regular_path(run_dir/'reports')

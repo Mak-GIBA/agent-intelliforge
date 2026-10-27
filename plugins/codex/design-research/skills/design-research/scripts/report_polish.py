@@ -133,6 +133,9 @@ def lint(entry, before, after, directory, timeout):
 
 def finish(state, workspace, run_dir, invoke):
     """Resume finalization alone; completed experiments and scientific reviews stay frozen."""
+    if state.get('report_contract_version') == 2:
+        from report_composition import finish as compose
+        return compose(state, workspace, run_dir, invoke)
     from report import publish
     basis = state['report_finalization']
     if basis['science_sha256'] != substantive_signature(state):

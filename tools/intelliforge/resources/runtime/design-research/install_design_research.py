@@ -20,7 +20,7 @@ import zlib
 
 NAME = "design-research"
 OWNER = "basic-memory-workgraph/design-research"
-VERSION = "2.8.1"
+VERSION = "2.9.0"
 MANIFEST = ".design-research-install.json"
 PAYLOAD_MARKER = b"\n__DESIGN_RESEARCH_PAYLOAD__\n"
 PAYLOAD_SHA256 = "__PAYLOAD_SHA256__"
@@ -34,7 +34,7 @@ REQUIRED_FILES = frozenset({
     "references/effectiveness-evaluation.md", "scripts/execution_units.py",
     "references/execution-units.md", "scripts/workspace_paths.py",
     "scripts/published_evidence.py", "scripts/role_runtime.py", "references/advanced-contracts.md",
-    "scripts/report_contract.py", "scripts/report_document.py", "scripts/report_polish.py",
+    "scripts/report_contract.py", "scripts/report_document.py", "scripts/report_polish.py", "scripts/report_composition.py",
     "references/reporting.md", "references/source-review.md"
 })
 

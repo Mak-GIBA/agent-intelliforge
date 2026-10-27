@@ -1,4 +1,4 @@
-新規runのreport_contract_version=1では[報告工程](reporting.md)と[原典確認](source-review.md)を適用する。以下の旧執筆推奨は旧run向けの互換契約として残す。
+新規runのreport_contract_version=2と保存済みのversion=1では[報告工程](reporting.md)と[原典確認](source-review.md)を適用する。以下の旧執筆推奨は旧run向けの互換契約として残す。
 
 
 # Design Research

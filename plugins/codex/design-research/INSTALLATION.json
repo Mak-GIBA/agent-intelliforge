@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "design-research",
   "name": "Design Research",
-  "version": "2.8.1",
+  "version": "2.9.0",
   "legacy": {
     "script": "install_design_research.sh",
     "actions": {

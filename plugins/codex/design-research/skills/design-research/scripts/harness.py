@@ -42,7 +42,7 @@ from reassessment import snapshot_requirements
 from research_workstreams import snapshot_task, role_instructions as workstream_instructions
 
 HERE = Path(__file__).resolve().parent
-VERSION = "2.8.1"
+VERSION = "2.9.0"
 SEVERITIES = ["Critical", "High", "Medium", "Low"]
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}")
 
@@ -402,7 +402,10 @@ def design_format(value, state):
 def bounded_instructions(role, state):
     """Child fast path: one responsibility, with conditional reference disclosure."""
     if role.startswith('report-'):
-        from report_polish import instructions
+        if state.get('report_contract_version') == 2:
+            from report_composition import instructions
+        else:
+            from report_polish import instructions
         return instructions(role)
     instructions = {
         "planner": "Inspect only relevant requirements/source/tests. Freeze a minimal executable evaluation plan, not a finished report. Return goal, baseline, constraints, criteria, safe test commands and optional queries. Each criterion covers one bounded question, primary outcome first. For research, read references/effectiveness-evaluation.md and return evaluation_json freezing purpose, candidate IDs, task inputs/expected outputs, primary graders and controls before execution. Research test_commands are existing PROJECT backend tests, never future generated experiment scripts. If no backend tests exist use test_commands=[]: runtime criteria are checked through producer-assets experiments and parent grading, not a duplicate backend invocation. Do not downgrade effectiveness to literature. Literature/design need no artificial experiment. About five substantive candidates when relevant; a smaller comparison needs an explained exception. Do not execute checks.",
@@ -1699,7 +1702,7 @@ def execution(args):
             state = {"schema_version": 1, "version": VERSION, "run_id": run_id,
                      "role_contract_version": 1,
                      "execution_contract_version": 2,
-                     "report_contract_version": 1,
+                     "report_contract_version": 2,
                      "status": "running", "phase": "planning", "iteration": 1,
                      "created_at": now(), "config": config, "evidence": {}, "sources": {},
                      "plateau": 0, "expected_source": fingerprint(project, workspace)}
