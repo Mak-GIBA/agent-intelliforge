@@ -24,8 +24,11 @@ def split_sections(lines):
 
 
 def substantive_signature(state):
-    return digest({k: state.get(k) for k in ('dossier', 'review', 'evaluation_summary',
-                                            'expected_source', 'iteration', 'config')})
+    value = {k: state.get(k) for k in ('dossier', 'review', 'evaluation_summary',
+                                            'expected_source', 'iteration', 'config')}
+    if state.get('original_first_contract_version') == 1:
+        value['original_first'] = state.get('original_first')
+    return digest(value)
 
 
 def body_hash(text):

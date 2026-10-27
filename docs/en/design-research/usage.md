@@ -4,9 +4,21 @@
 
 [Documentation](../README.md) · [Overview](README.md) · [Installation](installation.md) · [Validation (Japanese)](../../design-research/validation.md)
 
+## Try originals before adapting them
+
+New studies try promising official OSS implementations or faithful paper methods on common inputs from the target problem before creating variants. Prefer direct use or an input/transport adapter when official code works. Reimplement faithfully only when appropriate; reproducing published benchmark scores is a separate decision based on the request and budget.
+
+Read decisive sources → prepare isolated runtimes and existing model access → freeze common inputs and criteria → execute originals → independently inspect results → reuse unchanged or adapt an observed gap → compare under the same conditions. A failed setup stays unverified, not scientifically inferior. Reports explain original mechanisms, actual results, the reason for a change and its comparison; diagrams distinguish transport adapters from algorithm changes. Approximations are labelled explicitly.
+
+Pin dependency versions and repository commits in research-only environments. Record wheel/package-lock hashes and installed inventory without changing the app/global environment. `--allow-network` permits source/dependency acquisition; experiment inference separately requires `--allow-model-access --model-call-limit N`. The Skill selects these from the authorized scope and budget.
+
+Use configured API access or a compatible logged-in Codex CLI without acquiring keys or logging in automatically. CLI is an agent wrapper, not native API equivalence. Defer methods requiring unsupported native tool calling, sampling controls or modalities. An explicit `--model-connection <existing JSON>` can select backend/model and API base_url/key_env; keep secret values outside the file. Fix the effective model and transport across compared methods. A changed model does not reproduce published paper scores.
+
+Probes and failed inference requests consume the shared call budget. Preparation, originals and changes share time and experiment limits. Reuse confirmed original outputs unchanged; do not automatically replay uncertain interrupted preparation. The run's `original-first/` retains original outputs, both comparison contracts, change decisions, setup records and model usage for Evidence export. Historical runs retain their saved workflow.
+
 ## Report structure, reading and adoption
 
-New 2.9.1 runs compose a technical report in this default order: abstract, background and research question, compared methods and verification methods, results, discussion and recommendation, conclusion, references and appendix. Explain compared methods with diagrams and prose, showing inputs, processing, intermediate representations and outputs. Keep each required figure with its caption, reading guide and alternative text, exactly once near the method explanation. Explain mechanisms and comparison conditions before interpreting results. Keep relevant conditions beside claims; move secondary mechanisms, version tables, reading logs and run/retry details to the appendix. Literature/design studies report actual findings without inventing experiments. Audit/run reports describe actual checks and changes.
+New 2.10.0 runs compose a technical report in this default order: abstract, background and research question, compared methods and verification methods, results, discussion and recommendation, conclusion, references and appendix. Explain compared methods with diagrams and prose, showing inputs, processing, intermediate representations and outputs. Keep each required figure with its caption, reading guide and alternative text, exactly once near the method explanation. Explain mechanisms and comparison conditions before interpreting results. Keep relevant conditions beside claims; move secondary mechanisms, version tables, reading logs and run/retry details to the appendix. Literature/design studies report actual findings without inventing experiments. Audit/run reports describe actual checks and changes.
 
 After scientific review, freeze the records and reference draft, compose the whole report, and apply kotonoha once (otherwise yomiyasu). Headings, paragraph boundaries, order and existing-asset placement may change. The parent checks numeric tokens and support references; an independent reader checks metric/value associations, denominators, evidence relationships, negation, scope, certainty, adoption status, omissions and readability. Numeric equality alone cannot establish semantic preservation. Allow one repair, then stop with saved candidates if review still fails. Offline lint findings are retained without requiring zero findings.
 
@@ -28,7 +40,7 @@ Role `invocation.json` records effective permissions and command networking; fai
 
 ## Focus on the project's core logic
 
-2.9.1 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
+2.10.0 uses one `$design-research` entry. Open the target project and state the goal without enumerating mode names, candidate counts, figures, or CLI flags.
 
 ```text
 $design-research Investigate ways to improve this project's search accuracy.

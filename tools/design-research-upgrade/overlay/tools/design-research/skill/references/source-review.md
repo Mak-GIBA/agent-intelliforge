@@ -48,3 +48,5 @@ license.statusとcompatibilityはverified/unknown/incompatible。条件不明・
 PoCは既存の隔離・通信・許可・予算に従い、環境がなければ未実測とする。
 原文・checkoutはローカル実行領域へ保持し、公開reportには分析・適用条件・参照先を載せる。
 親が保存した外部資料の応答本文は、公開用Evidenceへ自動追加しない。外部原文を公開用local_pathへ登録しない。
+
+原形先行の新規runでは[検証の順序](original-first.md)に従い、この確認を実験設計より前に行う。公式利用・忠実な再実装・近似をimplementationに記録し、未検証の原形を近似版で置き換えない。

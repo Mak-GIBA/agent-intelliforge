@@ -6,11 +6,11 @@
 
 See [Upstream and Research: outputs and review order](../upstream-research-workflow.md) for the project overview, primary documents, reports, and selected evidence.
 
-Compare approaches for core logic—search, extraction, classification, reasoning—and report improvements grounded in sources and verification. This guide covers [install_design_research.sh](../../../install_design_research.sh) 2.9.1.
+Compare approaches for core logic—search, extraction, classification, reasoning—and report improvements grounded in sources and verification. This guide covers [install_design_research.sh](../../../install_design_research.sh) 2.10.0.
 
 For effectiveness/accuracy/performance claims, freeze metrics, scoring, comparison conditions, and adoption criteria before experiments. Save baseline/candidate final outputs for the same inputs and recalculate reported scores from execution records. Unmeasured main effects leave effectiveness evaluation incomplete; design/literature studies may complete with explicitly conditional, unmeasured conclusions.
 
-Execution progresses through minimal design/experiment assets, measurements/scoring, original-source checks, explanation, and review. Saved stages support reuse under unchanged conditions; required unfinished stages prevent overall completion.
+New studies read original sources, prepare isolated runtimes, measure original methods under common conditions, adapt observed gaps only when needed, and explain and independently review the results. Saved stages support reuse under unchanged conditions; required unfinished stages prevent overall completion.
 
 <a id="codex画面から使う"></a>
 <a id="目的に合わせた3つの使い方"></a>

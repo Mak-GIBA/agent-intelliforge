@@ -29,13 +29,18 @@ def select_inputs(role, state):
                   "evaluation_purpose", "report_profile", "target_methods", "reader_friendly") if k in cfg}}
     common = ["requirements_context", "workstream_context", "reassessment_context", "repair_context"]
     if role == "planner":
-        keys = common + ["input_review"]
+        keys = common + ["input_review", "original_sources", "original_runtime"]
+    elif role == "producer-originals":
+        keys = common + ["input_review", "discovery"]
+        inputs["available_project_input_files"] = sorted(state["expected_source"]["files"])
     elif role == "producer-assets":
         keys = ["plan", "proposal_design", "evaluation_contract", "evaluation_contract_sha256"]
         inputs["available_project_input_files"] = sorted(state["expected_source"]["files"])
+        if state.get("original_first_contract_version"):
+            keys += ["original_first_task", "original_runtime"]
     elif role == "producer-design":
         keys = common + ["plan", "evaluation_contract", "evaluation_contract_sha256", "discovery",
-                         "selected_issues", "sources", "dossier", "reason"]
+                         "selected_issues", "sources", "dossier", "reason", "original_sources", "original_runtime"]
     elif role.startswith("producer-"):
         keys = ["plan", "proposal_design", "evaluation_contract", "evaluation_contract_sha256",
                 "evaluation_summary", "evidence", "sources", "unit_task"]
@@ -47,6 +52,8 @@ def select_inputs(role, state):
         inputs["available_project_input_files"] = sorted(state["expected_source"]["files"])
     else:
         keys = common + ["plan", "selected_issues", "evidence", "fixes"]
+    if state.get('original_first_contract_version'):
+        keys += ['original_first_task']
     for key in keys:
         if state.get(key) is not None:
             inputs[key] = copy.deepcopy(state[key])
@@ -160,6 +167,9 @@ def unit(role, schema, state, workspace, run_dir, invoke, validator=None, *, nam
 
 
 def execution_key(state, command, check_ids, experiment_id, artifact_paths, execution_id=None):
+    if state.get('original_first_contract_version') == 1:
+        execution_id = {'id':execution_id,'stage':state.get('original_first',{}).get('phase'),
+                        'evaluation':state.get('evaluation_contract_sha256')}
     return f"{state['iteration']:03d}-execute-" + digest({"command": command, "check_ids": check_ids,
         "experiment_id": experiment_id, "artifact_paths": artifact_paths, "execution_id": execution_id,
         "assets": state.get("proposal", {}).get("files", []), "source": state["expected_source"],

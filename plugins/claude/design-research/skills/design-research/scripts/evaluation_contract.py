@@ -152,6 +152,8 @@ def measure(dossier, state, workspace):
             data = json.loads(path.read_text("utf-8"))
             if data["contract_sha256"] != state["evaluation_contract_sha256"]:
                 raise ValueError("result contract hash mismatch")
+            from original_first import verify_reused
+            verify_reused(data, state, workspace)
             for task in data["tasks"]:
                 if not isinstance(task["id"], str) or not task["id"] or task["id"] in tasks:
                     raise ValueError("task IDs must be unique across result artifacts")
@@ -241,6 +243,9 @@ def checkpoint_results(state, workspace):
             continue
         if isinstance(value, dict) and "contract_sha256" in value:
             if value["contract_sha256"] != state["evaluation_contract_sha256"]:
+                prior = state.get('original_first', {}).get('original_snapshot', {}).get('result_artifacts', [])
+                if state.get('original_first_contract_version') == 1 and any(r['path'] == record['path'] and r['sha256'] == record['sha256'] for r in prior):
+                    continue
                 raise Blocked("Exported paired result differs from the frozen contract")
             paths.append(record["path"])
     if not paths:

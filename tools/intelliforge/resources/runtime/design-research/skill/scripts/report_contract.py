@@ -26,10 +26,17 @@ def instruction(role, state):
                    'Record partial/unavailable reading truthfully and defer adoption of that candidate; other comparisons continue. '
                    'Prefer suitable existing OSS over unnecessary reimplementation. Never invent full reading or license clearance. '
                    'Unsupported findings remain unknown/hypothesis, not reported observations.\n')
+    if state.get('original_first_contract_version') == 1:
+        common += (' ORIGINAL-FIRST: Read references/original-first.md for this role. Originals and complete source reading '
+                   'precede execution. Never replace an untried original with a simplified custom proxy. '
+                   'Assets use parent-prepared runtimes through DR_RUNTIMES and the fixed model bridge; no child installs. '
+                   'For adaptation, reuse exact baseline trials from DR_ORIGINAL_RESULTS and run only changed candidates. '
+                   'Keep source_review.implementation origin, parent and differences. New variants need measured reasons. ')
+        return common
     return common if role != 'producer-assets' else ''
 
 
-def assess(dossier, state, *, require_all=True, verify_access=True):
+def assess(dossier, state, *, require_all=True, verify_access=True, for_trial=False):
     """Return candidate holds; malformed assessments fail, incomplete reading defers adoption."""
     if not active(state) or state['config']['mode'] != 'research':
         return {}
@@ -57,6 +64,8 @@ def assess(dossier, state, *, require_all=True, verify_access=True):
             linked |= {e['source_id'] for claim in dossier['claims']
                        if claim['id'] in dossier['decision'].get('claim_ids', [])
                        for e in claim['evidence'] if e['relation'] == 'supports'}
+        if state.get('original_first_contract_version') == 1:
+            linked |= set(review.get('implementation',{}).get('source_ids',[]))
         paper_ids = {sid for sid in linked if sources.get(sid, {}).get('source_type') in {'paper', 'preprint'}}
         indexed = {}; reasons = []
         for read in reads:
@@ -119,7 +128,7 @@ def assess(dossier, state, *, require_all=True, verify_access=True):
                     reasons.append('OSSの確認対象の原文が保存されていない: ' + sid)
             if not isinstance(reuse.get('compatibility'), str) or reuse['compatibility'] not in {'verified', 'unknown', 'incompatible'}:
                 raise Blocked('Source review: compatibility is required: ' + cid)
-            if reuse['compatibility'] != 'verified':
+            if reuse['compatibility'] != 'verified' and not (for_trial and reuse['compatibility']=='unknown'):
                 reasons.append('OSSの互換性が未確認または不適合')
         holds[cid] = reasons
     if (require_all and dossier['decision']['status'] in {'proposed', 'accepted'} and holds.get(selected)):

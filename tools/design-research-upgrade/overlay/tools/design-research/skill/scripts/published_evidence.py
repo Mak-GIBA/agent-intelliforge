@@ -50,8 +50,9 @@ def closure(workspace,run_id):
         def digest(value):
             return sha(json.dumps(value, sort_keys=True, ensure_ascii=False).encode())
         writing=state.get('report_polish',{})
-        science=digest({k:state.get(k) for k in ('dossier','review','evaluation_summary',
-                                               'expected_source','iteration','config')})
+        basis={k:state.get(k) for k in ('dossier','review','evaluation_summary','expected_source','iteration','config')}
+        if state.get('original_first_contract_version') == 1:basis['original_first']=state.get('original_first')
+        science=digest(basis)
         required={'question','methods','results','support','adoption','limits','readability'}
         review=writing.get('review',{})
         if (writing.get('status')!='complete' or writing.get('science_sha256')!=science
@@ -76,6 +77,8 @@ def closure(workspace,run_id):
     if writing.get('status')=='complete':
         for key,name in writing.get('artifacts',{}).items():
             add(name,writing['artifact_hashes'][key]);writing_names.add(name)
+    if state.get('original_first_contract_version') == 1:
+        for row in state.get('original_first',{}).get('artifacts',[]):add(row['path'],row['sha256'])
     for row in state.get('evidence',{}).values():
         add(row['path'],row['sha256'])
     for key in ('requirements_context','workstream_context'):

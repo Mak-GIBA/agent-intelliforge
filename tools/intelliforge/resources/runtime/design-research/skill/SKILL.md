@@ -24,7 +24,8 @@ description: Research and improve the core logic contributing to a project's mai
    提案手法の詳細設計が必要なら[提案手法](references/proposed-method-report.md)、
    条件変更なら[再検討](references/reassessment.md)、複数テーマなら[研究計画](references/workstreams.md)を読む。
    詳細な実行・証拠・役割契約は[実行契約](references/advanced-contracts.md)の該当節を使う。
-6. 最小設計→実行資材→実測・採点→原典確認→結論・説明→独立レビュー→公開前の全文推敲を保存する。
+6. 原典確認→公式実装・原手法の検証→必要な適応・改変→再比較→独立レビュー→全文推敲を保存する。
+   新規研究は[原形からの検証](references/original-first.md)に従い、近似PoCで原手法の検証を代用しない。
    必須単位が残る間は全体を完了としない。入力は通常16 KiB以内、超過は全文・ハッシュ付き参照へ。
    同一projectのロック・時間上限・sandbox・ネット利用・実装変更の境界を守る。
 

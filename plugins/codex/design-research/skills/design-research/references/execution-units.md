@@ -29,3 +29,5 @@ runは依頼範囲の変更、実行による確認、独立レビューが揃�
 具体的な最終出力、主要指標、採用条件、結論の範囲、残る作業を示す。
 
 Final dossier review returns `{base_sha256, replace:{changed_field: complete_value}}` in dossier_json. The base hash binds the saved full ledger; unchanged method/reader/figure sections are not regenerated. The parent reconstructs the full dossier, validates frozen identities, sources, receipts, figures and outcomes, and saves the validated full result. Criterion reviews and known ledger errors are passed into this final responsibility. Legacy full replies remain readable.
+
+original_first_contract_version=1では[原形からの検証](original-first.md)を適用する。原典確認・隔離準備を評価条件の固定前に完了し、原形の実測後に根拠がある場合だけ改変段階へ進む。フラグのない保存済みrunは上記の保存済み順序を維持する。

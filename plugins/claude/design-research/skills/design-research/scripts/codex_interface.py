@@ -206,7 +206,8 @@ def prepare(args):
         row = choose([r for r in rows if r['resume_eligible']], 'Choose an interrupted run; completed work uses reassess')
         if (args.brief or args.requirements or args.slug or args.plan or args.workstream_id or args.prior_run
                 or args.allow_network or args.model or args.target_methods is not None
-                or args.report_profile is not None or args.evaluation_purpose is not None):
+                or args.report_profile is not None or args.evaluation_purpose is not None
+                or getattr(args,'model_connection',None) or getattr(args,'allow_model_access',False) or getattr(args,'model_call_limit',0)):
             raise ValueError('Resume preserves frozen inputs; changed requirements need fresh research/reassess')
         argv = ['bash', str(HERE/'gan-harness.sh'), 'resume', row['run_id'], '--project', str(root)]
         if args.role_sandbox:
@@ -299,12 +300,23 @@ def prepare(args):
     argv += extras + (['--allow-network'] if args.allow_network else ['--offline'])
     if args.model:
         argv += ['--model', args.model]
+    connection_binding=None
+    if getattr(args,'model_connection',None):
+        path=Path(args.model_connection).expanduser().absolute()
+        if not path.is_file() or path.is_symlink() or path.stat().st_size>65536:
+            raise ValueError('Use an existing small model connection JSON')
+        connection_binding={'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
+        argv += ['--model-connection',str(path)]
+    if getattr(args,'allow_model_access',False):
+        if not 1<=args.model_call_limit<=10000:raise ValueError('Model access needs a finite --model-call-limit')
+        argv += ['--allow-model-access','--model-call-limit',str(args.model_call_limit)]
     if args.role_sandbox:
         argv += ['--role-sandbox', args.role_sandbox]
     return {'status': 'ready', 'executed': False, 'project': str(root), 'mode': mode,
             'argv': argv, 'inputs_sha256': bound, 'selected_run': public(prior) if prior else None,
             'context': context, 'target_methods': target, 'report_profile': profile, 'evaluation_purpose': purpose,
-            'scope': 'Isolated research/PoC and report only; no application changes, installs or human approval'}
+            'model_connection_binding':connection_binding,
+            'scope': 'Isolated research/PoC and pinned research-only preparation; no application changes or human approval'}
 
 
 def parser():
@@ -335,6 +347,9 @@ def parser():
         q.add_argument('--max-iterations', type=int, choices=range(1, 6), default=5)
         q.add_argument('--phase-timeout', type=int, default=1800)
         q.add_argument('--model')
+        q.add_argument('--model-connection')
+        q.add_argument('--allow-model-access', action='store_true')
+        q.add_argument('--model-call-limit',type=int,default=0)
         q.add_argument('--role-sandbox', choices=('read-only', 'workspace-write'))
         q.add_argument('--expect-dispatch', help='SHA-256 from prepare; required by run')
         n = q.add_mutually_exclusive_group()

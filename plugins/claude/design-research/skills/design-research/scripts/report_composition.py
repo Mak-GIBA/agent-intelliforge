@@ -49,7 +49,10 @@ def instructions(role):
             'references once to the whole document; no adjacent-skill assumptions. When unavailable, still '
             'write the complete report and retain the parent style-unavailable notice. Use the brief language. '
             'Default order: abstract, background/research question, compared methods/verification methods, '
-            'results, discussion/recommendation, conclusion. Headings, paragraph boundaries, order and asset '
+            'results, discussion/recommendation, conclusion. For original-first studies explain original implementation, '
+            'actual original results, observed gap, changes and paired re-evaluation in that order. Distinguish '
+            'official reuse, faithful implementation and approximation; disclose model/transport differences. '
+            'Headings, paragraph boundaries, order and asset '
             'placement may change. Explain the problem and mechanism before interpreting a comparison. '
             'Explain compared methods with the supplied diagrams and prose: input, processing, intermediate '
             'representations and output. Place every required diagram asset exactly once in the body near '
@@ -121,6 +124,10 @@ def evidence_pack(state, reference):
         if key == 'review' and isinstance(value, dict):
             value.pop('dossier_json', None)  # Already available as structured dossier records.
         add(key, value)
+    if state.get('original_first_contract_version') == 1:
+        original = state.get('original_first', {})
+        add('original_first.audit', original.get('audit'))
+        add('original_first.records', original.get('artifacts'))
     # A parent-created snapshot is a reference draft, not an original scientific source.
     # It never gets a SOURCE id, read-level or adoption eligibility.
     for heading, chunk in re.findall(r'(?ms)(^#{1,3} [^\n]+)\n(.*?)(?=^#{1,3} |\Z)', reference):
