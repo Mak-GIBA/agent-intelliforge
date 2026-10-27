@@ -1,9 +1,0 @@
-{
-  "source_path": "tools/codex-yomiyasu/evaluation-v200/baseline/assets/japanese-direct-writing/SKILL.md",
-  "source_sha256": "c50c7eb7bb7b889f0435148bf45a02d7d8c10bf75b98ac47f3e0144a3513be70",
-  "line_start": 1,
-  "line_end": 14,
-  "checked_at": "2026-10-11T12:40:48.962122+00:00",
-  "excerpt": "---\nname: japanese-direct-writing\ndescription: 過剰な留意書き・予防線・婉曲表現だけを減らす依頼、または明示的な $japanese-direct-writing で使う。通常の日本語文書全体の作成・推敲には yomiyasu を入口にする。必要な条件と不確実性は保持する。\n---\n\n# japanese-direct-writing\n\n本文の対象を直接述べ、依頼への返答や編集の自己説明を本文に加えない。yomiyasuと同時に選択された場合は同じ下書きの留保を一度だけ点検し、全体を別工程で再執筆しない。\n\n# 留保を減らし、確信度は変えない\n\n不要なのは、文章を読んでも判断が変わらない予防線である。「あくまで参考ですが」「一概には言えませんが」を文書全体へ繰り返す代わりに、結論の根拠と適用範囲を書く。条件がすでに示されているなら同じ条件の再掲を減らす。\n\n一方、推定・観測・仮説の違いは内容そのものである。観測データの関連を因果に変えない。「有意差を確認できなかった」を「効果がない」に変えない。「一部の条件で」を消して全条件への主張にしない。「予定」を「実施済み」に変えない。",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

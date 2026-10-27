@@ -1,6 +1,8 @@
+> 詳細な実行記録は[検証記録アーカイブ](../../../research-archives.md)から取得・検証・復元できます。記録中の詳細リンクは元commitも参照します。
+
 # 説明の深さの比較・回帰検証
 
-品質比較の固定資材と実行記録は [evaluation-explanation](../../../../tools/codex-yomiyasu/evaluation-explanation/) に保存する。旧比較のデータは変更しない。モデル生成、匿名採点、必要時の実ファイル参照、配布回帰試験は別々の証拠である。
+品質比較の固定資材と実行記録は [evaluation-explanation](https://github.com/Mak-GIBA/agent-intelliforge/tree/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/tools/codex-yomiyasu/evaluation-explanation) に保存する。旧比較のデータは変更しない。モデル生成、匿名採点、必要時の実ファイル参照、配布回帰試験は別々の証拠である。
 
 - primary-sources.json: 閲覧した一次資料の版・URL・本文のSHA-256。外部Skillは全文同梱しない。
 - lifecycle-final.json: 調整後の最終資材を一時環境で導入し、9手順を確認した。

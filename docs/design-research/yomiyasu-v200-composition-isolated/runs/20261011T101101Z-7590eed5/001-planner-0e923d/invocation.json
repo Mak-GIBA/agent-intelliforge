@@ -1,8 +1,0 @@
-{
-  "role": "planner",
-  "started_at": "2026-10-11T10:11:01.711688+00:00",
-  "sandbox": "read-only",
-  "model": "gpt-6.1-sol",
-  "prompt_bytes": 2376,
-  "execution_contract_version": 2
-}

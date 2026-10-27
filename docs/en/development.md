@@ -13,6 +13,8 @@ Maintained sources and required checks depend on the change. Edit the source and
 | Shared CLI / OS-host distributions | [Distribution development](cross-platform-development.md) |
 | New kit guide | [Adding documentation](#add-an-installer-guide) |
 
+For archived run records, integrity checks and restoration, see [research evidence archives](research-archives.md). Normal tests do not fetch these archives.
+
 ## Source and asset layout
 
 Root `install_*.sh` are entry points; helpers/assets/removal scripts live under `tools/<installer-id>/`, guides in `docs/<installer-id>/`, tests in `tests/`. No empty helper directory is needed for a standalone script. Bulk entry is `install_all.sh`; guide is `docs/installation.md`.

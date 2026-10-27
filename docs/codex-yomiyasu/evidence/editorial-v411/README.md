@@ -1,3 +1,5 @@
+> 詳細な実行記録は[検証記録アーカイブ](../../../research-archives.md)から取得・検証・復元できます。記録中の詳細リンクは元commitも参照します。
+
 # kotonoha 4.1.1：文言整理の確認
 
 4.1.0の入口と参照資料6件から、開発経緯の説明や独立Skillだった頃の呼び方を整理しました。入口の見出しは「kotonoha — 明晰で自然な日本語を書く」です。「この提案用に作成した」という記述を除き、段落・留保の資料を現在の工程として説明しています。出典、具体例、適用条件、例外、同じ下書きを一度ずつ点検する手順は保持しています。
@@ -32,7 +34,7 @@ sources.mdから除いた説明の深さの由来と過去版評価の扱いは�
 python3.11 tools/codex-yomiyasu/evals/verify_editorial.py \
   --baseline <baseline> \
   --candidate tools/codex-yomiyasu/assets/kotonoha \
-  --native docs/codex-yomiyasu/evidence/editorial-v411 \
+  --native .artifacts/evidence-archives/20261027/docs/codex-yomiyasu/evidence/editorial-v411 \
   --output <照合結果.json>
 ```
 

@@ -1,9 +1,0 @@
-{
-  "source_path": "tools/codex-yomiyasu/evaluation-v200/b/assets/SKILL.md",
-  "source_sha256": "1d2082cf4f33d5409543eb766e2a4892e276bae0b777da186470601d0ad5e0e0",
-  "line_start": 22,
-  "line_end": 28,
-  "checked_at": "2026-10-11T12:21:12.528251+00:00",
-  "excerpt": "原文の数値・単位・固有名詞・出典・図表参照・コード・数式だけでなく、否定、限定、比較対象、主体、因果、時系列、推量、義務／推奨、提案／決定の違いを保護する。保持するのは文書の内容であり、依頼者への返答や制作メモまで温存する意味ではない。ただし、そのメタ説明にだけ含まれる固有名詞・比較対象・事実は抽出し、本文の適切な位置に残す。情報量を落とす要約は、要約を依頼された場合に限る。具体性が足りなくても、数値、体験、根拠、実験、今後の計画を創作して補わない。\n\n執筆前に `references/reader-contract.md` を読み、素材と制作指示を四区分で整理する。分類メモは完成稿に出さない。\n\n## 2. 書く前に段落を設計する\n\n複数段落の執筆・再構成では `references/workflow.md` に従い、paragraph-writingの実際のSKILL.mdを読む。未導入の場合だけ `references/paragraphs.md` を代替にする。まず文書で伝える答えを定め、段落ごとに一つの論点と、それを支える材料を対応づける。設計メモは本文に出さない。",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

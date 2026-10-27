@@ -1,18 +1,20 @@
+> 詳細な実行記録は[検証記録アーカイブ](../../../research-archives.md)から取得・検証・復元できます。記録中の詳細リンクは元commitも参照します。
+
 # kotonoha 4.0.0の検証記録
 
 2026-10-26に、単一フォルダへの統合と、yomiyasu v2.4.0・meiseki v0.10.0の採用を確認した記録です。架空の素材と完成稿、評定、実行条件、hashだけを保存し、モデルの内部推論や個人の原稿は含めていません。
 
 | 記録 | 内容 |
 |---|---|
-| [initial/quality.json](initial/quality.json) | 初回18課題。E01の説明の重複により保留 |
-| [revised/model/contract.json](revised/model/contract.json) | 課題、要件、規範hash、モデル、制限時間 |
+| [initial/quality.json](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/codex-yomiyasu/evidence/self-contained-v4/initial/quality.json) | 初回18課題。E01の説明の重複により保留 |
+| [revised/model/contract.json](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/codex-yomiyasu/evidence/self-contained-v4/revised/model/contract.json) | 課題、要件、規範hash、モデル、制限時間 |
 | revised/model/baseline-*.json、candidate-*.json | 基準案・改訂版の完成稿と実行情報 |
 | revised/model/review-*.json | 原文、X/Yの稿、評定。K03の回帰指摘も保持 |
-| [revised/reader-repair/](revised/reader-repair/) | K03の1回の局所修正と別実行の再評定 |
-| [revised/quality.json](revised/quality.json) | 修正後の判定と全証拠ファイルのhash |
-| [revised/review.json](revised/review.json) | 9能力の確認、上流変更の採用・除外理由 |
-| [revised/verification.json](revised/verification.json) | 採用前の規範・原典・評定への結び付け |
-| [revised/metadata-correction.json](revised/metadata-correction.json) | 能力と課題IDの対応表だけを実際の課題に合わせた修正 |
+| [revised/reader-repair/](https://github.com/Mak-GIBA/agent-intelliforge/tree/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/codex-yomiyasu/evidence/self-contained-v4/revised/reader-repair) | K03の1回の局所修正と別実行の再評定 |
+| [revised/quality.json](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/codex-yomiyasu/evidence/self-contained-v4/revised/quality.json) | 修正後の判定と全証拠ファイルのhash |
+| [revised/review.json](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/codex-yomiyasu/evidence/self-contained-v4/revised/review.json) | 9能力の確認、上流変更の採用・除外理由 |
+| [revised/verification.json](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/codex-yomiyasu/evidence/self-contained-v4/revised/verification.json) | 採用前の規範・原典・評定への結び付け |
+| [revised/metadata-correction.json](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/codex-yomiyasu/evidence/self-contained-v4/revised/metadata-correction.json) | 能力と課題IDの対応表だけを実際の課題に合わせた修正 |
 | [native-summary.json](native-summary.json) | 実際のSkill読込2試行の要約 |
 
 比較はE01〜E12とK01〜K06の18課題です。`gpt-6.1-sol`、`xhigh`、1呼出し180秒以内、全体30分以内、失敗時の自動再実行なしで実施しました。6課題ずつ生成し、各組を別実行で評定しています。改訂時の基準案は、モデル設定・入力hashが一致する既存の3記録を再利用しました。新たな基準案の生成回数として数えません。
