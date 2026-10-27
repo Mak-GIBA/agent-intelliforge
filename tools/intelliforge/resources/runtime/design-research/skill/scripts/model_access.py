@@ -70,6 +70,8 @@ def resolve(config, requested=None, *, backend=None):
     elif not shutil.which('codex'):
         raise Blocked('Model access: Codex CLI is unavailable; no installation attempted')
     value['capabilities'] = sorted(set(value.get('capabilities',[])))
+    if value['backend']=='codex' and set(value['capabilities'])-{'text','json'}:
+        raise Blocked('Model access: CLI supports text/json only; native media/tools require a compatible API')
     value['scope'] = ('CLI agent wrapper; roles, output-token limits and settings may differ from a native API' if value['backend']=='codex'
                       else 'Configured API; actual model is fixed across the comparison')
     return value
@@ -101,8 +103,11 @@ class ModelAccess:
         c=self.connection
         if body.get('stream'):
             raise Blocked('Model access: streaming is not supported by this bridge')
-        raw=json.dumps(body)
-        if any(marker in raw for marker in ('input_image','image_url','input_audio')) and 'multimodal' not in c['capabilities']:
+        def media(value):
+            if isinstance(value,dict):
+                return value.get('type') in {'input_image','image_url','input_audio','audio_url','input_file','file'} or any(media(v) for v in value.values())
+            return isinstance(value,list) and any(media(v) for v in value)
+        if media(body) and (c['backend']=='codex' or 'multimodal' not in c['capabilities']):
             raise Blocked('Model access: configured transport does not support required modalities')
         if body.get('tools') and 'tools' not in c['capabilities']:
             raise Blocked('Model access: configured transport does not support native tools')

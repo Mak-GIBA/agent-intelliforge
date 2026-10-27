@@ -292,6 +292,31 @@ class ModelAccessTests(unittest.TestCase):
             with self.assertRaises(rt.Blocked):model.request(body)
         self.assertEqual(model.ledger['calls'],[])
 
+    def test_cli_media_cannot_be_enabled_by_declaring_capabilities(self):
+        model=access.ModelAccess({**self.connection,'backend':'codex','capabilities':['text','json','multimodal']},
+                                self.root,max_calls=1,deadline=time.time()+5)
+        with patch.object(model,'_codex') as dispatch:
+            for kind in ('image_url','input_audio','input_file'):
+                with self.assertRaisesRegex(rt.Blocked,'modalities'):
+                    model.request({'messages':[{'content':[{'type':kind,'url':'https://example.invalid/fixture'}]}]})
+            dispatch.assert_not_called()
+        self.assertEqual(model.ledger['calls'],[])
+
+    def test_cli_connection_rejects_unsupported_capability_declarations(self):
+        path=self.root/'connection.json'
+        path.write_text(json.dumps({'backend':'codex','model':'fixture','capabilities':['text','multimodal']}))
+        with patch.object(access.shutil,'which',return_value='codex'):
+            with self.assertRaisesRegex(rt.Blocked,'text/json only'):
+                access.resolve({'model_connection_file':str(path)})
+
+    def test_plain_text_about_media_fields_is_still_plain_text(self):
+        model=access.ModelAccess({**self.connection,'backend':'codex'},self.root,max_calls=1,deadline=time.time()+5)
+        with patch.object(model,'_codex',return_value={'choices':[{'message':{'content':'fixture'}}]}) as dispatch:
+            value=model.request({'messages':[{'role':'user','content':'Explain image_url and input_audio as JSON field names.'}]})
+        dispatch.assert_called_once()
+        self.assertEqual(value['choices'][0]['message']['content'],'fixture')
+        self.assertEqual(model.ledger['calls'][0]['status'],'complete')
+
     def test_api_bridge_keeps_real_key_in_parent_and_returns_actual_reply(self):
         seen={}
         class Handler(BaseHTTPRequestHandler):
