@@ -101,7 +101,7 @@ CLIのトークンはプロンプト本文だけの文字数換算ではなく�
 
 ## 記録と再照合
 
-[固定資材・出力・採点](../../tools/codex-yomiyasu/evaluation-explanation/)と[比較契約](../../tools/codex-yomiyasu/evals/EXPLANATION_STUDY.md)を保存した。`snapshots/improved`は最初の候補であり、調整後の配布本文と混同しない。匿名対応表は採点後に記録として残すが、採点者へは渡していない。実行環境の私的なパス情報は公開しない。
+[固定資材・出力・採点](https://github.com/Mak-GIBA/agent-intelliforge/tree/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/tools/codex-yomiyasu/evaluation-explanation)と[比較契約](../../tools/codex-yomiyasu/evals/EXPLANATION_STUDY.md)を保存した。`snapshots/improved`は最初の候補であり、調整後の配布本文と混同しない。匿名対応表は採点後に記録として残すが、採点者へは渡していない。実行環境の私的なパス情報は公開しない。
 
 ```bash
 python3 -B tools/codex-yomiyasu/evals/verify_explanation.py \

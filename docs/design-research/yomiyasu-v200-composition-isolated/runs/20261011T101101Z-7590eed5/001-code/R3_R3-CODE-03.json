@@ -1,9 +1,0 @@
-{
-  "source_path": "tools/codex-yomiyasu/evaluation-v200/c/assets/japanese-direct-writing/SKILL.md",
-  "source_sha256": "3b1d09382c22392bed966281c19383402a821ef7d43cf1d443caee83723cf374",
-  "line_start": 8,
-  "line_end": 8,
-  "checked_at": "2026-10-11T12:02:51.966984+00:00",
-  "excerpt": "本文の対象を直接述べ、依頼への返答や編集の自己説明を本文に加えない。yomiyasuの工程として読まれた場合や、同時に選択された場合は同じ下書きの留保を一度だけ点検し、全体を別工程で再執筆しない。",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

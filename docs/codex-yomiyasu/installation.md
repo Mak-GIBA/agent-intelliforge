@@ -1,121 +1,61 @@
-# kotonohaのインストール・更新・解除
+# kotonohaの導入・更新
 
-[English](../en/codex-yomiyasu/installation.md) | **日本語**
+[概要](README.md) · [使い方](usage.md) · [検証](validation.md)
 
-[概要](README.md) · [使い方](usage.md) · [検証結果](kotonoha-validation.md)
+## 導入
 
-## 前提と導入
-
-kotonohaは、必要なPython・Node.jsと文章検査ツールをユーザー専用領域へ用意します。既存の適合環境は再利用し、sudo、OSのパッケージ管理、永続的なPATH変更は行いません。Codexなど、Skillを使うホストは別途用意してください。
-
-Linux / WSL2ではBash、curlまたはwget、tar、ハッシュ検査コマンドが必要です。WindowsではPowerShellを使います。
+Python 3.11以上を推奨します。スタンドアロンエンジンは3.10以上に対応し、不足する実行環境は導入操作でユーザー領域へ準備します。文章作成中に自動導入はしません。
 
 ```bash
-bash install_kotonoha.sh                 # 導入予定を表示
-bash install_kotonoha.sh --apply         # Skillと検査環境を導入
-bash install_kotonoha.sh --doctor        # 配置・ハッシュ・検査環境を診断
-```
-
-```powershell
-.\install_kotonoha.ps1                  # 導入予定を表示
-.\install_kotonoha.ps1 --apply
-.\install_kotonoha.ps1 --doctor
-```
-
-一括導入は`bash install_all.sh --only kotonoha --apply`で実行します。共通CLIでは`intelliforge install --only kotonoha --apply`を使えます。Windowsの一括入口も、日本語キットだけならPythonやuvがなくても単体インストーラーへ委譲します。
-
-### 名前と配置先
-
-通常の執筆・推敲は`$kotonoha`から始めます。既存の`$yomiyasu`は同じ工程への互換入口です。段落だけの調整には`$paragraph-writing`、過剰な留保だけの調整には`$japanese-direct-writing`を使えます。
-
-標準の配置先は`~/.agents/skills/`です。`--skills-dir PATH`で変更した場合は、診断・更新・解除でも同じパスを指定してください。互換性のため、内部のキットID・Plugin名と管理ディレクトリ名は`yomiyasu`を維持しています。従来の`install_codex_yomiyasu.sh`も新しい単体インストーラーと同じ正本から生成します。
-
-同名の未管理Skillや別の場所にある同名Skillは上書き・二重登録しません。選択した全Skillを検査・準備してから配置し、切り替えに失敗した場合は切り替え済みのSkillも元へ戻します。
-
-### 実行環境と取得する原本
-
-Pythonが必要な場合は固定版uvを経由して3.11系を用意します。Node.jsは検証した24系LTSの公式配布をハッシュ照合して取得し、文章検査の依存パッケージはlockfileで固定します。
-
-専用環境はSkillディレクトリの親の`.kotonoha-runtime`に保存します。Python bootstrapの保存先は、ユーザーデータ領域の`agent-intelliforge/kotonoha-bootstrap`です。Plugin方式ではキット状態ディレクトリの`dependencies/kotonoha`を使います。解除後も環境とバックアップは残ります。
-
-初回導入ではmeisekiとyomiyasuの最新安定版Releaseを確認し、取得するcommitを確定します。yomiyasuはGit blob IDとサイズ、meisekiは対応確認済み資材のSHA-256を検査します。meisekiに未対応の規範変更がある場合は停止し、既存Skillを維持します。同じ構成で再実行しても、上流を自動更新しません。
-
-paragraph-writingとjapanese-direct-writingは同梱版から導入・更新します。元のGistやZIPへ接続する必要はありません。
-
-Python自体がない環境では、プレビューは通信せずbootstrapの概要を表示します。引数ごとの完全な予定表示には、既存のPythonを`PYTHON_BIN`で指定してください。`--apply`のない診断・ヘルプではPythonを自動取得しません。
-
-## 対象を選ぶ
-
-単体インストーラーの`--only`は、個々のSkillを選ぶ指定です。`all`（既定）、`yomiyasu`、`kotonoha`、`paragraph-writing`、`japanese-direct-writing`を使えます。一括導入・共通CLIの`--only kotonoha`と`--only yomiyasu`は、どちらも日本語キット全体を選びます。
-
-```bash
-bash install_kotonoha.sh --only paragraph-writing --apply
-bash install_kotonoha.sh --only japanese-direct-writing --apply
-bash install_kotonoha.sh --only yomiyasu --doctor
-```
-
-既存の適合Pythonがあれば、paragraph-writingまたはjapanese-direct-writing単独の導入に上流取得は不要です。
-
-## 更新と発動モード
-
-新しいインストーラーを用意し、更新内容を確認してから適用します。
-
-```bash
-bash install_kotonoha.sh --check-update
-bash install_kotonoha.sh --update
-bash install_kotonoha.sh --update --apply
+bash install_kotonoha.sh --dry-run
+bash install_kotonoha.sh --apply
 bash install_kotonoha.sh --doctor
 ```
 
-`--check-update`は両上流の最新安定版と同梱の独自規範・補助Skillを確認し、未対応のmeiseki変更もエラーとして知らせます。`--update`は`--apply`がなければ通信せず予定を表示し、適用時に取得版を確定・検査して配置します。補助Skill単独の更新確認・更新は通信せず同梱版を使います。
+既定の配置先は ~/.agents/skills/kotonoha/ です。--skills-dirで親を指定できます。Windowsではinstall_kotonoha.ps1を使います。検査用Python・Node.js・npm依存は隣接する専用領域で管理します。原典は検証した組合せを同梱し、実行環境の準備では通信する場合があります。MCP・hooks・AGENTS.mdを変更せず、文書を外部へ送信しません。
 
-上流版を保ち、同梱の入口・運用設定・補助Skillだけを更新する場合は`--force --apply`を使います。ただし、上流の必須ファイルが欠ける旧導入は、まず`--update --apply`で整えてください。2.0系列以降では`upstream/UNICODE-LICENSE.txt`も必須です。
-
-既存の管理ファイルに編集・欠落があると、`--force`でも停止します。更新前の資材は、Skill名付きZIPとして`.yomiyasu-installer-backups/`へ保存します。配置・解除の完了後に旧一時フォルダーの清掃だけが失敗した場合は、完了した操作と残ったパスを警告します。
-
-既存Skillの発動モードは保持します。新規Skillは管理済みyomiyasuのモードを引き継ぎ、全て新規なら`auto`です。モードを変更する場合は明示します。
+## 既存版の更新
 
 ```bash
-bash install_kotonoha.sh --mode explicit --force --apply
-bash install_kotonoha.sh --mode auto --force --apply
+bash install_kotonoha.sh --update --dry-run
+bash install_kotonoha.sh --update --apply
 ```
 
-`auto`は依頼に合うSkillの自動選択を許可する設定です。yomiyasu互換入口は明示呼び出し用として扱います。`explicit`では各Skill名を指定して使い、`agents/openai.yaml`の`allow_implicit_invocation`を`false`にします。毎回答を校正するHookは登録しません。
+既存の--mode auto|explicitは保持します。未編集の旧3入口は完全なバックアップを残して退役します。編集・追加ファイル・管理外の同名フォルダがあれば、準備前に停止します。--forceでもユーザー編集を消しません。置換中の例外では元のフォルダを復元します。
 
-## 上流だけを更新する・取得版を固定する
+install_codex_yomiyasu.shとkit名yomiyasuは互換名です。旧--only選択名はkotonohaへ正規化し、旧Skillの新規登録は行いません。
+
+## 上流最新版の確認と統合
 
 ```bash
-bash install_kotonoha.sh --update --upstream-only
-bash install_kotonoha.sh --update --upstream-only --apply
-bash install_kotonoha.sh --check-update --upstream-ref v1.1.1
-bash install_kotonoha.sh --update --upstream-ref v1.1.1 --apply
+bash install_kotonoha.sh --check-update
+python3 tools/codex-yomiyasu/update_upstreams.py check
+cp -a tools/codex-yomiyasu/assets/kotonoha /tmp/kotonoha-baseline
+python3 tools/codex-yomiyasu/update_upstreams.py prepare --source all --candidate /tmp/kotonoha-candidate
 ```
 
-`--upstream-only`は`--update`と併用し、yomiyasuの上流原本だけを更新します。kotonoha、meiseki、独自規範とその版、`references/explanation.md`、補助Skill、検査環境は保持します。`--upstream-ref`は安定版Releaseのtagを指定するオプションで、独自規範の版を指定するものではありません。
+prepareは最新安定リリースをcommitとハッシュで固定し、原典・規則・差分・未確認事項を候補ディレクトリへ保存します。個別対象は--source yomiyasuまたはmeiseki、安定リリースの固定は個別対象に--ref TAGを指定します。現在の採用版と導入済みSkillは変更しません。
 
-## 解除と検査
+保守担当者は候補の原典差分を読み、内部規則・アダプター・依存の変更と能力の対応を確認します。review.jsonへ採用・除外の理由と確認済み能力を記録します。旧版との規範照合に加え、現行版と候補版を24用途で実際に起動するevals/flow_native.pyを使い、参照・検査・完成稿の比較を候補のquality.jsonへ保存します。既定の全体上限は60分です。インストーラーがAIを自動起動することはありません。
 
 ```bash
-bash install_kotonoha.sh --uninstall
-bash install_kotonoha.sh --uninstall --apply
-bash install_kotonoha.sh --only paragraph-writing --uninstall --apply
-bash install_kotonoha.sh --only japanese-direct-writing --uninstall --apply
-bash install_kotonoha.sh --self-test
-bash install_kotonoha.sh --extract /tmp/yomiyasu-review
+python3.11 tools/codex-yomiyasu/evals/flow_native.py --candidate /tmp/kotonoha-candidate --baseline /tmp/kotonoha-baseline --runtime "$HOME/.agents/.kotonoha-runtime"
+python3 tools/codex-yomiyasu/update_upstreams.py verify --candidate /tmp/kotonoha-candidate
+python3 tools/codex-yomiyasu/update_upstreams.py promote --candidate /tmp/kotonoha-candidate
 ```
 
-標準の解除は管理する日本語Skill全体が対象です。個別解除には`--only`を使います。手動編集や追加ファイルがあれば、選択した全Skillの解除前に停止します。
+verifyは品質記録と固定された候補・出力の一致を検査します。promoteは検証済みの原典・規則・アダプターを一組でリポジトリへ反映します。重大な意味変更、未反映の対象機能、品質低下、記録の欠落・改変は保留です。取得できたことと能力の検証は別です。
 
-`--doctor`は通信せず、配置・ハッシュ・発動設定・既知の競合と検査環境を調べます。競合する校正Skillを検出しても無効化しません。`--project PATH`で競合診断の対象プロジェクトを指定できます。
+比較には受け取り側で準備した専用lint環境を--runtimeで指定します。規範の修正後は同じ候補へ--round 2を指定し、新設計側を全件再実行します。必要な場合は最後の--round 3まで実行できます。既存の試行を別の規範・実行コードへ付け替えることはできず、元の制限時間は延長しません。
 
-自己テストは一時環境と模擬の上流応答を使い、導入・更新・解除・検査の挙動を確認します。実際の配布元への通信やモデルの文章品質を検証するものではありません。文章比較は`evals/run_study.py`や`evals/explanation_study.py`などを明示実行し、インストール時には動かしません。
+比較コードはPython 3.11以上と認証済みCodex CLIを使い、利用者設定のモデル・推論設定を呼出しに固定します。モデル実行には費用と時間がかかります。固定課題での比較を一般的な能力の証明とは扱わず、重要な変更では未使用の課題でも確認します。
 
-`--extract`は未使用または空のディレクトリへ同梱資材を展開し、インストールは行いません。`--self-test`と`--extract`は`--only`と併用できません。
+--update --upstream-onlyは互換操作として、未統合の最新版があればUPSTREAM_REVIEW_REQUIREDを返して既存版を保持します。GitHub API制限・通信障害でも現在の採用版を消しません。配布元の真正性や人の承認をハッシュから推測しません。
 
-## 上流と依存の確認
+## 解除と共有
 
-`--source-dir PATH --apply`では、ローカル原本からyomiyasuを配置できます。受け付けるのはGit checkout、管理済み導入のsnapshot、旧v1.0.4固定版のフラット原本です。形式に応じて検査し、meisekiには対応確認済みの同梱原本を使います。両上流のネットワーク取得は省略しますが、未準備の実行環境や検査依存の取得には接続が必要です。`--source-dir`はyomiyasuを含む導入・更新で使い、`--upstream-ref`とは併用できません。
+--uninstall --dry-runで予定を確認し、--uninstall --applyで管理対象を解除します。編集や追加があれば停止し、バックアップは残します。
 
-実行環境の準備に失敗した場合はSkillを切り替えません。途中まで取得した所有済みキャッシュと、準備済みの専用環境は再利用できます。
+共有するときはkotonohaフォルダだけをコピーできます。resources.jsonは実行時の原典検証に必要なので残します。.installer.jsonは導入所有情報であり、手動共有では省けます。検査用の実行環境とsettings.jsonは受け取り側で準備し、個人の設定・キャッシュ・認証情報を配布しません。
 
-自動準備用の配布はLinux glibc、macOS、Windowsのx64 / ARM64向けに定義しています。配布の定義と実機検証は別であり、確認済みのOS・操作は[検証記録](kotonoha-validation.md)を参照してください。
+4.1.0はFLOW.jsonの旧規範照合と、24用途の実出力・参照記録・別実行の評定が揃うまで採用を保留します。4.0.0の一括入力による比較や、完成稿だけを試験の外で直した記録では代替しません。

@@ -230,6 +230,10 @@ The bulk installer, Workgraph, and Codex ECC need the complete repository. Other
 
 This repository combines custom workflows and management tools with external Skills, Plugins, and CLIs. Codex, Basic Memory, SpecKit, ECC, Playwright, meiseki, and yomiyasu remain maintained by their respective providers. Kit guides identify their sources and distinguish upstream components from custom functionality.
 
+## License
+
+Original code and documentation in this repository are covered by [LICENSE](LICENSE), except where a separate license or attribution is provided. Third-party materials retain their respective licenses and copyright notices. See [third-party notices](THIRD_PARTY_NOTICES.md) for bundled materials and dependencies.
+
 <a id="start"></a>
 <a id="python-tools"></a>
 <a id="update"></a>

@@ -45,10 +45,40 @@ def closure(workspace,run_id):
             or state.get('config',{}).get('mode')!='research' or state.get('status')!='research_complete'
             or not isinstance(state.get('dossier'),dict)):
         raise ValueError('Export requires an exact completed research run')
+    if state.get('report_contract_version') == 2:
+        # This verifier is also distributed in Upstream without the harness modules.
+        def digest(value):
+            return sha(json.dumps(value, sort_keys=True, ensure_ascii=False).encode())
+        writing=state.get('report_polish',{})
+        basis={k:state.get(k) for k in ('dossier','review','evaluation_summary','expected_source','iteration','config')}
+        if state.get('original_first_contract_version') == 1:basis['original_first']=state.get('original_first')
+        science=digest(basis)
+        required={'question','methods','results','support','adoption','limits','readability'}
+        review=writing.get('review',{})
+        if (writing.get('status')!='complete' or writing.get('science_sha256')!=science
+                or review.get('status')!='reviewed' or review.get('accepted') is not True
+                or review.get('issues') or set(review.get('checks',{}))!=required
+                or not all(v is True for v in review['checks'].values())):
+            raise ValueError('Report composition has no matching complete semantic review')
+        paths=writing.get('artifacts',{})
+        candidate=safe(workspace,paths.get('after')).read_text('utf-8')
+        pack=json.loads(safe(workspace,paths.get('evidence')).read_text('utf-8'))
+        if (candidate!=writing.get('approved_document') or sha(candidate.encode())!=writing.get('candidate_sha256')
+                or digest(pack)!=writing.get('evidence_sha256') or pack.get('science_sha256')!=science
+                or review.get('candidate_sha256')!=writing.get('candidate_sha256')
+                or review.get('evidence_sha256')!=writing.get('evidence_sha256')):
+            raise ValueError('Report composition approval/evidence changed')
     report=f'runs/{run_id}/reports/report.md'
     if not safe(workspace,report).is_file():
         report=f'runs/{run_id}/reports/design-research.md'
     add(report)
+    writing=state.get('report_polish',{})
+    writing_names=set()
+    if writing.get('status')=='complete':
+        for key,name in writing.get('artifacts',{}).items():
+            add(name,writing['artifact_hashes'][key]);writing_names.add(name)
+    if state.get('original_first_contract_version') == 1:
+        for row in state.get('original_first',{}).get('artifacts',[]):add(row['path'],row['sha256'])
     for row in state.get('evidence',{}).values():
         add(row['path'],row['sha256'])
     for key in ('requirements_context','workstream_context'):
@@ -89,7 +119,8 @@ def closure(workspace,run_id):
                 if target.startswith(('http:','https:','#','mailto:')):continue
                 target=target.split('#',1)[0]
                 if not target:continue
-                absolute=Path(os.path.abspath(workspace/path.parent/target))
+                origin=Path() if name in writing_names and writing.get('artifact_link_root')=='workspace' else path.parent
+                absolute=Path(os.path.abspath(workspace/origin/target))
                 if not absolute.is_relative_to(workspace):
                     raise ValueError('Archived report links outside workspace: '+target)
                 add(absolute.relative_to(workspace).as_posix())

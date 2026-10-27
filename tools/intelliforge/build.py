@@ -138,7 +138,7 @@ def render_skill(data: bytes, kit: dict, agent: str, name: str) -> bytes:
                 f"研究・UXハーネスは `intelliforge kit-run {kit['id']} --agent {agent} -- <引数>` から実行する。"
                 "Windowsではこの入口を使い、Bashやpython3という実行名を前提にしない。\n")
     if kit['id'] == 'yomiyasu':
-        appendix = (f"\n\n検査は `intelliforge kit-run yomiyasu --agent {agent} --tool writing_lint.py -- <原稿> [--before <原稿>]`。"
+        appendix = (f"\n\n検査は `intelliforge kit-run kotonoha --agent {agent} --tool writing_lint.py -- <原稿> [--before <原稿>]`。"
                     "Python・Node.jsは導入時に準備した専用環境を使う。\n")
     if agent == "claude":
         # Namespacing is a host API detail; upstream originals stay unchanged.
@@ -192,10 +192,10 @@ def build_outputs(assembled: Path) -> dict[str, bytes]:
                     data['agents/openai.yaml'] = ('policy:\n  allow_implicit_invocation: '+str(name != 'yomiyasu').lower()+'\n').encode()
                 for path, raw in data.items():
                     if path == "SKILL.md": raw = render_skill(raw, kit, agent, name)
-                    if kit['id'] == 'yomiyasu' and path == 'references/finish.md':
-                        raw = raw.decode().replace('`../upstream/references/`',f'`intelliforge locate --only yomiyasu --agent {agent} --upstream` が示す先の `references/`').encode()
-
-                    if path.endswith(".py"): raw = portable_python(raw, path)
+                    # Original writing checkers are hash-bound resources. Port only
+                    # our adapter; rewriting originals invalidates resources.json.
+                    original = kit['id']=='yomiyasu' and path.startswith(('upstream/','meiseki-upstream/'))
+                    if path.endswith(".py") and not original: raw = portable_python(raw, path)
                     if agent == "claude" and path == "agents/openai.yaml": continue
                     if agent == "claude" and path == "SKILL.md" and (name.startswith("upstream-") or (kit["id"] == "yomiyasu" and name == "yomiyasu")):
                         parts = raw.decode().split('---', 2)

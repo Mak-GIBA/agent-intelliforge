@@ -32,6 +32,20 @@ class EvidenceTests(unittest.TestCase):
     def write(self,name,raw):
         p=self.workspace/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(raw)
     def snapshot(self):return {p.relative_to(self.root):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+    def test_original_stage_and_model_ledger_survive_portable_export(self):
+        records=[]
+        for name in ('original-results.json','adaptation-results.json','model-ledger.json','setup-stdout.log'):
+            rel='runs/FIXTURE/original-first/'+name
+            raw=b'{}\n' if name.endswith('.json') else b'synthetic setup output\n'
+            self.write(rel,raw);records.append({'path':rel,'sha256':sha(raw)})
+        self.state.update(original_first_contract_version=1,original_first={'artifacts':records})
+        self.write('runs/FIXTURE/state.json',json.dumps(self.state).encode())
+        result=export(self.root,'example','FIXTURE',apply=True)
+        package=self.root/result['package']
+        verify(package)
+        for row in records:self.assertTrue((package/'files'/row['path']).is_file())
+        (package/'files'/records[0]['path']).write_text('changed')
+        with self.assertRaises(ValueError):verify(package)
     def test_new_layout_and_legacy_are_discovered_without_moving_history(self):
         old=self.root/'docs/design-research/old';old.mkdir(parents=True);(old/'keep').write_bytes(b'keep')
         self.assertEqual(topic_workspace(self.root,'old',True),old)

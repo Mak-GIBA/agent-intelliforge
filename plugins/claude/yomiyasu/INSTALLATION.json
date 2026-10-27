@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "yomiyasu",
   "name": "kotonoha Japanese writing",
-  "version": "3.0.0",
+  "version": "4.1.1",
   "legacy": {
     "script": "install_codex_yomiyasu.sh",
     "actions": {
@@ -30,21 +30,6 @@
     {
       "name": "kotonoha",
       "source": "tools/codex-yomiyasu/assets/kotonoha",
-      "assembled": false
-    },
-    {
-      "name": "yomiyasu",
-      "source": "tools/codex-yomiyasu/assets",
-      "assembled": false
-    },
-    {
-      "name": "paragraph-writing",
-      "source": "tools/codex-yomiyasu/assets/paragraph-writing",
-      "assembled": false
-    },
-    {
-      "name": "japanese-direct-writing",
-      "source": "tools/codex-yomiyasu/assets/japanese-direct-writing",
       "assembled": false
     }
   ],
@@ -74,9 +59,6 @@
   ],
   "destinations": [
     "{skills_home}/kotonoha",
-    "{skills_home}/yomiyasu",
-    "{skills_home}/paragraph-writing",
-    "{skills_home}/japanese-direct-writing",
     "{skills_home}/../.kotonoha-runtime"
   ],
   "settings": [],
@@ -90,7 +72,7 @@
   "editable_sources": [
     "tools/codex-yomiyasu"
   ],
-  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "compatibility": "One self-contained kotonoha with conditional detailed references; owned legacy migration and CLI aliases retained.",
   "package_version": "0.1.0",
   "version_kind": "local kit version; upstream versions are resolved and recorded separately",
   "aliases": [

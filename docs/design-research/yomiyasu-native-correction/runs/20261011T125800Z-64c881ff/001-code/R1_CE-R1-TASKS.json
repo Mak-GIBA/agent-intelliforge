@@ -1,9 +1,0 @@
-{
-  "source_path": "tools/codex-yomiyasu/evals/run_study.py",
-  "source_sha256": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47",
-  "line_start": 168,
-  "line_end": 181,
-  "checked_at": "2026-10-11T13:04:16.899190+00:00",
-  "excerpt": "def native_tasks():\n    full='新入社員向けの技術報告を完成稿にしてください。素材：旧方式は毎回設定を読み込む。新方式は起動時に保持する。待機時間は200 msから150 msへ短縮した。同じ負荷条件。設定変更の反映には再起動が必要。運用担当者が再起動時期を決める。CPU環境は未評価。'\n    paragraph='次の文章の段落構成だけを直してください。言い切りの強さや事実は変えないでください。原稿：検索精度は82%から86%になった。費用は月2万円増える。同じ評価データを使った。費用の承認は未決定。推論時間は2倍になった。'\n    direct='次の文章は過剰な予防線だけを減らしてください。段落構成と数値は変えないでください。原稿：あくまで参考ですが、処置群は4.4%、対照群は4.1%でした。p値は0.18で、有意差は確認できていません。この結果だけで効果の有無は判断できない点には留意が必要です。'\n    return [\n        {'id':'N1','prompt':'$yomiyasu '+full,'expected':['yomiyasu','paragraph-writing','japanese-direct-writing']},\n        {'id':'N2','prompt':full,'expected':['yomiyasu','paragraph-writing','japanese-direct-writing']},\n        {'id':'N3','prompt':'$paragraph-writing '+paragraph,'expected':['paragraph-writing']},\n        {'id':'N4','prompt':paragraph,'expected':['paragraph-writing']},\n        {'id':'N5','prompt':'$japanese-direct-writing '+direct,'expected':['japanese-direct-writing']},\n        {'id':'N6','prompt':direct,'expected':['japanese-direct-writing']},\n        {'id':'N7','prompt':'「設定を保存しましした」の誤字だけ直してください。他は変更しないでください。','expected':[]},\n        {'id':'N8','prompt':'次のコードだけを、aとbの和を返す形に直してください。説明文は不要です。\\ndef add(a, b):\\n    return a - b','expected':[]},\n    ]",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

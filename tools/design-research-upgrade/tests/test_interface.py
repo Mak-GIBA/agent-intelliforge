@@ -41,6 +41,18 @@ class InterfaceTests(unittest.TestCase):
         return p
     def req(self):
         p=self.root/'docs/upstream/requirements.md';p.parent.mkdir(parents=True,exist_ok=True);p.write_text('# Requirements\nExample requirements.\n');return p
+    def test_connection_file_and_call_cap_are_bound_before_dispatch(self):
+        connection=self.root/'model.json';connection.write_text('{"backend":"codex","model":"fixture"}')
+        args=('research','--brief','Compare original methods','--model-connection',str(connection),
+              '--allow-model-access','--model-call-limit','3')
+        c,first=self.invoke('prepare',*args);self.assertEqual(c,0)
+        self.assertIn('--model-call-limit',first['argv'])
+        connection.write_text('{"backend":"codex","model":"changed"}')
+        c,second=self.invoke('prepare',*args);self.assertEqual(c,0)
+        self.assertNotEqual(first['dispatch_sha256'],second['dispatch_sha256'])
+        with patch.object(ci.subprocess,'run') as execute:
+            c,result=self.invoke('run',*args,'--expect-dispatch',first['dispatch_sha256'])
+        self.assertEqual(c,2);execute.assert_not_called()
     def tree(self):
         return {str(p.relative_to(self.root)):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
     def plan(self):

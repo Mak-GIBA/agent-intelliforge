@@ -1,9 +1,0 @@
-{
-  "source_path": "tools/codex-yomiyasu/evals/explanation_native.py",
-  "source_sha256": "b458b55e0509013f9ebc2f4c8b5777c1e83494577c4300218dae1ea09f13e3a3",
-  "line_start": 18,
-  "line_end": 22,
-  "checked_at": "2026-10-11T14:02:37.921744+00:00",
-  "excerpt": "def full_reads(items, path):\n    return [{'command':r.get('command'),'exit_code':0,'content_sha256':base.sha(path.read_bytes())}\n            for r in items if r.get('exit_code')==0 and path.read_text().strip() in r.get('aggregated_output','')\n            and (str(path) in r.get('command','') or 'yomiyasu/references/explanation.md' in r.get('command',''))\n            and re.search(r'\\b(cat|sed|head|python3?|read_file)\\b',r.get('command',''))]",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

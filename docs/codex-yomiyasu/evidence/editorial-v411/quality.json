@@ -1,0 +1,30 @@
+{
+  "protocol": "editorial-native-v411",
+  "status": "passed",
+  "completed_pairs": 4,
+  "case_ids": [
+    "W01",
+    "W10",
+    "W17",
+    "W24"
+  ],
+  "critical_errors": [],
+  "unresolved_regressions": [],
+  "route_failures": [],
+  "scope": "Four paired native uses and one separate blinded-label same-model review; not full 24-use validation",
+  "elapsed_seconds": 275.23,
+  "artifacts": {
+    "W01-baseline.json": "dadbf71b53c7ce858fb746e20b76a5f63d734ea3f9ce739b729a772992bea16e",
+    "W01-candidate.json": "cf727d4cf34222fdee876f9da2b1ce619fc5d85fb79e1aef15180aec30bc12cf",
+    "W10-baseline.json": "8ba5233ec6986399c700313a0409389cbf16f625b46c12d7f2f715e0d54eb040",
+    "W10-candidate.json": "2c6697975bb382b9e50c9731b69238878ccc6ab7c037da9fa424f29d2a1677b2",
+    "W17-baseline.json": "de03d509c3262b11fd325992098fc21ef839e772f0d28701413549613e561ddc",
+    "W17-candidate.json": "4e7ab87c839763627ebdc28d233f35a90d083922eff0a8567544d52db2c8bae1",
+    "W24-baseline.json": "931c4595b37cdd9dfe60c500052c1e9e3759894b65c4123823ad0dfa2fb8987c",
+    "W24-candidate.json": "c18ce11a74a8b2e56e11e996e57b9bdc5ea143b36189d3a8028d7f83fcf2413f",
+    "contract.json": "996ec9f8b37365861e1b579bb0e4d855e7edf6d75118c429a40b55e94440b34f",
+    "flow_native.py": "bf404bb5e112a7c432f32598c76c5c8fd87814db807f67719830152d60aba249",
+    "review.json": "825b9fc3d234ff8bfa7cf089ea0e54580584ecbe0980ffa370352de6711eef20",
+    "runner.py": "71ebc095677540ee917a70d86638370f4bb8d493c7cbafd1593ce185dff70107"
+  }
+}

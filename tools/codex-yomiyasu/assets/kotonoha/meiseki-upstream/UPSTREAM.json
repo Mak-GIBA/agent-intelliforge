@@ -1,0 +1,38 @@
+{
+  "repository": "bamboo-nova/meiseki",
+  "tag": "v0.10.0",
+  "commit": "9750d9262c949aa3919b05b9dff1ba9ef502da03",
+  "files": {
+    "SKILL.md": {
+      "repo_path": ".agents/skills/meiseki/SKILL.md",
+      "size": 19525,
+      "git_blob_sha1": "1954db4326e6e2f243497e6216be6ddc7304a803"
+    },
+    "references/markdownlint.config.jsonc": {
+      "repo_path": ".agents/skills/meiseki/references/markdownlint.config.jsonc",
+      "size": 1958,
+      "git_blob_sha1": "86b696f2f4d69d9a660e0a06fe4b6cca6bff1336"
+    },
+    "references/patterns.md": {
+      "repo_path": ".agents/skills/meiseki/references/patterns.md",
+      "size": 18793,
+      "git_blob_sha1": "8c3f5dc13f5aedd47dce869b289d1a316250d2e6"
+    },
+    "references/prh-llm-phrases.yml": {
+      "repo_path": ".agents/skills/meiseki/references/prh-llm-phrases.yml",
+      "size": 7064,
+      "git_blob_sha1": "80b23a3ce2116151486c3eb98dea2b0e525bfdd5"
+    },
+    "references/textlint.config.json": {
+      "repo_path": ".agents/skills/meiseki/references/textlint.config.json",
+      "size": 1176,
+      "git_blob_sha1": "7327b495383ac39943b42f0489bc618aa166f216"
+    },
+    "LICENSE": {
+      "repo_path": "LICENSE",
+      "size": 1068,
+      "git_blob_sha1": "46f6c00e8728369d0bcdcab2866ad66c666736a7"
+    }
+  },
+  "release_url": "https://github.com/bamboo-nova/meiseki/releases/tag/v0.10.0"
+}

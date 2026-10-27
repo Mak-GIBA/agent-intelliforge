@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "protocol": "native-flow-v1",
+  "cases": 24,
+  "preserved_normative_resources": 9,
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "generation_calls": 96,
+  "review_calls": 18,
+  "fresh_baseline_generations": 24,
+  "candidate_generations": 72,
+  "baseline_reused_in_rounds": [
+    2,
+    3
+  ],
+  "source_revision_cycles": 2,
+  "model_window_seconds": 2413.61,
+  "ceiling_seconds": 3600,
+  "timing_method": "original first contract epoch to final review file creation, measured locally before export",
+  "adopted_round": 3,
+  "critical_errors": [],
+  "unresolved_regressions": [],
+  "route_failures": [],
+  "quality_sha256": "51a9552725cc15cd4dcc4c65c7e3085336a538f08a0481a0ea5c7aec5f071888",
+  "review_sha256": "d9a608fc8551541aced4cf8cffb4ebf663fb08b5149446335a0bc4586e4a3080",
+  "runner_snapshot_matches_maintained_code": true,
+  "baseline_copies_identical": true,
+  "installed_skill_files_unchanged": 54,
+  "baseline_upstreams": {
+    "yomiyasu": {
+      "repository": "nanaism/yomiyasu",
+      "tag": "local-602a3690dadd",
+      "commit": "602a3690dadd5d620bb21524353b8d192914eabb"
+    },
+    "meiseki": {
+      "repository": "bamboo-nova/meiseki",
+      "tag": "v0.9.0",
+      "commit": "a6cac6e2cabe1d39a0c079a898749311c7fadbf5"
+    }
+  },
+  "limitations": [
+    "Same model separate sessions; one baseline output per case",
+    "Fixed tasks reused for source revision; not an unseen holdout",
+    "Original upstream resources differ between baseline and candidate",
+    "Tool text visibility is not proof of internal reasoning or application counts",
+    "Timing is not a causal speed comparison or billing measurement"
+  ]
+}

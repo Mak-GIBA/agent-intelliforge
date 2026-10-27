@@ -1,8 +1,0 @@
-{
-  "status": "timeout",
-  "elapsed_seconds": 539.25,
-  "prompt_sha256": "6e3e987ee9057ecfeb63b4170c3c03b9a27d3517952281a5fd99493107e4603b",
-  "output": null,
-  "usage": null,
-  "tools": []
-}

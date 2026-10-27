@@ -1,0 +1,130 @@
+{
+  "schema": 1,
+  "baseline_version": "4.1.0",
+  "baseline_commit": "6a182c1accd059c6b0cf89abe749e1dc112681dc",
+  "candidate_version": "4.1.1",
+  "changes": {
+    "SKILL.md": {
+      "before_sha256": "3120dd5710ea6938e47961536017c0c910385e50af15a78179c4d1884ac03270",
+      "after_sha256": "7c4e7386d5e717cb5a827549cbc987c164dfde235cf93fa37ce3dab8606d591f",
+      "replacements": [
+        [
+          "# kotonoha — 旧版の推敲フローを保つ日本語執筆",
+          "# kotonoha — 明晰で自然な日本語を書く"
+        ],
+        [
+          "専門入口を既に適用した工程は繰り返さない。",
+          "既に適用した工程は繰り返さない。"
+        ]
+      ]
+    },
+    "references/paragraphs.md": {
+      "before_sha256": "69bb1a290ff5381c81b1747a013de79f1f815087ea80641d9d592554864babfa",
+      "after_sha256": "0a2be9a762803209393803530dc8b52c3f8147f3a187ce2d047707e7b50c735e",
+      "replacements": [
+        [
+          "# paragraph-writing",
+          "# 段落構成の点検"
+        ],
+        [
+          "kotonohaの工程として読まれた場合は構成の点検を一度だけ行い、再帰的に呼び合わない。",
+          "構成の点検は一度だけ行い、資料やSkillを再帰的に呼び出さない。"
+        ],
+        [
+          "# 論点から段落を組み立てる",
+          "## 論点から段落を組み立てる"
+        ],
+        [
+          "。本文・例文・検査手順はこの提案用に作成した。",
+          "。"
+        ],
+        [
+          "このスキルを読んだら対象の段落・留保の工程を適用し、同じ下書きを次の工程へ渡す。",
+          "この資料に沿って段落構成を点検し、同じ下書きを次の工程へ渡す。"
+        ]
+      ]
+    },
+    "references/directness.md": {
+      "before_sha256": "72936cbe206500407b0fee7c13c1fd5e273dc81c5e0561a9a18c42e795c97adc",
+      "after_sha256": "15a1811414be39f225725d7f7973d0d306b439a28dd6d661800ad40658b29405",
+      "replacements": [
+        [
+          "# japanese-direct-writing",
+          "# 留保の点検"
+        ],
+        [
+          "kotonohaの工程として読まれた場合は同じ下書きの留保を一度だけ点検し、",
+          "同じ下書きの留保を一度だけ点検し、"
+        ],
+        [
+          "# 留保を減らし、確信度は変えない",
+          "## 留保を減らし、確信度は変えない"
+        ],
+        [
+          "このスキルを読んだら対象の段落・留保の工程を適用し、同じ下書きを次の工程へ渡す。",
+          "この資料に沿って留保を点検し、同じ下書きを次の工程へ渡す。"
+        ]
+      ]
+    },
+    "references/finish.md": {
+      "before_sha256": "aff7ab938ab80cc13a875eea17831f920d3ff562f4a8e84caa027447a820e24d",
+      "after_sha256": "5c217e718c18320e66ead36d5cd74fe3682816ca8138a2198742c4c1d915f6e3",
+      "replacements": [
+        [
+          "# yomiyasuによる仕上げ",
+          "# 自然さの点検"
+        ],
+        [
+          "意味保持と読者境界は共通フローに従い、",
+          "意味保持と読者境界は[SKILL.md](../SKILL.md)の手順に従い、"
+        ],
+        [
+          "現在の `../upstream/references/`",
+          "`../upstream/references/`"
+        ],
+        [
+          "上流の目安とこの独自工程が異なる場合は、ユーザーの依頼、意味保持、読者・媒体、この共通フローの順に優先する。",
+          "上流資料の目安とSKILL.mdの手順が異なる場合は、ユーザーの依頼、意味保持、読者・媒体、SKILL.mdの手順の順に優先する。"
+        ]
+      ]
+    },
+    "references/file-review.md": {
+      "before_sha256": "748d03ba4b730ba8fa55cf49e0560ad8c50e5077e45b7d95aff1935061fd4e41",
+      "after_sha256": "cc1a2718b3bbdbd11eec62ca17093c224567b84af09727356a6cec838ab9778b",
+      "replacements": [
+        [
+          "最新版の統合検査で原文・提供資料との意味リスクや提出する本文の同一性まで調べる場合は、",
+          "source-checkで原文・提供資料との意味リスクや提出する本文の同一性まで調べる場合は、"
+        ],
+        [
+          "本文の説明不足には共通フローと同じ条件を適用し、",
+          "本文の説明不足には[SKILL.md](../SKILL.md)の手順と同じ条件を適用し、"
+        ]
+      ]
+    },
+    "references/sources.md": {
+      "before_sha256": "3219fed483e03e3033f238b0dfcdc89c54d5716286624c389ee8d2c05a91c5ba",
+      "after_sha256": "d7c844ec13dc186a595d307dac258bf25e48865be7c17b734748c7cc612a8c8d",
+      "replacements": [
+        [
+          "段落構成と留保整理は従来の独自規範を同じSkillへ移した。段落原則の出典はPurdue OWL On ParagraphsとHarvard College Writing Center Anatomy of a Body Paragraph。原文記事は転載しない。説明の深さの規範はプロジェクトの従来の比較・評価から継承する。過去の評価は現行版の品質証明として扱わない。",
+          "段落構成・留保整理・説明の深さはkotonohaの資料で扱う。段落原則の出典はPurdue OWL On ParagraphsとHarvard College Writing Center Anatomy of a Body Paragraph。原文記事は転載していない。"
+        ],
+        [
+          "通常の執筆ではこの保守情報を読む必要はない。",
+          "出典や適用範囲の確認が必要な場合だけ、この資料を読む。"
+        ]
+      ]
+    }
+  },
+  "metadata": {
+    "FLOW.json": {
+      "before_sha256": "8bb967c29968f4573b1b39ef5e1209c362a02bb1ebcd441ca2f73c8810be50df",
+      "after_sha256": "4fd262c1c0931791294db80a31bac4c539b0ef224f511c680a0d96d33bc6c917"
+    },
+    "UPSTREAMS.json": {
+      "before_sha256": "c0b3872afb13d3df6942f72d29b98182439581703ab9fe2d437c0b4169b9c6bf",
+      "after_sha256": "c7ae867c96168761c64f0a171ea24ea4f1e04ab8bed041e65aa17cd2422a53a8"
+    }
+  }
+}

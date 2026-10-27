@@ -1,9 +1,0 @@
-{
-  "source_path": "tools/codex-yomiyasu/evals/run_study.py",
-  "source_sha256": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47",
-  "line_start": 7,
-  "line_end": 28,
-  "checked_at": "2026-10-11T13:04:16.900614+00:00",
-  "excerpt": "import argparse\nfrom concurrent.futures import ThreadPoolExecutor, as_completed\nfrom datetime import datetime, timezone\nimport hashlib\nimport importlib.util\nimport json\nimport os\nfrom pathlib import Path\nimport random\nimport re\nimport shutil\nimport subprocess\nimport tempfile\nimport threading\nimport time\n\nROOT = Path(__file__).resolve().parents[1]\nARMS = ('baseline', 'a', 'b', 'c')\nLOCK = threading.Lock()\n\ndef sha(data):\n    return hashlib.sha256(data).hexdigest()",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

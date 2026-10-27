@@ -1,9 +1,0 @@
-{
-  "source_path": "tools/codex-yomiyasu/evals/run_study.py",
-  "source_sha256": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47",
-  "line_start": 206,
-  "line_end": 223,
-  "checked_at": "2026-10-11T12:32:13.743232+00:00",
-  "excerpt": "        if phase=='native':\n            task=next(t for t in native_tasks() if t['id']==job['task'])\n            skills=install_native(cwd,sources/job['arm']/'assets',upstream)\n            prompt=task['prompt']+'\\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。'\n        else:\n            tasks=contract['tasks'] if phase=='writing' else json.loads((out/'holdout-tasks.json').read_text())\n            task=next(t for t in tasks if t['id']==job['task'])\n            prompt=('この比較は文章生成のみ。必要な規則と参照資料は展開済みなので、ツール・ファイル・検索・他のスキルを使わず、完成稿だけ返してください。\\n\\n'\n                    +guides(sources,upstream,job['arm'])+'\\n\\n【執筆課題】\\n'+task['instruction']+'\\n'+task['input'])\n        result=execute(prompt,cwd,contract,locations['disabled'],native=phase=='native')\n        if phase=='native':\n            result['reads']=read_receipts(result['tools'],skills)\n            actual=set(result['reads']);expected=set(task['expected'])\n            result['route_pass']=actual==expected and all(len(rows)==1 for rows in result['reads'].values()) and result['status']=='completed'\n            result['expected_reads']=task['expected']\n            # Replace only the temporary workspace prefix in actual command receipts.\n            result=json.loads(json.dumps(result,ensure_ascii=False).replace(str(cwd),'<workspace>'))\n        result.update(job_id=identifier,**job)",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

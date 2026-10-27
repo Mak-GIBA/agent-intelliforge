@@ -37,7 +37,11 @@ class KotonohaContracts(unittest.TestCase):
         meta=json.loads(A['meiseki-upstream/UPSTREAM.json'])
         for name,digest in meta['files'].items():
             local='SKILL.upstream.md' if name=='SKILL.md' else name
-            self.assertEqual(I.sha(A['meiseki-upstream/'+local]),digest)
+            raw=A['meiseki-upstream/'+local]
+            if isinstance(digest,str):self.assertEqual(I.sha(raw),digest)
+            else:
+                self.assertEqual(I.blob_sha(raw),digest['git_blob_sha1'])
+                self.assertEqual(len(raw),digest['size'])
         self.assertIn(b'MIT License',A['meiseki-upstream/LICENSE'])
     def test_unreviewed_upstream_is_rejected_before_preparation(self):
         with mock.patch.object(I,'json_download',side_effect=[{'tag_name':'v9.0.0'},{'sha':'a'*40}]),mock.patch.object(I,'download',return_value=b'changed'):

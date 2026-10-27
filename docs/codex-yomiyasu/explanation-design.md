@@ -2,7 +2,7 @@
 
 ## 現行版でできることと不足
 
-作業開始時の2.0.0-proposal.2を[固定した原稿](../../tools/codex-yomiyasu/evaluation-explanation/snapshots/baseline/assets/)として保持した。既存の段落規範は、主題、根拠、その解釈をつなぎ、意味保持と読者境界の保護が詳しい。paragraph-writingとjapanese-direct-writingの実ファイルを読む工程も既にある。追加Skillで同じ機能を重ねる必要はない。
+作業開始時の2.0.0-proposal.2を[固定した原稿](https://github.com/Mak-GIBA/agent-intelliforge/tree/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/tools/codex-yomiyasu/evaluation-explanation/snapshots/baseline/assets)として保持した。既存の段落規範は、主題、根拠、その解釈をつなぎ、意味保持と読者境界の保護が詳しい。paragraph-writingとjapanese-direct-writingの実ファイルを読む工程も既にある。追加Skillで同じ機能を重ねる必要はない。
 
 不足するのは、根拠の対応を確認した後に「処理がどう変わるか」まで説明を下ろす判断である。抽象名詞を自然な表現へ直す規範はあるが、読者が仕組み・操作・差異を理解できたかを独立に測る評価は弱かった。既存評価は主に段落、自然さ、読者適合を測っており、完了稿が全て合格した過去の比較から説明の深さの改善は言えない。
 

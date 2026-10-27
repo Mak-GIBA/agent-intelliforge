@@ -1,0 +1,37 @@
+{
+  "reviewed": true,
+  "capabilities": [
+    "meaning",
+    "clarity",
+    "paragraphs",
+    "explanation",
+    "certainty",
+    "naturalness",
+    "reader-boundary",
+    "scoped-edit",
+    "file-checks"
+  ],
+  "unintegrated": [],
+  "source_changes": [
+    {
+      "source": "legacy 3.0.0 at 6da3e4",
+      "adopted": "Complete preserved flow and nine detailed normative blocks; allowed wiring changes recorded in FLOW.json; source originals remain pinned."
+    },
+    {
+      "source": "yomiyasu v2.4.0 / meiseki v0.10.0",
+      "adopted": "Existing verified original files and checkers unchanged; detailed routing through the restored v3 adapters."
+    },
+    {
+      "excluded": "External sending, hooks, quizzes, PDF, mandatory scoring and original output boilerplate",
+      "reason": "Same exclusions and unified workflow as prior writing scope."
+    },
+    {
+      "source": "24-use native round 1",
+      "adopted": "Preserved blocks unchanged. Clarified quantifier/negation scope, comparison links, repeated operation summaries, Markdown heading structure and relative reference base after observed failures. Candidate rerun required; original outputs retained."
+    },
+    {
+      "source": "native round 2",
+      "adopted": "Clarified retained author claims and title/heading coverage in diagnosis. Retained v3 blocks unchanged; one additional full candidate round within the original 60 minute ceiling. Original round 2 outputs, ratings and visibility audit retained."
+    }
+  ]
+}

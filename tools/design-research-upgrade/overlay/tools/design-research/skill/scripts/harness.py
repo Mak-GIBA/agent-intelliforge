@@ -40,7 +40,7 @@ from reassessment import snapshot_requirements
 from research_workstreams import snapshot_task, role_instructions as workstream_instructions
 
 HERE = Path(__file__).resolve().parent
-VERSION = "2.7.0"
+VERSION = "2.10.0"
 SEVERITIES = ["Critical", "High", "Medium", "Low"]
 ID = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,63}")
 
@@ -277,11 +277,11 @@ def run_role(role, schema, state, workspace, run_dir):
     (role_dir / "prompt.txt").write_text(scrub(prompt), "utf-8")
     mode = role_sandbox(state, role)
     env = child_environment(role_dir, "DR_GAN_CHILD")
-    network = bool(state["config"]["allow_network"] and role != "fixer")
+    network = bool(state["config"]["allow_network"] and role != "fixer" and not role.startswith('report-'))
     argv = ["codex", "exec", "-C", state["config"]["project"], "--sandbox",
             mode, "--add-dir", str(role_dir), "--json", "--ephemeral",
             "--output-schema", str(schema_path), "--output-last-message", str(output),
-            "-c", 'web_search="' + ("live" if state["config"]["allow_network"] and role != "fixer"
+            "-c", 'web_search="' + ("live" if network
                                    else "disabled") + '"', "-c",
             "sandbox_workspace_write.network_access=" + str(network).lower()]
     if not state["expected_source"]["head"]:
@@ -382,6 +382,8 @@ def nested_dossier(value):
 
 
 def design_format(value, state):
+    from original_first import attach_origin
+    attach_origin(value, state)
     from dossier import validate_dossier
     draft = nested_dossier(value)
     validated = validate_dossier(draft)
@@ -399,26 +401,44 @@ def design_format(value, state):
 
 def bounded_instructions(role, state):
     """Child fast path: one responsibility, with conditional reference disclosure."""
+    if state.get('original_first_contract_version') == 1:
+        from original_first import schemas, instructions as original_instructions
+        if role in schemas(sys.modules[__name__]):
+            return original_instructions(role)
+    if role.startswith('report-'):
+        if state.get('report_contract_version') == 2:
+            from report_composition import instructions
+        else:
+            from report_polish import instructions
+        return instructions(role)
     instructions = {
         "planner": "Inspect only relevant requirements/source/tests. Freeze a minimal executable evaluation plan, not a finished report. Return goal, baseline, constraints, criteria, safe test commands and optional queries. Each criterion covers one bounded question, primary outcome first. For research, read references/effectiveness-evaluation.md and return evaluation_json freezing purpose, candidate IDs, task inputs/expected outputs, primary graders and controls before execution. Research test_commands are existing PROJECT backend tests, never future generated experiment scripts. If no backend tests exist use test_commands=[]: runtime criteria are checked through producer-assets experiments and parent grading, not a duplicate backend invocation. Do not downgrade effectiveness to literature. Literature/design need no artificial experiment. About five substantive candidates when relevant; a smaller comparison needs an explained exception. Do not execute checks.",
         "producer-design": "Read references/evidence-format.md for the core dossier only. Return the smallest valid runnable comparison dossier: question, scope, constraints, candidate mechanisms, common comparison criteria, sources/claims and planned experiments. All unmeasured effects are unknown/hypothesis; provisional/deferred decision. No reader_guide, method_ideas, figures, full Methods chapter or additional literature survey in this unit. Follow frozen candidate IDs. Detailed evidence and presentation are separate later units. If saved sources/dossier/reason exist, preserve failed access history and reuse actually accessible originals; do not repeat failing URLs when a registered original mirror is available. Update support links to its actual source ID, never silently reidentify the old source. Do not implement or execute experiments.",
         "producer-assets": "Read references/effectiveness-evaluation.md result format. Build only files/commands for the saved minimal design and frozen evaluation. Export actual paired final task outputs and contract_sha256 in declared artifact_paths. No expected-answer echo or mock in a real effectiveness study. Installed local runtimes only; no downloads/network/paid calls. Experiment input_files must be names from available_project_input_files, relative to PROJECT root (e.g. tasks.json), never absolute or ../. Generated files/artifact_paths are relative to the isolated scratch root. Source.path is workspace-relative; code_evidence.path is project-relative. For literature/design without a necessary PoC return empty files/experiments. Parent executes in isolation.",
         "producer-results": "Read references/evidence-format.md. Update only the small core dossier using actual saved experiment receipts, results and grades. Set executed status only with real artifacts. Preserve candidate IDs and sources. Add evaluation_result contract_sha256/artifact_paths when metrics exist; artifact_paths must contain only parent-exported paired-result JSON, never receipt/code/stdout/stderr. With no paired measurements, omit evaluation_result or use {}; qualitative review grades belong in the comparison/decision, not this runtime-result field. experiment.artifacts contains successful matching experiment receipts. State a conditional recommendation consistent with measured thresholds and failures. No presentation/figures yet.",
         "producer-evidence": "Investigate only unit_task.candidate_id against its baseline and question. Read decisive primary passages and relevant source/code; no whole-catalog survey. Read references/evidence-format.md fields. Return patch_json containing sources, claims, candidate (same ID), comparison rows for that candidate. Sources/claims IDs use this candidate's prefix. Use actually read locators, reported/inferred/hypothesis/unknown distinctions; no fabricated effect. Do not alter other candidates, frozen criteria or observed artifacts. Return access sources as SOURCE descriptors separately.",
-        "producer-reader": "Read references/readable-documents.md. Return patch_json containing only reader_guide and sources=[]. Explain conclusion first, real with/without example, tested scope/limitations and meaningful distinct overview/detail figures. Reuse existing measured outputs; illustrations explicitly unmeasured. Give comparison_exception if fewer than frozen target methods. Do not change scientific claims or grades.",
+        "producer-reader": "Read references/readable-documents.md. Return patch_json containing only reader_guide and sources=[]. Explain conclusion first, real with/without example, tested scope/limitations and meaningful distinct overview/detail figures. Use the overview to compare every candidate from input through processing/intermediate representation to output; expand only the important mechanism. Figure branches show method alternatives, not unverified concurrent execution. Reuse existing measured outputs; illustrations explicitly unmeasured. Give comparison_exception if fewer than frozen target methods. Do not change scientific claims or grades.",
         "producer-method": "Read references/proposed-method-report.md, references/method-ideation.md and scripts/method_ideation.py skeleton()/quality_issues(). method_ideas requires schema_version=1, question, task, baseline{id,name,method,known_limitations}, comparison_plan{target_total,exception_reason}, primary_metric, hard_constraints, failure_modes, sources, candidates, selection{leading_candidate_id,rationale,rejected_candidate_ids}, notes. Use exact documented field names and types, not invented problem/baseline.description/target_methods fields. A frozen two-method comparison may contain one substantive proposal only with a substantive scope exception; do not invent candidates. Narratives use the user brief language. Return patch_json containing only method_ideas and sources=[] for the existing saved candidates. Formalize mechanisms, interfaces, closest prior art, objections, complexity and discriminating experiments. The leading design needs the complete presentation and bounded figures. Use saved actual grades/statuses; describing a method does not imply measured superiority. Do not repeat source discovery or change dossier IDs/evidence.",
         "reviewer-check": "Independently verify only unit_task.criterion_ids against decisive originals and actual receipts/stdout/results. Return checks exactly for those criteria, evidence-backed issues, code_evidence, sources, complexity explanation; dossier_json empty. code_evidence.path may only name original PROJECT source files from available_project_input_files. Reports/JSON/receipts/generated experiment code inside the research workspace are artifacts: use existing evidence_ids or workspace-relative SOURCE.path, never code_evidence. Carry previous issues in this criterion scope; never self-certify a new issue resolved. Unknown stays unknown. Runtime pass requires current successful receipts. Do not re-run checks or edit anything.",
         "reviewer-dossier": "Read references/evidence-format.md and the presentation contract only if present. Independently verify and correct the saved dossier against decisive original sources, actual artifacts and recomputed grades. Return dossier_json as a compact object {base_sha256: unit_task.base_sha256, replace: {changed_top_level_field: corrected_complete_value}}. If no corrections are needed, replace={}. Never copy unchanged sources, claims, diagrams or method/reader sections back into the output. Parent reconstructs the full dossier and runs the unchanged strict gates. Allowed replacement fields: sources, claims, candidates, comparison, experiments, limitations, decision, evaluation_result, reader_guide, method_ideas, reassessment. Inspect unit_task.known_ledger_errors, completed_required_units and saved criterion_reviews first. Update decision and presentation text to reflect completed work; remove obsolete explanation/review waiting items, while preserving genuine unresolved domain constraints and unmeasured effects. For an unavailable decisive source, read an actually accessible original, register it under a new source ID if needed, and update claim support links to that record. Preserve failed access history and original identities. A provisional decision alone does not resolve unavailable support. experiment.artifacts must name successful matching parent experiment receipt paths under the current evidence contract; evaluation_result.artifact_paths contains only parent-exported paired-result JSON, never receipts or code/log files. unit_task.current_exported_artifacts lists all current exports, including auxiliary files; inspect each JSON against the frozen paired-result format before choosing it. Code/log paths belong in sources.local_path. With no paired measurements, omit evaluation_result or use {}; never populate it with qualitative review grades or source access metadata. Every path remains hash checked. Never alter genuine statuses to avoid a failed check. For design/literature with unmeasured effects, keep decision.status provisional/deferred even when a qualitative mechanism is preferred; checks/issues/code_evidence empty because criterion reviewers already assessed these. Preserve source and candidate identities. Existing SOURCE descriptors must be copied verbatim from saved sources[id].source, including locator, or omitted because they are already registered. Use a new source ID for another locator/passage; never rewrite a saved descriptor. New dossier source IDs need matching actual access descriptors. Never turn planned/failed work into observed success. Do not repeat broad searches. complexity_ok needs a reason.",
         "fixer": "Reproduce only selected issues and apply the smallest requested source/test change. Preserve user edits. Do not edit framework outputs, evidence, rules, settings or reports. Return actual changed files and fixed_issue_ids; next independent review must confirm. Parent executes required checks in isolation.",
     }
-    return instructions[role]
+    instruction = instructions[role]
+    if state.get('original_first_contract_version') == 1 and role == 'producer-assets':
+        instruction = instruction.replace('Installed local runtimes only; no downloads/network/paid calls.',
+            'Use only the parent-prepared pinned runtimes in DR_RUNTIMES. No child downloads, installs or direct credential access; model calls use the parent bridge and shared cap.')
+    return instruction
 
 
 def checked_role(role, schema, state, workspace, run_dir, validator=None):
     """One syntax/locator/history repair, within the original role's time budget."""
     if not (state.get("role_contract_version") or state.get("evaluation_contract_version")):
         return run_role(role, schema, state, workspace, run_dir)
-    deadline = time.monotonic() + state["config"]["phase_timeout"]
+    limit = state['config']['phase_timeout']
+    if state.get('original_first_contract_version') == 1 and not role.startswith('report-'):
+        from original_first import remaining
+        limit = min(limit, remaining(state))
+    deadline = time.monotonic() + limit
     state["_role_deadline"] = deadline
     try:
         for attempt in range(2):
@@ -443,7 +463,7 @@ def checked_role(role, schema, state, workspace, run_dir, validator=None):
                     "Evaluation artifact needs a current matching parent record",
                     "Evaluation needs the frozen contract hash and actual paired-result artifacts",
                     "Primary effects measured, but independent review has not bound",
-                    "Decisive source unavailable:", "IDs must be unique",
+                    "Decisive source unavailable:", "Source review:", "Report polish:", "IDs must be unique",
                     "Sources need titles and exact locators", "Source needs a URL or real local artifact"))
                 if attempt or not repairable or time.monotonic() >= deadline:
                     raise
@@ -585,6 +605,8 @@ def plan_candidate(value, state):
     candidate = copy.deepcopy(state)
     candidate["plan"] = copy.deepcopy(value)
     validate_plan(candidate)
+    from original_first import check_plan
+    check_plan(candidate["plan"], candidate)
     state["plan"] = candidate["plan"]
     for key in ("evaluation_contract", "evaluation_contract_sha256"):
         if key in candidate:
@@ -645,7 +667,13 @@ def collect_sources(rows, state, workspace, run_dir):
                       "evidence_id": match}
         else:
             path = regular_path(run_dir / "sources" / (source["id"] + "-" + uuid.uuid4().hex[:8] + ".json"))
-            result = source_receipt(source, path, state["config"]["allow_network"])
+            from report_contract import active as report_active
+            if report_active(state) and source['read_level'] in {'full_text', 'relevant_sections'}:
+                result = source_receipt(source, path, state["config"]["allow_network"], archive_body=True)
+            else:
+                result = source_receipt(source, path, state["config"]["allow_network"])
+            if result.get('original_name'):
+                result['original_path'] = (path.parent/result['original_name']).relative_to(workspace).as_posix()
             match = add_record(state, workspace, path, kind="source",
                                description=source["title"], url=source["url"],
                                access_status=result["status"])
@@ -817,7 +845,8 @@ def experiments(state, workspace, run_dir):
             relative(name)
             if sensitive_path(name) or name not in state["expected_source"]["files"]:
                 raise Blocked("Experiment input must be a non-secret project source/data file")
-        directory = regular_path(run_dir / f"{state['iteration']:03d}-experiments" / experiment["id"])
+        stage = state.get('original_first', {}).get('phase', '') if state.get('original_first_contract_version') else ''
+        directory = regular_path(run_dir / (f"{state['iteration']:03d}-" + (stage+"-" if stage else "") + "experiments") / experiment["id"])
         directory.mkdir(parents=True)
         with tempfile.TemporaryDirectory(prefix="design-research-poc-") as temp:
             scratch = Path(temp)
@@ -840,10 +869,13 @@ def experiments(state, workspace, run_dir):
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, dest)
             env = test_environment(scratch)
-            execute_check(experiment["command"], experiment["check_ids"], state, workspace,
-                          directory, scratch, env, experiment_id=experiment["id"],
-                          timeout=experiment["timeout_seconds"], network=False,
-                          artifact_paths=experiment["artifact_paths"])
+            from original_first import reserve_experiment, experiment_context, remaining, active as original_active
+            reserve_experiment(state, experiment['id'])
+            with experiment_context(sys.modules[__name__], state, workspace, run_dir, scratch, env) as (actual_env, network):
+                timeout = min(experiment['timeout_seconds'], remaining(state)) if original_active(state) else experiment['timeout_seconds']
+                execute_check(experiment["command"], experiment["check_ids"], state, workspace,
+                              directory, scratch, actual_env, experiment_id=experiment["id"],
+                              timeout=timeout, network=network, artifact_paths=experiment["artifact_paths"])
             save(state, run_dir)
     assert_source(state["expected_source"], state["config"]["project"], workspace)
 
@@ -1005,6 +1037,8 @@ def validate_review(value, state, workspace, run_dir):
         require_contract(dossier, state, workspace)
         from evaluation_contract import evaluate
         evaluate(dossier, state, workspace)
+        from report_contract import assess
+        state['candidate_adoption_holds'] = assess(dossier, state)
         state["dossier"] = dossier
         state["ledger_validation"] = result
     elif state["config"]["mode"] == "research":
@@ -1093,6 +1127,11 @@ def dossier_review_task(state, workspace):
     base = nested_dossier(state["proposal_design"])
     errors = list(verify_artifacts(base, workspace, state["evidence"])["errors"])
     errors.extend(decisive_source_errors(base, state))
+    from report_contract import assess
+    try:
+        assess(base, state)
+    except Blocked as exc:
+        errors.append(str(exc))
     try:
         evaluate(copy.deepcopy(base), copy.deepcopy(state), workspace)
     except Blocked as exc:
@@ -1119,6 +1158,14 @@ def bounded_loop(state, workspace, run_dir):
     from execution_units import unit, digest
     from evaluation_contract import assert_frozen, checkpoint_results
     from report import publish
+    if state.get('report_finalization'):
+        from report_polish import finish, assert_artifacts
+        assert_artifacts(state, workspace)
+        finish(state, workspace, run_dir, checked_role)
+        state['status'] = state['report_finalization']['target_status']
+        state['phase'] = 'complete'
+        save(state, run_dir)
+        return
     def prerequisites(role):
         if role == "planner":
             return ()
@@ -1144,10 +1191,15 @@ def bounded_loop(state, workspace, run_dir):
             return tuple("review-" + c["id"] for c in state["plan"]["criteria"]) + presentation
         return ()
     def call(role, schema, validator=None, name=None, dependencies=()):
+        adaptation = state.get('original_first_contract_version') == 1 and state.get('original_first', {}).get('phase') == 'adaptation'
+        if adaptation:
+            name = 'adaptation-' + (name or role)
         if not dependencies:
             dependencies = prerequisites(role)
             # A correction iteration retains the frozen plan and validated design.
             # Only units belonging to this iteration need an in-iteration edge.
+            if adaptation:
+                dependencies = tuple('adaptation-'+dep for dep in dependencies)
             dependencies = tuple(dep for dep in dependencies
                 if f"{state['iteration']:03d}-" + dep in state.get("units", {}))
         state["phase"] = name or role
@@ -1163,6 +1215,10 @@ def bounded_loop(state, workspace, run_dir):
                      name=name, dependencies=dependencies)
         publish(state, workspace, run_dir)
         return value
+    from original_first import active as original_active, prepare as prepare_originals, resume_transition
+    if original_active(state):
+        prepare_originals(sys.modules[__name__], state, workspace, run_dir)
+        resume_transition(sys.modules[__name__], state, workspace, run_dir)
     if not state.get("plan"):
         schema = PLAN_V2 if state.get("evaluation_contract_version") else PLAN
         value = call("planner", schema, plan_candidate)
@@ -1172,7 +1228,8 @@ def bounded_loop(state, workspace, run_dir):
         planned = [("producer-design", "実行に必要な比較設計"), ("producer-assets", "実験資材")]
         if state["config"]["mode"] == "research":
             planned += [("producer-results", "主要結果と暫定結論")]
-            planned += [("evidence-" + cid, "候補ごとの原典確認") for cid in state["evaluation_contract"]["candidate_ids"]]
+            if not original_active(state):
+                planned += [("evidence-" + cid, "候補ごとの原典確認") for cid in state["evaluation_contract"]["candidate_ids"]]
             if state["config"].get("report_profile") == "proposed-method":
                 planned += [("producer-method", "提案手法の詳細説明")]
             if state["config"].get("reader_friendly"):
@@ -1220,7 +1277,10 @@ def bounded_loop(state, workspace, run_dir):
             draft = nested_dossier(result)
             state["draft_conclusion"] = copy.deepcopy(draft["decision"])
             save(state, run_dir); publish(state, workspace, run_dir)
-            for candidate in list(draft["candidates"]):
+            from original_first import after_results
+            if after_results(sys.modules[__name__], state, workspace, run_dir, call):
+                continue
+            for candidate in ([] if original_active(state) else list(draft["candidates"])):
                 cid = candidate["id"]
                 state["unit_task"] = {"candidate_id": cid, "question": candidate["summary"],
                     "patch_keys": ["sources", "claims", "candidate", "comparison"],
@@ -1233,6 +1293,10 @@ def bounded_loop(state, workspace, run_dir):
                     validated = validate_dossier(preview)
                     if not validated["valid"]:
                         raise Blocked("Comparison design format: " + "; ".join(validated["errors"][:6]))
+                    from report_contract import assess
+                    # This format gate runs before the parent collects newly
+                    # declared sources. Access is required by the final review.
+                    assess(preview, s, require_all=False, verify_access=False)
                 value = call("producer-evidence", PATCH, candidate_format, name="evidence-" + cid)
                 patch_candidate(draft, value, cid)
                 collect_sources(value["sources"], state, workspace, run_dir)
@@ -1320,10 +1384,23 @@ def bounded_loop(state, workspace, run_dir):
         incomplete = [r["id"] for r in state["units"].values() if r["required"] and r["status"] != "complete"]
         reasons.extend("Required unit incomplete: " + key for key in incomplete)
         state["reason"] = "; ".join(reasons) if reasons else "Required evidence, reporting and independent review complete"
+        from report_contract import active as report_active
+        if report_active(state) and (state['config']['mode'] == 'audit' or not reasons):
+            from report_document import substantive_signature
+            from report_polish import finish
+            target = 'reviewed' if state['config']['mode'] == 'audit' else ('research_complete' if research else 'passed')
+            state['report_finalization'] = {'target_status': target, 'science_sha256': substantive_signature(state)}
+            save(state, run_dir)
+            finish(state, workspace, run_dir, checked_role)
+            state['status'] = target
+            state['phase'] = 'complete'
+            return
         if state["config"]["mode"] == "audit":
             state["status"] = "reviewed"; return
         if not reasons:
             state["status"] = "research_complete" if research else "passed"; return
+        if original_active(state):
+            raise Blocked('Original first: independent review unresolved; preserve measurements and resume review-only: '+state['reason'])
         current = metric(state)
         if state.get("best_metric") is None or current < tuple(state["best_metric"]):
             state["best_metric"], state["plateau"] = list(current), 0
@@ -1576,7 +1653,11 @@ def config_from(args, project):
             "report_profile": getattr(args, "report_profile", "comparison"),
             "target_methods": getattr(args, "target_methods", 5),
             "evaluation_purpose": getattr(args, "evaluation_purpose", "auto"),
-            "role_sandbox": getattr(args, "role_sandbox", None) or "workspace-write"}
+            "role_sandbox": getattr(args, "role_sandbox", None) or "workspace-write",
+            "allow_model_access": getattr(args,"allow_model_access",False),
+            "model_call_limit": getattr(args,"model_call_limit",0),
+            "model_connection_file": str(regular_path(args.model_connection)) if getattr(args, "model_connection", None) else "",
+            "model_connection_sha256": sha256(args.model_connection) if getattr(args, "model_connection", None) else ""}
 
 
 def execution(args):
@@ -1627,6 +1708,8 @@ def execution(args):
                         raise Blocked("Producer checkpoint changed after validation")
             from execution_units import assert_inputs, enabled
             assert_inputs(state)
+            from report_polish import assert_artifacts
+            assert_artifacts(state, workspace)
             override_sandbox(state, getattr(args, "role_sandbox", None), now())
             if state["phase"] in {"experiments", "checks"} and not enabled(state):
                 if state["iteration"] >= state["config"]["max_iterations"]:
@@ -1653,12 +1736,15 @@ def execution(args):
             state = {"schema_version": 1, "version": VERSION, "run_id": run_id,
                      "role_contract_version": 1,
                      "execution_contract_version": 2,
+                     "report_contract_version": 2,
+                     "report_diagram_contract_version": 1,
                      "status": "running", "phase": "planning", "iteration": 1,
                      "created_at": now(), "config": config, "evidence": {}, "sources": {},
                      "plateau": 0, "expected_source": fingerprint(project, workspace)}
             state["original_source"] = state["expected_source"]
             if config["mode"] == "research":
                 state["evaluation_contract_version"] = 1
+                state["original_first_contract_version"] = 1
             if getattr(args, "reassessment_context", None):
                 state["reassessment_context"] = args.reassessment_context
             try:
@@ -1728,7 +1814,8 @@ def execution(args):
             from report import publish
             publish(state, workspace, run_dir)
         print(json.dumps({"run_id": state["run_id"], "status": state["status"],
-                          "reason": state.get("reason", ""), "workspace": str(workspace)},
+                          "reason": state.get("reason", ""), "workspace": str(workspace),
+                          "report_writing": state.get('report_polish', {}).get('status', 'legacy')},
                          ensure_ascii=False))
         return 0 if state["status"] in {"passed", "research_complete", "reviewed"} else 2
     finally:
@@ -1780,6 +1867,9 @@ def parser():
                              help="Disable this harness's scholarly/live web research; not a general firewall")
         sub.add_argument("--max-iterations", type=int, default=5)
         sub.add_argument("--phase-timeout", type=int, default=1800)
+        sub.add_argument("--allow-model-access", action="store_true", help="Permit budgeted experiment model access separately from source downloads")
+        sub.add_argument("--model-call-limit", type=int, default=0, help="Shared experiment-model call cap, including probes; required for model access")
+        sub.add_argument("--model-connection", help="Existing model connection JSON (key_env references only)")
         sub.add_argument("--model")
     return p
 

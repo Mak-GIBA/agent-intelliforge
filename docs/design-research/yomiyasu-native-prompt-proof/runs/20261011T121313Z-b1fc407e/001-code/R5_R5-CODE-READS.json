@@ -1,9 +1,0 @@
-{
-  "source_path": "tools/codex-yomiyasu/evals/run_study.py",
-  "source_sha256": "bd5ec62a46be00237f5b267756afe1ccc016b4f051cbb234d046541d5586ff47",
-  "line_start": 183,
-  "line_end": 195,
-  "checked_at": "2026-10-11T12:48:11.300476+00:00",
-  "excerpt": "def read_receipts(tools, skills):\n    reads={}\n    for name in ('yomiyasu','paragraph-writing','japanese-direct-writing'):\n        path=skills/name/'SKILL.md'\n        marker='name: '+name\n        matches=[]\n        for item in tools:\n            command=item.get('command','')\n            text=item.get('aggregated_output','')\n            if (str(path) in command or (name+'/SKILL.md' in command)) and path.read_text().strip() in text and item.get('exit_code')==0 and re.search(r'\\b(cat|sed|head|python3?|read_file)\\b',command):\n                matches.append({'command':command,'exit_code':0,'content_sha256':sha(path.read_bytes())})\n        if matches:reads[name]=matches\n    return reads",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

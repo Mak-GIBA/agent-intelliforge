@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "capabilities": [
+    {
+      "id": "meaning",
+      "rules": "SKILL.md; references/file-review.md",
+      "cases": [
+        "W07",
+        "W08",
+        "W14",
+        "W16",
+        "W20"
+      ]
+    },
+    {
+      "id": "clarity",
+      "rules": "SKILL.md",
+      "cases": [
+        "W05",
+        "W06",
+        "W07",
+        "W08"
+      ]
+    },
+    {
+      "id": "paragraphs",
+      "rules": "references/paragraphs.md; references/explanation.md",
+      "cases": [
+        "W09",
+        "W22"
+      ]
+    },
+    {
+      "id": "explanation",
+      "rules": "references/paragraphs.md; references/explanation.md",
+      "cases": [
+        "W10",
+        "W11",
+        "W12"
+      ]
+    },
+    {
+      "id": "certainty",
+      "rules": "SKILL.md",
+      "cases": [
+        "W08",
+        "W13",
+        "W14",
+        "W15"
+      ]
+    },
+    {
+      "id": "naturalness",
+      "rules": "SKILL.md; upstream/references",
+      "cases": [
+        "W01",
+        "W02",
+        "W04",
+        "W16"
+      ]
+    },
+    {
+      "id": "reader-boundary",
+      "rules": "SKILL.md",
+      "cases": [
+        "W03",
+        "W19"
+      ]
+    },
+    {
+      "id": "scoped-edit",
+      "rules": "SKILL.md",
+      "cases": [
+        "W21",
+        "W22",
+        "W23",
+        "W24"
+      ]
+    },
+    {
+      "id": "file-checks",
+      "rules": "references/file-review.md; scripts/check.py; scripts/writing_lint.py",
+      "cases": [
+        "W17",
+        "W18",
+        "W19",
+        "W20"
+      ]
+    }
+  ]
+}

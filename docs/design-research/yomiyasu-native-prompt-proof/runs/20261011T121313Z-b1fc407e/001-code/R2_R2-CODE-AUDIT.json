@@ -1,9 +1,0 @@
-{
-  "source_path": "native_provenance_audit.py",
-  "source_sha256": "7a373f34d518dab71dd1f5c0f46d798bf07ac9fac66f49fdd804b7e403ce7288",
-  "line_start": 12,
-  "line_end": 30,
-  "checked_at": "2026-10-11T12:32:13.743953+00:00",
-  "excerpt": "evidence = ROOT / 'docs/codex-yomiyasu/evidence/study-2026-10-11'\nprovenance = json.loads((evidence / 'native-prompt-provenance.json').read_text())\nfor name, expected in provenance['source_files'].items():\n    assert hashlib.sha256((ROOT / name).read_bytes()).hexdigest() == expected\ntasks = {task['id']: task for task in run_study.native_tasks()}\nseen = set()\nfor trial in provenance['trials']:\n    path = evidence / trial['receipt']\n    assert trial['receipt'] not in seen\n    seen.add(trial['receipt'])\n    assert hashlib.sha256(path.read_bytes()).hexdigest() == trial['receipt_sha256']\n    saved = json.loads(path.read_text())\n    task = tasks[saved['task']]\n    prompt = task['prompt'] + '\\n送信・インストール・ユーザー設定変更は不要です。完成稿だけを返してください。'\n    assert trial['reconstructed_prompt'] == prompt\n    assert hashlib.sha256(prompt.encode()).hexdigest() == saved['prompt_sha256'] == trial['original_prompt_sha256']\n    assert trial['expected_reads'] == saved['expected_reads'] == task['expected']\nassert len(seen) == 32\nassert seen == {str(path.relative_to(evidence)) for path in (evidence / 'native').glob('*.json')}",
-  "scope": "Static code observation; does not prove runtime behavior"
-}

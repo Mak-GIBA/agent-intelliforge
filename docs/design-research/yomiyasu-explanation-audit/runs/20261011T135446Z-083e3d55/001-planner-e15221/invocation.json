@@ -1,8 +1,0 @@
-{
-  "role": "planner",
-  "started_at": "2026-10-11T13:54:46.888022+00:00",
-  "sandbox": "read-only",
-  "model": "inherited Codex configuration",
-  "prompt_bytes": 3163,
-  "execution_contract_version": 2
-}

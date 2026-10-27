@@ -1,3 +1,5 @@
+> 詳細な実行記録は[検証記録アーカイブ](../../research-archives.md)から取得・検証・復元できます。記録中の詳細リンクは元commitも参照します。
+
 # Design Research 2.5.0 の汎用ワークフロー検証
 
 2026年10月11日。MCP選定以外の比較実験、原典に基づく設計判断、不具合修正を対象に、実際のCodexモデル・親の実行器・採点器・独立レビューを使って確認しました。
@@ -8,9 +10,9 @@
 
 | 課題 | 実際に確認する成果 | 保存資料 |
 |---|---|---|
-| アルゴリズム比較 | 2つの真偽値パーサーを同じ7入力で14回呼び、親が型付き最終出力を採点。Aは5/7、Bは7/7、差2/7は事前の採用条件1/7以上 | [報告](algorithm/report.md)、[実出力](algorithm/runs/20261010T143105Z-6cc28cd0/001-experiments/E1/artifacts/paired-results.json)、[実行receipt](algorithm/runs/20261010T143105Z-6cc28cd0/001-experiments/E1/receipt.json) |
-| 原典に基づく設計判断 | JSONチェックポイントの直接書き込みと一時ファイルからの置換を比較。原子的な参照先切り替え、永続化、同一ファイルシステム条件を区別。5項目の独立レビューを完了し、効果未測定の条件付き判断を保存。実験は0件 | [報告](literature/report.md)、[最終台帳とstate](literature/runs/20261010T141626Z-4ca67d1d/state.json) |
-| 不具合修正 | 既存unittestの失敗を再現し、`parser.py`だけに`strip().lower()`を加え、同じテストの新しい実行成功と独立した指摘解消を確認 | [報告](fix/report.md)、[変更前receipt](fix/runs/20261010T141626Z-c3872498/001-checks/001/receipt.json)、[変更後receipt](fix/runs/20261010T141626Z-c3872498/002-checks/001/receipt.json) |
+| アルゴリズム比較 | 2つの真偽値パーサーを同じ7入力で14回呼び、親が型付き最終出力を採点。Aは5/7、Bは7/7、差2/7は事前の採用条件1/7以上 | [報告](algorithm/report.md)、[実出力](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/design-research/validation-v250/algorithm/runs/20261010T143105Z-6cc28cd0/001-experiments/E1/artifacts/paired-results.json)、[実行receipt](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/design-research/validation-v250/algorithm/runs/20261010T143105Z-6cc28cd0/001-experiments/E1/receipt.json) |
+| 原典に基づく設計判断 | JSONチェックポイントの直接書き込みと一時ファイルからの置換を比較。原子的な参照先切り替え、永続化、同一ファイルシステム条件を区別。5項目の独立レビューを完了し、効果未測定の条件付き判断を保存。実験は0件 | [報告](literature/report.md)、[最終台帳とstate](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/design-research/validation-v250/literature/runs/20261010T141626Z-4ca67d1d/state.json) |
+| 不具合修正 | 既存unittestの失敗を再現し、`parser.py`だけに`strip().lower()`を加え、同じテストの新しい実行成功と独立した指摘解消を確認 | [報告](fix/report.md)、[変更前receipt](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/design-research/validation-v250/fix/runs/20261010T141626Z-c3872498/001-checks/001/receipt.json)、[変更後receipt](https://github.com/Mak-GIBA/agent-intelliforge/blob/871cb8adf0f7c278d22c72c4fbb21fadc5882f72/docs/design-research/validation-v250/fix/runs/20261010T141626Z-c3872498/002-checks/001/receipt.json) |
 
 アルゴリズム比較の差は空白付きの2入力です。`" true "`ではAが`"invalid"`、Bが`true`を返し、`"\tfalse\n"`ではAが`"invalid"`、Bが`false`を返しました。他の5入力は同じ出力です。計画や正解の書き写しを実行結果として使わず、実際の関数の戻り値と固定した正解を別々に保存しました。実験は1件で、途中の形式修正やレビュー再開の際に再実行していません。
 

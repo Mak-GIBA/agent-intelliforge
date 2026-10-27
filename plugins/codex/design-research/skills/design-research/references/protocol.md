@@ -1,5 +1,7 @@
 # Research protocol and stop rules
 
+New report_contract_version=1/2 runs additionally follow [source-review.md](source-review.md): promising papers require complete main text and relevant supplements. Missing reading defers that candidate's adoption while other comparisons continue. This adds no search budget or automatic dependency installation.
+
 The table below sets per-task reading/discovery budgets. The installed Bash harness additionally enforces execution limits described in `runtime.md`.
 The CLI independently caps each request to one page of 1–50 results and at most two HTTP attempts.
 
