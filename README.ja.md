@@ -259,6 +259,10 @@ Design ResearchとUpstreamは固定版ベースを取得・照合して組み立
 Codex、Basic Memory、SpecKit、ECC、Playwright、meiseki、yomiyasu等の上流プロジェクトは各提供元が管理しています。
 導入資材の提供元と独自機能の区分は、各キットの概要・導入ガイドに記載しています。
 
+## ライセンス
+
+本リポジトリの独自コードと文書には、別のライセンスや出典表示がある箇所を除き、[LICENSE](LICENSE)を適用します。第三者の資材は、それぞれのライセンスと著作権表示を維持します。同梱資材と依存ツールについては[第三者資材の表記](THIRD_PARTY_NOTICES.md)を参照してください。
+
 <a id="start"></a>
 <a id="python-tools"></a>
 <a id="update"></a>
