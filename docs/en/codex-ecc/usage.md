@@ -34,7 +34,7 @@ Run at the repository root:
 python3 tools/ecc-on-demand/ecc_on_demand.py search 'Python tests' --json
 python3 tools/ecc-on-demand/ecc_on_demand.py search 'DB migration' --json
 python3 tools/ecc-on-demand/ecc_on_demand.py resolve api-design --json
-bash install_codex_ecc.sh --doctor
+bash install_ecc.sh --doctor
 ```
 
 Search uses names, descriptions, and some project structure. If results do not fit, use English technical terms or an original Skill name. `resolve` returns the body path, Skill directory, Plugin root, and version, rather than printing the whole body. Outside the repository, use the installed CLI; see [management](../ecc-on-demand.md).

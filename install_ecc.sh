@@ -3,7 +3,9 @@
 # Requires this repository. Existing MCP settings are preserved.
 # Default: offline preview. --apply installs/configures; --update --apply updates.
 # --mcps recommended|research|browser|cloudflare|none or comma-separated names.
-# recommended is a task-specific registration choice, not a proven accuracy gain.
+# recommended: Firecrawl (keyless search/scrape/parse) + Chrome DevTools.
+# crawl/map require Firecrawl authentication; existing MCP settings are preserved.
+# This selection is not a proven general accuracy gain.
 # Assessment: docs/codex-ecc/mcp-workflow-evaluation.md (preview includes reasons).
 set -euo pipefail
 

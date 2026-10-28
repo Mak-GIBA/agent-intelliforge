@@ -51,7 +51,7 @@ bash -n install_codex_ux_stack.sh
 bash -n install_speckit_upstream.sh
 bash -n install_codex_github_pm.sh
 bash -n install_design_research.sh
-bash -n install_codex_ecc.sh
+bash -n install_ecc.sh
 bash -n install_codex_office.sh
 bash -n install_kotonoha.sh
 bash -n install_herdr.sh

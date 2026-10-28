@@ -93,7 +93,7 @@ BULK_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 BULK_TOOLS=(workgraph ux-stack speckit github-pm design-research ecc office kotonoha herdr)
 BULK_SCRIPTS=(install_basic_memory_workgraph.sh install_codex_ux_stack.sh
   install_speckit_upstream.sh install_codex_github_pm.sh install_design_research.sh
-  install_codex_ecc.sh install_codex_office.sh install_kotonoha.sh install_herdr.sh)
+  install_ecc.sh install_codex_office.sh install_kotonoha.sh install_herdr.sh)
 BULK_DESCRIPTIONS=("Basic Memory・Workgraph" "OOUI・UI/UX設計と画像付き検証"
   "SpecKit上流工程" "GitHubのIssue・PR・Projects管理" "コアロジックの調査・改善"
   "ECCと必要時に読む入口" "PDF・Word・PowerPointの編集" "日本語の段落構成・推敲" "HerdrとBash設定")

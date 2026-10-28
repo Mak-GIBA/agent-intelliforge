@@ -7,7 +7,7 @@
 ECCの専門スキルを、作業に必要なときだけ参照できるようにするキットです。Codex標準のPlugin機能でECCの原本を取得し、常設Skillは短い入口に絞ります。
 Python実装、エラー処理、安全性レビューは対応する入口から原本を読み、それ以外の手順は用途で検索します。全ての専門スキルを最初から読み込む必要はありません。
 
-[install_codex_ecc.sh](../../install_codex_ecc.sh)は、`tools/ecc-on-demand/`を含むリポジトリ一式で使います。
+[install_ecc.sh](../../install_ecc.sh)は、`tools/ecc-on-demand/`を含むリポジトリ一式で使います。
 引数なしでは通信せず予定を表示し、`--apply`で実際に導入します。
 
 ## 導入するツールと役割

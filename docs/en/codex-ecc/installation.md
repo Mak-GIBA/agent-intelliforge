@@ -13,20 +13,22 @@ Requires Linux / WSL2, Bash, Python 3.11 or later as `python3`, Git, and a Codex
 **No arguments previews the plan without network or configuration changes.**
 
 ```bash
-bash install_codex_ecc.sh
-bash install_codex_ecc.sh --apply
-bash install_codex_ecc.sh --doctor
+bash install_ecc.sh
+bash install_ecc.sh --apply
+bash install_ecc.sh --doctor
 ```
 
 The installer checks local configuration and same-name Skills, then queries Codex's ECC registration and installation. If missing, it registers `affaan-m/ECC` and installs `ecc@ecc`. Existing originals are reused. Normal application does not explicitly upgrade the marketplace; Codex manages versions and cache.
 
-It then sets ECC's enabled flag to `false`, places the entry Skills and management CLI, and diagnoses them. On first installation, independent Context7 and Playwright MCPs are added by default. Same-name existing entries, disabled entries, and the old `context7-mcp` name are retained without duplicate registration. Hooks are not automatically trusted.
+It then sets ECC's enabled flag to `false`, places the entry Skills and management CLI, and diagnoses them. On first installation, independent Firecrawl and Chrome DevTools MCPs are added by default. Same-name existing entries, disabled entries, and the old `context7-mcp` name are retained without duplicate registration. Hooks are not automatically trusted.
 
-stdio MCPs need Node.js and `npx`, and fetch npm packages on first start. Context7 provides library-document lookup; Playwright provides interactive browser access. This selection is not evidence of better accuracy than existing tools.
+stdio MCPs need Node.js and `npx`, and fetch npm packages on first start. Firecrawl provides web search and page extraction; Chrome DevTools provides browser diagnostics. This selection is not evidence of better accuracy than existing tools. Firecrawl was not included in the earlier comparative trials.
+
+Firecrawl uses the [official keyless hosted endpoint](https://github.com/firecrawl/firecrawl-mcp-server#hosted-mcp-keyless-free-tier), `https://mcp.firecrawl.dev/v2/mcp`. Search, scrape, and parse are available with rate limits. Site crawling (`crawl`) and URL discovery (`map`) require authentication.
 
 | Selection | Candidates | Intended use |
 |---|---|---|
-| `recommended` | Context7, Playwright | Documentation and browser interaction; first-install default |
+| `recommended` | Firecrawl, Chrome DevTools | Web search, page extraction, and browser diagnostics; first-install default |
 | `research` | Context7, Parallel Search | Documentation and web research; unnecessary if existing search is sufficient |
 | `browser` | Playwright, Chrome DevTools | UI interaction, console/network inspection, performance |
 | `cloudflare` | Context7, Cloudflare Docs | Official Cloudflare documentation |
@@ -34,19 +36,19 @@ stdio MCPs need Node.js and `npx`, and fetch npm packages on first start. Contex
 
 ```bash
 # Preview without network or changes first
-bash install_codex_ecc.sh --mcps recommended,browser,cloudflare
+bash install_ecc.sh --mcps recommended,browser,cloudflare
 # Select connections on first application or an installed-environment update
-bash install_codex_ecc.sh --apply --mcps recommended,browser,cloudflare
-bash install_codex_ecc.sh --update --apply --mcps research
+bash install_ecc.sh --apply --mcps recommended,browser,cloudflare
+bash install_ecc.sh --update --apply --mcps research
 ```
 
-Names are `context7`, `playwright`, `chrome-devtools`, `parallel-search`, `cloudflare-docs`, and `sequential-thinking`. Combine presets and names with commas; duplicates are collapsed. `none` cannot be combined. Unknown names fail before configuration changes or ECC downloads.
+Names are `firecrawl`, `context7`, `playwright`, `chrome-devtools`, `parallel-search`, `cloudflare-docs`, and `sequential-thinking`. Combine presets and names with commas; duplicates are collapsed. `none` cannot be combined. Unknown names fail before configuration changes or ECC downloads.
 
 Sequential Thinking is opt-in only. In the limited 6-question × 2-trial comparison, both conditions answered 12/12 correctly, while mean processing time rose from 29.176 to 51.7875 seconds; the criterion for routine use was not met. This does not rule out benefits on other tasks.
 
 Token Optimizer is not registered. It reduced returned text when rereading within a conversation, but failed twice to retrieve important values in a new conversation without the prior body. The measured package was `@ooples/token-optimizer-mcp@7.4.3`, distinct from the unversioned ECC catalog package. Returned-text volume does not establish billing savings or accuracy improvements. See [conditions, outputs, and selection rationale (Japanese)](../../codex-ecc/mcp-evaluation.md).
 
-New stdio packages use measured, pinned versions; reevaluate before upgrading their registration definitions. New Playwright and Chrome DevTools entries use headless isolated profiles. Chrome DevTools disables usage statistics and CrUX URL queries. Existing connections are not changed. A usable browser is required; neither browsers nor Node.js are installed here. Cloudflare Docs and Parallel Search use URL connections. Public search worked without authentication in the recorded test; service limits and future authentication requirements remain the providers' responsibility. GitHub uses an existing official integration or `gh`; Jira and Confluence are not automatically registered.
+New stdio packages use measured, pinned versions; reevaluate before upgrading their registration definitions. New Playwright and Chrome DevTools entries use headless isolated profiles. Chrome DevTools disables usage statistics and CrUX URL queries. New entries forward `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` from the launch environment without storing their values. Existing connections are not changed. A usable browser is required; neither browsers nor Node.js are installed here. Cloudflare Docs and Parallel Search use URL connections. Public search worked without authentication in the recorded test; service limits and future authentication requirements remain the providers' responsibility. GitHub uses an existing official integration or `gh`; Jira and Confluence are not automatically registered.
 
 ## Options
 
@@ -75,8 +77,8 @@ Originals stay in Codex's Plugin cache; their path is not fixed. `config.toml` c
 ## Updates and recovery
 
 ```bash
-bash install_codex_ecc.sh --update
-bash install_codex_ecc.sh --update --apply
+bash install_ecc.sh --update
+bash install_ecc.sh --update --apply
 ```
 
 Updates use `plugin marketplace upgrade ecc` and `plugin add ecc@ecc`, then refresh management assets from the repository. Edited managed files stop processing. Earlier management-only installations retain their restoration metadata.
@@ -86,8 +88,8 @@ Backups are created before installation/update changes. Failures restore ECC's d
 ## Restore
 
 ```bash
-bash install_codex_ecc.sh --restore
-bash install_codex_ecc.sh --restore --apply
+bash install_ecc.sh --restore
+bash install_ecc.sh --restore --apply
 ```
 
 An ECC installation that existed beforehand returns to its originally recorded enabled value; this can resume bulk registration and startup hooks. If this installer originally installed ECC, it leaves the originals present but disabled. Managed entry points and the CLI are removed, while unrelated later configuration, backups, ECC, the marketplace, and hook trust are preserved.

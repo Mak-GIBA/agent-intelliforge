@@ -84,19 +84,20 @@ class ManagerTest(unittest.TestCase):
         self.config.write_text(CONFIG + '\n[mcp_servers.context7]\nenabled = false\ncommand = "user-docs"\n')
         original_servers = ecc.tomllib.loads(self.config.read_text())["mcp_servers"]
         report = self.manager.apply()
-        self.assertEqual(report["mcps"]["context7"], "existing_disabled")
+        self.assertEqual(report["selected_mcps"], ["firecrawl", "chrome-devtools"])
         parsed = ecc.tomllib.loads(self.config.read_text())["mcp_servers"]
         self.assertEqual(parsed["chrome-devtools"], original_servers["chrome-devtools"])
         self.assertEqual(parsed["context7"], original_servers["context7"])
         self.assertNotIn("parallel-search", parsed)
         self.assertNotIn("sequential-thinking", parsed)
-        self.assertIn("--headless", parsed["playwright"]["args"])
+        self.assertEqual(parsed["firecrawl"]["url"], "https://mcp.firecrawl.dev/v2/mcp")
+        self.assertNotIn("playwright", parsed)
         self.assertNotIn("github", parsed)
         self.manager.restore()
         self.assertEqual(ecc.tomllib.loads(self.config.read_text())["mcp_servers"], original_servers)
 
     def test_mcp_user_changes_prevent_apply_and_restore_without_mutation(self):
-        self.manager.apply()
+        self.manager.apply(mcps="context7")
         self.config.write_text(self.config.read_text() + '\n[mcp_servers.context7.env]\nCONTEXT7_API_KEY = "user-value"\n')
         before = self.config.read_bytes()
         with self.assertRaisesRegex(ecc.ManagementError, "Managed MCP changed"):
@@ -108,7 +109,7 @@ class ManagerTest(unittest.TestCase):
 
     def test_mcp_legacy_alias_and_upgrade_from_old_state(self):
         self.config.write_text(CONFIG + '\n[mcp_servers.context7-mcp]\ncommand = "legacy-docs"\n')
-        self.manager.apply()
+        self.manager.apply(mcps="context7,playwright")
         self.assertNotIn("context7", ecc.tomllib.loads(self.config.read_text())["mcp_servers"])
         # Existing installations before MCP support have no mcps field.
         state = self.manager.state()
@@ -119,6 +120,29 @@ class ManagerTest(unittest.TestCase):
         self.manager.state_path.write_text(json.dumps(state))
         self.manager.apply()
         self.assertIn("playwright", self.manager.state()["mcps"])
+
+    def test_explicit_new_selection_retains_existing_servers_and_is_idempotent(self):
+        self.manager.apply(mcps="context7,playwright")
+        before = ecc.tomllib.loads(self.config.read_text())["mcp_servers"]
+        self.manager.apply(mcps="firecrawl,chrome-devtools")
+        after = ecc.tomllib.loads(self.config.read_text())["mcp_servers"]
+        self.assertEqual({name: after[name] for name in before}, before)
+        self.assertEqual(set(after) - set(before), {"firecrawl"})
+        self.assertEqual(self.manager.state()["selected_mcps"], ["firecrawl", "chrome-devtools"])
+        self.assertEqual(self.manager.apply()["changed_files"], 0)
+        self.manager.restore()
+        self.assertEqual(self.config.read_text(), CONFIG)
+
+    def test_keyless_defaults_preserve_existing_firecrawl_credentials_and_opt_out(self):
+        original = CONFIG + ('\n[mcp_servers.firecrawl]\nurl = "https://custom.example/mcp"\n'
+                             'enabled = false\nbearer_token_env_var = "USER_FIRECRAWL_TOKEN"\n')
+        self.config.write_text(original)
+        report = self.manager.apply()
+        self.assertEqual(report["mcps"]["firecrawl"], "existing_disabled")
+        self.assertEqual(ecc.tomllib.loads(self.config.read_text())["mcp_servers"],
+                         ecc.tomllib.loads(original)["mcp_servers"])
+        self.manager.restore()
+        self.assertEqual(self.config.read_text(), original)
 
     def test_mcp_selection_persists_and_none_keeps_prior_connections(self):
         self.manager.apply(mcps="research,cloudflare")
@@ -161,6 +185,8 @@ class ManagerTest(unittest.TestCase):
         self.assertIn("--isolated", servers["playwright"]["args"])
         self.assertIn("--no-usage-statistics", servers["chrome-devtools"]["args"])
         self.assertIn("--no-performance-crux", servers["chrome-devtools"]["args"])
+        self.assertEqual(servers["chrome-devtools"]["env_vars"], ["HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY"])
+        self.assertNotIn("env", servers["chrome-devtools"])
         self.assertEqual(servers["cloudflare-docs"]["url"], "https://docs.mcp.cloudflare.com/mcp")
         self.assertEqual(servers["sequential-thinking"]["env"]["DISABLE_THOUGHT_LOGGING"], "true")
         self.assertNotIn("token-optimizer", servers)

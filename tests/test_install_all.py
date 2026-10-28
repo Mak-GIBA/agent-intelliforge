@@ -15,7 +15,7 @@ INSTALLERS = [
     ("speckit", "install_speckit_upstream.sh", ["--apply"]),
     ("github-pm", "install_codex_github_pm.sh", []),
     ("design-research", "install_design_research.sh", []),
-    ("ecc", "install_codex_ecc.sh", ["--apply"]),
+    ("ecc", "install_ecc.sh", ["--apply"]),
     ("office", "install_codex_office.sh", ["--apply"]),
     ("kotonoha", "install_kotonoha.sh", ["--apply"]),
     ("herdr", "install_herdr.sh", []),

@@ -7,7 +7,7 @@ import tempfile
 import tomllib
 import unittest
 
-INSTALLER = Path(__file__).resolve().parents[1] / "install_codex_ecc.sh"
+INSTALLER = Path(__file__).resolve().parents[1] / "install_ecc.sh"
 CONFIG = '''# user setting
 model = "keep-model"
 [plugins."codex@basic-memory"]
@@ -148,7 +148,11 @@ class InstallerTest(unittest.TestCase):
 
     def test_default_and_dry_run_are_offline_and_do_not_write(self):
         before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
-        self.assertEqual(self.run_installer()['status'], 'planned')
+        report = self.run_installer()
+        self.assertEqual(report['status'], 'planned')
+        self.assertEqual(report['selected_mcps'], ['firecrawl', 'chrome-devtools'])
+        self.assertIn('crawl/map require authentication', report['mcp_selection_basis']['firecrawl'])
+        self.assertIn('Firecrawl was not evaluated', report['mcp_assessment'])
         self.assertEqual(self.run_installer('--dry-run')['status'], 'planned')
         self.assertEqual(before, {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
         self.assertFalse(self.calls())
@@ -165,6 +169,8 @@ class InstallerTest(unittest.TestCase):
         parsed = tomllib.loads(self.config.read_text())
         self.assertTrue(parsed['plugins']['codex@basic-memory']['enabled'])
         self.assertEqual(parsed['mcp_servers']['chrome-devtools']['command'], 'keep-browser')
+        self.assertEqual(parsed['mcp_servers']['firecrawl']['url'], 'https://mcp.firecrawl.dev/v2/mcp')
+        self.assertEqual(set(parsed['mcp_servers']), {'firecrawl', 'chrome-devtools'})
         self.config.write_text(self.config.read_text()+'\n[added_after_install]\nkeep = true\n')
         self.run_installer('--restore', '--apply')
         self.assertFalse(self.enabled())
@@ -175,8 +181,8 @@ class InstallerTest(unittest.TestCase):
     def test_mcp_preview_selection_and_invalid_name_are_offline(self):
         before = self.config.read_bytes()
         report = self.run_installer('--mcps', 'recommended,cloudflare')
-        self.assertEqual(report['selected_mcps'], ['context7', 'playwright', 'cloudflare-docs'])
-        self.assertEqual(report['recommended_mcps'], ['context7', 'playwright'])
+        self.assertEqual(report['selected_mcps'], ['firecrawl', 'chrome-devtools', 'context7', 'cloudflare-docs'])
+        self.assertEqual(report['recommended_mcps'], ['firecrawl', 'chrome-devtools'])
         error = self.run_installer('--apply', '--mcps', 'unknown', success=False)
         self.assertIn('Unknown MCP selection', error['error'])
         self.assertFalse(self.calls())

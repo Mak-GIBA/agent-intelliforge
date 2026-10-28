@@ -4,7 +4,7 @@
   "name": "ECC on demand",
   "version": "1.0.0",
   "legacy": {
-    "script": "install_codex_ecc.sh",
+    "script": "install_ecc.sh",
     "actions": {
       "install": [
         "--apply"

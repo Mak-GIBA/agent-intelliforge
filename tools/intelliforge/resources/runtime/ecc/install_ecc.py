@@ -143,7 +143,7 @@ class Installer:
                 "available_mcps": list(MCP_SERVERS),
                 "mcp_selection_scope": "add_missing_only; existing connections and opt-outs preserved",
                 "mcp_selection_basis": {name: MCP_SELECTION_BASIS[name] for name in self.manager.selected_mcps(self.mcps)},
-                "mcp_assessment": "docs/codex-ecc/mcp-workflow-evaluation.md; task-specific utility, not proven general accuracy improvement",
+                "mcp_assessment": "docs/codex-ecc/mcp-workflow-evaluation.md; Firecrawl was not evaluated; no proven general accuracy improvement",
                 "managed_installation": state is not None}
 
     def install(self, *, update: bool = False) -> dict:

@@ -38,7 +38,7 @@ React・Cloudflare・GitHub・記憶管理は既存の専門スキルを優先�
 python3 tools/ecc-on-demand/ecc_on_demand.py search 'Python テスト' --json
 python3 tools/ecc-on-demand/ecc_on_demand.py search 'DB マイグレーション' --json
 python3 tools/ecc-on-demand/ecc_on_demand.py resolve api-design --json
-bash install_codex_ecc.sh --doctor
+bash install_ecc.sh --doctor
 ```
 
 検索は名前・説明と一部のプロジェクト構成を使います。候補が合わない場合は、英語の技術名や原本の名前で絞ってください。
