@@ -32,7 +32,7 @@ $ooui-design Design and implement an internal app for documents and reader group
 
 Specify users/features for the actual project. Reuse existing specifications and a short design memo. Small fixes need relevant checks, not a full redesign or document suite. Design-only requests do not start implementation or the harness.
 
-Prioritize OOUI for exploring/comparing/editing multiple objects; fixed-target procedures may use task-oriented flows. Search filters a collection; bulk actions target selected objects and expose scope/results. Record choices/reasons. Japanese copy retains meaning/object names and short labels. Missing writing Skills do not block copy checks; see [installation](../codex-yomiyasu/installation.md).
+Prioritize OOUI for exploring/comparing/editing multiple objects; fixed-target procedures may use task-oriented flows. Search filters a collection; bulk actions target selected objects and expose scope/results. Record choices/reasons. Japanese copy retains meaning/object names and short labels. Missing writing Skills do not block copy checks; see [installation](../kotonoha/installation.md).
 
 ## Review and improve an implemented app
 

@@ -33,7 +33,7 @@ No arguments / `--dry-run` displays commands without invoking individual install
 | `design-research` | Build/verify both distributions, install research Skill/harness | [Guide](design-research/installation.md) |
 | `ecc` | Native ECC originals and on-demand entries | [Guide](codex-ecc/installation.md) |
 | `office` | OfficeCLI, document libraries, Workbench | [Guide](codex-office/installation.md) |
-| `kotonoha` (`yomiyasu` compatible) | Integrated Japanese workflow plus missing Python/Node.js/lint environment | [Guide](codex-yomiyasu/installation.md) |
+| `kotonoha` | Integrated Japanese workflow plus missing Python/Node.js/lint environment | [Guide](kotonoha/installation.md) |
 | `herdr` | Herdr, wrapper, Bash integration | [Guide](herdr/installation.md) |
 
 UX Stack recommends kotonoha for Japanese copy. Both are included in all-kits installation; select them together with:

@@ -171,7 +171,7 @@ class InstallerTests(unittest.TestCase):
         components = self.manifest()["components"]
         self.assertIn("ooui-design",components)
         self.assertNotIn("ux-critique",components)
-        self.assertNotIn("yomiyasu",components)
+        self.assertNotIn("kotonoha",components)
         self.assertEqual({p["pluginId"] for p in self.mock_state()["installed"]},set(mod.PLUGINS))
         spec = json.loads((SOURCE/"sources.json").read_text())["design"]
         design = self.home/".agents/skills/ooui-design"

@@ -23,8 +23,8 @@ GitHub/Office sources were extracted from verified ZIPs. `EXTRACTED.json` record
 
 ```bash
 # Generate/check standalone installers from their maintained sources
-python tools/codex-yomiyasu/build_installer.py
-python tools/codex-yomiyasu/build_installer.py --check
+python tools/kotonoha/build_installer.py
+python tools/kotonoha/build_installer.py --check
 python tools/codex-github-pm/build_installer.py --check
 python tools/codex-office/build_installer.py --check
 python tools/herdr/build_installer.py --check
@@ -49,8 +49,8 @@ Definitions generate CLI previews and bulk-entry comments. Regenerate when chang
 python -B -m unittest discover -s tests -p test_intelliforge.py -v
 python -B -m unittest discover -s tests -v
 bash -n install_all.sh
-bash -n install_codex_yomiyasu.sh
-bash install_codex_yomiyasu.sh --self-test
+bash -n install_kotonoha.sh
+bash install_kotonoha.sh --self-test
 uv build
 ```
 

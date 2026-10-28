@@ -61,10 +61,10 @@
       "description": "Office Workbench"
     },
     {
-      "name": "yomiyasu",
+      "name": "kotonoha",
       "source": {
         "source": "local",
-        "path": "./plugins/codex/yomiyasu"
+        "path": "./plugins/codex/kotonoha"
       },
       "description": "kotonoha Japanese writing"
     }

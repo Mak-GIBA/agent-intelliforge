@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "id": "kotonoha",
+  "name": "kotonoha Japanese writing",
+  "version": "5.0.0",
+  "legacy": {
+    "script": "install_kotonoha.sh",
+    "actions": {
+      "install": [
+        "--apply"
+      ],
+      "update": [
+        "--update",
+        "--apply"
+      ],
+      "doctor": [
+        "--doctor"
+      ],
+      "uninstall": [
+        "--uninstall",
+        "--apply"
+      ]
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "kotonoha",
+      "source": "tools/kotonoha/assets/kotonoha",
+      "assembled": false
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/nanaism/yomiyasu",
+      "revision": "latest stable upstream release; local writing rules have independent version"
+    },
+    {
+      "url": "https://github.com/bamboo-nova/meiseki",
+      "revision": "latest stable release; normative changes require reviewed adapter"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Python >=3.11 (standalone engine remains >=3.10)",
+      "condition": "prepared in user-owned directory on apply if no compatible runtime exists"
+    },
+    {
+      "name": "Node.js 24 LTS and npm",
+      "condition": "prepared in user-owned directory on apply if no compatible runtime exists"
+    },
+    {
+      "name": "fixed textlint and markdownlint packages",
+      "condition": "prepared in user-owned directory on apply if no compatible runtime exists"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/kotonoha",
+    "{skills_home}/../.kotonoha-runtime"
+  ],
+  "settings": [],
+  "plugin": {
+    "name": "kotonoha",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run kotonoha"
+  },
+  "editable_sources": [
+    "tools/kotonoha"
+  ],
+  "compatibility": "One self-contained kotonoha with conditional detailed references; owned legacy migration and CLI aliases retained.",
+  "package_version": "0.2.0",
+  "version_kind": "local kit version; upstream versions are resolved and recorded separately",
+  "aliases": [],
+  "definition": "tools/kotonoha/kit.json",
+  "agent": "codex"
+}

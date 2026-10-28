@@ -18,9 +18,9 @@ Codex、Python、Git自体のインストールは行いません。以下はリ
 **引数なしは、通信・設定変更をしない予定表示です。**
 
 ```bash
-bash install_codex_ecc.sh
-bash install_codex_ecc.sh --apply
-bash install_codex_ecc.sh --doctor
+bash install_ecc.sh
+bash install_ecc.sh --apply
+bash install_ecc.sh --doctor
 ```
 
 適用では、ローカルの設定と同名スキルを確認した後、CodexからECCの登録・導入状態を取得します。
@@ -29,18 +29,23 @@ bash install_codex_ecc.sh --doctor
 取得する版とキャッシュはCodexが管理します。
 
 その後、ECCの有効設定を`false`にし、入口4件と管理CLIを配置して診断します。
-初回の既定では、独立したMCPとしてContext7とPlaywrightを追加します。
+初回の既定では、独立したMCPとしてFirecrawlとChrome DevToolsを追加します。
 同名の既存設定（無効設定を含む）とContext7の旧名`context7-mcp`はそのまま保持し、重複登録しません。
 フックを自動承認するオプションは使用しません。
 
 stdioのMCPを起動するにはNode.jsと`npx`が必要です。初回起動時にnpmパッケージを取得します。
-Context7はライブラリ文書探索、Playwrightは対話的なブラウザー操作の接続として選んでいます。
-今回の比較で既存手段に対する正答率の改善を確認したという意味ではありません。
+FirecrawlはWeb検索と本文取得、Chrome DevToolsはブラウザーのconsole・network等の診断に使います。
+既定値は用途に合わせた接続の選択であり、既存手段より正答率が高いと確認したものではありません。
+Firecrawlは過去の比較試験の対象外です。
+
+Firecrawlは[公式のキー不要接続](https://github.com/firecrawl/firecrawl-mcp-server#hosted-mcp-keyless-free-tier)を使います。
+接続先は`https://mcp.firecrawl.dev/v2/mcp`で、検索・本文取得・文書解析を利用できます。
+利用回数には制限があり、サイト全体の`crawl`やURL探索の`map`には認証が必要です。
 用途別に追加するMCPは、次のプリセットまたは名前のカンマ区切りで選べます。
 
 | 選択 | 新規に追加する候補 | 適する用途 |
 |---|---|---|
-| `recommended` | Context7、Playwright | 文書探索と対話的な画面確認。初回の既定 |
+| `recommended` | Firecrawl、Chrome DevTools | Web検索・本文取得とブラウザー診断。初回の既定 |
 | `research` | Context7、Parallel Search | 文書・Web調査。既存のWeb検索で足りる場合は不要 |
 | `browser` | Playwright、Chrome DevTools | 画面操作、console・network・性能の診断 |
 | `cloudflare` | Context7、Cloudflare Docs | Cloudflare公式文書の探索 |
@@ -48,13 +53,13 @@ Context7はライブラリ文書探索、Playwrightは対話的なブラウザ�
 
 ```bash
 # まず通信・変更なしで予定を確認する
-bash install_codex_ecc.sh --mcps recommended,browser,cloudflare
+bash install_ecc.sh --mcps recommended,browser,cloudflare
 # 初回適用、または適用済み環境の更新時に選択を指定する
-bash install_codex_ecc.sh --apply --mcps recommended,browser,cloudflare
-bash install_codex_ecc.sh --update --apply --mcps research
+bash install_ecc.sh --apply --mcps recommended,browser,cloudflare
+bash install_ecc.sh --update --apply --mcps research
 ```
 
-名前は`context7`、`playwright`、`chrome-devtools`、`parallel-search`、`cloudflare-docs`、
+名前は`firecrawl`、`context7`、`playwright`、`chrome-devtools`、`parallel-search`、`cloudflare-docs`、
 `sequential-thinking`です。プリセットと名前を組み合わせられ、重複はまとめます。
 `none`は他の指定と併用できません。未知の名前は設定変更やECC取得の前にエラーになります。
 
@@ -69,7 +74,9 @@ Token Optimizerは登録対象に含めません。同一会話の再読では�
 測定条件、同じ入力の実出力、用途別判断は[MCPの導入判断](mcp-evaluation.md)にあります。
 新規登録のstdioパッケージは測定したバージョンに固定しています。バージョンを上げる際は再検証して登録定義を更新してください。
 PlaywrightとChrome DevToolsの新規登録はheadless・隔離プロファイルを使用します。
-Chrome DevToolsは利用統計とCrUXへのURL問い合わせを無効にします。既存接続の設定は変更しません。
+Chrome DevToolsは利用統計とCrUXへのURL問い合わせを無効にします。
+新規登録では`HTTP_PROXY`・`HTTPS_PROXY`・`NO_PROXY`を起動環境から転送します。値は設定ファイルへ保存しません。
+既存接続の設定は変更しません。
 ブラウザー操作には利用可能なブラウザーも必要です。インストーラーはブラウザーやNode.jsを導入しません。
 Cloudflare DocsとParallel SearchはURL接続です。公開検索は認証なしで確認できましたが、
 制限や追加の認証要件は各サービスの運用に従います。
@@ -124,8 +131,8 @@ ECC設定がインラインテーブルやドット区切りのキーで書か�
 ## 更新・再実行
 
 ```bash
-bash install_codex_ecc.sh --update
-bash install_codex_ecc.sh --update --apply
+bash install_ecc.sh --update
+bash install_ecc.sh --update --apply
 ```
 
 更新はCodex標準の `plugin marketplace upgrade ecc` と `plugin add ecc@ecc` を使い、
@@ -142,8 +149,8 @@ bash install_codex_ecc.sh --update --apply
 ## 復元
 
 ```bash
-bash install_codex_ecc.sh --restore
-bash install_codex_ecc.sh --restore --apply
+bash install_ecc.sh --restore
+bash install_ecc.sh --restore --apply
 ```
 
 導入済みだったECCは、最初に記録した有効値へ戻します。有効だった場合は一括スキル登録や起動フックも再開されます。

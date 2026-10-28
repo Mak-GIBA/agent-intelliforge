@@ -48,7 +48,7 @@ bash install_all.sh --apply
 | `design-research` | 固定版から両ツールを組み立て・検証し、単一入口の研究Skillとハーネスを導入 | [導入・更新](design-research/installation.md) |
 | `ecc` | Codex標準ECC pluginと必要時に参照する入口。`--apply`で導入・設定 | [導入・更新・復元](codex-ecc/installation.md) |
 | `office` | OfficeCLI、文書処理ライブラリ、Office Workbench。`--apply`で導入 | [導入・更新](codex-office/installation.md) |
-| `kotonoha`（`yomiyasu`も互換） | meisekiの明晰化、yomiyasuの自然さ、段落構成・留保整理を統合。`--apply`で不足するPython・Node.jsと検査環境も準備 | [導入・更新](codex-yomiyasu/installation.md) |
+| `kotonoha` | meisekiの明晰化、yomiyasuの自然さ、段落構成・留保整理を統合。`--apply`で不足するPython・Node.jsと検査環境も準備 | [導入・更新](kotonoha/installation.md) |
 | `herdr` | Herdr、herdr-open、Bash設定 | [導入とBash設定](herdr/installation.md) |
 
 UX Stackは日本語のUI文言を仕上げる際にkotonohaを推奨します。

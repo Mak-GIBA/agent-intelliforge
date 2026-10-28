@@ -15,9 +15,9 @@ INSTALLERS = [
     ("speckit", "install_speckit_upstream.sh", ["--apply"]),
     ("github-pm", "install_codex_github_pm.sh", []),
     ("design-research", "install_design_research.sh", []),
-    ("ecc", "install_codex_ecc.sh", ["--apply"]),
+    ("ecc", "install_ecc.sh", ["--apply"]),
     ("office", "install_codex_office.sh", ["--apply"]),
-    ("yomiyasu", "install_codex_yomiyasu.sh", ["--apply"]),
+    ("kotonoha", "install_kotonoha.sh", ["--apply"]),
     ("herdr", "install_herdr.sh", []),
 ]
 HELPERS = [
@@ -74,6 +74,12 @@ class BatchInstallerTests(unittest.TestCase):
     def expected(self, *ids):
         return [{"script": script, "args": args} for tool, script, args in INSTALLERS if not ids or tool in ids]
 
+    def test_retired_writing_id_is_rejected_before_running_children(self):
+        result=self.invoke('--apply','--only','yomiyasu')
+        self.assertNotEqual(result.returncode,0)
+        self.assertIn('kotonoha',result.stderr)
+        self.assertEqual(self.calls(),[])
+
     def test_default_preview_invokes_nothing_and_preserves_home(self):
         marker = self.codex / "basic-memory-workgraph"
         marker.mkdir(parents=True)
@@ -89,11 +95,11 @@ class BatchInstallerTests(unittest.TestCase):
         self.assertEqual(before, {p.relative_to(self.home): p.read_bytes() for p in self.home.rglob("*") if p.is_file()})
 
     def test_explicit_preview_selects_without_invoking_apply_only_children(self):
-        result = self.invoke("--dry-run", "--only", "yomiyasu,ux-stack")
+        result = self.invoke("--dry-run", "--only", "kotonoha,ux-stack")
         self.assertEqual(result.returncode, 0, result.stderr)
         lines = result.stdout.splitlines()
         self.assertIn("ux-stack:", lines[0])
-        self.assertIn("yomiyasu:", lines[1])
+        self.assertIn("kotonoha:", lines[1])
         self.assertIn("--apply", lines[1])
         self.assertEqual(len(lines), 3)
         self.assertEqual(self.calls(), [])
@@ -107,9 +113,9 @@ class BatchInstallerTests(unittest.TestCase):
         self.assertNotIn("--force", result.stdout)
 
     def test_repeated_selection_is_deduplicated_and_runs_from_any_directory(self):
-        result = self.invoke("--only", "yomiyasu,office", "--only", "ux-stack,yomiyasu", "--apply")
+        result = self.invoke("--only", "kotonoha,office", "--only", "ux-stack,kotonoha", "--apply")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(self.calls(), self.expected("ux-stack", "office", "yomiyasu"))
+        self.assertEqual(self.calls(), self.expected("ux-stack", "office", "kotonoha"))
         self.assertIn("COMPLETE: 3", result.stdout)
 
     def test_existing_workgraph_uses_update_and_keeps_its_settings(self):

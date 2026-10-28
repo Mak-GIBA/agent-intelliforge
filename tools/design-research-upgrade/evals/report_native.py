@@ -19,7 +19,7 @@ import time
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[3]
-spec = importlib.util.spec_from_file_location('writing_native', ROOT/'tools/codex-yomiyasu/evals/flow_native.py')
+spec = importlib.util.spec_from_file_location('writing_native', ROOT/'tools/kotonoha/evals/flow_native.py')
 native = importlib.util.module_from_spec(spec); spec.loader.exec_module(native)
 
 

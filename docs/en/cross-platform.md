@@ -32,7 +32,7 @@ Build a standard wheel from the checkout. Package construction neither fetches k
 
 ## Install
 
-Japanese writing uses `$kotonoha`. `--only kotonoha` and compatibility `--only yomiyasu` select the same kit; internal ID/Plugin name remain `yomiyasu`. See [kotonoha](codex-yomiyasu/installation.md).
+Japanese writing uses `$kotonoha`. The kit ID and plugin name are also `kotonoha`; the former ID is retired. See [kotonoha](kotonoha/installation.md).
 
 ```bash
 # Linux / WSL2: existing Codex path; host can be omitted

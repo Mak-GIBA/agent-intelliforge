@@ -25,13 +25,13 @@ from agent_intelliforge.catalog import ForgeError, definitions, safe_relative, s
 class DistributionTests(unittest.TestCase):
     def test_catalog_selection_is_fixed_and_complete(self):
         catalog = definitions(ROOT)
-        self.assertEqual([k['id'] for k in selection(['yomiyasu,workgraph','yomiyasu'],catalog)], ['workgraph','yomiyasu'])
+        self.assertEqual([k['id'] for k in selection(['kotonoha,workgraph','kotonoha'],catalog)], ['workgraph','kotonoha'])
         self.assertEqual(len(catalog['speckit']['skills']),8)
-        self.assertEqual([k['id'] for k in selection(['kotonoha'],catalog)],['yomiyasu'])
-        with self.assertRaises(ForgeError): selection(['yomiyasu,typo'],catalog)
+        self.assertEqual([k['id'] for k in selection(['kotonoha'],catalog)],['kotonoha'])
+        with self.assertRaises(ForgeError): selection(['kotonoha,typo'],catalog)
         output=io.StringIO()
-        with contextlib.redirect_stdout(output):self.assertEqual(cli.main(['list','--only','yomiyasu','--json']),0)
-        self.assertEqual([kit['id'] for kit in json.loads(output.getvalue())],['yomiyasu'])
+        with contextlib.redirect_stdout(output):self.assertEqual(cli.main(['list','--only','kotonoha','--json']),0)
+        self.assertEqual([kit['id'] for kit in json.loads(output.getvalue())],['kotonoha'])
 
     def test_inspect_and_preview_have_no_writes_or_processes(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -39,19 +39,19 @@ class DistributionTests(unittest.TestCase):
             with patch.object(subprocess,'run',side_effect=AssertionError('process in preview')), patch.object(subprocess,'call',side_effect=AssertionError('process in preview')):
                 for command in ('inspect','install','update','uninstall'):
                     with contextlib.redirect_stdout(io.StringIO()):
-                        self.assertEqual(cli.main([command,'--agent','claude','--only','yomiyasu','--state-dir',str(state),'--json']),0)
+                        self.assertEqual(cli.main([command,'--agent','claude','--only','kotonoha','--state-dir',str(state),'--json']),0)
             self.assertFalse(state.exists())
 
     def test_invalid_options_fail_before_preview(self):
         with contextlib.redirect_stderr(io.StringIO()):
-            self.assertEqual(cli.main(['install','--upstream-only','--only','yomiyasu']),2)
+            self.assertEqual(cli.main(['install','--upstream-only','--only','kotonoha']),2)
             if os.name != 'nt':
-                self.assertEqual(cli.main(['install','--only','yomiyasu','--skills-dir','/tmp/protected','--apply']),2)
+                self.assertEqual(cli.main(['install','--only','kotonoha','--skills-dir','/tmp/protected','--apply']),2)
 
     def test_legacy_default_delegates_without_new_installer(self):
         with patch.object(cli.shutil,'which',return_value='bash'),patch.object(cli.subprocess,'call',return_value=0) as call:
-            self.assertEqual(cli.legacy_action(ROOT,[definitions(ROOT)['yomiyasu']],'install'),0)
-        self.assertEqual(call.call_args.args[0],['bash',str(ROOT/'install_all.sh'),'--only','yomiyasu','--apply'])
+            self.assertEqual(cli.legacy_action(ROOT,[definitions(ROOT)['kotonoha']],'install'),0)
+        self.assertEqual(call.call_args.args[0],['bash',str(ROOT/'install_all.sh'),'--only','kotonoha','--apply'])
 
     def test_helper_parser_preserves_host_and_literal_arguments(self):
         with patch.object(runtime,'kit_run',return_value=0) as run:
@@ -102,7 +102,7 @@ class DistributionTests(unittest.TestCase):
 class WritingDistributionTests(unittest.TestCase):
     def test_original_resources_keep_their_portable_integrity_hashes(self):
         for agent in ('codex','claude'):
-            root=ROOT/'plugins'/agent/'yomiyasu/skills/kotonoha'
+            root=ROOT/'plugins'/agent/'kotonoha/skills/kotonoha'
             resources=json.loads((root/'resources.json').read_text())['files']
             for name,expected in resources.items():
                 with self.subTest(agent=agent,resource=name):
@@ -111,11 +111,11 @@ class WritingDistributionTests(unittest.TestCase):
     def test_only_intended_skills_are_discoverable(self):
         expected={'kotonoha'}
         for agent in ('codex','claude'):
-            root=ROOT/'plugins'/agent/'yomiyasu/skills'
+            root=ROOT/'plugins'/agent/'kotonoha/skills'
             discovered=list(root.rglob('SKILL.md'))
             self.assertEqual({p.parent.name for p in discovered},expected)
             self.assertTrue(all(p.parent.parent==root for p in discovered))
-        root=ROOT/'plugins/codex/yomiyasu/skills'
+        root=ROOT/'plugins/codex/kotonoha/skills'
         self.assertIn('allow_implicit_invocation: true',(root/'kotonoha/agents/openai.yaml').read_text())
         self.assertTrue((root/'kotonoha/scripts/check.py').is_file())
         self.assertTrue((root/'kotonoha/resources.json').is_file())
@@ -123,7 +123,7 @@ class WritingDistributionTests(unittest.TestCase):
 
 class OwnershipTests(unittest.TestCase):
     def lifecycle(self, temporary, agent='claude'):
-        kit = definitions(ROOT)['yomiyasu']; state = Path(temporary)/'state'
+        kit = definitions(ROOT)['kotonoha']; state = Path(temporary)/'state'
         args = argparse.Namespace(action='install', skills_dir=Path(temporary)/'skills', upstream_only=False, mode='explicit')
         plan = cli.inspect_plan([kit],agent,True,state)
         return kit,state,args,plan
@@ -133,26 +133,26 @@ class OwnershipTests(unittest.TestCase):
             kit,state,args,plan=self.lifecycle(temporary)
             def upstream(bundle,home,agent):
                 return ownership.replace_tree(home/'upstream',runtime.owner('yomiyasu-upstream',agent),{'SKILL.upstream.md':b'unchanged upstream original'})
-            with patch.object(plugins,'preflight'),patch.object(plugins,'manage'),patch.object(plugins.shutil,'which',return_value='claude'),patch.object(plugins,'installed',return_value={'yomiyasu@agent-intelliforge'}),patch.object(runtime,'prepare_dependencies'),patch.object(runtime,'meiseki_assets',return_value={}),patch.object(runtime,'upstream_update',upstream),contextlib.redirect_stdout(io.StringIO()):
+            with patch.object(plugins,'preflight'),patch.object(plugins,'manage'),patch.object(plugins.shutil,'which',return_value='claude'),patch.object(plugins,'installed',return_value={'kotonoha@agent-intelliforge'}),patch.object(runtime,'prepare_dependencies'),patch.object(runtime,'meiseki_assets',return_value={}),patch.object(runtime,'upstream_update',upstream),contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 args.action='update';self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
-                bundle=state/'claude/yomiyasu/bundle';before=ownership.inventory(bundle)
+                bundle=state/'claude/kotonoha/bundle';before=ownership.inventory(bundle)
                 args.upstream_only=True
                 checker=SimpleNamespace(check_updates=lambda *args: {'status':'review_required','applied':False})
                 with patch.object(runtime,'load',return_value=checker):
                     self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
                 self.assertEqual(ownership.inventory(bundle),before)
                 self.assertEqual(runtime.diagnose(kit,'claude',state)['exit_code'],0)
-                self.assertIn('disable-model-invocation: true',(state/'claude/marketplace/plugins/yomiyasu/skills/kotonoha/SKILL.md').read_text(encoding='utf-8').split('---',2)[1])
+                self.assertIn('disable-model-invocation: true',(state/'claude/marketplace/plugins/kotonoha/skills/kotonoha/SKILL.md').read_text(encoding='utf-8').split('---',2)[1])
                 args.action='uninstall';self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
-                self.assertFalse(bundle.exists());self.assertTrue((state/'claude/yomiyasu/upstream/SKILL.upstream.md').exists())
+                self.assertFalse(bundle.exists());self.assertTrue((state/'claude/kotonoha/upstream/SKILL.upstream.md').exists())
 
     def native_migration(self, temporary):
         kit,state,args,plan=self.lifecycle(temporary,'codex')
         plan['operations'][0]['method']='native';args.action='update'
         originals={}
-        for name in ('kotonoha','yomiyasu','paragraph-writing','japanese-direct-writing'):
+        for name in ('yomiyasu','kotonoha','paragraph-writing','japanese-direct-writing'):
             target=args.skills_dir/name
             ownership.replace_tree(target,runtime.owner(name,'codex'),{'SKILL.md':(name+' original').encode()})
             originals[name]=ownership.inventory(target)
@@ -164,7 +164,7 @@ class OwnershipTests(unittest.TestCase):
             with patch.object(runtime,'prepare_dependencies'),contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(runtime.portable_action(ROOT,[kit],plan,args,state),0)
             self.assertEqual({p.parent.name for p in args.skills_dir.rglob('SKILL.md')},{'kotonoha'})
-            backups=list((state/'codex/yomiyasu/backups').iterdir())
+            backups=list((state/'codex/kotonoha/backups').iterdir())
             self.assertEqual(len(backups),4)
             for name,before in originals.items():
                 saved=next(p for p in backups if p.name.startswith(name+'-') or p.name.startswith(name+'.backup-'))
@@ -183,8 +183,8 @@ class OwnershipTests(unittest.TestCase):
             for name,before in originals.items():
                 self.assertEqual(ownership.inventory(args.skills_dir/name),before)
                 ownership.verify(args.skills_dir/name,runtime.owner(name,'codex'))
-            self.assertFalse((state/'codex/yomiyasu/bundle').exists())
-            self.assertFalse((state/'codex/yomiyasu/settings.json').exists())
+            self.assertFalse((state/'codex/kotonoha/bundle').exists())
+            self.assertFalse((state/'codex/kotonoha/settings.json').exists())
 
             self.assertEqual({p.parent.name for p in args.skills_dir.rglob('SKILL.md')},set(originals))
 
@@ -195,7 +195,7 @@ class OwnershipTests(unittest.TestCase):
             with patch.object(runtime,'prepare_dependencies',side_effect=AssertionError('dependencies before preflight')),contextlib.redirect_stdout(io.StringIO()):
                 with self.assertRaises(ForgeError):runtime.portable_action(ROOT,[kit],plan,args,state)
             self.assertEqual(edited.read_bytes(),b'manual edit')
-            self.assertEqual(ownership.inventory(args.skills_dir/'yomiyasu'),originals['yomiyasu'])
+            self.assertEqual(ownership.inventory(args.skills_dir/'kotonoha'),originals['kotonoha'])
             self.assertFalse(state.exists())
 
     def test_native_archive_failure_rolls_back_switch_and_settings(self):
@@ -205,8 +205,8 @@ class OwnershipTests(unittest.TestCase):
                 with self.assertRaises(OSError):runtime.portable_action(ROOT,[kit],plan,args,state)
             for name,before in originals.items():
                 self.assertEqual(ownership.inventory(args.skills_dir/name),before)
-            self.assertFalse((state/'codex/yomiyasu/bundle').exists())
-            self.assertFalse((state/'codex/yomiyasu/settings.json').exists())
+            self.assertFalse((state/'codex/kotonoha/bundle').exists())
+            self.assertFalse((state/'codex/kotonoha/settings.json').exists())
 
     def test_plugin_failure_rolls_back_runtime_and_upstream(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -215,8 +215,8 @@ class OwnershipTests(unittest.TestCase):
                 return ownership.replace_tree(home/'upstream',runtime.owner('yomiyasu-upstream',agent),{'SKILL.upstream.md':b'original'})
             with patch.object(plugins,'preflight'),patch.object(plugins,'manage',side_effect=ForgeError('injected native manager failure')),patch.object(runtime,'prepare_dependencies'),patch.object(runtime,'meiseki_assets',return_value={}),patch.object(runtime,'upstream_update',upstream),contextlib.redirect_stdout(io.StringIO()):
                 with self.assertRaises(ForgeError): runtime.portable_action(ROOT,[kit],plan,args,state)
-            self.assertFalse((state/'claude/yomiyasu/bundle').exists())
-            self.assertFalse((state/'claude/yomiyasu/upstream').exists())
+            self.assertFalse((state/'claude/kotonoha/bundle').exists())
+            self.assertFalse((state/'claude/kotonoha/upstream').exists())
             self.assertFalse((state/'claude/marketplace').exists())
 
     def test_reinstall_backup_and_manual_edit_refusal(self):
@@ -253,8 +253,8 @@ class OwnershipTests(unittest.TestCase):
             self.assertEqual((destination/'a').read_bytes(),b'original')
 
     def test_unowned_plugin_is_not_adopted(self):
-        with tempfile.TemporaryDirectory() as temporary, patch.object(plugins.shutil,'which',return_value='codex'),patch.object(plugins,'checked',return_value='{"marketplaces":[]}'),patch.object(plugins,'installed',return_value={'yomiyasu@agent-intelliforge'}):
-            with self.assertRaises(ForgeError): plugins.preflight(definitions(ROOT)['yomiyasu'],'codex','install',Path(temporary))
+        with tempfile.TemporaryDirectory() as temporary, patch.object(plugins.shutil,'which',return_value='codex'),patch.object(plugins,'checked',return_value='{"marketplaces":[]}'),patch.object(plugins,'installed',return_value={'kotonoha@agent-intelliforge'}):
+            with self.assertRaises(ForgeError): plugins.preflight(definitions(ROOT)['kotonoha'],'codex','install',Path(temporary))
 
 
 class ProcessTests(unittest.TestCase):

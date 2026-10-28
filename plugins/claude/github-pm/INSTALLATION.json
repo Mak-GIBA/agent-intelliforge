@@ -60,7 +60,7 @@
     "tools/codex-github-pm"
   ],
   "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
-  "package_version": "0.1.0",
+  "package_version": "0.2.0",
   "version_kind": "local kit version; upstream versions are resolved and recorded separately",
   "definition": "tools/codex-github-pm/kit.json",
   "agent": "claude"

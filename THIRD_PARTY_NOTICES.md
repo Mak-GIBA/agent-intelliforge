@@ -4,15 +4,15 @@ The root [LICENSE](LICENSE) covers original Agent Intelliforge code and document
 
 ## Bundled writing resources
 
-The maintained originals are stored in `tools/codex-yomiyasu/assets/kotonoha/`. Their versions, commits, and file identities are recorded in [UPSTREAMS.json](tools/codex-yomiyasu/assets/kotonoha/UPSTREAMS.json).
+The maintained originals are stored in `tools/kotonoha/assets/kotonoha/`. Their versions, commits, and file identities are recorded in [UPSTREAMS.json](tools/kotonoha/assets/kotonoha/UPSTREAMS.json).
 
 | Material | Copyright holder | Retained license |
 |---|---|---|
-| [yomiyasu](https://github.com/nanaism/yomiyasu) | nanaism | [MIT](tools/codex-yomiyasu/assets/kotonoha/upstream/LICENSE) |
-| [meiseki](https://github.com/bamboo-nova/meiseki) | bamboo-nova | [MIT](tools/codex-yomiyasu/assets/kotonoha/meiseki-upstream/LICENSE) |
-| Unicode material used by yomiyasu | Unicode, Inc. | [Unicode License V3](tools/codex-yomiyasu/assets/kotonoha/upstream/UNICODE-LICENSE.txt) |
+| [yomiyasu](https://github.com/nanaism/yomiyasu) | nanaism | [MIT](tools/kotonoha/assets/kotonoha/upstream/LICENSE) |
+| [meiseki](https://github.com/bamboo-nova/meiseki) | bamboo-nova | [MIT](tools/kotonoha/assets/kotonoha/meiseki-upstream/LICENSE) |
+| Unicode material used by yomiyasu | Unicode, Inc. | [Unicode License V3](tools/kotonoha/assets/kotonoha/upstream/UNICODE-LICENSE.txt) |
 
-Copies in generated Plugins, runtime resources, standalone installers, and archived evaluations retain the corresponding notices. Keep those notices when redistributing the material. The writing integration's [source and scope guide](tools/codex-yomiyasu/assets/kotonoha/references/sources.md) describes how the originals are used.
+Copies in generated Plugins, runtime resources, standalone installers, and archived evaluations retain the corresponding notices. Keep those notices when redistributing the material. The writing integration's [source and scope guide](tools/kotonoha/assets/kotonoha/references/sources.md) describes how the originals are used.
 
 ## Kit-specific notices
 

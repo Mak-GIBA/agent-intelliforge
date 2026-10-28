@@ -6,7 +6,7 @@
 
 Use ECC's specialized procedures only when the task needs them. The kit obtains ECC originals through Codex's standard Plugin system and keeps the always-visible Skills as short entry points. Python implementation, error handling, and security review have dedicated entries; search for other procedures by purpose instead of loading everything upfront.
 
-[install_codex_ecc.sh](../../../install_codex_ecc.sh) requires the full repository, including `tools/ecc-on-demand/`. No arguments previews the plan without network access; `--apply` installs and configures it.
+[install_ecc.sh](../../../install_ecc.sh) requires the full repository, including `tools/ecc-on-demand/`. No arguments previews the plan without network access; `--apply` installs and configures it.
 
 ## Components
 

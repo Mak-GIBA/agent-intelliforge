@@ -4,7 +4,7 @@
   "name": "ECC on demand",
   "version": "1.0.0",
   "legacy": {
-    "script": "install_codex_ecc.sh",
+    "script": "install_ecc.sh",
     "actions": {
       "install": [
         "--apply"
@@ -82,6 +82,6 @@
     "tools/ecc-on-demand"
   ],
   "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
-  "package_version": "0.1.0",
+  "package_version": "0.2.0",
   "version_kind": "local kit version; upstream versions are resolved and recorded separately"
 }

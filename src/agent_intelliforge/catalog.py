@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 ORDER = ("workgraph", "ux-stack", "speckit", "github-pm", "design-research",
-         "ecc", "office", "yomiyasu", "herdr")
+         "ecc", "office", "kotonoha", "herdr")
 MARKETPLACE = "agent-intelliforge"
 
 
@@ -63,7 +63,8 @@ def selection(value: list[str] | None, catalog: dict[str, dict]) -> list[dict]:
     ids = []
     for part in value or []:
         ids.extend(part.split(","))
-    ids = ["yomiyasu" if item == "kotonoha" else item for item in ids]
+    if "yomiyasu" in ids:
+        raise ForgeError("The yomiyasu kit ID was retired; use --only kotonoha.")
     if any(not item or item not in catalog for item in ids):
         raise ForgeError("Unknown/empty kit selection; use intelliforge list.")
     return [kit for key, kit in catalog.items() if not ids or key in ids]

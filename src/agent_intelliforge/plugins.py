@@ -42,7 +42,10 @@ def preflight(kit, agent, action, state):
         source = row.get('root') or row.get('installLocation') or row.get('path')
         if source is None or Path(source).absolute() != target:
             raise ForgeError('Existing marketplace uses another source; preserving '+ MARKETPLACE)
-    if identity in installed(agent) and identity not in prior:
+    present=installed(agent)
+    if kit['id']=='kotonoha' and 'yomiyasu@'+MARKETPLACE in present and not prior.get(identity,{}).get('migration_from'):
+        raise ForgeError('Old writing plugin registration has no verified migration context; preserve it and use its host manager before installing kotonoha.')
+    if identity in present and identity not in prior:
         raise ForgeError('Existing unowned plugin registration is preserved: ' + identity)
     if action in ('update', 'uninstall') and identity not in prior:
         raise ForgeError('No owned plugin registration: ' + identity)
@@ -93,7 +96,8 @@ def manage(root: Path, kit: dict, agent: str, action: str, state: Path, skills_d
         # registers an owned local directory so wheel upgrades cannot invalidate
         # its path. plugin add installs/refetches that selected local plugin.
         if agent == 'claude': checked([agent, 'plugin', 'marketplace', 'update', MARKETPLACE])
-        checked([agent, "plugin", "add" if agent == "codex" else "update", identity])
+        checked([agent, "plugin", "add" if agent == "codex" else "install" if previous[identity].get("migration_from") else "update", identity])
+        previous[identity].pop("migration_from",None)
     elif action == "uninstall":
         if identity not in previous:
             raise ForgeError(f"Unowned plugin registration; preserving {identity}")

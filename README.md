@@ -97,7 +97,7 @@ Follow a kit's link for its overview, installation, and examples. Use its ID wit
 | `design-research` | [Design Research](docs/en/design-research/README.md) | Compare core approaches using primary sources and experiments, reporting conditions, results, and unverified claims. |
 | `ecc` | [Codex ECC](docs/en/codex-ecc/README.md) | Keep ECC originals and read specialized Python, error-handling, and security procedures when needed. |
 | `office` | [Office Workbench](docs/en/codex-office/README.md) | Read and edit PDF, Word, and PowerPoint files while protecting originals and checking differences and rendering. |
-| `kotonoha` (compatible ID: `yomiyasu`) | [kotonoha and Japanese writing](docs/en/codex-yomiyasu/README.md) | Improve Japanese structure and explanations while preserving meaning and conditions. |
+| `kotonoha` | [kotonoha and Japanese writing](docs/en/kotonoha/README.md) | Improve Japanese structure and explanations while preserving meaning and conditions. |
 | `herdr` | [Herdr](docs/en/herdr/README.md) | Open or reuse the terminal workspace associated with the working directory. |
 
 <a id="workflow"></a>
@@ -134,7 +134,7 @@ Each kit also works independently. When combining them, follow the separate proc
 - **Inspect changes before applying them.** Guides describe sources, destinations, configuration handling, updates, and removal. Protection and optional features vary by kit.
 - **Keep evidence of verification.** Self-tests, regression tests, and writing comparisons have documented conditions and limitations.
 
-Installation success and output quality are evaluated separately. See [UX validation (Japanese)](docs/codex-ux-stack/validation.md), [research validation (Japanese)](docs/design-research/validation.md), and [Japanese writing evaluation](docs/codex-yomiyasu/validation.md).
+Installation success and output quality are evaluated separately. See [UX validation (Japanese)](docs/codex-ux-stack/validation.md), [research validation (Japanese)](docs/design-research/validation.md), and [Japanese writing evaluation](docs/kotonoha/validation.md).
 
 ## Before running agents in parallel
 

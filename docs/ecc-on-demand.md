@@ -21,9 +21,12 @@ python3 tools/ecc-on-demand/ecc_on_demand.py doctor
 管理CLIは `${CODEX_HOME:-~/.codex}/ecc-on-demand/ecc_on_demand.py` に配置します。
 設定のバックアップと管理状態も同じディレクトリに保存します。バックアップの権限は所有者のみ読み書き可能です。
 ECCの原本、Basic Memory、既存のMCP、スキル一覧の上限は変更しません。
-初回の既定ではContext7とPlaywrightを独立MCPとして追加します。
+初回の既定ではFirecrawlとChrome DevToolsを独立MCPとして追加します。
 既存の同名設定と無効指定は保持します。Context7の旧名`context7-mcp`があれば二重登録しません。
-stdio接続にはNode.jsと`npx`が必要です。GitHubは既存の公式連携または`gh`を使います。
+Firecrawlは[公式のキー不要接続](https://github.com/firecrawl/firecrawl-mcp-server#hosted-mcp-keyless-free-tier)で検索・本文取得・文書解析を利用できます。
+利用回数には制限があり、`crawl`・`map`には認証が必要です。
+Chrome DevToolsのstdio接続にはNode.jsと`npx`、利用可能なブラウザーが必要です。
+GitHubは既存の公式連携または`gh`を使います。
 
 ```bash
 python3 tools/ecc-on-demand/ecc_on_demand.py apply --mcps recommended,browser,cloudflare
@@ -38,7 +41,7 @@ python3 tools/ecc-on-demand/ecc_on_demand.py apply --mcps none
 
 Sequential Thinkingは明示指定のみ、Token Optimizerは登録対象外です。今回の比較では前者の正答増加を確認できず、
 後者には新しい会話で必要な情報を取得できない失敗がありました。既定2件も精度改善を保証する選択ではなく、
-文書探索・画面操作の接続を用意するためのものです。
+Web検索・本文取得とブラウザー診断の接続を用意するためのものです。Firecrawlは過去の比較試験の対象外です。
 用途別の判断と実測例は[MCPの導入判断](codex-ecc/mcp-evaluation.md)、
 選択肢の詳細は[ECCのインストール](codex-ecc/installation.md)を参照してください。
 
@@ -89,7 +92,7 @@ python3 tools/ecc-on-demand/ecc_on_demand.py restore
 更新後にCodexからフックの信頼確認が要求されることがあります。本ツールはフックを自動承認しません。
 原本は新しいネイティブカタログから解決するため、入口のバージョン固定パスを書き換える必要はありません。
 入口や管理CLI自体の更新には、新しいリポジトリのコピーから`apply`を実行します。
-ECC原本と管理資材をまとめて更新する場合は、ルートの`install_codex_ecc.sh --update --apply`を使います。
+ECC原本と管理資材をまとめて更新する場合は、ルートの`install_ecc.sh --update --apply`を使います。
 
 `configure-ecc` や直接の `codex plugin add` はECCを再有効化する場合があります。
 `doctor` が再有効化を検出したら `apply` で戻してください。

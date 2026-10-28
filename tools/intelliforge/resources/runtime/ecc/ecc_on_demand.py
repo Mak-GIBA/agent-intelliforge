@@ -31,21 +31,23 @@ ENTRIES = {
 }
 MANAGER_DIR = "ecc-on-demand"
 MCP_SERVERS = {
+    "firecrawl": {"url": "https://mcp.firecrawl.dev/v2/mcp", "startup_timeout_sec": 60},
     "context7": {"command": "npx", "args": ["-y", "@upstash/context7-mcp@4.3.0"], "startup_timeout_sec": 60},
     "parallel-search": {"url": "https://search.parallel.ai/mcp", "startup_timeout_sec": 60},
     "playwright": {"command": "npx", "args": ["-y", "@playwright/mcp@0.0.83", "--headless", "--isolated"], "startup_timeout_sec": 60},
-    "chrome-devtools": {"command": "npx", "args": ["-y", "chrome-devtools-mcp@1.10.1", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"], "startup_timeout_sec": 60},
+    "chrome-devtools": {"command": "npx", "args": ["-y", "chrome-devtools-mcp@1.10.1", "--headless", "--isolated", "--no-usage-statistics", "--no-performance-crux"], "env_vars": ["HTTP_PROXY", "HTTPS_PROXY", "NO_PROXY"], "startup_timeout_sec": 60},
     # Retain legacy names for ownership validation/restoration and explicit use.
     "sequential-thinking": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@2026.8.31"], "env": {"DISABLE_THOUGHT_LOGGING": "true"}, "startup_timeout_sec": 60},
     "cloudflare-docs": {"url": "https://docs.mcp.cloudflare.com/mcp", "startup_timeout_sec": 60},
 }
-RECOMMENDED_MCPS = ("context7", "playwright")
+RECOMMENDED_MCPS = ("firecrawl", "chrome-devtools")
 # Registration is a workflow choice. The paired trials did not establish a
 # general accuracy gain; explicit-only tools must stay explicit-only.
 MCP_SELECTION_BASIS = {
+    "firecrawl": "keyless hosted connection: rate-limited search, scrape and parse; crawl/map require authentication; not evaluated in the paired workflow trials",
     "context7": "conditional: unknown-library discovery and documentation access; tested answers/code tied, citation defect observed",
     "playwright": "conditional: interactive browser work; tested final outcomes tied, lower observed model/tool time",
-    "chrome-devtools": "optional: console/network inspection; tested outcomes tied, select for diagnosis",
+    "chrome-devtools": "browser diagnosis: console/network inspection; tested outcomes tied, not a general accuracy gain",
     "parallel-search": "optional: alternative public search; no observed answer gain in the fixed tasks",
     "cloudflare-docs": "optional: Cloudflare-specific documentation; no observed answer gain in the fixed tasks",
     "sequential-thinking": "explicit-only: tested reasoning tied; default adoption rule not met",

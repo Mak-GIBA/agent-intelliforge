@@ -6,5 +6,5 @@ recursive-include .claude-plugin *.json
 recursive-include scripts *.py
 include docs/research-archives.json docs/research-archives.md docs/en/research-archives.md
 # Historical writing records are distributed separately, even if restored locally.
-prune tools/codex-yomiyasu/evaluation*
+prune tools/kotonoha/evaluation*
 global-exclude *.pyc *.private.json

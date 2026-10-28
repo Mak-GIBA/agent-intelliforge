@@ -15,7 +15,9 @@ python3 tools/ecc-on-demand/ecc_on_demand.py doctor
 
 `apply` sets `plugins."ecc@ecc".enabled = false` and places `ecc-python`, `ecc-errors`, `ecc-security`, and `ecc-library` under `~/.agents/skills/`. The CLI, state, and owner-only configuration backups live in `${CODEX_HOME:-~/.codex}/ecc-on-demand/`. Originals, Basic Memory, existing MCPs, and Skill-list limits are unchanged.
 
-First-time defaults add Context7 and Playwright independently. Existing same-name settings, disabled entries, and the old `context7-mcp` connection remain intact. stdio needs Node.js and `npx`; GitHub uses an existing official integration or `gh`.
+First-time defaults add Firecrawl and Chrome DevTools independently. Existing same-name settings, disabled entries, and the old `context7-mcp` connection remain intact. Chrome DevTools needs Node.js, `npx`, and a usable browser; GitHub uses an existing official integration or `gh`.
+
+Firecrawl uses the [official keyless hosted endpoint](https://github.com/firecrawl/firecrawl-mcp-server#hosted-mcp-keyless-free-tier) for rate-limited search, scrape, and parse. The `crawl` and `map` tools require authentication. Firecrawl was not evaluated in the earlier comparative trials; the default selection does not establish better accuracy.
 
 ```bash
 python3 tools/ecc-on-demand/ecc_on_demand.py apply --mcps recommended,browser,cloudflare
@@ -56,7 +58,7 @@ python3 tools/ecc-on-demand/ecc_on_demand.py update
 python3 tools/ecc-on-demand/ecc_on_demand.py restore
 ```
 
-`update` uses `codex plugin marketplace upgrade ecc --json` and `codex plugin add ecc@ecc --json`. Failures still return ECC to disabled and report diagnostics. Codex may request hook trust after updating; this tool does not approve it. Paths are resolved from the new native catalog, so versioned entry paths need no manual replacement. Refresh entry assets/the CLI with `apply` from a new checkout; use `install_codex_ecc.sh --update --apply` to update both originals and management assets.
+`update` uses `codex plugin marketplace upgrade ecc --json` and `codex plugin add ecc@ecc --json`. Failures still return ECC to disabled and report diagnostics. Codex may request hook trust after updating; this tool does not approve it. Paths are resolved from the new native catalog, so versioned entry paths need no manual replacement. Refresh entry assets/the CLI with `apply` from a new checkout; use `install_ecc.sh --update --apply` to update both originals and management assets.
 
 `configure-ecc` or direct `codex plugin add` can re-enable ECC. If `doctor` detects this, run `apply` again.
 

@@ -66,15 +66,15 @@
 # Edit: tools/codex-office/kit.json
 # Inspect: intelliforge inspect --only office
 # Regenerate: python tools/intelliforge/build.py
-# Kit: yomiyasu — kotonoha Japanese writing
+# Kit: kotonoha — kotonoha Japanese writing
 # Skills: kotonoha
 # Source: https://github.com/nanaism/yomiyasu (latest stable upstream release; local writing rules have independent version)
 # Source: https://github.com/bamboo-nova/meiseki (latest stable release; normative changes require reviewed adapter)
 # Destination: {skills_home}/kotonoha
 # Destination: {skills_home}/../.kotonoha-runtime
 # Settings: none
-# Edit: tools/codex-yomiyasu/kit.json
-# Inspect: intelliforge inspect --only yomiyasu
+# Edit: tools/kotonoha/kit.json
+# Inspect: intelliforge inspect --only kotonoha
 # Regenerate: python tools/intelliforge/build.py
 # Kit: herdr — Herdr workspace reuse
 # Skills: CLI integration
@@ -90,10 +90,10 @@
 set -euo pipefail
 
 BULK_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-BULK_TOOLS=(workgraph ux-stack speckit github-pm design-research ecc office yomiyasu herdr)
+BULK_TOOLS=(workgraph ux-stack speckit github-pm design-research ecc office kotonoha herdr)
 BULK_SCRIPTS=(install_basic_memory_workgraph.sh install_codex_ux_stack.sh
   install_speckit_upstream.sh install_codex_github_pm.sh install_design_research.sh
-  install_codex_ecc.sh install_codex_office.sh install_codex_yomiyasu.sh install_herdr.sh)
+  install_ecc.sh install_codex_office.sh install_kotonoha.sh install_herdr.sh)
 BULK_DESCRIPTIONS=("Basic Memory・Workgraph" "OOUI・UI/UX設計と画像付き検証"
   "SpecKit上流工程" "GitHubのIssue・PR・Projects管理" "コアロジックの調査・改善"
   "ECCと必要時に読む入口" "PDF・Word・PowerPointの編集" "日本語の段落構成・推敲" "HerdrとBash設定")
@@ -117,7 +117,7 @@ Usage: bash install_all.sh [--apply | --dry-run] [--only TOOL[,TOOL...]]
 
 例:
   bash install_all.sh --apply
-  bash install_all.sh --only ux-stack,yomiyasu --apply
+  bash install_all.sh --only ux-stack,kotonoha --apply
 
 リポジトリ一式が必要です。全ツールの標準導入はLinux / WSL2向けです。
 各ツールの前提条件・取得元・設定変更はdocs/installation.mdを参照してください。
@@ -149,10 +149,10 @@ while [[ $# -gt 0 ]]; do
       [[ "$2" =~ ^[a-z][a-z0-9-]*(,[a-z][a-z0-9-]*)*$ ]] || bulk_error "--only はツールIDをカンマ区切りで指定してください。"
       IFS=',' read -r -a requested_tools <<< "$2"
       for requested_tool in "${requested_tools[@]}"; do
-        [[ "$requested_tool" != kotonoha ]] || requested_tool=yomiyasu
+        [[ "$requested_tool" != yomiyasu ]] || bulk_error "旧ID yomiyasu は廃止しました。--only kotonoha を使ってください。"
         bulk_known_tool "$requested_tool" || bulk_error "不明なツールID: $requested_tool（--listで確認）"
       done
-      normalized_tools=${2//kotonoha/yomiyasu}
+      normalized_tools=$2
       BULK_ONLY="${BULK_ONLY:+$BULK_ONLY,}$normalized_tools"
       shift 2
       ;;
@@ -202,7 +202,7 @@ for i in "${!BULK_TOOLS[@]}"; do
         bulk_command+=(--update)
       fi
       ;;
-    speckit|ecc|office|yomiyasu) bulk_command+=(--apply) ;;
+    speckit|ecc|office|kotonoha) bulk_command+=(--apply) ;;
   esac
   printf '[codex-tools] %s:' "$tool"
   printf ' %q' "${bulk_command[@]}"

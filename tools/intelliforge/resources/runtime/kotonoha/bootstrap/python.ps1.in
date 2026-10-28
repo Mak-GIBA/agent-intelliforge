@@ -1,0 +1,83 @@
+# kotonoha standalone bootstrap. Source: tools/kotonoha; generated.
+$ErrorActionPreference = 'Stop'
+$installerArgs = @($args)
+$OutputEncoding = [Text.UTF8Encoding]::new($false)
+$environmentKeys = @('UV_PYTHON_INSTALL_DIR','UV_CACHE_DIR','UV_PYTHON_BIN_DIR','UV_NO_MODIFY_PATH','PYTHONDONTWRITEBYTECODE','PYTHONUTF8')
+$previousEnvironment = @{}
+foreach ($key in $environmentKeys) { $previousEnvironment[$key] = [Environment]::GetEnvironmentVariable($key,'Process') }
+try {
+$python = $env:PYTHON_BIN
+if (-not $python) {
+    foreach ($candidate in @('python','python3')) {
+        if (Get-Command $candidate -ErrorAction SilentlyContinue) {
+            if ((Get-Command $candidate).Source -like '*\Microsoft\WindowsApps\python*.exe') { continue }
+            & $candidate -c 'import sys;raise SystemExit(sys.version_info<(3,10))' 2>$null
+            if ($LASTEXITCODE -eq 0) { $python = (Get-Command $candidate).Source; break }
+        }
+    }
+}
+$base = $env:KOTONOHA_BOOTSTRAP_DIR
+if (-not $base) { $base = Join-Path $env:LOCALAPPDATA 'agent-intelliforge/kotonoha-bootstrap' }
+if (-not $python -and (Test-Path -LiteralPath (Join-Path $base '.kotonoha-bootstrap-owner'))) {
+    if ((Get-Content -Raw -LiteralPath (Join-Path $base '.kotonoha-bootstrap-owner')).Trim() -eq 'agent-intelliforge/kotonoha-bootstrap-v1') {
+        foreach ($candidate in (Get-ChildItem (Join-Path $base 'python') -Recurse -Filter python.exe -ErrorAction SilentlyContinue)) {
+            & $candidate.FullName -c 'import sys;raise SystemExit(sys.version_info<(3,11))' 2>$null
+            if ($LASTEXITCODE -eq 0) { $python = $candidate.FullName; break }
+        }
+    }
+}
+if (-not $python) {
+    if (($installerArgs -notcontains '--apply') -or ($installerArgs | Where-Object { $_ -in @('--dry-run','--help','-h','--doctor','--status','--self-test','--check-update','--uninstall') })) {
+        Write-Output '{"status":"PYTHON_REQUIRED_FOR_FULL_PREVIEW","applied":false,"network":false,"plan":"--apply prepares user-local Python 3.11, Node.js 24 LTS, fixed lint packages and kotonoha"}'
+        if ($installerArgs | Where-Object { $_ -in @('--doctor','--status','--self-test','--check-update','--uninstall') }) { exit 2 }
+        exit 0
+    }
+    $base = $env:KOTONOHA_BOOTSTRAP_DIR
+    if (-not $base) { $base = Join-Path $env:LOCALAPPDATA 'agent-intelliforge/kotonoha-bootstrap' }
+    $cursor = [System.IO.Path]::GetFullPath($base)
+    while ($cursor) {
+        if ((Test-Path -LiteralPath $cursor) -and ((Get-Item -LiteralPath $cursor -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Linked bootstrap path refused' }
+        $cursor = [IO.Path]::GetDirectoryName($cursor)
+    }
+    New-Item -ItemType Directory -Force -Path $base | Out-Null
+    $marker = Join-Path $base '.kotonoha-bootstrap-owner'
+    if (Test-Path -LiteralPath $marker) {
+        if (((Get-Item -LiteralPath $marker -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) -or (Get-Content -Raw -LiteralPath $marker).Trim() -ne 'agent-intelliforge/kotonoha-bootstrap-v1') { throw 'Unmanaged bootstrap marker' }
+    } elseif (Get-ChildItem -LiteralPath $base -Force) { throw 'Unmanaged bootstrap directory' }
+    else { Set-Content -LiteralPath $marker -Value 'agent-intelliforge/kotonoha-bootstrap-v1' -Encoding UTF8 }
+    $uv = Get-Command uv -ErrorAction SilentlyContinue
+    $stage = $null
+    try {
+        if (-not $uv) {
+            switch ([Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()) {
+@UV_PS_CASES@
+                default { throw 'No verified Python bootstrap for this architecture' }
+            }
+            $stage = Join-Path $base ([Guid]::NewGuid().ToString('N'))
+            New-Item -ItemType Directory -Path $stage | Out-Null
+            $archive = Join-Path $stage 'uv.zip'
+            Invoke-WebRequest -Uri $url -OutFile $archive
+            if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $digest) { throw 'uv SHA-256 mismatch' }
+            Expand-Archive -LiteralPath $archive -DestinationPath (Join-Path $stage 'files')
+            $uv = (Get-ChildItem (Join-Path $stage 'files') -Recurse -Filter uv.exe | Select-Object -First 1).FullName
+        } else { $uv = $uv.Source }
+        $env:UV_PYTHON_INSTALL_DIR = Join-Path $base 'python'
+        $env:UV_CACHE_DIR = Join-Path $base 'cache'
+        $env:UV_PYTHON_BIN_DIR = Join-Path $base 'bin'
+        $env:UV_NO_MODIFY_PATH = '1'
+        & $uv python install @PYTHON_VERSION@
+        if ($LASTEXITCODE -ne 0) { throw 'Python provisioning failed' }
+        $python = (& $uv python find --managed-python @PYTHON_VERSION@).Trim()
+        if ($LASTEXITCODE -ne 0) { throw 'Python lookup failed' }
+    } finally { if ($stage) { Remove-Item -Recurse -Force -LiteralPath $stage } }
+}
+$payload = '@PYTHON_PAYLOAD@'
+$source = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payload))
+$env:PYTHONDONTWRITEBYTECODE = '1'
+$env:PYTHONUTF8 = '1'
+$source | & $python -B - $PSCommandPath @installerArgs
+exit $LASTEXITCODE
+
+} finally {
+    foreach ($key in $environmentKeys) { [Environment]::SetEnvironmentVariable($key,$previousEnvironment[$key],'Process') }
+}

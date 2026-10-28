@@ -25,8 +25,8 @@ GitHub管理とOfficeは、以前のZIP資材を検証して読みやすいソ�
 
 ```bash
 # 各正本から既存の単一ファイルを生成・確認
-python tools/codex-yomiyasu/build_installer.py
-python tools/codex-yomiyasu/build_installer.py --check
+python tools/kotonoha/build_installer.py
+python tools/kotonoha/build_installer.py --check
 python tools/codex-github-pm/build_installer.py --check
 python tools/codex-office/build_installer.py --check
 python tools/herdr/build_installer.py --check
@@ -54,8 +54,8 @@ python tools/intelliforge/build.py --assembled-source <assembly-directory> --che
 python -B -m unittest discover -s tests -p test_intelliforge.py -v
 python -B -m unittest discover -s tests -v
 bash -n install_all.sh
-bash -n install_codex_yomiyasu.sh
-bash install_codex_yomiyasu.sh --self-test
+bash -n install_kotonoha.sh
+bash install_kotonoha.sh --self-test
 uv build
 ```
 

@@ -29,7 +29,7 @@ Search, bulk actions, fixed-target operations, and meaningful wizards depend on 
 
 At design/review/fix start, recall available Basic Memory feedback and compare original context/exceptions with current users, goals, and constraints. Current screenshots/actions establish findings and resolution. Record applied notes/reasons briefly in existing findings. Missing Memory/search failure/no matches do not block work; this does not install/configure/write Memory.
 
-Japanese drafts can be polished once with kotonoha, falling back to yomiyasu; do not apply both. Preserve claims, numbers, conditions, results, and evidence, and keep short labels short. See the [separate installer](../codex-yomiyasu/installation.md).
+Japanese drafts can be polished once with kotonoha, falling back to yomiyasu; do not apply both. Preserve claims, numbers, conditions, results, and evidence, and keep short labels short. See the [separate installer](../kotonoha/installation.md).
 
 The custom existing-app harness references [ECC's iteration structure](https://github.com/affaan-m/ECC/blob/ef648e01899ba3e8dc6371642deaaf64b4477775/scripts/gan-harness.sh). It runs separate researcher/fixer/reviewer Codex executions, not model training. Use the requested audience, with first-time, mistaken, hurried, and explanation-skipping perspectives as additional checks. Prefer consolidation, removal, ordering, and precise copy before adding UI. Recheck steps, decisions, mobile density, and before/after screenshots. Reference research normally seeks 3 apps, distinguishing public interactions from official images.
 

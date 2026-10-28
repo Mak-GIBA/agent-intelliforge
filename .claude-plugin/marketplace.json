@@ -40,8 +40,8 @@
       "description": "Office Workbench"
     },
     {
-      "name": "yomiyasu",
-      "source": "./plugins/claude/yomiyasu",
+      "name": "kotonoha",
+      "source": "./plugins/claude/kotonoha",
       "description": "kotonoha Japanese writing"
     }
   ]
