@@ -27,6 +27,16 @@ jobs:
         run: uv run --no-project --python 3.11 python -B -m unittest discover -s tests -p test_kotonoha_migration.py -v
       - name: Kotonoha offline runtime contracts
         run: uv run --no-project --python 3.11 python -B -m unittest discover -s tools/kotonoha/tests -p test_kotonoha.py -v
+      - name: Standalone kotonoha preview (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:PYTHON_BIN = (uv python find 3.11).Trim()
+          & .\install_kotonoha.ps1 --dry-run
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Standalone kotonoha preview (Linux)
+        if: runner.os == 'Linux'
+        run: PYTHON_BIN="$(uv python find 3.11)" bash install_kotonoha.sh --dry-run
       - run: uv build
       - name: Inspect packaged resources in an isolated tool environment
         shell: pwsh
@@ -40,6 +50,8 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: python3 scripts/research_archive.py check-tree
       - run: uv run --no-project --python 3.11 --with "PyYAML>=6,<7" python -B -m unittest discover -s tests -v
+      - name: Kotonoha installer and writing contracts
+        run: uv run --no-project --python 3.11 python -B -m unittest discover -s tools/kotonoha/tests -v
       - name: Research and Upstream workflow contracts
         run: uv run --no-project --python 3.11 python -B tools/design-research-upgrade/build_installers.py --out "${RUNNER_TEMP}/research-assembly"
       - name: Generated plugin and runtime consistency
