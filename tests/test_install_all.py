@@ -74,6 +74,12 @@ class BatchInstallerTests(unittest.TestCase):
     def expected(self, *ids):
         return [{"script": script, "args": args} for tool, script, args in INSTALLERS if not ids or tool in ids]
 
+    def test_retired_writing_id_is_rejected_before_running_children(self):
+        result=self.invoke('--apply','--only','yomiyasu')
+        self.assertNotEqual(result.returncode,0)
+        self.assertIn('kotonoha',result.stderr)
+        self.assertEqual(self.calls(),[])
+
     def test_default_preview_invokes_nothing_and_preserves_home(self):
         marker = self.codex / "basic-memory-workgraph"
         marker.mkdir(parents=True)

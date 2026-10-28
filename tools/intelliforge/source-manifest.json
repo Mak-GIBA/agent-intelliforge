@@ -3,7 +3,7 @@
     ".agents/plugins/marketplace.json": "334abbc7176886d493197c52138ce71a862ad2560176a8f91234d5a9dd8aa2f9",
     ".claude-plugin/marketplace.json": "fb97e4e11d193c4666d2647a18600c122847a02e8f0283a0894b560e3033a705",
     "install_all.ps1": "6702759d7a5bc55d5e7f1210c9d1bb1147653741cecb5449f352ce90c4e1e23f",
-    "install_all.sh": "4bbccce42e37910055d849a60bb311c95163701dd93bf41df174d046e6e6f71a",
+    "install_all.sh": "cff202e1c30769316c50b7da8b6a5ab459b3bc016a24af9f9fc7db1ff12e5feb",
     "intelliforge.py": "5073dc3695542e512986cbb008011eddba1722495cc32f0b68ce15c09dde1d1f",
     "plugins/claude/design-research/.claude-plugin/plugin.json": "47c617fcf875b3e477dab46ebff1251548f923531b2cc6f7bd37d5c79e9276d7",
     "plugins/claude/design-research/INSTALLATION.json": "8bb7337b7f9e02638bc3889dcbe821d9be4d9f24da713649c6e3e1cb97627d8a",

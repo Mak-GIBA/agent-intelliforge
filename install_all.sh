@@ -149,6 +149,7 @@ while [[ $# -gt 0 ]]; do
       [[ "$2" =~ ^[a-z][a-z0-9-]*(,[a-z][a-z0-9-]*)*$ ]] || bulk_error "--only はツールIDをカンマ区切りで指定してください。"
       IFS=',' read -r -a requested_tools <<< "$2"
       for requested_tool in "${requested_tools[@]}"; do
+        [[ "$requested_tool" != yomiyasu ]] || bulk_error "旧ID yomiyasu は廃止しました。--only kotonoha を使ってください。"
         bulk_known_tool "$requested_tool" || bulk_error "不明なツールID: $requested_tool（--listで確認）"
       done
       normalized_tools=$2
