@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep native ECC installed, exposing four small on-demand skill entrypoints.
+"""Keep native ECC installed, exposing five small on-demand skill entrypoints.
 
 Python 3.11+, standard library only. Native Codex owns ECC's cache and updates.
 """
@@ -24,6 +24,7 @@ import tomllib
 OWNER = "basic-memory-workgraph/ecc-on-demand"
 PLUGIN = "ecc@ecc"
 ENTRIES = {
+    "ecc-tdd": "tdd-workflow",
     "ecc-python": "python-patterns",
     "ecc-errors": "error-handling",
     "ecc-security": "security-review",
@@ -288,6 +289,22 @@ class Codex:
             process.stdin.close()
             process.stdout.close()
 
+    def verify_entrypoints(self, commands: dict[str, list[str]], cwd: Path) -> list[str]:
+        issues = []
+        for name, command in commands.items():
+            try:
+                completed = subprocess.run(command, cwd=cwd, env=self.env, capture_output=True,
+                                           text=True, timeout=self.timeout)
+                if completed.returncode:
+                    raise ManagementError(f"exit {completed.returncode}; check the bound Python and rerun install_ecc.sh --apply")
+                result = json.loads(completed.stdout)
+                paths = [row.get("path") for row in result.get("matches", [])] if "matches" in result else [result.get("path")]
+                if not paths or any(not path or not Path(path).is_file() for path in paths):
+                    raise ManagementError("original document not resolved")
+            except (OSError, ValueError, ManagementError, subprocess.TimeoutExpired) as error:
+                issues.append(f"Entrypoint {name}: {error}")
+        return issues
+
     def update(self) -> None:
         for arguments in (["plugin", "marketplace", "upgrade", "ecc", "--json"],
                           ["plugin", "add", PLUGIN, "--json"]):
@@ -340,34 +357,73 @@ SEARCH_TERMS = {
 }
 
 
-def search_catalog(skills: list[dict], query: str, cwd: Path, limit: int = 5) -> list[dict]:
+LANGUAGE_ALIASES = {
+    "python": ("python", "パイソン", "django", "pytest"),
+    "typescript": ("typescript", "ts"), "javascript": ("javascript", "js", "nodejs"),
+    "golang": ("golang", "go"), "rust": ("rust",),
+    "cpp": ("cpp", "c++"), "csharp": ("csharp", "c#", "dotnet"),
+    "java": ("java", "springboot", "quarkus"), "kotlin": ("kotlin",),
+    "ruby": ("ruby", "rails"), "php": ("php", "laravel"),
+    "swift": ("swift",), "fsharp": ("fsharp", "f#"),
+    "dart": ("dart", "flutter"), "perl": ("perl",),
+}
+
+
+def query_languages(text: str) -> set[str]:
+    return {name for name, aliases in LANGUAGE_ALIASES.items()
+            if any(re.search(r"(?<![a-z0-9])" + re.escape(alias) + r"(?![a-z0-9])", text.casefold())
+                   for alias in aliases)}
+
+
+def project_languages(cwd: Path) -> set[str]:
+    """The nearest manifest boundary avoids guessing a monorepo-wide language."""
+    manifests = {"pyproject.toml": "python", "requirements.txt": "python", "setup.py": "python",
+                 "tsconfig.json": "typescript", "package.json": "javascript", "go.mod": "golang",
+                 "Cargo.toml": "rust", "pom.xml": "java", "build.gradle": "java",
+                 "build.gradle.kts": "kotlin", "Gemfile": "ruby", "composer.json": "php",
+                 "Package.swift": "swift", "pubspec.yaml": "dart", "CMakeLists.txt": "cpp"}
+    for directory in (cwd, *cwd.parents):
+        languages = {lang for file, lang in manifests.items() if (directory / file).is_file()}
+        for pattern, lang in (("*.csproj", "csharp"), ("*.fsproj", "fsharp")):
+            if any(directory.glob(pattern)): languages.add(lang)
+        if languages: return languages
+        if (directory / ".git").exists(): break
+    return set()
+
+
+def skill_languages(name: str) -> set[str]:
+    # React/Next and shared frontend guidance serve both JS and TS projects.
+    if set(re.findall(r"[a-z0-9]+", name)) & {"react", "nextjs", "frontend"}:
+        return {"typescript", "javascript"}
+    return query_languages(name)
+
+
+def search_catalog(skills: list[dict], query: str, cwd: Path, limit: int = 5,
+                   *, language: str | None = None) -> list[dict]:
     normalized = query.casefold()
+    target = query_languages(language) if language else query_languages(query)
+    if language and (len(target) != 1 or language.casefold().strip() not in
+                     {alias for aliases in LANGUAGE_ALIASES.values() for alias in aliases}):
+        raise ManagementError(f"Unknown language: {language}; use a supported language name")
     explicit = [s for s in skills if s["name"] == normalized.removeprefix("ecc:")]
-    if explicit:
-        return explicit
+    if explicit: return explicit
+    target = target or project_languages(cwd)
     tokens = set(re.findall(r"[a-z0-9]+", normalized))
+    if "tdd" in tokens: tokens.add("testing")
     for term, aliases in SEARCH_TERMS.items():
         if any((alias in normalized if not alias.isascii() else alias in tokens) for alias in aliases):
             tokens.add(term)
             tokens.difference_update(alias for alias in aliases if alias.isascii() and alias != term)
-    stack = set()
-    if any((cwd / file).is_file() for file in ("pyproject.toml", "requirements.txt", "setup.py")):
-        stack.add("python")
-    if (cwd / "tsconfig.json").is_file():
-        stack.add("typescript")
-    if (cwd / "package.json").is_file():
-        stack.add("javascript")
+    tokens.update(query_languages(query))
     results = []
-    languages = {"python", "typescript", "javascript", "golang", "rust", "ruby",
-                 "java", "kotlin", "swift", "csharp", "fsharp", "php", "dart", "perl"}
     for skill in skills:
+        languages = skill_languages(skill["name"])
+        if target and languages and not target & languages: continue
         name_tokens = set(re.findall(r"[a-z0-9]+", skill["name"].casefold()))
-        if tokens & languages and name_tokens & languages and not tokens & name_tokens & languages:
-            continue
         description_tokens = set(re.findall(r"[a-z0-9]+", skill["description"].casefold()))
         score = 8 * len(tokens & name_tokens) + len(tokens & description_tokens)
         if score:
-            score += 2 * len(stack & name_tokens)
+            score += 2 * len(target & languages)
             results.append({**skill, "score": score})
     return sorted(results, key=lambda s: (-s["score"], s["name"]))[:limit]
 
@@ -391,13 +447,18 @@ class Manager:
         if not self.state_path.exists():
             return None
         state = json.loads(self.state_path.read_text())
-        if state.get("owner") != OWNER or state.get("version") != 1:
+        if state.get("owner") != OWNER or state.get("version") not in (1, 2):
             raise ManagementError("Unknown ECC manager state; refusing to modify it")
         if state["config_path"] != str(self.config) or state["skills_root"] != str(self.skills_root):
             raise ManagementError("ECC manager state belongs to different config/skill paths")
+        entries = list(ENTRIES) if state["version"] == 2 else [n for n in ENTRIES if n != "ecc-tdd"]
+        if state["version"] == 2 and (state.get("entrypoints") != entries or not isinstance(state.get("python_executable"), str) or not Path(state["python_executable"]).is_absolute()):
+            raise ManagementError("Invalid ECC runtime/entrypoint state")
         allowed = {str(self.installed_script)} | {
             str(self.skills_root / name / relative)
-            for name in ENTRIES for relative in ("SKILL.md", "agents/openai.yaml")}
+            for name in entries for relative in ("SKILL.md", "agents/openai.yaml")}
+        if state.get("catalog_snapshot") is True:
+            allowed.add(str(self.directory / "catalog.json"))
         if set(state["files"]) != allowed:
             raise ManagementError("Unexpected managed file paths in state")
         return state
@@ -407,6 +468,23 @@ class Manager:
             path = Path(filename)
             if path.is_symlink() or not path.is_file() or digest(path.read_bytes()) != expected:
                 raise ManagementError(f"Managed file missing or changed; preserving it: {path}")
+
+    def read_snapshot(self) -> list[dict]:
+        state = self.state()
+        if not state or not state.get("catalog_snapshot"):
+            raise ManagementError("Refresh ECC originals using install_ecc.sh --apply from the repository copy")
+        self.check_files(state)
+        value = json.loads((self.directory / "catalog.json").read_text())
+        if value.get("owner") != OWNER or value.get("version") != 1:
+            raise ManagementError("Invalid ECC catalog snapshot; rerun install_ecc.sh --apply")
+        skills = value["skills"]
+        for skill in skills:
+            path = Path(skill["path"])
+            if path.is_symlink() or not path.is_file() or digest(path.read_bytes()) != skill["sha256"]:
+                raise ManagementError("ECC original changed or missing; refresh with install_ecc.sh --apply: " + skill["name"])
+        if {name for name in ENTRIES.values() if name} - {row["name"] for row in skills}:
+            raise ManagementError("ECC catalog snapshot is missing required originals")
+        return [{key: val for key, val in row.items() if key != "sha256"} for row in skills]
 
     def payload(self) -> dict[Path, bytes]:
         source = Path(__file__).resolve()
@@ -418,15 +496,17 @@ class Manager:
             if state is None:
                 raise ManagementError("Run apply from the repository copy first")
             self.check_files(state)
+            if state["version"] != 2:
+                raise ManagementError("Update ECC entrypoints using install_ecc.sh --apply from the new repository copy")
             return {Path(path): Path(path).read_bytes() for path in state["files"]}
         files = {self.installed_script: source.read_bytes()}
         for name in ENTRIES:
             for relative in ("SKILL.md", "agents/openai.yaml"):
                 text = (template_root / name / relative).read_text()
-                command = (shlex.quote(str(self.installed_script))
+                command = (shlex.quote(os.path.abspath(sys.executable)) + " -B " + shlex.quote(str(self.installed_script))
                            + " --codex-home " + shlex.quote(str(self.home))
                            + " --codex " + shlex.quote(self.codex.binary))
-                text = text.replace("{{MANAGER}}", command)
+                text = text.replace("python3 {{MANAGER}}", command)
                 files[self.skills_root / name / relative] = text.encode()
         return files
 
@@ -436,6 +516,9 @@ class Manager:
         self.payload()
         if state:
             self.check_files(state)
+            for name in ENTRIES:
+                if name not in (state.get("entrypoints") or [n for n in ENTRIES if n != "ecc-tdd"]) and ((self.skills_root / name).exists() or (self.skills_root / name).is_symlink()):
+                    raise ManagementError(f"Existing unmanaged skill; refusing to overwrite: {name}")
         else:
             for name in ENTRIES:
                 path = self.skills_root / name
@@ -459,6 +542,9 @@ class Manager:
         with nullcontext() if _locked else self.lock():
             state = self.preflight()
             files = self.payload()
+            snapshot = {"owner": OWNER, "version": 1, "skills": [
+                {**row, "sha256": digest(Path(row["path"]).read_bytes())} for row in originals]}
+            files[self.directory / "catalog.json"] = (json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n").encode()
             original = self.config.read_bytes() if self.config.exists() else b""
             changed_text = edit_enabled(original.decode(), False)
             selected = self.selected_mcps(mcps)
@@ -468,7 +554,9 @@ class Manager:
                               "config_path": str(self.config), "skills_root": str(self.skills_root),
                               "previous_enabled": baseline["previous_enabled"] if baseline else config_value(original.decode()),
                               "backup": baseline["backup"] if baseline else str(self.directory / f"config.before-ecc-on-demand.{time.time_ns()}.toml")}
-            new_state = {**state, "codex_binary": self.codex.binary,
+            new_state = {**state, "version": 2, "entrypoints": list(ENTRIES), "catalog_snapshot": True,
+                         "python_executable": (os.path.abspath(sys.executable) if (Path(__file__).parent / "skills").is_dir()
+                                               else state["python_executable"]), "codex_binary": self.codex.binary,
                          "mcps": records, "selected_mcps": list(selected),
                          "files": {str(path): digest(data) for path, data in files.items()}}
             writes = dict(files)
@@ -546,7 +634,32 @@ class Manager:
             originals = catalog(self.codex, self.cwd)
         except ManagementError as error:
             issues.append(str(error))
+        entrypoint_verification = "not_checked"
+        if state and not issues:
+            if state["version"] != 2:
+                issues.append("Upgrade the four-entry installation using install_ecc.sh --apply from the new repository copy")
+            else:
+                commands = {}
+                try:
+                    snapshot = self.read_snapshot()
+                    if {(row["name"], row["path"]) for row in snapshot} != {(row["name"], row["path"]) for row in originals}:
+                        raise ManagementError("Native ECC inventory changed; refresh with install_ecc.sh --apply")
+                    for name in ENTRIES:
+                        text = (self.skills_root / name / "SKILL.md").read_text()
+                        match = re.search(r"`([^`]+)`", text)
+                        command = shlex.split(match[1]) if match else []
+                        expected = [state["python_executable"], "-B", str(self.installed_script)]
+                        if command[:3] != expected:
+                            raise ManagementError(f"Unexpected runtime binding: {name}; rerun install_ecc.sh --apply")
+                        commands[name] = command
+                    failures = self.codex.verify_entrypoints(commands, self.cwd)
+                    issues.extend(failures)
+                    entrypoint_verification = "failed" if failures else "originals_resolved_via_installed_commands"
+                except (OSError, ValueError, ManagementError) as error:
+                    issues.append(str(error)); entrypoint_verification = "failed"
         return {"status": "ready" if not issues else "needs_attention", "issues": issues,
+                "python_executable": state.get("python_executable") if state else None,
+                "entrypoint_verification": entrypoint_verification,
                 "mcps": mcp_report, "mcp_verification": "configuration_only; startup and credentials not tested",
                 "selected_mcps": list(self.selected_mcps()), "recommended_mcps": list(RECOMMENDED_MCPS),
                 "active_skills": len(active), "active_native_ecc_skills": len(active_ecc),
@@ -565,6 +678,7 @@ class Manager:
             failure = None
             try:
                 self.codex.update()
+                self.apply(_locked=True)
             except (ManagementError, subprocess.TimeoutExpired, OSError) as error:
                 failure = str(error)
             finally:
@@ -586,7 +700,8 @@ class Manager:
             if state is None:
                 return {"status": "already_restored"}
             self.check_files(state)
-            for name in ENTRIES:
+            entries = state.get("entrypoints", [n for n in ENTRIES if n != "ecc-tdd"])
+            for name in entries:
                 root = self.skills_root / name
                 expected = {root / "SKILL.md", root / "agents", root / "agents/openai.yaml"}
                 extras = [p for p in root.rglob("*") if p not in expected]
@@ -605,7 +720,7 @@ class Manager:
             try:
                 for filename in state["files"]:
                     Path(filename).unlink()
-                for name in ENTRIES:
+                for name in entries:
                     (self.skills_root / name / "agents").rmdir()
                     (self.skills_root / name).rmdir()
                 atomic_write(self.config, restored, snapshots[self.config][1])
@@ -647,6 +762,7 @@ def main(argv=None) -> int:
             sub.add_argument("--mcps", help="追加するMCPのプリセット/名前をカンマ区切りで選択。未指定は前回の選択、初回はrecommended")
         if name == "search":
             sub.add_argument("query")
+            sub.add_argument("--language", help="対象言語。未指定時は検索語と近いプロジェクト設定から判断")
             sub.add_argument("--limit", type=int, choices=range(1, 6), default=5)
         if name == "resolve":
             sub.add_argument("name")
@@ -658,9 +774,9 @@ def main(argv=None) -> int:
         codex = Codex(args.codex, home)
         manager = Manager(home, skills_root, codex, cwd)
         if args.command in ("search", "resolve"):
-            skills = catalog(codex, cwd)
+            skills = manager.read_snapshot()
             if args.command == "search":
-                result = {"matches": search_catalog(skills, args.query, cwd, args.limit)}
+                result = {"matches": search_catalog(skills, args.query, cwd, args.limit, language=args.language)}
             else:
                 matches = [s for s in skills if s["name"] == args.name.removeprefix("ecc:")]
                 if len(matches) != 1:

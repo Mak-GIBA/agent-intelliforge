@@ -3,6 +3,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import tomllib
 import unittest
@@ -29,7 +30,7 @@ def cache(version):
  manifest=root/'.codex-plugin/plugin.json'
  manifest.parent.mkdir(parents=True,exist_ok=True)
  manifest.write_text(json.dumps({'name':'ecc','version':version}))
- for name in ['python-patterns','error-handling','security-review','api-design','database-migrations']:
+ for name in ['tdd-workflow','python-patterns','error-handling','security-review','api-design','database-migrations']:
   folder=root/'skills'/name
   (folder/'references').mkdir(parents=True,exist_ok=True)
   (folder/'SKILL.md').write_text('---\nname: '+name+'\ndescription: '+name+'\n---\nFixture body\n')
@@ -67,10 +68,10 @@ if args[-2:]==['app-server','--stdio']:
    skills=[]
    if state.get('installed') and (override or enabled):
     root=home/'plugins/cache/ecc/ecc'/state.get('version','1.0.0')
-    for name in ['python-patterns','error-handling','security-review','api-design','database-migrations']:
+    for name in ['tdd-workflow','python-patterns','error-handling','security-review','api-design','database-migrations']:
      skills.append({'name':'ecc:'+name,'description':name,'path':str(root/'skills'/name/'SKILL.md'),
                     'enabled':True,'pluginId':'ecc@ecc'})
-   for name in ['ecc-python','ecc-errors','ecc-security','ecc-library']:
+   for name in ['ecc-tdd','ecc-python','ecc-errors','ecc-security','ecc-library']:
     path=pathlib.Path(state['skills_root'])/name/'SKILL.md'
     if path.is_file(): skills.append({'name':name,'path':str(path),'enabled':True})
    result={'data':[{'cwd':request['params']['cwds'][0],'skills':skills,'errors':[]}]}
@@ -113,7 +114,7 @@ class InstallerTest(unittest.TestCase):
         self.config = self.home / "config.toml"
         self.config.write_text(CONFIG)
         self.binary = self.root / "native codex"
-        self.binary.write_text(FAKE_CODEX)
+        self.binary.write_text(FAKE_CODEX.replace("#!/usr/bin/env python3", "#!"+sys.executable, 1))
         self.binary.chmod(0o755)
         self.fixture = self.home / "fixture.json"
         self.fixture.write_text(json.dumps({'skills_root': str(self.skills)}))
@@ -145,6 +146,23 @@ class InstallerTest(unittest.TestCase):
         self.run_installer('--restore', '--apply')
         self.config.write_text(CONFIG + '\n[plugins."ecc@ecc"]\nenabled = true\n')
         (self.home / 'calls.jsonl').unlink()
+
+    def test_explicit_and_recorded_python_override_old_path_python(self):
+        shim = self.root/'old-bin'; shim.mkdir()
+        python = shim/'python3'
+        python.write_text('#!/bin/sh\nif [ "$1" = "-c" ]; then exit 1; fi\nexec '+sys.executable+' "$@"\n')
+        python.chmod(0o755)
+        self.env.update(PATH=str(shim)+os.pathsep+self.env['PATH'], PYTHON_BIN=sys.executable)
+        self.assertEqual(self.run_installer('--apply')['status'], 'ready')
+        self.env.pop('PYTHON_BIN')
+        self.assertEqual(self.run_installer('--doctor')['status'], 'ready')
+        self.env['PYTHON_BIN'] = '/missing/ecc-python'
+        before = self.config.read_bytes()
+        result = subprocess.run(['bash',str(INSTALLER),'--codex-home',str(self.home),'--apply'],
+                                env=self.env,text=True,capture_output=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('PYTHON_BIN',result.stderr)
+        self.assertEqual(before,self.config.read_bytes())
 
     def test_default_and_dry_run_are_offline_and_do_not_write(self):
         before = {p: p.read_bytes() for p in self.root.rglob('*') if p.is_file()}

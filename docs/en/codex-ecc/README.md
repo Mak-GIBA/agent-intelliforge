@@ -26,4 +26,4 @@ ECC is an external Plugin. This integration uses the standard Plugin commands fo
 
 ## References
 
-The guide uses native commands checked on 2026-10-03 with Codex CLI 0.160.0 and ECC 2.2.3. Available versions and original paths are resolved from the live Codex catalog. Upstream: [ECC](https://github.com/affaan-m/ECC).
+The guide uses native commands checked on 2026-10-03 with Codex CLI 0.160.0 and ECC 2.2.3. Available versions and original paths are resolved from the native Codex catalog at installation/update; normal queries verify the saved inventory and original-document hashes. Upstream: [ECC](https://github.com/affaan-m/ECC).

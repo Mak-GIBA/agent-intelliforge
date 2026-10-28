@@ -1,0 +1,5 @@
+interface:
+  display_name: "ECC TDD"
+  short_description: "新機能・不具合修正・リファクタリングで対象言語のTDD手順を適用する"
+policy:
+  allow_implicit_invocation: true

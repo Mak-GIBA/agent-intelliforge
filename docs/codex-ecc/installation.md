@@ -28,7 +28,7 @@ bash install_ecc.sh --doctor
 導入済みなら、その原本を再利用します。通常適用では明示的なマーケットプレイス更新を実行しません。
 取得する版とキャッシュはCodexが管理します。
 
-その後、ECCの有効設定を`false`にし、入口4件と管理CLIを配置して診断します。
+その後、ECCの有効設定を`false`にし、入口5件と管理CLIを配置して診断します。
 初回の既定では、独立したMCPとしてFirecrawlとChrome DevToolsを追加します。
 同名の既存設定（無効設定を含む）とContext7の旧名`context7-mcp`はそのまま保持し、重複登録しません。
 フックを自動承認するオプションは使用しません。
@@ -112,7 +112,7 @@ GitHubは既存の公式連携または`gh`を使用します。Jira・Confluenc
 |---|---|
 | ECC原本 | Codex標準プラグインのキャッシュ。パスは固定しない |
 | 有効設定 | Codexの `config.toml` に `[plugins."ecc@ecc"]` の `enabled = false` |
-| 入口4件 | スキル配置先の `ecc-python`、`ecc-errors`、`ecc-security`、`ecc-library` |
+| 入口5件 | スキル配置先の `ecc-tdd`、`ecc-python`、`ecc-errors`、`ecc-security`、`ecc-library` |
 | 管理CLI・状態 | Codex設定先の `ecc-on-demand/` |
 | 設定バックアップ | 同ディレクトリの `config.before-ecc-on-demand.<識別子>.toml`。所有者のみ読み書き可能 |
 
@@ -170,3 +170,7 @@ ECC本体やマーケットプレイスの削除、フックの信頼状態の�
 | カタログに `ecc@ecc` がない | 元のエラーと `codex plugin list --available --json` を確認する。別プラグインへ切り替えない |
 | 同名スキルや管理ファイルの編集がある | ファイルを確認し、自分の変更を保管・整理してから再実行する |
 | 原本が欠けている | `--doctor` で原因を確認し、管理導入済みなら `--update --apply` で標準の再取得を試す |
+
+Pythonの選択、旧4入口からの移行、多言語TDDの使い方は[管理CLIのガイド](../ecc-on-demand.md)を参照してください。
+
+起動環境と多言語TDDの確認結果は[検証記録](tdd-validation.md)を参照してください。

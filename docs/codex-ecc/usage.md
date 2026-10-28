@@ -20,6 +20,7 @@ $ecc-library このプロジェクトのDBマイグレーションに合う原�
 
 | 入口 | 用途・取得する原本 |
 |---|---|
+| `ecc-tdd` | 言語共通の`tdd-workflow`と対象技術のテスト手順 |
 | `ecc-python` | Python実装の `python-patterns` |
 | `ecc-errors` | 失敗処理・再試行の `error-handling` |
 | `ecc-security` | 認証・秘密情報・安全性レビューの `security-review` |

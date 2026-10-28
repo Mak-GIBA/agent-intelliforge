@@ -47,7 +47,7 @@
 # Inspect: intelliforge inspect --only design-research
 # Regenerate: python tools/intelliforge/build.py
 # Kit: ecc — ECC on demand
-# Skills: ecc-library, ecc-python, ecc-errors, ecc-security
+# Skills: ecc-library, ecc-python, ecc-errors, ecc-security, ecc-tdd
 # Source: https://github.com/affaan-m/ECC (legacy: official ecc@ecc plugin; portable: stable released tag plus recorded commit)
 # Destination: {skills_home}/ecc-*
 # Destination: {agent_home}/ecc-on-demand

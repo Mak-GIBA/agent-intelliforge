@@ -5,7 +5,7 @@ description: API・テスト・DB・Dockerなどの作業で必要なECC専門�
 
 ECCの専門スキルを必要時に探す入口。React・Cloudflare・GitHub・記憶管理は既存の専門スキルを優先する。
 
-1. 依頼から技術名・目的を抽出し、`intelliforge kit-run ecc --agent codex -- search 'api design' --json` の検索語を置き換えて検索する。英語の技術名を含めると候補を絞りやすい。候補は最大5件で、現在の作業ディレクトリの構成も順位に反映する。
+1. 依頼から技術名・目的を抽出し、`intelliforge kit-run ecc --agent codex -- search 'api design' --json` の検索語を置き換えて検索する。英語の技術名を含めると候補を絞りやすい。候補は最大5件。対象言語が分かる場合は `--language typescript` の言語を置き換えて指定する。未指定では検索語と作業ディレクトリに近い構成ファイルから判断する。複数言語の変更は対象ごとに探す。
 2. スキル名が明示された場合は、その名前で `intelliforge kit-run ecc --agent codex -- resolve api-design --json` を実行して優先する。
 3. 最初は今回の作業に合う原本1〜3件を選び、返された `path` の本文を読む。候補をユーザーに示す場合も最大5件に絞る。
 4. 相対参照は `skill_dir`、プラグイン共通資材は `plugin_root` を基準に解決し、追加の参照は必要なものだけ読む。別スキルへの参照は `resolve` で取得する。

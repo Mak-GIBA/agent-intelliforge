@@ -47,6 +47,9 @@ class FakeCodex:
         skills.append({"name": "github-project-director", "path": "/unmanaged/director/SKILL.md", "enabled": True})
         return {"cwd": str(cwd), "skills": skills, "errors": []}
 
+    def verify_entrypoints(self, commands, cwd):
+        return []  # Protocol execution is covered by installer and runtime tests.
+
     def update(self):
         path = self.home / "config.toml"
         path.write_text(ecc.edit_enabled(path.read_text(), True)

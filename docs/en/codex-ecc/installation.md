@@ -107,3 +107,5 @@ Unchanged managed MCP entries are removed; preexisting connections remain. Edite
 | Missing originals | Diagnose; for managed installations, try `--update --apply` |
 
 See [management details](../ecc-on-demand.md) for search, disabled behavior, and restoration.
+
+See the [management guide](../ecc-on-demand.md#runtime-binding-and-multilingual-tdd) for Python selection, four-entry migration, and multilingual TDD.

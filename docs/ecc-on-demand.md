@@ -7,6 +7,8 @@ Python 3.11以降、Linux / WSL2、導入済みのCodexとネイティブECCプ�
 
 ECC自体が未導入の場合は、[ECCのインストーラー](codex-ecc/installation.md)で原本の導入とこの設定をまとめて行えます。
 
+管理用Pythonの要件は、開発対象の言語を制限しません。TDD、TypeScript／JavaScript、Go、Rust、C++、C#等の原本を必要時に参照できます。
+
 ## 導入と確認
 
 リポジトリのルートから実行します。
@@ -17,7 +19,7 @@ python3 tools/ecc-on-demand/ecc_on_demand.py doctor
 ```
 
 `apply` は、Codexのユーザー設定で `plugins."ecc@ecc".enabled = false` にし、
-`~/.agents/skills/` に `ecc-python`、`ecc-errors`、`ecc-security`、`ecc-library` を配置します。
+`~/.agents/skills/` に `ecc-tdd`、`ecc-python`、`ecc-errors`、`ecc-security`、`ecc-library` を配置します。
 管理CLIは `${CODEX_HOME:-~/.codex}/ecc-on-demand/ecc_on_demand.py` に配置します。
 設定のバックアップと管理状態も同じディレクトリに保存します。バックアップの権限は所有者のみ読み書き可能です。
 ECCの原本、Basic Memory、既存のMCP、スキル一覧の上限は変更しません。
@@ -50,16 +52,34 @@ Web検索・本文取得とブラウザー診断の接続を用意するため�
 既存TOMLのコメントと他の設定を保持します。ECC設定がインラインテーブルやドット区切りのキーで書かれている場合は自動編集しません。
 通常の`[plugins."ecc@ecc"]`テーブルに整理してから適用してください。
 
+Pythonは`PYTHON_BIN`、記録済みの実行パス、`python3`の順に選び、3.11以上を確認します。
+導入された入口は検証済みPythonの絶対パスを使います。仮想環境のパスは維持し、システムのPythonは変更しません。
+初回に`python3`が古い場合は、次のように指定します。以後の更新・診断は記録した実行パスを使います。
+
+```bash
+PYTHON_BIN=/path/to/python3.11 bash install_ecc.sh --apply
+bash install_ecc.sh --doctor
+```
+
+4入口の旧管理状態は更新時に5入口へ移行します。手動編集・未管理の同名スキルは保持して停止し、途中失敗は更新前へ戻します。
+Pythonを移動・削除した場合は`PYTHON_BIN`で新しい実行ファイルを指定し、リポジトリの`install_ecc.sh --apply`から更新してください。
+導入済み管理CLIだけではスキルテンプレートを更新できません。
+
 反映は新しいセッションで確認してください。実行中の共有Codexデーモンは再起動しません。
 
 ## 使用する入口
 
 | 入口 | 取得する原本 |
 |---|---|
+| `ecc-tdd` | 言語共通の`tdd-workflow`と対象技術のテスト手順 |
 | `ecc-python` | `python-patterns` |
 | `ecc-errors` | `error-handling` |
 | `ecc-security` | `security-review` |
 | `ecc-library` | 依頼に合う専門スキルを最大5件検索し、必要な1〜3件を読む |
+
+`ecc-tdd`は新機能実装・不具合修正・リファクタリングでも自動選択できます。
+TDD原本と対象技術のテスト原本を読み、期待したテスト失敗、最小実装、成功、必要なリファクタリングを確認します。
+文書だけの変更には適用せず、既存テストやプロジェクトの網羅率基準を尊重します。
 
 入口は自動選択も有効です。明示する場合は `$ecc-library` などと指定します。
 React・Cloudflare・GitHub・記憶管理は既存の専門スキルを優先します。
@@ -73,11 +93,15 @@ python3 tools/ecc-on-demand/ecc_on_demand.py resolve api-design --json
 
 `resolve` は本文のパス、スキルのディレクトリ、プラグインのルート、バージョンを返します。
 相対参照は原本の位置から解決します。原本がない場合はエラーを返し、別キャッシュへ推測で切り替えません。
-検索は名前・説明と現在の作業ディレクトリのPython / TypeScript / JavaScript構成を使う軽量な順位付けです。
+検索は名前・説明を使う軽量な順位付けです。`search 'testing' --language typescript --json`のように言語を指定できます。
+未指定では検索語、次に作業ディレクトリに近い構成ファイルから判断します。Go／Golang、C++／CPP、C#／CSharp等の表記を正規化し、他言語専用の候補を除外します。
+複数言語のリポジトリでは、グローバル引数`--cwd`を`search`の前に置き、対象ディレクトリを指定してください。
 文意全体を理解する検索ではないため、候補が合わない場合は英語の技術名で検索するか、名前を指定してください。
 
-原本の一覧は、ECCをそのプロセス内だけで有効にした独立した `codex app-server --stdio` の
-`skills/list` から毎回取得します。会話、モデル呼び出し、SessionStartフックは開始しません。
+導入・更新時に、独立した`codex app-server`の`skills/list`で正式な原本の一覧を確認します。
+一覧と原本のハッシュを管理ディレクトリの`catalog.json`に保存します。通常の`search`・`resolve`は保存済み一覧と内容を検証して読み、内部でCodexを起動しません。
+原本が変更・削除された場合は停止し、リポジトリの`install_ecc.sh --apply`で一覧を更新します。キャッシュ内の別バージョンへ推測で切り替えません。
+診断では保存済み一覧と現在の正式な一覧を照合します。会話やモデル呼び出しは開始しません。
 初期一覧が減っても、選んだ本文を読む分のコンテキストは消費します。
 
 ## 更新と復元
@@ -116,6 +140,7 @@ Basic Memoryのフック、Codexの会話履歴、Claude Code側のECC設定は�
 
 `doctor` は新しい独立app-serverのカタログを確認します。モデルに渡される一覧が省略されていないかは、
 新規セッションの診断ログでも確認してください。実行中のセッションの一覧は置き換えません。
+各入口の診断は、記載されたコマンドを実行して原本の取得まで確認します。
 MCPについては設定だけを検証し、起動・認証・ツール実行は別途確認します。
 
 ## 検証

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "ecc",
   "name": "ECC on demand",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "legacy": {
     "script": "install_ecc.sh",
     "actions": {
@@ -45,6 +45,11 @@
     {
       "name": "ecc-security",
       "source": "tools/ecc-on-demand/skills/ecc-security",
+      "assembled": false
+    },
+    {
+      "name": "ecc-tdd",
+      "source": "tools/ecc-on-demand/skills/ecc-tdd",
       "assembled": false
     }
   ],

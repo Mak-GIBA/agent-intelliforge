@@ -19,6 +19,7 @@ $ecc-library Select the relevant original procedures for this project's database
 
 | Entry | Original |
 |---|---|
+| `ecc-tdd` | Language-neutral `tdd-workflow` and relevant testing guidance |
 | `ecc-python` | `python-patterns` |
 | `ecc-errors` | `error-handling` |
 | `ecc-security` | `security-review` |

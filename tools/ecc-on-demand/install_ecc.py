@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install native ECC and configure its four on-demand entrypoints."""
+"""Install native ECC and configure its five on-demand entrypoints."""
 from __future__ import annotations
 
 import argparse
@@ -128,7 +128,7 @@ class Installer:
         steps = {
             "install": ["Inspect native ECC marketplace and plugin inventory",
                         "Register affaan-m/ECC if absent; install ecc@ecc if absent",
-                        "Disable native ECC and install/update four entrypoints",
+                        "Disable native ECC and install/update five entrypoints",
                         "Add missing selected MCPs; preserve existing connections and disabled settings", "Run doctor"],
             "update": ["Refresh the ECC marketplace and native plugin", "Keep ECC disabled",
                        "Update managed CLI/entrypoints and add missing selected MCPs; run doctor"],

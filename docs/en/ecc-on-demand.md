@@ -13,7 +13,7 @@ python3 tools/ecc-on-demand/ecc_on_demand.py apply
 python3 tools/ecc-on-demand/ecc_on_demand.py doctor
 ```
 
-`apply` sets `plugins."ecc@ecc".enabled = false` and places `ecc-python`, `ecc-errors`, `ecc-security`, and `ecc-library` under `~/.agents/skills/`. The CLI, state, and owner-only configuration backups live in `${CODEX_HOME:-~/.codex}/ecc-on-demand/`. Originals, Basic Memory, existing MCPs, and Skill-list limits are unchanged.
+`apply` sets `plugins."ecc@ecc".enabled = false` and places `ecc-tdd`, `ecc-python`, `ecc-errors`, `ecc-security`, and `ecc-library` under `~/.agents/skills/`. The CLI, state, and owner-only configuration backups live in `${CODEX_HOME:-~/.codex}/ecc-on-demand/`. Originals, Basic Memory, existing MCPs, and Skill-list limits are unchanged.
 
 First-time defaults add Firecrawl and Chrome DevTools independently. Existing same-name settings, disabled entries, and the old `context7-mcp` connection remain intact. Chrome DevTools needs Node.js, `npx`, and a usable browser; GitHub uses an existing official integration or `gh`.
 
@@ -34,6 +34,7 @@ Put `--codex-home PATH`, `--skills-root PATH`, and `--cwd PATH` before the subco
 
 | Entry | Original |
 |---|---|
+| `ecc-tdd` | Language-neutral `tdd-workflow` and relevant testing guidance |
 | `ecc-python` | `python-patterns` |
 | `ecc-errors` | `error-handling` |
 | `ecc-security` | `security-review` |
@@ -47,9 +48,9 @@ python3 tools/ecc-on-demand/ecc_on_demand.py search 'DB migration' --json
 python3 tools/ecc-on-demand/ecc_on_demand.py resolve api-design --json
 ```
 
-`resolve` returns the body path, Skill directory, Plugin root, and version. Resolve relative references from their original location. Missing originals produce an error rather than a guessed fallback cache. Search is lightweight ranking over names, descriptions, and Python / TypeScript / JavaScript project structure, not full semantic understanding; use technical terms or exact names when needed.
+`resolve` returns the body path, Skill directory, Plugin root, and version. Resolve relative references from their original location. Missing originals produce an error rather than a guessed fallback cache. Search is lightweight ranking over names, descriptions, explicit language, and nearest-project manifests, not full semantic understanding; use technical terms or exact names when needed.
 
-Each query gets the catalog through `skills/list` in a separate `codex app-server --stdio`, with ECC enabled only in that process. It does not start a conversation, model call, or SessionStart hook. Reading selected bodies still consumes context even if the initial list is smaller.
+Installation and explicit updates get the authoritative catalog through native `skills/list`. Queries verify and read the saved inventory without starting Codex. Diagnosis compares that snapshot with the current native inventory. No conversation, model call, or SessionStart hook is started. Reading selected bodies still consumes context even if the initial list is smaller.
 
 ## Update and restore
 
@@ -79,3 +80,15 @@ python3 -m unittest discover -s tests -p 'test_ecc_on_demand.py' -v
 ```
 
 Tests use isolated configuration and originals to cover reapplication, conflicts, restoration, successful/failed updates, missing data, search, and RPC retrieval. They do not update real ECC or personal settings.
+
+## Runtime binding and multilingual TDD
+
+Management requires Python 3.11+, independently of the project's programming language. The installer selects `PYTHON_BIN`, the recorded interpreter, then `python3`, validates it, and embeds its absolute path in the installed entry commands. Venv paths are retained. If the runtime is missing, select a replacement with `PYTHON_BIN=/path/to/python3.11 bash install_ecc.sh --apply`; the system Python is not changed.
+
+Updates migrate owned four-entry installations to five entries while preserving backups, MCP settings, and saved selections. Modified or unowned entries block migration; partial failures roll back. Refresh templates from the repository installer, not the installed manager alone. Diagnosis executes the installed commands and verifies original-document resolution.
+
+`ecc-tdd` can be selected automatically for feature implementation, bug fixes, and refactoring. It reads `tdd-workflow` and relevant language testing originals, checks an expected failing test, implements the minimal fix, then reruns tests after refactoring. Higher-priority instructions and project coverage criteria take precedence. Documentation-only tasks do not trigger it.
+
+Both legacy and portable readers support `search 'testing' --language typescript --json`. Without the option, query language takes precedence over nearest-project manifests. Go/Golang, C++/CPP, and C#/CSharp are normalized; language-neutral guidance remains eligible. For monorepos, put `--cwd <target-directory>` before `search`. Exact-name `resolve tdd-workflow --json` remains available.
+
+The installer/update obtains the authoritative inventory through native `skills/list` and stores an owned `catalog.json` with original-document hashes. Normal `search`/`resolve` verify and read that snapshot without starting a nested Codex process. Changed or missing originals require an explicit refresh with `install_ecc.sh --apply`; diagnosis compares the snapshot with the native inventory. No cache-version guessing is used.
