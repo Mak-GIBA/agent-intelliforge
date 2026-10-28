@@ -23,14 +23,16 @@ jobs:
         run: uv run --no-project --python 3.11 python -B -m unittest discover -s tests -p test_research_archive.py -v
       - name: Portable contracts (no personal installation or model calls)
         run: uv run --no-project --python 3.11 python -B -m unittest discover -s tests -p test_intelliforge.py -v
+      - name: Kit identity migration contracts
+        run: uv run --no-project --python 3.11 python -B -m unittest discover -s tests -p test_kotonoha_migration.py -v
       - name: Kotonoha offline runtime contracts
-        run: uv run --no-project --python 3.11 python -B -m unittest discover -s tools/codex-yomiyasu/tests -p test_kotonoha.py -v
+        run: uv run --no-project --python 3.11 python -B -m unittest discover -s tools/kotonoha/tests -p test_kotonoha.py -v
       - run: uv build
       - name: Inspect packaged resources in an isolated tool environment
         shell: pwsh
         run: |
           $wheel = (Get-ChildItem dist/*.whl | Select-Object -First 1).FullName
-          uv tool run --from $wheel intelliforge inspect --agent claude --only yomiyasu --json
+          uv tool run --from $wheel intelliforge inspect --agent claude --only kotonoha --json
   legacy:
     runs-on: ubuntu-latest
     steps:
@@ -42,5 +44,5 @@ jobs:
         run: uv run --no-project --python 3.11 python -B tools/design-research-upgrade/build_installers.py --out "${RUNNER_TEMP}/research-assembly"
       - name: Generated plugin and runtime consistency
         run: uv run --no-project --python 3.11 python -B tools/intelliforge/build.py --assembled-source "${RUNNER_TEMP}/research-assembly/sources" --check
-      - run: python3 tools/codex-yomiyasu/build_installer.py --check
-      - run: bash -n install_all.sh && bash -n install_codex_yomiyasu.sh
+      - run: python3 tools/kotonoha/build_installer.py --check
+      - run: bash -n install_all.sh && bash -n install_kotonoha.sh

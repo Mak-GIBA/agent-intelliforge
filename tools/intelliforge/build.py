@@ -128,8 +128,8 @@ def render_skill(data: bytes, kit: dict, agent: str, name: str) -> bytes:
     if kit["id"] == "office":
         text = text.replace("{{LAUNCHER}}", f"intelliforge kit-run office --agent {agent} --")
         text = text.replace("{{RELEASE}}", f"<runtime shown by intelliforge locate --only office --agent {agent}>")
-    if kit["id"] == "yomiyasu" and name == "yomiyasu":
-        text = text.replace("`upstream/SKILL.upstream.md`", f"`intelliforge locate --only yomiyasu --agent {agent} --upstream` が示すディレクトリの `SKILL.upstream.md`")
+    if kit["id"] == "kotonoha" and name == "kotonoha":
+        text = text.replace("`upstream/SKILL.upstream.md`", f"`intelliforge locate --only kotonoha --agent {agent} --upstream` が示すディレクトリの `SKILL.upstream.md`")
     # Keep facts/constraints in the original body. This is invocation binding,
     # not a second independently edited version of the writing/research rules.
     appendix = (f"\n\n## 配布環境の呼び出し\nこのPluginの管理ソースは `{kit['definition']}`。"
@@ -137,7 +137,7 @@ def render_skill(data: bytes, kit: dict, agent: str, name: str) -> bytes:
                 f"Pythonヘルパーは `intelliforge kit-run {kit['id']} --agent {agent} --tool <ファイル名> -- <引数>`、"
                 f"研究・UXハーネスは `intelliforge kit-run {kit['id']} --agent {agent} -- <引数>` から実行する。"
                 "Windowsではこの入口を使い、Bashやpython3という実行名を前提にしない。\n")
-    if kit['id'] == 'yomiyasu':
+    if kit['id'] == 'kotonoha':
         appendix = (f"\n\n検査は `intelliforge kit-run kotonoha --agent {agent} --tool writing_lint.py -- <原稿> [--before <原稿>]`。"
                     "Python・Node.jsは導入時に準備した専用環境を使う。\n")
     if agent == "claude":
@@ -186,18 +186,18 @@ def build_outputs(assembled: Path) -> dict[str, bytes]:
                 else:
                     base = assembled if skill.get("assembled") else ROOT
                     data = files_under(source_path(base, skill["source"]))
-                    if kit["id"] == "yomiyasu" and name == "yomiyasu":
+                    if kit["id"] == "kotonoha" and name == "kotonoha":
                         data = {key: value for key, value in data.items() if not key.startswith(("kotonoha/", "paragraph-writing/", "japanese-direct-writing/"))}
-                if kit['id'] == 'yomiyasu' and agent == 'codex':
-                    data['agents/openai.yaml'] = ('policy:\n  allow_implicit_invocation: '+str(name != 'yomiyasu').lower()+'\n').encode()
+                if kit['id'] == 'kotonoha' and agent == 'codex':
+                    data['agents/openai.yaml'] = ('policy:\n  allow_implicit_invocation: '+str(True).lower()+'\n').encode()
                 for path, raw in data.items():
                     if path == "SKILL.md": raw = render_skill(raw, kit, agent, name)
                     # Original writing checkers are hash-bound resources. Port only
                     # our adapter; rewriting originals invalidates resources.json.
-                    original = kit['id']=='yomiyasu' and path.startswith(('upstream/','meiseki-upstream/'))
+                    original = kit['id']=='kotonoha' and path.startswith(('upstream/','meiseki-upstream/'))
                     if path.endswith(".py") and not original: raw = portable_python(raw, path)
                     if agent == "claude" and path == "agents/openai.yaml": continue
-                    if agent == "claude" and path == "SKILL.md" and (name.startswith("upstream-") or (kit["id"] == "yomiyasu" and name == "yomiyasu")):
+                    if agent == "claude" and path == "SKILL.md" and (name.startswith("upstream-")):
                         parts = raw.decode().split('---', 2)
                         raw = ('---' + parts[1] + 'disable-model-invocation: true\n---' + parts[2]).encode()
                     output[prefix + f"/skills/{name}/{path}"] = raw

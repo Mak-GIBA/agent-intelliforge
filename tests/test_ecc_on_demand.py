@@ -43,7 +43,7 @@ class FakeCodex:
             path = self.skills_root / name / "SKILL.md"
             if path.is_file():
                 skills.append({"name": name, "path": str(path), "enabled": True})
-        skills.append({"name": "yomiyasu", "path": "/unmanaged/yomiyasu/SKILL.md", "enabled": True})
+        skills.append({"name": "kotonoha", "path": "/unmanaged/yomiyasu/SKILL.md", "enabled": True})
         skills.append({"name": "github-project-director", "path": "/unmanaged/director/SKILL.md", "enabled": True})
         return {"cwd": str(cwd), "skills": skills, "errors": []}
 

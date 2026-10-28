@@ -115,7 +115,7 @@ def dependency_directory(home, label):
 def prepare_dependencies(kit, agent, home, bundle, config, state):
     """Explicit dependency policies, kept here instead of opaque shell payloads."""
     identity = kit['id']
-    if identity == 'yomiyasu':
+    if identity == 'kotonoha':
         helper = load(bundle / 'assets/kotonoha/scripts/writing_runtime.py', '_kotonoha_runtime')
         try: writing = helper.prepare(home / 'dependencies/kotonoha')
         except RuntimeError as error: raise ForgeError(str(error)) from error
@@ -205,7 +205,7 @@ def meiseki_assets(bundle):
 
 
 def upstream_update(bundle, home, agent):
-    engine = load(bundle / 'installer.py', '_intelliforge_yomiyasu')
+    engine = load(bundle / 'installer.py', '_intelliforge_kotonoha')
     data = {name.removeprefix('upstream/'):raw for name,raw in engine.own_bundle('kotonoha','auto').items()
             if name.startswith('upstream/')}
     data['UPSTREAM.json'] = engine.own_bundle('kotonoha','auto')['UPSTREAM.json']
@@ -219,13 +219,10 @@ def marketplace(root, kit, agent, state, mode):
     prefix = 'plugins/' + kit['id'] + '/'
     data = {name: raw for name, raw in data.items() if not name.startswith(prefix)}
     for name, raw in files(root / 'plugins' / agent / kit['id']).items():
-        if kit['id'] == 'yomiyasu' and name.startswith('skills/yomiyasu/meiseki-upstream/'):
-            relative = name.removeprefix('skills/yomiyasu/')
-            raw = (state / agent / kit['id'] / 'bundle/assets' / relative).read_bytes()
-        if kit['id'] == 'yomiyasu' and name.endswith('agents/openai.yaml'):
-            implicit = mode != 'explicit' and '/skills/yomiyasu/' not in '/' + name
+        if kit['id'] == 'kotonoha' and name.endswith('agents/openai.yaml'):
+            implicit = mode != 'explicit'
             raw = f'policy:\n  allow_implicit_invocation: {str(implicit).lower()}\n'.encode()
-        if agent == 'claude' and kit['id'] == 'yomiyasu' and name.endswith('SKILL.md') and mode == 'explicit':
+        if agent == 'claude' and kit['id'] == 'kotonoha' and name.endswith('SKILL.md') and mode == 'explicit':
             text = raw.decode(); split = text.split('---', 2)
             if len(split) != 3 or split[0].strip(): raise ForgeError('Missing Skill frontmatter')
             if 'disable-model-invocation:' not in split[1]:
@@ -263,7 +260,7 @@ def diagnose(kit, agent, state, legacy=False):
             if result['writing_runtime']['status']!='READY':missing.append('writing runtime')
         for key in ('browser',):
             if config.get(key) and not Path(config[key]).is_dir(): missing.append(key)
-        if kit['id'] == 'yomiyasu': verify(home / 'upstream', owner('yomiyasu-upstream', agent))
+        if kit['id'] == 'kotonoha': verify(home / 'upstream', owner('yomiyasu-upstream', agent))
         if config.get('method') == 'plugin':
             result['host_cli'] = bool(shutil.which(agent))
             if not result['host_cli']: missing.append('host plugin manager')
@@ -286,6 +283,22 @@ def diagnose(kit, agent, state, legacy=False):
 
 
 def portable_action(root, kits, plan, args, state):
+    from .kotonoha_migration import migrate, describe
+    # Publish a success summary only after registration retirement also commits.
+    output=io.StringIO()
+    with contextlib.redirect_stdout(output):
+        with contextlib.ExitStack() as stack:
+            for item in plan['operations']:
+                if item['kit']=='kotonoha' and args.action in ('install','update'):
+                    if describe(state,item['agent']) and (args.action!='update' or getattr(args,'upstream_only',False)):
+                        raise ForgeError('Complete the kit rename using update --only kotonoha --apply before a source-only check or install.')
+                    stack.enter_context(migrate(state,item['agent'],item['method']))
+            result=_portable_action(root,kits,plan,args,state)
+    print(output.getvalue(),end='')
+    return result
+
+
+def _portable_action(root, kits, plan, args, state):
     catalog = {kit['id']: kit for kit in kits}; results = []
     # Complete preflight before the first dependency/network or mutation.
     for item in plan['operations']:
@@ -302,7 +315,7 @@ def portable_action(root, kits, plan, args, state):
                 if destination.exists(): verify(destination, owner('marketplace', item['agent']))
             else:
                 destination = args.skills_dir or Path.home() / '.agents/skills'
-                for name in (set(skill_roots(root, kit, item['agent'])) | ({'yomiyasu','paragraph-writing','japanese-direct-writing'} if kit['id']=='yomiyasu' else set())):
+                for name in (set(skill_roots(root, kit, item['agent'])) | ({'yomiyasu','paragraph-writing','japanese-direct-writing'} if kit['id']=='kotonoha' else set())):
                     if (destination / name).exists(): verify(destination / name, owner(name, item['agent']))
     for item in plan['operations']:
         kit = catalog[item['kit']]; agent = item['agent']; home = state / agent / item['kit']
@@ -330,9 +343,9 @@ def portable_action(root, kits, plan, args, state):
                 checked = engine.check_updates(Path('/nonexistent-kotonoha-preview'))
                 results.append({'kit':kit['id'],'agent':agent,'upstream_only':True,'applied':False,**checked}); continue
             bundle_data = files(root / 'tools/intelliforge/resources/runtime' / kit['id'])
-            if kit['id'] == 'yomiyasu':
-                bundle_data.update(meiseki_assets(root / 'tools/intelliforge/resources/runtime/yomiyasu'))
-            if kit['id']=='yomiyasu':
+            if kit['id'] == 'kotonoha':
+                bundle_data.update(meiseki_assets(root / 'tools/intelliforge/resources/runtime/kotonoha'))
+            if kit['id']=='kotonoha':
                 lock_data=json.loads(bundle_data['assets/kotonoha/UPSTREAMS.json'])
                 if lock_data['integration']['status']!='verified':raise ForgeError('Upstream integration is pending verification')
             backup = replace_tree(bundle, owner(kit['id'], agent), bundle_data)
@@ -343,11 +356,11 @@ def portable_action(root, kits, plan, args, state):
                 config.update(owner=owner(kit['id'], agent), version=kit['version'], method=item['method'], installed=True)
                 if getattr(args, 'mode', None): config['mode'] = args.mode
                 prepare_dependencies(kit, agent, home, bundle, config, state)
-                if kit['id'] == 'yomiyasu' and (args.action == 'update' or not (home / 'upstream').exists()):
+                if kit['id'] == 'kotonoha' and (args.action == 'update' or not (home / 'upstream').exists()):
                     upstream_backup = upstream_update(bundle, home, agent); upstream_changed = True
                 if item['method'] == 'native':
                     destination = args.skills_dir or Path.home() / '.agents/skills'
-                    if kit['id']=='yomiyasu':
+                    if kit['id']=='kotonoha':
                         for legacy_name in ('yomiyasu','paragraph-writing','japanese-direct-writing'):
                             old=destination/legacy_name
                             if old.exists():
@@ -360,9 +373,9 @@ def portable_action(root, kits, plan, args, state):
                     config['skills'] = []
                     for name, data in skill_roots(root, kit, agent).items():
                         target = destination / name
-                        if kit['id'] == 'yomiyasu':
+                        if kit['id'] == 'kotonoha':
                             mode = config.get('mode', 'auto')
-                            data['agents/openai.yaml'] = f'policy:\n  allow_implicit_invocation: {str(mode == "auto" and name != "yomiyasu").lower()}\n'.encode()
+                            data['agents/openai.yaml'] = f'policy:\n  allow_implicit_invocation: {str(mode == "auto").lower()}\n'.encode()
                         skill_backups.append((target, replace_tree(target, owner(name, agent), data)))
                         config['skills'].append(str(target))
                 atomic_write(home / 'settings.json', (json.dumps(config, ensure_ascii=False, indent=2) + '\n').encode())
@@ -370,7 +383,7 @@ def portable_action(root, kits, plan, args, state):
                     market_target, market_backup = marketplace(root, kit, agent, state, config.get('mode', 'auto'))
                     plugins.manage(market_target, kit, agent, 'update' if args.action == 'update' else 'install', state, args.skills_dir)
                 for index,(target,saved) in enumerate(skill_backups):
-                    if saved and kit['id']=='yomiyasu':
+                    if saved and kit['id']=='kotonoha':
                         archive=home/'backups'/saved.name;archive.parent.mkdir(parents=True,exist_ok=True)
                         shutil.move(str(saved),str(archive))
                         skill_backups[index]=(target,archive)
@@ -384,7 +397,7 @@ def portable_action(root, kits, plan, args, state):
                 for target, saved in reversed(skill_backups):
                     remove_tree(target, owner(target.name, agent))
                     if saved:
-                        if kit['id']=='yomiyasu':
+                        if kit['id']=='kotonoha':
                             shutil.copytree(saved,target)
                             if saved.parent==target.parent:remove_tree(saved,owner(target.name,agent))
                         else:saved.rename(target)
@@ -402,11 +415,11 @@ def portable_action(root, kits, plan, args, state):
 
 ENTRIES = {'ux-stack': 'skill/scripts/harness.py', 'design-research': 'skill/scripts/harness.py',
            'speckit': 'swb.py', 'github-pm': 'skills/github-project-director/scripts/github_inspect.py',
-           'office': 'office.py', 'yomiyasu': 'assets/kotonoha/scripts/check.py'}
+           'office': 'office.py', 'kotonoha': 'assets/kotonoha/scripts/check.py'}
 
 
 def kit_run(identity, agent, arguments, state):
-    identity = 'yomiyasu' if identity == 'kotonoha' else identity
+    if identity == 'yomiyasu': raise ForgeError('The yomiyasu kit ID was retired; use kit-run kotonoha.')
     kit = definitions(distribution_root()).get(identity)
     if not kit: raise ForgeError('Unknown kit: ' + identity)
     home = state / agent / identity; bundle = home / 'bundle'
@@ -436,7 +449,7 @@ def kit_run(identity, agent, arguments, state):
         matches = [p for p in bundle.rglob(options.tool) if 'tests' not in p.parts and p.is_file()]
         if len(matches) != 1: raise ForgeError('Helper not found or ambiguous: ' + options.tool)
         allowed = {'workgraph': {'workgraph_tools.py','workgraph_github.py','install_schemas.py'},
-                   'office': {'office.py'}, 'yomiyasu': {'check.py','writing_lint.py'}, 'github-pm': {'github_inspect.py'},
+                   'office': {'office.py'}, 'kotonoha': {'check.py','writing_lint.py'}, 'github-pm': {'github_inspect.py'},
                    'speckit': {'swb.py'}, 'ux-stack': {'harness.py'}}
         if identity in allowed and options.tool not in allowed[identity]:
             raise ForgeError('Installer/configuration helpers are not executable through the portable Skill entry')

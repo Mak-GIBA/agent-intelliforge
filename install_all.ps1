@@ -65,15 +65,15 @@
 # Edit: tools/codex-office/kit.json
 # Inspect: intelliforge inspect --only office
 # Regenerate: python tools/intelliforge/build.py
-# Kit: yomiyasu — kotonoha Japanese writing
+# Kit: kotonoha — kotonoha Japanese writing
 # Skills: kotonoha
 # Source: https://github.com/nanaism/yomiyasu (latest stable upstream release; local writing rules have independent version)
 # Source: https://github.com/bamboo-nova/meiseki (latest stable release; normative changes require reviewed adapter)
 # Destination: {skills_home}/kotonoha
 # Destination: {skills_home}/../.kotonoha-runtime
 # Settings: none
-# Edit: tools/codex-yomiyasu/kit.json
-# Inspect: intelliforge inspect --only yomiyasu
+# Edit: tools/kotonoha/kit.json
+# Inspect: intelliforge inspect --only kotonoha
 # Regenerate: python tools/intelliforge/build.py
 # Kit: herdr — Herdr workspace reuse
 # Skills: CLI integration
@@ -87,12 +87,12 @@
 # Native Windows entry. Inspect the selected kit definitions before --apply.
 # Skills/Plugin/CLI sources and destinations: tools/*/kit.json
 # Default: Codex, preview only. Existing Bash install_all.sh remains unchanged.
-# Example: .\install_all.ps1 --only yomiyasu --apply
+# Example: .\install_all.ps1 --only kotonoha --apply
 $ErrorActionPreference = 'Stop'
 $entry = Join-Path $PSScriptRoot 'intelliforge.py'
 # Japanese-only preview must not cause uv to download Python.
 $selectedIndex = [Array]::IndexOf($args, '--only')
-$japaneseOnly = $selectedIndex -ge 0 -and ($selectedIndex + 1) -lt $args.Count -and $args[$selectedIndex + 1] -in @('kotonoha','yomiyasu')
+$japaneseOnly = $selectedIndex -ge 0 -and ($selectedIndex + 1) -lt $args.Count -and $args[$selectedIndex + 1] -in @('kotonoha','kotonoha')
 if ($japaneseOnly) {
     $existingPython = Get-Command python -ErrorAction SilentlyContinue
     if ($existingPython -and $existingPython.Source -notlike '*\Microsoft\WindowsApps\python*.exe') {

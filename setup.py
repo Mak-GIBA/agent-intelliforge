@@ -18,7 +18,7 @@ class WithResources(build_py):
         module = importlib.util.module_from_spec(specification); specification.loader.exec_module(module)
         module.verify(root)
         super().run()
-        if not (root / 'tools/intelliforge/resources/runtime/yomiyasu/installer.py').is_file():
+        if not (root / 'tools/intelliforge/resources/runtime/kotonoha/installer.py').is_file():
             raise RuntimeError('Generate distributions with python tools/intelliforge/build.py before building the wheel.')
         target = Path(self.build_lib) / 'agent_intelliforge/resources'
         # A previous build may contain a renamed Skill entrypoint. Never merge stale resources.

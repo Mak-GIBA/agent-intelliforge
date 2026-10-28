@@ -38,7 +38,7 @@ cloneした資材から標準のwheelを構築して導入します。パッケ�
 
 ## 導入する
 
-日本語執筆の入口は`$kotonoha`です。`--only kotonoha`と互換IDの`--only yomiyasu`は同じキットを選びます。内部のキットID・Plugin名は`yomiyasu`を維持しています。詳細は[kotonohaの導入](codex-yomiyasu/installation.md)を参照してください。
+日本語執筆の入口は`$kotonoha`です。キットID・Plugin名も`kotonoha`です。旧キットIDは廃止しました。詳細は[kotonohaの導入](kotonoha/installation.md)を参照してください。
 
 ```bash
 # Linux / WSL2：既存Codex方式。ホスト指定を省略できる

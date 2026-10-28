@@ -115,3 +115,6 @@ dist/
 /tools/codex-yomiyasu/evaluation-v130/assets/
 /tools/codex-yomiyasu/evaluation-v130/tests/
 /tools/codex-yomiyasu/evaluation-v200/
+
+# Private local writing evaluations under the current source name.
+/tools/kotonoha/evaluation*/

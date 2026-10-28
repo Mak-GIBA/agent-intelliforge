@@ -1,0 +1,7 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "kotonoha",
+  "version": "5.0.0",
+  "description": "kotonoha Japanese writing",
+  "repository": "https://github.com/Mak-GIBA/agent-intelliforge"
+}

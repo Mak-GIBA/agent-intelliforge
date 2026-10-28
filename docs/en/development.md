@@ -53,7 +53,7 @@ bash -n install_codex_github_pm.sh
 bash -n install_design_research.sh
 bash -n install_codex_ecc.sh
 bash -n install_codex_office.sh
-bash -n install_codex_yomiyasu.sh
+bash -n install_kotonoha.sh
 bash -n install_herdr.sh
 bash -n tools/basic-memory-workgraph/remove_workgraph_hooks.sh
 ```
@@ -74,7 +74,7 @@ Before changing distributed templates, preserve the previous version under `tool
 | Research | `bash install_design_research.sh --bundle-self-test`, assembly: 2.5.0 bundled 330 tests and both distributions' self-tests; [model scope (Japanese)](../design-research/validation.md) separate |
 | ECC | `python3 -m unittest discover -s tests -p 'test*ecc*.py' -v`, Bash: mocked Codex lifecycle, retry/recovery/settings/original resolution; real fresh downloads separate |
 | Office | `bash install_codex_office.sh --self-test`: temporary lifecycle/edit protection/document processing; mocked network/Codex, unavailable PDF libraries skipped; real OfficeCLI/rendering E2E separate |
-| kotonoha | `bash install_kotonoha.sh --self-test`: temporary mocked lifecycle/lint; real runtime/network/writing comparisons in [validation (Japanese)](../codex-yomiyasu/kotonoha-validation.md) |
+| kotonoha | `bash install_kotonoha.sh --self-test`: temporary mocked lifecycle/lint; real runtime/network/writing comparisons in [validation (Japanese)](../kotonoha/kotonoha-validation.md) |
 | Herdr | `python3 -m unittest discover -s tests -p 'test_install_herdr.py' -v`: temporary HOME/mock download/Bash/workspace checks; not real downloads/sessions |
 
 Existing Research/Upstream checks may target ordinary 2.0.1 installers; do not apply their regeneration-equivalence checks unchanged to current assembly bootstraps. Distinguish base, upgrades, assembled tests, and real model evaluation.
@@ -151,21 +151,21 @@ See [installation](design-research/installation.md) and [validation (Japanese)](
 
 ## Office Workbench and kotonoha embedded assets
 
-Both embed custom assets/tests and support `--extract DIRECTORY`. Office exposes `README_JA.md` and `install.py`. kotonoha retains `tools/codex-yomiyasu/` as its maintained path. `python3 tools/codex-yomiyasu/build_installer.py` generates `install_kotonoha.sh`, `install_kotonoha.ps1`, and compatible `install_codex_yomiyasu.sh`; `--check` verifies all.
+Both embed custom assets/tests and support `--extract DIRECTORY`. Office exposes `README_JA.md` and `install.py`. kotonoha retains `tools/kotonoha/` as its maintained path. `python3 tools/kotonoha/build_installer.py` generates `install_kotonoha.sh`, `install_kotonoha.ps1`, and compatible `install_kotonoha.sh`; `--check` verifies all.
 
 Extracted kotonoha includes `installer.py`, `SKILL.md`, `kotonoha/`, `meiseki-upstream/`, `references/`, `scripts/`, `paragraph-writing/`, `japanese-direct-writing/`, `tests/`, and `evals/`. Evaluation material is not installed as Skills. Separate custom/upstream/runtime versions and verify upstream-only updates preserve custom rules. Since 2.0.0-proposal.1, auxiliaries are partial-task Skills, with hashes/provenance in `UPSTREAM.json` / `SOURCE.json` and metadata generated for `auto` / `explicit`. Source replacements need provenance/hash/revision updates, regeneration, and tests. Extract for review only; maintain user guides separately.
 
-Historical 1.1.0 / 1.2.0 comparisons use explicit `tools/codex-yomiyasu/evaluate_writing.py` with preserved `tools/codex-yomiyasu/evaluation-v130/` entries/references/four drafts, Python 3.11+, authenticated Codex, and upstream originals. It makes real model calls and never runs from installation/self-tests.
+Historical 1.1.0 / 1.2.0 comparisons use explicit `tools/kotonoha/evaluate_writing.py` with preserved `tools/kotonoha/evaluation-v130/` entries/references/four drafts, Python 3.11+, authenticated Codex, and upstream originals. It makes real model calls and never runs from installation/self-tests.
 
 ```bash
-python3 tools/codex-yomiyasu/evaluate_writing.py --out /tmp/paragraph-writing-comparison
+python3 tools/kotonoha/evaluate_writing.py --out /tmp/paragraph-writing-comparison
 ```
 
-Save conditions/input hashes/full outputs/blind ratings and manually compare facts/conditions/certainty. Current generation setup uses `evals/prepare_generation_eval.py` and [protocol (Japanese)](../../tools/codex-yomiyasu/evals/PROTOCOL.md). `evals/evaluate.py` tests the detector on 60 synthetic cases; `evals/review_examples.py` checks examples without models. Generation, selection, and reader comprehension are separate evaluations.
+Save conditions/input hashes/full outputs/blind ratings and manually compare facts/conditions/certainty. Current generation setup uses `evals/prepare_generation_eval.py` and [protocol (Japanese)](../../tools/kotonoha/evals/PROTOCOL.md). `evals/evaluate.py` tests the detector on 60 synthetic cases; `evals/review_examples.py` checks examples without models. Generation, selection, and reader comprehension are separate evaluations.
 
 ### Revise Japanese documentation
 
-Use kotonoha with before/after UTF-8 copies, textlint/markdownlint, and `check.py compare`; see [examples](codex-yomiyasu/usage.md#check-saved-files). Preserve commands, settings, numbers, conditions, negation, and certainty. Keep useful tables/procedures; do not change meaning merely to silence findings.
+Use kotonoha with before/after UTF-8 copies, textlint/markdownlint, and `check.py compare`; see [examples](kotonoha/usage.md#check-saved-files). Preserve commands, settings, numbers, conditions, negation, and certainty. Keep useful tables/procedures; do not change meaning merely to silence findings.
 
 ## Documentation-only checks
 

@@ -17,7 +17,7 @@ Choose a kit by purpose, then read its overview, installation guide, and usage g
 | Compare and evaluate core approaches | [Design Research](design-research/README.md) | [Install](design-research/installation.md) | [Usage](design-research/usage.md) |
 | Read ECC procedures when needed | [Codex ECC](codex-ecc/README.md) | [Install, update, restore](codex-ecc/installation.md) | [Usage](codex-ecc/usage.md) |
 | Read and edit Office files | [Office Workbench](codex-office/README.md) | [Install](codex-office/installation.md) | [Usage](codex-office/usage.md) |
-| Improve Japanese writing | [kotonoha](codex-yomiyasu/README.md) | [Install](codex-yomiyasu/installation.md) | [Usage](codex-yomiyasu/usage.md) |
+| Improve Japanese writing | [kotonoha](kotonoha/README.md) | [Install](kotonoha/installation.md) | [Usage](kotonoha/usage.md) |
 | Open a terminal workspace by directory | [Herdr](herdr/README.md) | [Install and configure Bash](herdr/installation.md) | [Usage](herdr/usage.md) |
 
 ## Combine kits

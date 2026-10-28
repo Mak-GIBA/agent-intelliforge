@@ -113,7 +113,7 @@ intelliforge install --only kotonoha --apply
 | `design-research` | [Design Research](docs/design-research/README.md) | コアロジックの方式を一次資料と実験で比較し、条件・結果・未検証事項を報告にまとめる。 |
 | `ecc` | [Codex ECC](docs/codex-ecc/README.md) | ECCの原本を保持し、Python実装、エラー処理、安全性レビューなどの手順を必要なときに読む。 |
 | `office` | [Office Workbench](docs/codex-office/README.md) | PDF・Word・PowerPointを読み、原本を保護しながら編集と差分・描画の確認を行う。 |
-| `kotonoha`（互換ID: `yomiyasu`） | [kotonohaと日本語執筆](docs/codex-yomiyasu/README.md) | 意味と条件を保って日本語を整え、段落の論旨や仕組みが伝わる説明にする。 |
+| `kotonoha` | [kotonohaと日本語執筆](docs/kotonoha/README.md) | 意味と条件を保って日本語を整え、段落の論旨や仕組みが伝わる説明にする。 |
 | `herdr` | [Herdr](docs/herdr/README.md) | 作業ディレクトリに対応するターミナルworkspaceを開き、既存workspaceを再利用する。 |
 
 <a id="workflow"></a>
@@ -154,7 +154,7 @@ kotonohaは設計書や報告文を仕上げる工程で使えます。
 - **検証の根拠を残す。** 自己テスト、回帰テスト、文章生成の比較評価などを、対象に合わせて用意しています。測定条件と未実施の範囲も確認できます。
 
 導入の成功と、実際の成果物の品質は別に確認します。
-[UXの検証範囲](docs/codex-ux-stack/validation.md)、[研究環境の検証結果](docs/design-research/validation.md)、[日本語執筆の評価](docs/codex-yomiyasu/validation.md)に、それぞれの根拠があります。
+[UXの検証範囲](docs/codex-ux-stack/validation.md)、[研究環境の検証結果](docs/design-research/validation.md)、[日本語執筆の評価](docs/kotonoha/validation.md)に、それぞれの根拠があります。
 
 ## エージェントを並列実行する前に
 

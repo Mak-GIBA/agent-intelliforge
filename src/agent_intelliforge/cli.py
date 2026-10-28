@@ -28,6 +28,11 @@ def inspect_plan(kits: list[dict], agent: str, plugin: bool, state: Path) -> dic
         for kit in kits:
             method = "plugin" if plugin or host == "claude" or os.name == "nt" else "legacy"
             if kit['id'] == 'herdr' and method == 'plugin': method = 'native'
+            if kit['id']=='kotonoha':
+                from .kotonoha_migration import describe
+                migration=describe(state,host)
+                if migration: method=migration['method']
+            else: migration=None
             target_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) if host == "codex" else Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude"))
             places = {"agent_home": str(target_home), "skills_home": str(Path.home() / (".agents/skills" if host == "codex" else ".claude/skills")),
                       "data_home": str(state), "bin_home": str(Path.home() / ".local/bin")}
@@ -45,6 +50,7 @@ def inspect_plan(kits: list[dict], agent: str, plugin: bool, state: Path) -> dic
                     ["native " + host + " plugin manager cache"] if method == "plugin" and kit["plugin"]["enabled"]
                     else [str(Path(places["skills_home"]) / item["name"]) for item in kit["skills"]])
                 entry["settings"] = ["selected plugin registrations" if method == "plugin" else "owned Skill directories", "kit runtime settings"]
+            if migration: entry['migration']=migration
             operations.append(entry)
     return {"schema_version": 1, "default_agent": "codex", "operations": operations,
             "unresolved": "Latest upstream/plugin versions are resolved only during an explicit install/update."}
@@ -106,7 +112,7 @@ def main(argv=None) -> int:
             mode = command.add_mutually_exclusive_group()
             mode.add_argument("--apply", action="store_true")
             mode.add_argument("--dry-run", action="store_true")
-            command.add_argument("--upstream-only", action="store_true", help="yomiyasu update only")
+            command.add_argument("--upstream-only", action="store_true", help="kotonoha upstream check only")
             command.add_argument("--mode", choices=("auto", "explicit"))
         if action == "locate":
             command.add_argument("--upstream", action="store_true")
@@ -145,10 +151,10 @@ def main(argv=None) -> int:
                 raise ForgeError("locate requires one --only kit and one agent")
             path = state / args.agent / kits[0]["id"] / ("upstream" if args.upstream else "bundle")
             print(path); return 0
-        if getattr(args, "upstream_only", False) and (args.action != "update" or [kit["id"] for kit in kits] != ["yomiyasu"] or args.mode):
-            raise ForgeError("--upstream-only requires update --only yomiyasu without --mode")
-        if getattr(args, 'mode', None) and [kit['id'] for kit in kits] != ['yomiyasu']:
-            raise ForgeError('--mode requires --only yomiyasu')
+        if getattr(args, "upstream_only", False) and (args.action != "update" or [kit["id"] for kit in kits] != ["kotonoha"] or args.mode):
+            raise ForgeError("--upstream-only requires update --only kotonoha without --mode")
+        if getattr(args, 'mode', None) and [kit['id'] for kit in kits] != ['kotonoha']:
+            raise ForgeError('--mode requires --only kotonoha')
         if getattr(args, 'mode', None) and args.action not in ('install','update'):
             raise ForgeError('--mode applies to install/update only')
         if any(item['method']=='legacy' for item in plan['operations']) and (args.skills_dir or args.state_dir):
@@ -162,8 +168,8 @@ def main(argv=None) -> int:
             show_plan(plan, args.json); return 0
         if all(item["method"] == "legacy" for item in plan["operations"]):
             if getattr(args, "upstream_only", False) or getattr(args, "mode", None):
-                if len(kits) != 1 or kits[0]["id"] != "yomiyasu":
-                    raise ForgeError("Writing mode options require --only yomiyasu")
+                if len(kits) != 1 or kits[0]["id"] != "kotonoha":
+                    raise ForgeError("Writing mode options require --only kotonoha")
                 command = ["bash", str(root / kits[0]["legacy"]["script"]), "--apply"]
                 if args.action == "update": command.append("--update")
                 if args.upstream_only: command.append("--upstream-only")

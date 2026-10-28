@@ -68,7 +68,7 @@ bash -n install_codex_github_pm.sh
 bash -n install_design_research.sh
 bash -n install_codex_ecc.sh
 bash -n install_codex_office.sh
-bash -n install_codex_yomiyasu.sh
+bash -n install_kotonoha.sh
 bash -n install_herdr.sh
 bash -n tools/basic-memory-workgraph/remove_workgraph_hooks.sh
 ```
@@ -95,7 +95,7 @@ policy変更はリポジトリの `tools/basic-memory-workgraph/memory-policy.md
 | Design Research | `bash install_design_research.sh --bundle-self-test`、固定版からの組み立てと内蔵試験 | 両配布物に同じ更新資材を内蔵。2.5.0の同梱330件と両ツールの組み立て・自己テストを確認。実モデルの検証範囲は[検証結果](design-research/validation.md)を参照 |
 | Codex ECC | `python3 -m unittest discover -s tests -p 'test*ecc*.py' -v`、Bash構文確認 | 模擬Codexによる新規導入、既存再利用、更新失敗・再実行、復元、設定維持と原本取得。新規環境への実ダウンロードは別途確認が必要 |
 | Office Workbench | `bash install_codex_office.sh --self-test` | 一時環境で導入・編集保護・文書処理を検証。通信・Codexは模擬し、実PDFライブラリがない対象はSKIP。実OfficeCLIや描画のE2E確認は別途必要 |
-| kotonohaと日本語執筆 | `bash install_kotonoha.sh --self-test` | 一時HOME・作業ディレクトリと模擬上流で導入・更新・解除・検査を確認。実通信・実行環境の準備と文章生成の比較は[専用の検証記録](codex-yomiyasu/kotonoha-validation.md)を参照 |
+| kotonohaと日本語執筆 | `bash install_kotonoha.sh --self-test` | 一時HOME・作業ディレクトリと模擬上流で導入・更新・解除・検査を確認。実通信・実行環境の準備と文章生成の比較は[専用の検証記録](kotonoha/kotonoha-validation.md)を参照 |
 | Herdr | `python3 -m unittest discover -s tests -p 'test_install_herdr.py' -v` | 一時HOMEで取得・Bash設定・workspace照合・再実行を検証。実ダウンロードや実セッションの起動は含まない |
 
 リポジトリの既存テストには、2.0.1系の通常インストーラーを前提とするDesign Research・Upstreamの検査があります。
@@ -104,7 +104,7 @@ policy変更はリポジトリの `tools/basic-memory-workgraph/memory-policy.md
 
 構文確認や文書レビューのためにインストーラーの通常実行を行わないでください。
 Workgraph、UX Stack、GitHub Project Director、Design Research、Herdrは引数なしで実際に導入します。
-UX Stack、SpecKit、GitHub Project Director、Design Research、Office Workbench、yomiyasuの`--extract`もファイルを書き込む操作です。
+UX Stack、SpecKit、GitHub Project Director、Design Research、Office Workbench、kotonohaの`--extract`もファイルを書き込む操作です。
 Design ResearchとUpstreamの`--extract-bundle`は通信なしで展開し、`--extract`・`--doctor`・`--self-test`は先に組み立てるため通信が発生し得ます。
 
 ## 新しいインストーラーの説明を追加する
@@ -235,26 +235,26 @@ Memory保存は外側のSkillが担当し、既存の保存基準・モードと
 どちらもスクリプト単体に独自資材とテストを含み、`--extract DIRECTORY`で展開できます。
 Office Workbenchは`README_JA.md`と`install.py`を確認します。
 
-kotonohaの正本は、互換性のため従来名の`tools/codex-yomiyasu/`で管理します。`python3 tools/codex-yomiyasu/build_installer.py`で、`install_kotonoha.sh`、`install_kotonoha.ps1`、互換入口の`install_codex_yomiyasu.sh`を再生成します。`--check`は全ての配布物と正本の一致を検査します。
+kotonohaの正本は、互換性のため従来名の`tools/kotonoha/`で管理します。`python3 tools/kotonoha/build_installer.py`で、`install_kotonoha.sh`、`install_kotonoha.ps1`、互換入口の`install_kotonoha.sh`を再生成します。`--check`は全ての配布物と正本の一致を検査します。
 
 展開物には`installer.py`、`SKILL.md`、`kotonoha/`、`meiseki-upstream/`、`references/`、`scripts/`、`paragraph-writing/`、`japanese-direct-writing/`と、検査用の`tests/`・`evals/`を含みます。評価資材はSkillの導入先には配置しません。上流原本、独自規範、実行環境の版を分け、上流のみの更新で独自規範が失われないことを確認します。
 
 2.0.0-proposal.1では、補助スキルの本文を部分作業用に限定しています。現在の本文のhashと由来は`UPSTREAM.json`・`SOURCE.json`に記録し、発動設定は導入時の`auto`/`explicit`に応じて生成します。資材を差し替える場合は、出典とhash、revisionを更新し、再生成と自己テストを行います。
 展開物はレビュー用の一時ディレクトリに置き、利用者向けの説明は専用ガイドで保守します。
 
-1.1.0と1.2.0の文章比較を再測定する場合は、`tools/codex-yomiyasu/evaluate_writing.py`を明示実行します。比較対象の入口・参照資料と4件の原稿は、`tools/codex-yomiyasu/evaluation-v130/`に旧版のまま保持しています。Python 3.11以降、ログイン済みのCodex CLI、yomiyasuの上流原本が必要です。設定済みのモデルと推論設定で実際のモデル利用が発生するため、インストールや`--self-test`からは呼びません。
+1.1.0と1.2.0の文章比較を再測定する場合は、`tools/kotonoha/evaluate_writing.py`を明示実行します。比較対象の入口・参照資料と4件の原稿は、`tools/kotonoha/evaluation-v130/`に旧版のまま保持しています。Python 3.11以降、ログイン済みのCodex CLI、yomiyasuの上流原本が必要です。設定済みのモデルと推論設定で実際のモデル利用が発生するため、インストールや`--self-test`からは呼びません。
 
 ```bash
-python3 tools/codex-yomiyasu/evaluate_writing.py --out /tmp/paragraph-writing-comparison
+python3 tools/kotonoha/evaluate_writing.py --out /tmp/paragraph-writing-comparison
 ```
 
-結果には実行条件、入力hash、出力全文、条件名を伏せた評価を残します。数値やコードの機械差分に加え、原文の各事実・条件・断定の強さを本文で照合してから結論を記載します。[検証結果](codex-yomiyasu/validation.md)には実際の修正前後と限界を載せます。
+結果には実行条件、入力hash、出力全文、条件名を伏せた評価を残します。数値やコードの機械差分に加え、原文の各事実・条件・断定の強さを本文で照合してから結論を記載します。[検証結果](kotonoha/validation.md)には実際の修正前後と限界を載せます。
 
-現在の統合工程の生成比較は、`evals/prepare_generation_eval.py`で別途準備します。[比較手順](../tools/codex-yomiyasu/evals/PROTOCOL.md)に条件と採点方法をまとめています。`evals/evaluate.py`は60件の人工データによる検出器の試験、`evals/review_examples.py`は推敲例の機械点検です。どちらもモデルを呼びません。生成比較、自動選択の試験、読者の理解度測定と混同しないでください。
+現在の統合工程の生成比較は、`evals/prepare_generation_eval.py`で別途準備します。[比較手順](../tools/kotonoha/evals/PROTOCOL.md)に条件と採点方法をまとめています。`evals/evaluate.py`は60件の人工データによる検出器の試験、`evals/review_examples.py`は推敲例の機械点検です。どちらもモデルを呼びません。生成比較、自動選択の試験、読者の理解度測定と混同しないでください。
 
 ### 日本語の説明を推敲する
 
-kotonohaを使う場合は、修正前後を別のUTF-8ファイルに残します。textlint・markdownlintによる表現と構造の点検に加え、`check.py compare`で数値・コード等の変化を調べます。実行例は[日本語文書の検査手順](codex-yomiyasu/usage.md#保存する文章を検査する)を参照してください。
+kotonohaを使う場合は、修正前後を別のUTF-8ファイルに残します。textlint・markdownlintによる表現と構造の点検に加え、`check.py compare`で数値・コード等の変化を調べます。実行例は[日本語文書の検査手順](kotonoha/usage.md#保存する文章を検査する)を参照してください。
 コマンド、設定名、数値、条件、否定、断定の強さを保持し、表や番号付き手順は用途に合えば残します。
 検査結果は見直し候補として扱い、警告を消すためだけに意味を変えません。
 

@@ -36,7 +36,7 @@ Product Design / Build Web Appsへ渡します。画像生成や実装にも必�
 
 日本語のラベルや説明、設計メモ、レビュー・比較・改善レポートの下書きは、
 kotonohaで一度推敲することを推奨します。未導入なら利用可能なyomiyasuを使い、両方を重ねて適用しません。主張、数値、条件、確認結果、根拠を保ち、短いラベルは長文化しません。
-未導入の場合は[別インストーラー](../codex-yomiyasu/installation.md)を利用できます。
+未導入の場合は[別インストーラー](../kotonoha/installation.md)を利用できます。
 
 [ECCの反復構成](https://github.com/affaan-m/ECC/blob/ef648e01899ba3e8dc6371642deaaf64b4477775/scripts/gan-harness.sh)を参考にした、既存アプリ向けの独自実装です。
 モデルの学習ではなく、調査・修正・評価を別のCodex実行に分けます。

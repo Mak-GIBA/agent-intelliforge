@@ -19,7 +19,7 @@ Linux / WSL2でCodexへ導入する場合は[一括インストール](installat
 | コアロジックをテーマ別に比較・実測・再評価する | [Design Research](design-research/README.md) | [導入手順](design-research/installation.md) | [使い方](design-research/usage.md) |
 | ECCを導入し、必要なスキルだけ参照する | [Codex ECC](codex-ecc/README.md) | [導入・更新・復元](codex-ecc/installation.md) | [使い方](codex-ecc/usage.md) |
 | PDF・Word・PowerPointを閲覧・編集する | [Office Workbench](codex-office/README.md) | [導入手順](codex-office/installation.md) | [使い方](codex-office/usage.md) |
-| 日本語を明晰にし、段落・説明・表現・留保を整える | [kotonohaと日本語執筆](codex-yomiyasu/README.md) | [導入手順](codex-yomiyasu/installation.md) | [使い方](codex-yomiyasu/usage.md) |
+| 日本語を明晰にし、段落・説明・表現・留保を整える | [kotonohaと日本語執筆](kotonoha/README.md) | [導入手順](kotonoha/installation.md) | [使い方](kotonoha/usage.md) |
 | 作業ディレクトリからターミナルworkspaceを開く | [Herdr](herdr/README.md) | [導入とBash設定](herdr/installation.md) | [使い方](herdr/usage.md) |
 
 ## キットを組み合わせる
