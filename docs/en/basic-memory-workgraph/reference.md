@@ -30,6 +30,8 @@ Progressive Cases may include successes without corrections, keeping inferred ad
 
 ### Workflow review and prompt length
 
+The current hook uses compact start instructions and a shorter persistence policy. Against the immediate pre-change version on 2026-10-29, fixed fixtures reduced start tokens by about 30–39% and Stop tokens by about 23%. See the [validation and policy mapping (Japanese)](../../basic-memory-workgraph/prompt-validation.md) for additional reads, live usage, and limits. The character measurements below are historical.
+
 Review attempts, obstacles, remedies, verification, and next applicability as an operational summary, not private reasoning. A verified remedy does not establish its cause. Hooks supply common admission criteria once; detailed Case/Correction/audit/Skill procedures are read only before relevant operations.
 
 Hook length is checked against a [fixed baseline](../../../tests/fixtures/workgraph-prompt-baseline.json) under the same four configurations, normalizing environment paths only. Common policy, reference guidance, and arming commands count. This is character measurement, not real input-token or decision-quality measurement. Tests require at least 20% shorter full prompts, deployed references, mode/config preservation, and one evaluation. Semantic choices use [fictional scenarios (Japanese)](../../../tests/POLICY_SCENARIOS.md).
@@ -45,7 +47,7 @@ Default, Case/registration-enabled, and automation-off settings also met the red
 
 ### Read in Plan; evaluate writes in implementation mode
 
-The start hook supplies recall guidance and a session/turn-specific arming command. Codex runs it before answering only after confirming current implementation mode and write availability. Users normally need not run it. Plan/read-only and Stop continuations must not arm. The Stop hook requests one evaluation only for armed turns.
+The start hook supplies seed retrieval results, application-check instructions, and a session/turn-specific arming command. Codex arms persistence only after confirming implementation mode and write availability. Plan/read-only and Stop continuations must not arm. Application checks can request one reminder for unresolved conditions; capture evaluation is separate and requires an armed turn.
 
 Plan can recall Memory. A short Stop gating process still runs, but not an extra capture turn. Missing/stale tokens, another turn, invalid setup, or `auto=off` suppress evaluation; turns begun before update have no token.
 
@@ -89,16 +91,17 @@ Paths below are relative to `${CODEX_HOME:-$HOME/.codex}`.
 | Path | Content |
 |---|---|
 | `basic-memory.json` | Project and policy; `checkpointOnCompact=false` |
-| `basic-memory-workgraph/config.json` | Capture, Case, and Skill modes |
+| `basic-memory-workgraph/config.json` | Capture/Case/Skill modes and retrieval CLI/Python binding |
 | `basic-memory-workgraph/memory-policy.md` | Common hook criteria |
 | `basic-memory-workgraph/templates/` | Case, Skill review, schemas |
 | `basic-memory-workgraph/workgraph_tools.py` | Share, JSONL, audit, registration CLI |
 | `basic-memory-workgraph/workgraph_sequence.py` | Case v2 sequence/evidence validation |
+| `basic-memory-workgraph/workgraph_recall.py` | Candidate retrieval, adoption, and artifact mapping checks |
 | `basic-memory-workgraph/workgraph_github.py` | Private GitHub PR/pull/update CLI |
 | `basic-memory-workgraph/github-sharing.json` | Setup profiles |
 | `basic-memory-workgraph/github-state/` | Import fingerprints, commits, locks; no note bodies |
 | Managed `AGENTS.md` block | Route memory-sharing requests; retain other instructions |
-| `hooks/basic_memory_workgraph.py` | Recall/policy/evaluation prompts |
+| `hooks/basic_memory_workgraph.py` | Initial retrieval, policy, application checks, capture evaluation |
 | `hooks.json` | Hook registrations |
 
 The installed CLI also works outside the repository:
@@ -110,6 +113,12 @@ python3 "${CODEX_HOME:-$HOME/.codex}/basic-memory-workgraph/workgraph_tools.py" 
 Its Python still needs PyYAML; GitHub sharing needs git/gh. Existing authentication is reused and not saved in sharing state. There is no recurring/hook-driven send; see [GitHub sharing](github-sharing.md).
 
 Official Plugin configuration discovery follows its own rules; project `.codex/basic-memory.json` can take precedence. Existing `captureEvents` is preserved (default true when absent). Official event recording differs from these hooks, which do not record bodies. Automatic compaction checkpoints remain disabled.
+
+Application state lives in the task directory's `.workgraph-recall/`, separately from graph notes. It stores references, fingerprints, selections, and check status, not raw prompts or note bodies. Plan/read-only creates no application state. Successful verification or the end of a single unresolved reminder removes the task record; interrupted tasks are not bulk-deleted.
+
+Lifecycle events are separate from knowledge notes. `hook flush` archives local event envelopes; it does not extract corrections or create notes. Application checks never flush or delete the existing event inbox. See the [application guide](../../../tools/basic-memory-workgraph/templates/RECALL.md).
+
+See the [validation record (Japanese)](../../basic-memory-workgraph/recall-validation.md) for live matching-scope, different-scope, and current-instruction tests, mechanical checks, and applicability limits.
 
 `connect` / `sync` store repository connections under `connections` in `github-sharing.json`.
 Received sources and preserved edits live under `shared-memory/<repo-id>/` beside the personal memory project.

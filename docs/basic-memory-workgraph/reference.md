@@ -38,6 +38,8 @@ progressiveは修正なしの成功例も扱い、採用推定を観測事実と
 
 ### 作業の振り返りと指示の長さ
 
+現在のhookは、開始時に短い手順と必要な検索本文を渡し、終了時に圧縮した保存方針を渡します。2026-10-29の直前版との比較では、開始時約30〜39％、終了時約23％のトークン削減を確認しました。追加参照・実モデルの使用量・旧方針との対応は[プロンプト短縮の検証](prompt-validation.md)を参照してください。以下の文字数比較は以前の検証記録です。
+
 Codex自身の実行経路も、「試行・障害・対処・検証・次回の適用条件」の要約として振り返ります。
 修正指示の有無によらず、確認できた学びだけを5基準で選びます。原因の推測と対処の検証は区別します。
 フックには共通の保存基準を一度だけ渡し、事例・修正・監査・Skillレビューの詳しい手順は、対象の操作前に既存の参照資料を読みます。
@@ -61,10 +63,10 @@ Workgraphの38テストと既存環境更新の14テスト、Bash構文検査を
 
 ### Planでは参照のみ、実装モードで保存評価
 
-開始時フックは検索方針と、そのセッション・ターンだけの有効化コマンドを渡します。
+開始時フックは初期検索の結果、反映確認の手順と、そのセッション・ターンだけの有効化コマンドを渡します。
 Codexが**現在は実装モードかつ書き込み可能**と確認した場合にだけ、回答前にその補助コマンドを実行します。
 通常はユーザーがコマンドを操作する必要はありません。Plan／読み取り専用や追加評価中は実行しません。
-終了時フックは有効化済みターンだけ、一度の保存評価を依頼します。
+終了時フックは、未確認の採用条件があれば一度だけ確認を求めます。新しい知識の保存評価はこれと別で、有効化済みターンだけ依頼します。
 
 Planでも過去のMemoryを検索・参照できます。終了時の短い判定プロセス自体は呼ばれますが、
 保存評価の追加ターンは起動しません。トークンなし・古いトークン・別ターン・設定不備・`auto=off`も評価しません。
@@ -122,16 +124,17 @@ Skillのレビュー基準と登録手順は[SKILL_REVIEW.md](../../tools/basic-
 | 配置 | 内容 |
 |---|---|
 | `basic-memory.json` | 保存先と共通policy。`checkpointOnCompact=false` |
-| `basic-memory-workgraph/config.json` | 評価・事例・Skillのモード |
+| `basic-memory-workgraph/config.json` | 評価・事例・Skillのモード、検索用CLI・Pythonの指定 |
 | `basic-memory-workgraph/memory-policy.md` | 開始・終了hookの共通基準 |
 | `basic-memory-workgraph/templates/` | 事例形式、Skillレビュー、スキーマの参照資料 |
 | `basic-memory-workgraph/workgraph_tools.py` | 共有・JSONL出力・点検・Skill登録CLI |
 | `basic-memory-workgraph/workgraph_sequence.py` | Case v2の構造・根拠参照検証 |
+| `basic-memory-workgraph/workgraph_recall.py` | 候補取得・採用判断・成果物との対応確認 |
 | `basic-memory-workgraph/workgraph_github.py` | privateリポジトリへのPR作成・取り込み・更新CLI |
 | `basic-memory-workgraph/github-sharing.json` | 初回setupで保存する共有先・送信元・プロジェクトの設定 |
 | `basic-memory-workgraph/github-state/` | 取り込み済みノートの指紋・取得コミット・操作ロック。本文は保持しない |
 | `AGENTS.md`の管理ブロック | メモリ共有・取り込みの依頼から共有手順を読む入口。他の指示は保持 |
-| `hooks/basic_memory_workgraph.py` | 方針注入、検索案内、保存評価依頼 |
+| `hooks/basic_memory_workgraph.py` | 方針注入、初期検索、反映確認、保存評価依頼 |
 | `hooks.json` | hook登録 |
 
 導入済みCLIは、リポジトリ以外の場所からも実行できます。
@@ -147,6 +150,12 @@ GitHub共有CLIにはgit・ghも必要です。認証情報はgh・Gitの既存�
 設定がある場合、ユーザー設定より優先されることがあります。
 既存の `captureEvents` は保持します（未設定ならtrue）。公式pluginのイベント記録とは別に、
 本フックでは本文を記録しません。圧縮時の自動checkpointは無効です。
+
+作業中の反映状態は保存先ノートと分離し、作業ディレクトリの`.workgraph-recall/`に置きます。Plan/read-onlyでは作成しません。本文や生の依頼文を一時状態へ残さず、ノート参照・指紋・採用条件・確認状態だけを保持します。確認完了、または一度の確認依頼後も未検証ならタスク状態を消去します。中断したタスクの状態は自動で一括削除しません。
+
+`captureEvents`のイベント記録は知識ノートとは別です。`hook flush`はローカルのイベント整理であり、指摘の抽出やノート作成は行いません。反映確認処理から既存イベントを整理・削除しません。詳細は[反映ガイド](../../tools/basic-memory-workgraph/templates/RECALL.md)を参照してください。
+
+適用範囲の一致・相違・今回の指示との衝突を扱った実モデル試験と機械検査の結果は、[反映機能の検証記録](recall-validation.md)にまとめています。
 
 `connect` / `sync` は共有先ごとの設定を `github-sharing.json` の `connections` に追加します。
 送信元別の受信プロジェクトと編集版の保存先は、個人メモリーの親にある `shared-memory/<repo-id>/` へ分離します。

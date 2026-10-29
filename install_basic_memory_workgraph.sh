@@ -55,6 +55,7 @@ case "${1:-}" in
     echo "--update: 登録済みの保存先を検出し、設定・hooks・CLI・スキーマを更新。コード取得やパッケージ更新は行いません。"
     echo "--configure-only: 設定とフックだけを更新。既存の保存先とモードを維持。"
     echo "MEMORY_PROJECT / BM_AUTO_MODE / BM_CORRECTION_MODE / BM_CASE_MODE / BM_SKILL_MODE で設定を指定します。"
+    echo "BM_RECALL_CLI には、使用するBasic Memory実行ファイルのパスを指定できます。"
     exit 0
     ;;
   "") [[ $# -eq 0 ]] || die "不正な引数です。" ;;
@@ -187,7 +188,8 @@ python3 "$WORKGRAPH_DIR/install_schemas.py" --memory-dir "$MEMORY_DIR" || SCHEMA
 # STEP 7: 共通ポリシー / Codex設定 / 追加Hook
 # ------------------------------------------------------------
 python3 "$WORKGRAPH_DIR/configure_workgraph.py" \
-  --codex-dir "$CODEX_HOME_DIR" --project "$MEMORY_PROJECT" --mode "$BM_AUTO_MODE"
+  --codex-dir "$CODEX_HOME_DIR" --project "$MEMORY_PROJECT" --mode "$BM_AUTO_MODE" \
+  --recall-cli "${BM_RECALL_CLI:-$(command -v bm)}"
 
 # ------------------------------------------------------------
 # STEP 8: Status

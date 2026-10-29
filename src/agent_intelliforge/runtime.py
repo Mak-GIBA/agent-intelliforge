@@ -448,7 +448,7 @@ def kit_run(identity, agent, arguments, state):
             raise ForgeError('--tool must be a Python helper filename')
         matches = [p for p in bundle.rglob(options.tool) if 'tests' not in p.parts and p.is_file()]
         if len(matches) != 1: raise ForgeError('Helper not found or ambiguous: ' + options.tool)
-        allowed = {'workgraph': {'workgraph_tools.py','workgraph_github.py','install_schemas.py'},
+        allowed = {'workgraph': {'workgraph_tools.py','workgraph_github.py','workgraph_recall.py','install_schemas.py'},
                    'office': {'office.py'}, 'kotonoha': {'check.py','writing_lint.py'}, 'github-pm': {'github_inspect.py'},
                    'speckit': {'swb.py'}, 'ux-stack': {'harness.py'}}
         if identity in allowed and options.tool not in allowed[identity]:
@@ -480,6 +480,18 @@ def hook_run(agent, arguments, state):
         if not policy_text: raise ValueError('Missing policy')
         return settings_value, policy_text
     module.runtime = runtime
+    module.RECALL_SOURCE = home / 'bundle/workgraph_recall.py'
+    codex_dir = Path(os.environ.get('CODEX_HOME', Path.home()/'.codex'))
+    import shlex
+    module.RECALL_COMMAND = shlex.join(['intelliforge','kit-run','workgraph','--agent',agent,
+                                       '--tool','workgraph_recall.py','--',
+                                       '--codex-dir',str(codex_dir),'--policy-root',str(policy)])
+    def recall_service(workdir=None):
+        helper = load(module.RECALL_SOURCE, '_intelliforge_recall')
+        service = helper.Recall(codex_dir,workdir=workdir)
+        service.root = policy
+        return service
+    module.recall_service = recall_service
     if arguments[:1] == ['arm']:
         parser = argparse.ArgumentParser(); parser.add_argument('action'); parser.add_argument('--ticket', required=True)
         parser.add_argument('--token', required=True); parser.add_argument('--mode', required=True); parser.add_argument('--candidate', action='store_true')
@@ -504,6 +516,7 @@ def hook_run(agent, arguments, state):
         command = re.compile(r'^.*basic_memory_workgraph\.py[\'\"]? arm (.*)$', re.M)
         context = command.sub(lambda match: f'intelliforge hook --agent {agent} arm ' + match[1], context)
         context = context.replace(str(policy / 'templates'), str(policy / 'assets/templates'))
+        context = context.replace(str(policy / 'memory-policy.md'), str(policy / 'assets/memory-policy.md'))
         value['hookSpecificOutput']['additionalContext'] = context
     if 'reason' in value: value['reason'] = value['reason'].replace(str(policy / 'templates'), str(policy / 'assets/templates'))
     if value: print(json.dumps(value, ensure_ascii=False))

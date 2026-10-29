@@ -63,7 +63,7 @@ Start a new session and inspect `/plugins` for `codex@basic-memory`. In `/hooks`
 
 ### Prepare Python for updates, exports, and Skill registration
 
-`--update` and the sharing/JSONL/registration CLI need PyYAML. Hooks and `--configure-only` use the standard library.
+`--update`, sharing/JSONL/registration, and local memory retrieval need PyYAML. Placing configuration files uses the standard library; retrieval runtime validation is separate.
 
 ```bash
 python3 -m venv .venv
@@ -73,6 +73,21 @@ python3 -c 'import yaml; print(yaml.__version__)'
 ```
 
 Activate this environment for later examples. In another terminal, return to the repository and rerun `source .venv/bin/activate`. If venv is unavailable, prepare your OS's Python venv support. The Python used for automatic Skill registration must also be able to import PyYAML.
+
+<a id="recall-runtime"></a>
+
+### Bind a retrieval runtime
+
+First installation checks the Basic Memory executable and its Python environment. For an existing installation, bind an installed compatible executable by absolute path:
+
+```bash
+BM_RECALL_CLI="/absolute/path/to/basic-memory" \
+bash install_basic_memory_workgraph.sh --configure-only
+```
+
+`--update` accepts the same environment variable; the configuration helper also accepts `--recall-cli`. Omitting it preserves the existing binding. Configuration checks the executable version and PyYAML before writing, rolling back modified configuration files on write failure. Binding does not upgrade Basic Memory or migrate its database.
+
+Local projects read registered Markdown directly. Cloud projects use the bound CLI and report connection failures as unavailable. `workgraph_recall.py doctor` checks execution; `prepare --mode plan` checks project retrieval. A successful version check alone does not prove retrieval works.
 
 <a id="update"></a>
 

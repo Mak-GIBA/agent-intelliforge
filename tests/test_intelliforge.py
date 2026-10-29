@@ -354,6 +354,45 @@ class ProcessTests(unittest.TestCase):
 
 
 class HookTests(unittest.TestCase):
+    def test_portable_recall_command_uses_bound_policy_and_task_workspace(self):
+        import shlex
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);state=root/'state';codex=root/'codex';registry=root/'registry';work=root/'work'
+            for path in (codex,registry,work):path.mkdir()
+            memory=root/'memory';memory.mkdir()
+            (memory/'flow.md').write_text('---\ntitle: Flow\ntype: rule\n---\nKeep writing flow')
+            (registry/'config.json').write_text(json.dumps({'projects':{'fixture':str(memory)}}))
+            (codex/'basic-memory.json').write_text('{"basicMemory":{"primaryProject":"fixture"}}')
+            home=state/'codex/workgraph';bundle=home/'bundle';policy=home/'policy'
+            source=ROOT/'tools/intelliforge/resources/runtime/workgraph'
+            ownership.replace_tree(bundle,runtime.owner('workgraph','codex'),runtime.files(source))
+            ownership.replace_tree(policy/'assets',runtime.owner('workgraph-policy','codex'),{
+                name:data for name,data in runtime.files(source).items() if name=='memory-policy.md' or name.startswith('templates/')})
+            ownership.atomic_write(policy/'config.json',b'{"mode":"smart"}')
+            ownership.atomic_write(home/'settings.json',json.dumps({'owner':runtime.owner('workgraph','codex'),'policy':str(policy),'python':sys.executable}).encode())
+            env={**os.environ,'CODEX_HOME':str(codex),'BASIC_MEMORY_CONFIG_DIR':str(registry),
+                 'INTELLIFORGE_STATE_DIR':str(state),'PYTHONPATH':str(ROOT/'src')}
+            event={'session_id':'fixture','turn_id':'one','prompt':'writing flow','cwd':str(work)}
+            out=io.StringIO()
+            with patch.dict(os.environ,env),patch.object(sys,'stdin',io.StringIO(json.dumps(event))),contextlib.redirect_stdout(out):
+                self.assertEqual(runtime.hook_run('codex',['recall'],state),0)
+            context=json.loads(out.getvalue())['hookSpecificOutput']['additionalContext']
+            line=next(line for line in context.splitlines() if line.startswith('Helper: '))
+            prefix=shlex.split(line.removeprefix('Helper: '))
+            self.assertIn(str(policy/'assets/memory-policy.md'),context)
+            self.assertEqual(prefix[:3],['intelliforge','kit-run','workgraph'])
+            base=[sys.executable,'-B','-m','agent_intelliforge.cli',*prefix[1:]]
+            ticket='d'*64
+            def run(*args):
+                result=subprocess.run([*base,*args],cwd=work,env=env,capture_output=True,text=True)
+                self.assertEqual(result.returncode,0,result.stderr+result.stdout)
+                return json.loads(result.stdout)
+            result=run('prepare','--ticket',ticket,'--query','writing flow','--mode','implementation')
+            self.assertEqual(result['status'],'found')
+            run('select','--ticket',ticket,'--input',json.dumps([{'id':result['notes'][0]['id'],'decision':'excluded','reason':'different scope'}]),'--mode','implementation')
+            self.assertEqual(run('check','--ticket',ticket,'--mode','implementation','--close')['status'],'verified')
+            self.assertFalse((work/'.workgraph-recall'/(ticket+'.json')).exists())
+
     def test_claude_turn_token_plan_and_single_stop_gate(self):
         with tempfile.TemporaryDirectory() as temporary:
             state=Path(temporary);home=state/'claude/workgraph';bundle=home/'bundle';policy=home/'policy'

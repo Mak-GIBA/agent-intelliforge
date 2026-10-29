@@ -10,7 +10,15 @@ Run terminal examples from the repository root; enter requests in Codex.
 
 ## Daily use
 
-Ask Codex to work normally. It searches relevant Memory before work and reviews successful procedures/corrections afterward. Only qualifying knowledge is saved. Hooks prompt recall/evaluation; Codex makes the decision and writes notes. [Modes](#modes) control eligible types.
+Ask Codex to work normally. The start hook retrieves initial candidates. Codex reads their scope, selects applicable notes, and turns them into task conditions, actions, and verification. Application checks and capture of new knowledge are separate. Codex writes only qualifying notes; [modes](#modes) control eligible types.
+
+### Apply retrieved knowledge
+
+For example, a correction to put recommendations first in decision reports can change a report's opening and trigger a final ordering check. It need not apply to a beginner tutorial. Current explicit instructions override historical preferences.
+
+The sequence is search → read scope/exceptions → adopt, exclude, or defer → define task conditions → compare artifacts. Codex refines inadequate seed terms. Retrieval failures remain distinct from successful searches with no matches. Local retrieval reads registered Markdown without starting a database or downloading embedding models. It uses lexical matching, with at most five candidates and three bodies of 6,000 characters each. Long or `needs_review` notes require separate review before adoption.
+
+Implementation records live temporarily in the task directory's private, Git-ignored `.workgraph-recall/`. Source fingerprints, artifact hashes, and mapping checks detect changes or missing evidence; they do not establish semantic correctness. Codex must inspect the actual content. Successful checks remove the task record. Stop requests at most one reminder, then unresolved conditions must be reported as unverified. Plan/read-only creates no application records or graph notes, and usage diaries are never captured. See the [application guide](../../../tools/basic-memory-workgraph/templates/RECALL.md) and [runtime setup](installation.md#recall-runtime).
 
 ### Learn from the agent's own workflow
 

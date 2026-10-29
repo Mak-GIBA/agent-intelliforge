@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import stat
+from agent_intelliforge import subprocess_bridge as subprocess
 import tempfile
 
 from configure_workgraph import prepare_configuration, read_object, write_file
@@ -100,7 +101,8 @@ def update(args):
         args.codex_dir, args.basic_memory_config, args.project, args.memory_dir)
     # All parsing/validation precedes mutation, including malformed hook settings.
     config_changes, message = prepare_configuration(
-        codex, project, args.mode, args.case_mode, args.skill_mode, getattr(args, "correction_mode", None))
+        codex, project, args.mode, args.case_mode, args.skill_mode, getattr(args, "correction_mode", None),
+        getattr(args, "recall_cli", None))
     schema_changes, preserved = prepare_schemas(memory)
     changes = config_changes + schema_changes
     for path, _ in changes:
@@ -125,11 +127,12 @@ def main():
     parser.add_argument("--case-mode", default=os.environ.get("BM_CASE_MODE"))
     parser.add_argument("--skill-mode", default=os.environ.get("BM_SKILL_MODE"))
     parser.add_argument("--correction-mode", default=os.environ.get("BM_CORRECTION_MODE"))
+    parser.add_argument("--recall-cli", type=Path, default=os.environ.get("BM_RECALL_CLI"))
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     try:
         result = update(args)
-    except (OSError, ValueError, TypeError, AttributeError) as exc:
+    except (OSError, ValueError, TypeError, AttributeError, subprocess.TimeoutExpired) as exc:
         parser.exit(1, f"Update failed: {exc}\n")
     print(json.dumps(result, ensure_ascii=False, indent=2))
     if result["preserved"]:

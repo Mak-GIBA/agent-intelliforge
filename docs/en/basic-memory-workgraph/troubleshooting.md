@@ -13,6 +13,11 @@ Run commands at the repository root; requests go in Codex.
 | Symptom | Check / action |
 |---|---|
 | New behavior unavailable | Start a new Codex session; inspect `/plugins` and `/hooks` |
+| Retrieval says `unavailable` | Not a no-match result. Check registered projects and PyYAML in the retrieval Python; for Cloud, check CLI version and connectivity |
+| Retrieval says `needs_context` | Add sanitized purpose, output, and constraint terms; “implement the plan” alone lacks context |
+| CLI cannot locate a DB revision | Check CLI/DB compatibility before rebuilding or deleting anything. [Bind a compatible runtime](installation.md#recall-runtime); local retrieval reads registered Markdown |
+| Stop asks for application verification | Compare adopted conditions with artifacts and run `check`; report unresolved conditions as unverified. Only one reminder is requested |
+| Many pending lifecycle events | Events are not knowledge notes. `hook flush` archives event envelopes; it does not extract corrections or create notes |
 | Lesson not saved | Check mode, evidence, reuse value, duplicates; no value correctly means no capture |
 | Correction not saved | Check `correctionMode=scoped`, implementation mode, duplication, privacy |
 | No Stop evaluation | Normal in Plan; implementation still needs this turn armed. Start a new session after update |

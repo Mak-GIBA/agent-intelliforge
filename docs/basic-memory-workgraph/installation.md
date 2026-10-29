@@ -81,8 +81,8 @@ bash install_basic_memory_workgraph.sh
 
 ### 更新・共有・Skill登録に使うPython環境を準備する
 
-`--update`、共有・JSONL出力・Skill登録CLIにはPyYAMLが必要です。
-フックと `--configure-only` はPython標準ライブラリだけで動作します。
+`--update`、共有・JSONL出力・Skill登録CLIと、ローカルメモリーの検索にはPyYAMLが必要です。
+設定ファイルの配置は標準ライブラリだけで行えますが、検索用ランタイムは別途確認します。
 
 依存を分離して導入するには、リポジトリで次を実行します。
 
@@ -97,6 +97,21 @@ python3 -c 'import yaml; print(yaml.__version__)'
 リポジトリに移動して `source .venv/bin/activate` を再実行してください。
 `venv` 自体が利用できない場合は、OSのPython環境にvenv機能を用意してください。
 Skill自動登録を使う場合も、登録CLIを実行するPythonからPyYAMLを参照できる必要があります。
+
+<a id="recall-runtime"></a>
+
+### 検索用ランタイムを指定する
+
+初回導入ではBasic Memoryの実行ファイルと、その環境のPythonを確認して検索に使います。既存環境で実行ファイルを指定する場合は、手元にある対応版の絶対パスを渡します。
+
+```bash
+BM_RECALL_CLI="/absolute/path/to/basic-memory" \
+bash install_basic_memory_workgraph.sh --configure-only
+```
+
+`--update`でも同じ環境変数を使えます。`configure_workgraph.py --recall-cli`による直接指定も可能です。指定を省略した設定更新では既存の指定を保持します。実行ファイルの版とPyYAMLを確認してから設定を書き、途中で書き込みに失敗した場合は変更した設定ファイルを戻します。Basic Memory本体の更新やDB移行は、この指定では行いません。
+
+登録済みのローカルプロジェクトはMarkdownを直接読みます。Cloudプロジェクトでは指定CLIを使い、接続に失敗したら利用不能として返します。実行可能かどうかは`workgraph_recall.py doctor`、登録先を検索できるかどうかは`prepare --mode plan`で確認します。`doctor`の成功だけでは検索の成功を証明しません。
 
 <a id="update"></a>
 

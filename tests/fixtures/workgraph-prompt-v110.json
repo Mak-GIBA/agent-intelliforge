@@ -1,0 +1,131 @@
+{
+  "tokenizer": "tiktoken 0.9.0 / o200k_base; normalized paths and fixed synthetic control tokens; not billing tokens",
+  "before": {
+    "empty": {
+      "start": {
+        "characters": 2856,
+        "tokens": 712
+      },
+      "stop": {
+        "characters": 13830,
+        "tokens": 2614
+      }
+    },
+    "found": {
+      "start": {
+        "characters": 4421,
+        "tokens": 1058
+      },
+      "stop": {
+        "characters": 13830,
+        "tokens": 2614
+      }
+    },
+    "unavailable": {
+      "start": {
+        "characters": 2857,
+        "tokens": 712
+      },
+      "stop": {
+        "characters": 13830,
+        "tokens": 2614
+      }
+    },
+    "needs_context": {
+      "start": {
+        "characters": 2859,
+        "tokens": 712
+      },
+      "stop": {
+        "characters": 13830,
+        "tokens": 2614
+      }
+    },
+    "plan": {
+      "start": {
+        "characters": 1039,
+        "tokens": 227
+      },
+      "stop": {
+        "characters": 0,
+        "tokens": 0
+      }
+    },
+    "off": {
+      "start": {
+        "characters": 738,
+        "tokens": 162
+      },
+      "stop": {
+        "characters": 0,
+        "tokens": 0
+      }
+    }
+  },
+  "after": {
+    "empty": {
+      "start": {
+        "characters": 2115,
+        "tokens": 500
+      },
+      "stop": {
+        "characters": 10313,
+        "tokens": 2020
+      }
+    },
+    "found": {
+      "start": {
+        "characters": 2735,
+        "tokens": 642
+      },
+      "stop": {
+        "characters": 10313,
+        "tokens": 2020
+      }
+    },
+    "unavailable": {
+      "start": {
+        "characters": 2116,
+        "tokens": 500
+      },
+      "stop": {
+        "characters": 10313,
+        "tokens": 2020
+      }
+    },
+    "needs_context": {
+      "start": {
+        "characters": 2118,
+        "tokens": 500
+      },
+      "stop": {
+        "characters": 10313,
+        "tokens": 2020
+      }
+    },
+    "plan": {
+      "start": {
+        "characters": 884,
+        "tokens": 188
+      },
+      "stop": {
+        "characters": 0,
+        "tokens": 0
+      }
+    },
+    "off": {
+      "start": {
+        "characters": 676,
+        "tokens": 146
+      },
+      "stop": {
+        "characters": 0,
+        "tokens": 0
+      }
+    }
+  },
+  "policy_sha256": {
+    "before": "33dcd8ec7be8ec8c68f0d848a3dd7ac7319d85636ec6ec81740bfa03d1102883",
+    "after": "e3c506bb9f106842c5ddfce69d1b327760b20eb6400d39a60d8d1992f2fa38ef"
+  }
+}

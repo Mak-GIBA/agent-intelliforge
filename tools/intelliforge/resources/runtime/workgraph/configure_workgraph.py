@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 import shlex
 import shutil
+from agent_intelliforge import subprocess_bridge as subprocess
+import sys
 import tempfile
 
 
@@ -44,7 +46,7 @@ def write_file(path, content, stamp):
         temporary.unlink(missing_ok=True)
 
 
-def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None):
+def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None, recall_cli=None):
     policy = (SOURCE / "memory-policy.md").read_text(encoding="utf-8").strip()
     hook_source = (SOURCE / "hooks/basic_memory_workgraph.py").read_text(encoding="utf-8")
     if not policy:
@@ -75,6 +77,23 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
             raise ValueError(f"{key} must be one of {', '.join(allowed)}")
         auto_config[key] = value
 
+    if recall_cli is not None:
+        executable = shutil.which(str(recall_cli))
+        if not executable:
+            raise ValueError("Recall CLI unavailable; choose a compatible installed basic-memory executable")
+        executable = str(Path(executable).resolve())
+        result = subprocess.run([executable, "--version"], capture_output=True, text=True, timeout=5)
+        if result.returncode:
+            raise ValueError("Recall CLI version check failed")
+        python = Path(executable).parent / "python"
+        if not python.is_file(): python = Path(sys.executable)
+        check = subprocess.run([str(python), "-c", "import yaml"], capture_output=True, timeout=5)
+        if check.returncode:
+            raise ValueError("Recall runtime requires PyYAML; use the Basic Memory environment or requirements-export.txt")
+        auto_config["recallPython"] = os.path.abspath(python)
+        auto_config["recallCli"] = [os.path.abspath(executable)]
+        auto_config["recallVersion"] = result.stdout.strip()
+    auto_config["compactContext"] = True
     bm["primaryProject"] = selected_project
     for key, value in {
         "secondaryProjects": [], "teamProjects": {}, "rememberFolder": "corrections",
@@ -100,8 +119,8 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
         ("UserPromptSubmit", "recall", "Searching Basic Memory Work Knowledge Graph"),
         ("Stop", "save", "Evaluating reusable Basic Memory knowledge"),
     ):
-        entry = {"type": "command", "command": "python3 " + shlex.quote(str(hook_path)) + " " + action,
-                 "timeout": 10}
+        entry = {"type": "command", "command": shlex.quote(auto_config.get("recallPython", "python3")) + " " + shlex.quote(str(hook_path)) + " " + action,
+                 "timeout": 30}
         if action == "recall":
             entry["statusMessage"] = message
         hooks[event].append({"hooks": [entry]})
@@ -122,7 +141,7 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
         if source.is_file():
             changes.append((auto_dir / "templates" / source.relative_to(SOURCE / "templates"),
                             source.read_text(encoding="utf-8")))
-    for name in ("workgraph_tools.py", "workgraph_sequence.py", "workgraph_github.py", "requirements-export.txt"):
+    for name in ("workgraph_tools.py", "workgraph_sequence.py", "workgraph_github.py", "workgraph_recall.py", "requirements-export.txt"):
         changes.append((auto_dir / name, (SOURCE / name).read_text(encoding="utf-8")))
     # This entrypoint applies only to explicit memory sharing requests. It never
     # grants sharing permission or schedules uploads from automatic save hooks.
@@ -165,11 +184,22 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
     return changes, message
 
 
-def configure(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None):
-    changes, message = prepare_configuration(codex_dir, project, mode, case_mode, skill_mode, correction_mode)
+def configure(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None, recall_cli=None):
+    changes, message = prepare_configuration(codex_dir, project, mode, case_mode, skill_mode, correction_mode, recall_cli)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S-%f")
-    for path, content in changes:
-        write_file(path, content, stamp)
+    originals = {path: (path.read_bytes(), path.stat().st_mode & 0o777) if path.exists() else None for path, _ in changes}
+    touched = []
+    try:
+        for path, content in changes:
+            touched.append(path)
+            write_file(path, content, stamp)
+    except (OSError, ValueError):
+        for path in reversed(touched):
+            previous = originals[path]
+            if previous is None: path.unlink(missing_ok=True)
+            else:
+                path.write_bytes(previous[0]);path.chmod(previous[1])
+        raise
     print(message)
 
 
@@ -181,11 +211,12 @@ def main():
     parser.add_argument("--case-mode", default=os.environ.get("BM_CASE_MODE"))
     parser.add_argument("--skill-mode", default=os.environ.get("BM_SKILL_MODE"))
     parser.add_argument("--correction-mode", default=os.environ.get("BM_CORRECTION_MODE"))
+    parser.add_argument("--recall-cli", type=Path, default=os.environ.get("BM_RECALL_CLI"), help="Compatible installed Basic Memory executable; never installs or migrates its database")
     args = parser.parse_args()
     try:
         configure(args.codex_dir.expanduser().resolve(), args.project, args.mode,
-                  args.case_mode, args.skill_mode, args.correction_mode)
-    except (OSError, ValueError, TypeError, AttributeError) as exc:
+                  args.case_mode, args.skill_mode, args.correction_mode, args.recall_cli)
+    except (OSError, ValueError, TypeError, AttributeError, subprocess.TimeoutExpired) as exc:
         parser.exit(1, f"Configuration failed: {exc}\n")
 
 

@@ -115,7 +115,7 @@ class WorkgraphTest(unittest.TestCase):
         self.assertEqual(bm["rememberFolder"], "manual")
         self.assertEqual(bm["placementConventions"], POLICY)
         self.assertEqual(self.read_json("basic-memory-workgraph/config.json"),
-                         {"mode": "off", "other": 3, "caseMode": "off", "skillMode": "review", "correctionMode": "off"})
+                         {"mode": "off", "other": 3, "caseMode": "off", "skillMode": "review", "correctionMode": "off", "compactContext": True})
         hooks = self.read_json("hooks.json")
         self.assertEqual(hooks["custom"], "keep")
         self.assertEqual(hooks["hooks"]["Stop"][0], {"matcher": "keep", "hooks": [sibling]})
@@ -186,7 +186,8 @@ class WorkgraphTest(unittest.TestCase):
         self.assertEqual(self.install().returncode, 0)
         event = {"session_id": "session", "turn_id": "short", "prompt": "今後日本語で"}
         recall = self.hook("recall", event)["hookSpecificOutput"]["additionalContext"]
-        self.assertTrue(recall.startswith(POLICY))
+        self.assertIn(str(self.codex / 'basic-memory-workgraph/memory-policy.md'), recall)
+        self.assertNotIn(POLICY, recall)
         self.assertIs(json.loads(self.state_files()[0].read_text())["candidate"], True)
         self.activate(event)
         stop = self.hook("save", {**event, "last_assistant_message": "承知しました。"})
@@ -308,7 +309,7 @@ class WorkgraphTest(unittest.TestCase):
         self.assertEqual(shlex.split(command)[1], str(self.codex / "hooks/basic_memory_workgraph.py"))
         result = subprocess.run(command, shell=True, input='{"prompt":"hi"}', text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn(POLICY, json.loads(result.stdout)["hookSpecificOutput"]["additionalContext"])
+        self.assertIn(str(self.codex / 'basic-memory-workgraph/memory-policy.md'), json.loads(result.stdout)["hookSpecificOutput"]["additionalContext"])
 
     def test_legacy_commands_use_new_policy_in_existing_sessions(self):
         for action in ("recall", "save"):
@@ -323,7 +324,7 @@ class WorkgraphTest(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stderr)
             if action == "recall":
-                self.assertIn(POLICY, json.dumps(json.loads(result.stdout), ensure_ascii=False).replace("\\n", "\n"))
+                self.assertIn('memory-policy.md', json.loads(result.stdout)['hookSpecificOutput']['additionalContext'])
             else:
                 self.assertEqual(json.loads(result.stdout), {})  # Old sessions have no attested token.
         self.assertTrue(list((self.codex / "hooks").glob("*.bak.*")))
@@ -347,7 +348,7 @@ class WorkgraphTest(unittest.TestCase):
         self.assertEqual(self.install().returncode, 0)
         config = self.read_json("basic-memory-workgraph/config.json")
         self.assertEqual(config, {"mode": "smart", "caseMode": "off",
-                                  "skillMode": "review", "correctionMode": "scoped"})
+                                  "skillMode": "review", "correctionMode": "scoped", "compactContext": True})
         context = self.hook("recall", {})["hookSpecificOutput"]["additionalContext"]
         self.assertIn("correction=scoped", context)
         self.assertIn("Before drafting", context)
@@ -436,8 +437,8 @@ class WorkgraphTest(unittest.TestCase):
                 self.activate(event)
                 reason = self.hook('save', event)['reason']
                 self.assertIn("Review the agent's own workflow", reason)
-                self.assertIn('User correction is not required', reason)
-                self.assertIn('Recovery alone does not establish', reason)
+                self.assertIn('without user correction', reason)
+                self.assertIn('Recovery does not prove cause', reason)
                 self.assertEqual(self.hook('save', event), {})
         self.assertFalse((self.home / 'knowledge').exists())
 
@@ -502,8 +503,8 @@ class WorkgraphTest(unittest.TestCase):
                 event = {'session_id': 'budget', 'turn_id': case['name'], 'prompt': '教訓を覚えて'}
                 recall = self.hook('recall', event)['hookSpecificOutput']['additionalContext']
                 self.assertLessEqual(size(recall), case['recall_chars'] * 0.8)
-                self.assertTrue(recall.startswith(POLICY))
-                self.assertEqual(recall.count(POLICY), 1)
+                self.assertIn('memory-policy.md', recall)
+                self.assertEqual(recall.count(POLICY), 0)
                 for guide in ('CORRECTIONS.md', 'CAPTURE.md', 'AUDIT.md', 'SKILL_REVIEW.md'):
                     self.assertTrue((self.codex / 'basic-memory-workgraph/templates' / guide).is_file())
                     self.assertIn(guide, recall)
