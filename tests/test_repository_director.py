@@ -133,7 +133,11 @@ class PortableMigrationTests(unittest.TestCase):
 
 
 def load_tests(loader, tests, pattern):
-    tests.addTests(loader.discover(str(ROOT/'tools/repository-director/tests'),pattern='test_*.py',top_level_dir=str(ROOT/'tools/repository-director/tests')))
+    # Python 3.11 retains each loader's discovery root. Keep the outer suite's
+    # root intact while preserving any requested test-name filter.
+    kit_loader = unittest.TestLoader()
+    kit_loader.testNamePatterns = loader.testNamePatterns
+    tests.addTests(kit_loader.discover(str(ROOT/'tools/repository-director/tests'),pattern='test_*.py',top_level_dir=str(ROOT/'tools/repository-director/tests')))
     return tests
 
 
