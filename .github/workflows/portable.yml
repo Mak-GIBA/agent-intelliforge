@@ -22,7 +22,7 @@ jobs:
       - name: Archive integrity and restoration contracts
         run: uv run --no-project --python 3.11 python -B -m unittest discover -s tests -p test_research_archive.py -v
       - name: Portable contracts (no personal installation or model calls)
-        run: uv run --no-project --python 3.11 python -B -m unittest discover -s tests -p test_intelliforge.py -v
+        run: uv run --no-project --python 3.11 --with "PyYAML>=6,<7" python -B -m unittest discover -s tests -p test_intelliforge.py -v
       - name: Kit identity migration contracts
         run: uv run --no-project --python 3.11 python -B -m unittest discover -s tests -p test_kotonoha_migration.py -v
       - name: Kotonoha offline runtime contracts
