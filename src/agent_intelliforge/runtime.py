@@ -147,15 +147,6 @@ def prepare_dependencies(kit, agent, home, bundle, config, state):
         env = {**os.environ, 'PLAYWRIGHT_BROWSERS_PATH': str(directory / 'browsers')}
         checked(['node', str(directory / 'node_modules/playwright/cli.js'), 'install', 'chromium'], env=env, timeout=600)
         config['browser'] = str(directory)
-    if identity == 'speckit' and not config.get('specify'):
-        found = shutil.which('specify')
-        if found:
-            checked([found, 'version']); config['specify'] = found
-        else:
-            directory = dependency_directory(home, 'specify-1.0.8')
-            venv.EnvBuilder(with_pip=True).create(directory)
-            checked([str(python_in(directory)), '-m', 'pip', 'install', '--disable-pip-version-check', 'specify-cli==1.0.8'], timeout=600)
-            config['specify'] = str(directory / ('Scripts/specify.exe' if os.name == 'nt' else 'bin/specify'))
     if identity == 'office' and not config.get('python'):
         from .office_port import prepare
         config.update(prepare(bundle, home))
@@ -177,8 +168,6 @@ def prepare_dependencies(kit, agent, home, bundle, config, state):
         checked([found, '--version'])
         config['binary'] = found
         config['binary_sha256'] = hashlib.sha256(Path(found).read_bytes()).hexdigest()
-    if identity == 'github-pm' and not shutil.which('gh'):
-        raise ForgeError('GitHub management requires the official GitHub CLI (gh). Install it and authenticate first.')
     if identity == 'workgraph':
         recall_runtime = load(bundle / 'recall_runtime.py', '_workgraph_runtime')
         if not config.get('python') or not recall_runtime.probe(config['python'])['yaml']:
@@ -293,6 +282,9 @@ def portable_action(root, kits, plan, args, state):
     with contextlib.redirect_stdout(output):
         with contextlib.ExitStack() as stack:
             for item in plan['operations']:
+                if item['kit']=='repository-director' and args.action in ('install','update') and item['method']!='legacy':
+                    from .director_migration import migrate as migrate_director
+                    stack.enter_context(migrate_director(root,state,item['agent'],getattr(args,'migrate_legacy',False),getattr(args,'skills_dir',None)))
                 if item['kit']=='kotonoha' and args.action in ('install','update'):
                     if describe(state,item['agent']) and (args.action!='update' or getattr(args,'upstream_only',False)):
                         raise ForgeError('Complete the kit rename using update --only kotonoha --apply before a source-only check or install.')
@@ -304,6 +296,13 @@ def portable_action(root, kits, plan, args, state):
 
 def _portable_action(root, kits, plan, args, state):
     catalog = {kit['id']: kit for kit in kits}; results = []
+    def operation_action(item):
+        # The first replacement of two legacy Plugins has no new registration to update.
+        if (item['kit']=='repository-director' and args.action=='update'
+                and getattr(args,'migrate_legacy',False)
+                and not (state/item['agent']/item['kit']/'settings.json').exists()):
+            return 'install'
+        return args.action
     # Complete preflight before the first dependency/network or mutation.
     for item in plan['operations']:
         kit = catalog[item['kit']]; home = state / item['agent'] / item['kit']
@@ -314,7 +313,7 @@ def _portable_action(root, kits, plan, args, state):
             files(root / 'tools/intelliforge/resources/runtime' / item['kit'])
             if item['method'] == 'plugin':
                 plugins.conflict_skills(kit, item['agent'], args.skills_dir)
-                plugins.preflight(kit, item['agent'], args.action, state)
+                plugins.preflight(kit, item['agent'], operation_action(item), state)
                 destination = state / item['agent'] / 'marketplace'
                 if destination.exists(): verify(destination, owner('marketplace', item['agent']))
             else:
@@ -323,9 +322,10 @@ def _portable_action(root, kits, plan, args, state):
                     if (destination / name).exists(): verify(destination / name, owner(name, item['agent']))
     for item in plan['operations']:
         kit = catalog[item['kit']]; agent = item['agent']; home = state / agent / item['kit']
+        action = operation_action(item)
         if item['method'] == 'legacy':
             from .cli import legacy_action
-            results.append({'kit': kit['id'], 'agent': agent, 'exit_code': legacy_action(root, [kit], args.action)}); continue
+            results.append({'kit': kit['id'], 'agent': agent, 'exit_code': legacy_action(root, [kit], args.action, getattr(args,'migrate_legacy',False))}); continue
         if args.action == 'doctor': results.append(diagnose(kit, agent, state)); continue
         home.mkdir(parents=True, exist_ok=True)
         with file_lock(home / '.operation.lock'):
@@ -385,9 +385,9 @@ def _portable_action(root, kits, plan, args, state):
                 atomic_write(home / 'settings.json', (json.dumps(config, ensure_ascii=False, indent=2) + '\n').encode())
                 if item['method'] == 'plugin':
                     market_target, market_backup = marketplace(root, kit, agent, state, config.get('mode', 'auto'))
-                    plugins.manage(market_target, kit, agent, 'update' if args.action == 'update' else 'install', state, args.skills_dir)
+                    plugins.manage(market_target, kit, agent, 'update' if action == 'update' else 'install', state, args.skills_dir)
                 for index,(target,saved) in enumerate(skill_backups):
-                    if saved and kit['id']=='kotonoha':
+                    if saved and kit['id'] in ('kotonoha','repository-director'):
                         archive=home/'backups'/saved.name;archive.parent.mkdir(parents=True,exist_ok=True)
                         shutil.move(str(saved),str(archive))
                         skill_backups[index]=(target,archive)
@@ -401,7 +401,7 @@ def _portable_action(root, kits, plan, args, state):
                 for target, saved in reversed(skill_backups):
                     remove_tree(target, owner(target.name, agent))
                     if saved:
-                        if kit['id']=='kotonoha':
+                        if kit['id'] in ('kotonoha','repository-director'):
                             shutil.copytree(saved,target)
                             if saved.parent==target.parent:remove_tree(saved,owner(target.name,agent))
                         else:saved.rename(target)
@@ -418,7 +418,7 @@ def _portable_action(root, kits, plan, args, state):
 
 
 ENTRIES = {'ux-stack': 'skill/scripts/harness.py', 'design-research': 'skill/scripts/harness.py',
-           'speckit': 'swb.py', 'github-pm': 'skills/github-project-director/scripts/github_inspect.py',
+           'repository-director': 'skill/scripts/repository.py',
            'office': 'office.py', 'kotonoha': 'assets/kotonoha/scripts/check.py'}
 
 
@@ -453,8 +453,8 @@ def kit_run(identity, agent, arguments, state):
         matches = [p for p in bundle.rglob(options.tool) if 'tests' not in p.parts and p.is_file()]
         if len(matches) != 1: raise ForgeError('Helper not found or ambiguous: ' + options.tool)
         allowed = {'workgraph': {'workgraph_tools.py','workgraph_github.py','workgraph_recall.py','install_schemas.py'},
-                   'office': {'office.py'}, 'kotonoha': {'check.py','writing_lint.py'}, 'github-pm': {'github_inspect.py'},
-                   'speckit': {'swb.py'}, 'ux-stack': {'harness.py'}}
+                   'office': {'office.py'}, 'kotonoha': {'check.py','writing_lint.py'},
+                   'repository-director': {'repository.py','forge_inspect.py','github_inspect.py'}, 'ux-stack': {'harness.py'}}
         if identity in allowed and options.tool not in allowed[identity]:
             raise ForgeError('Installer/configuration helpers are not executable through the portable Skill entry')
         if identity == 'design-research' and matches[0].parent != bundle / 'skill/scripts':

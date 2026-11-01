@@ -99,14 +99,14 @@ intelliforge locate --agent claude --only kotonoha --upstream
 
 ## 研究・UX評価を実行する
 
-入口は既存のSkillを維持します。Claudeでは`/design-research:design-research`、`/ux-stack:ux-gan-harness`、`/speckit:upstream-new`などの名前になります。
+入口は既存のSkillを維持します。Claudeでは`/design-research:design-research`、`/ux-stack:ux-gan-harness`、`/repository-director:repository-director`などの名前になります。
 生成する本文のコマンドは次の共通入口に接続します。
 
 ```bash
 intelliforge kit-run design-research --agent claude -- doctor --project <project>
 intelliforge kit-run design-research --agent claude -- research --project <project> --brief "比較する方式と制約" --slug comparison --allow-network
 intelliforge kit-run ux-stack --agent claude -- audit --project <project> --url http://localhost:3000
-intelliforge kit-run speckit --agent claude -- doctor --project <project>
+intelliforge kit-run repository-director --agent claude -- check --project <project>
 ```
 
 Claudeでは、既存の役割別プロンプト・JSON Schema・評価予算・成果物検証を使い、`claude -p`の構造化出力を受け取ります。構造化出力がない実行や失敗した実行を成功として扱いません。

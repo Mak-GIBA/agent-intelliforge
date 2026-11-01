@@ -113,7 +113,7 @@ def build(output, base_dir=None, offline=False):
             print('Checking '+label+'...',file=sys.stderr)
             checked(cmd,repo,logs,label,env)
         output.mkdir(parents=True,exist_ok=True)
-        for name in ('install_design_research.sh','install_speckit_upstream.sh'):
+        for name in ('install_design_research.sh',):
             p=output/name
             with p.open('xb') as f: f.write((repo/name).read_bytes())
             p.chmod(0o755)

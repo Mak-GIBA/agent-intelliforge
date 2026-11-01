@@ -20,23 +20,14 @@
 # Edit: tools/codex-ux-stack/kit.json
 # Inspect: intelliforge inspect --only ux-stack
 # Regenerate: python tools/intelliforge/build.py
-# Kit: speckit — SpecKit Upstream
-# Skills: upstream-new, upstream-existing, upstream-change, upstream-bug, upstream-refactor, upstream-check, upstream-review, upstream-approve
-# Source: https://github.com/github/spec-kit (verified base d3f46e0d591b45cb2423317030a489b91566e891 plus maintained upgrade layers)
-# Destination: {skills_home}/upstream-*
-# Destination: {data_home}/speckit-upstream
-# Destination: {bin_home}/swb
-# Settings: owned per-user CLI/skills; per-project initialization remains explicit
-# Edit: tools/speckit-upstream/kit.json
-# Inspect: intelliforge inspect --only speckit
-# Regenerate: python tools/intelliforge/build.py
-# Kit: github-pm — GitHub Project Director
-# Skills: github-project-director
-# Source: https://cli.github.com/ (existing pinned source or official plugin policy; inspect source definition below)
-# Destination: {skills_home}/github-project-director
-# Settings: owned user-level AGENTS guidance only; no GitHub mutations during install
-# Edit: tools/codex-github-pm/kit.json
-# Inspect: intelliforge inspect --only github-pm
+# Kit: repository-director — Repository Director
+# Skills: repository-director
+# Source: https://github.com/Mak-GIBA/agent-intelliforge (maintained Repository Director sources; no SpecKit dependency)
+# Destination: {skills_home}/repository-director
+# Destination: {bin_home}/repository-director
+# Settings: owned global AGENTS routing block; project documents only during explicit initialization
+# Edit: tools/repository-director/kit.json
+# Inspect: intelliforge inspect --only repository-director
 # Regenerate: python tools/intelliforge/build.py
 # Kit: design-research — Design Research
 # Skills: design-research
@@ -90,12 +81,12 @@
 set -euo pipefail
 
 BULK_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-BULK_TOOLS=(workgraph ux-stack speckit github-pm design-research ecc office kotonoha herdr)
+BULK_TOOLS=(workgraph ux-stack repository-director design-research ecc office kotonoha herdr)
 BULK_SCRIPTS=(install_basic_memory_workgraph.sh install_codex_ux_stack.sh
-  install_speckit_upstream.sh install_codex_github_pm.sh install_design_research.sh
+  install_repository_director.sh install_design_research.sh
   install_ecc.sh install_codex_office.sh install_kotonoha.sh install_herdr.sh)
 BULK_DESCRIPTIONS=("Basic Memory・Workgraph" "OOUI・UI/UX設計と画像付き検証"
-  "SpecKit上流工程" "GitHubのIssue・PR・Projects管理" "コアロジックの調査・改善"
+  "リポジトリ方針・文書・GitHub/GitLab運用" "コアロジックの調査・改善"
   "ECCと必要時に読む入口" "PDF・Word・PowerPointの編集" "日本語の段落構成・推敲" "HerdrとBash設定")
 BULK_MODE=preview
 BULK_EXPLICIT_MODE=
@@ -150,6 +141,7 @@ while [[ $# -gt 0 ]]; do
       IFS=',' read -r -a requested_tools <<< "$2"
       for requested_tool in "${requested_tools[@]}"; do
         [[ "$requested_tool" != yomiyasu ]] || bulk_error "旧ID yomiyasu は廃止しました。--only kotonoha を使ってください。"
+        [[ "$requested_tool" != speckit && "$requested_tool" != github-pm ]] || bulk_error "旧IDは廃止しました。--only repository-director と移行ガイドを使ってください。"
         bulk_known_tool "$requested_tool" || bulk_error "不明なツールID: $requested_tool（--listで確認）"
       done
       normalized_tools=$2
@@ -202,7 +194,7 @@ for i in "${!BULK_TOOLS[@]}"; do
         bulk_command+=(--update)
       fi
       ;;
-    speckit|ecc|office|kotonoha) bulk_command+=(--apply) ;;
+    repository-director|ecc|office|kotonoha) bulk_command+=(--apply) ;;
   esac
   printf '[codex-tools] %s:' "$tool"
   printf ' %q' "${bulk_command[@]}"

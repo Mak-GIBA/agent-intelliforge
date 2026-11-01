@@ -1,66 +1,12 @@
-# GitHub Project Director
+# 旧キットの廃止と統合先
 
-[English](../en/codex-github-pm/README.md) | **日本語**
+GitHub Project DirectorとSpecKit UpstreamはRepository Directorに統合しました。旧スクリプト・ID・Skillの互換入口はありません。
 
-[docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md) · [記録方針と検証](behavior.md)
+[統合版の概要](../repository-director/README.md) · [導入・旧版移行](../repository-director/installation.md) · [既存コードの文書整備](../repository-director/usage.md)
 
-GitHubのIssue・PR・Projectsを、Codexとの会話から調査・整理・更新するSkillです。
-Issueで作業や不具合を追い、PRでコード変更を提案し、Projectsで担当や進捗を一覧管理します。
-目的・変更点・確認結果・次の行動を文章で伝え、開発者と非開発者が同じ記録を追えるようにします。
+既存のプロジェクト文書・SpecKit資材・履歴は保持します。旧版の利用手順はGit履歴を参照してください。
 
-「進捗を確認して」「残タスクを整理して」などの依頼でも、会話やリポジトリからGitHubが対象と分かれば適用します。
-**スキルの起動とIssueへの投稿は別です。** 途中経過を逐次投稿せず、重要な新情報に絞って記録します。
-ログインや管理対象が不足している場合は、その場で必要な支援を提案します。
-
-対象は単一ファイルの[install_codex_github_pm.sh](../../install_codex_github_pm.sh)、現在の版は**v1.3.1**です。
-このファイルだけで導入でき、リポジトリの補助コードを一緒に配置する必要はありません。
-GitHub Project Directorは、このリポジトリ独自のSkillです。GitHub・OpenAI・ECCの公式配布物ではありません。
-
-## インストールされるもの
-
-| 資材 | 役割 |
-|---|---|
-| `github-project-director` Skill・参照資料・表示設定 | Issue・PRの文章、投稿判断、タスクの分割、担当・期限・優先度の計画などの手順と、Codex向けの表示設定 |
-| `github_inspect.py` | Issue・PR・Project・依存関係・定例コメントを読む補助スクリプト。書き込みはしない |
-| ユーザー共通AGENTSの適用ルール | GitHub関連の依頼でSkillを読む案内。AGENTSはCodexへの共通指示を置く文書 |
-
-Skillの既定の配置先は`~/.agents/skills/github-project-director/`です。
-共通ルールは通常`~/.codex/AGENTS.md`に追加し、既存の文章を保持します。
-各プロジェクトのAGENTS、Codexの設定・hooks、GitHub上のデータは変更しません。
-配置先の選択や更新方法は[導入手順](installation.md)を参照してください。
-
-GitHubの操作には、GitHub公式CLIの`gh`、または利用可能な既存GitHub MCPを使います。
-CLIはターミナルから操作する道具、MCPはCodexから外部サービスへ接続する仕組みです。
-`gh`は既存のものを再利用し、不足時の自動取得は`--install-gh`を指定した場合だけ行います。
-インストーラーはログイン、GitHub MCPの追加、トークン登録を行いません。
-Codex本体は別途必要です。Basic Memory、ECC、SpecKitは導入せず、利用の必須条件でもありません。
-
-## 導入したあとの動き
-
-1. 管理したいプロジェクトで新しいCodexセッションを開き、普段の言葉で依頼します。
-2. Codexが対象と接続状況を確認し、必要な調査を進めます。不足があれば、手伝える作業と必要な許可・情報を尋ねます。
-3. 調査結果や案を会話に返します。GitHubへの反映が依頼・承認された範囲では、変更後の状態を再取得して確認します。
-
-たとえば、次のように依頼できます。
-
-```text
-このプロジェクトの進捗を確認して、残タスクと詰まっている作業を整理して。
-まず調査結果と提案だけ教えて。
-```
-
-接続支援の具体例や、Issue・PRの作成例は[使い方](usage.md)にあります。
-自然な起動はCodexへの指示によるもので、すべての会話での起動を保証するプログラムではありません。
-明示したい場合は、会話欄で`$github-project-director`を指定できます。
-
-## できることと記録の扱い
-
-Issue・PRの作成やレビュー、Actionsの失敗調査、リリースの要約に加え、
-要件からのタスク案、既存Issueの抜け・重複、親子関係や依存関係、担当・期限・優先度を整理できます。
-単発の依頼では必要な手順だけを使い、毎回プロジェクト全体を棚卸しすることはありません。
-
-タスクの状態はGitHub Issues／Projectsを正本とします。
-定例への記録は、明示依頼または合意済みの運用がある場合だけ行い、重要な変化をまとめます。
-別の管理DBやバックグラウンドの定期実行は導入しません。
-記録する条件、参考にした技術記事、検証の範囲は[記録方針と検証](behavior.md)にまとめています。
-
-初めて使う場合は[導入手順](installation.md)から、導入済みなら[使い方](usage.md)から進んでください。
+<a id="github-project-director"></a>
+<a id="インストールされるもの"></a>
+<a id="導入したあとの動き"></a>
+<a id="できることと記録の扱い"></a>

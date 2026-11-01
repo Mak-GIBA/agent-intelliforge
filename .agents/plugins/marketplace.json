@@ -21,20 +21,12 @@
       "description": "UX Stack"
     },
     {
-      "name": "speckit",
+      "name": "repository-director",
       "source": {
         "source": "local",
-        "path": "./plugins/codex/speckit"
+        "path": "./plugins/codex/repository-director"
       },
-      "description": "SpecKit Upstream"
-    },
-    {
-      "name": "github-pm",
-      "source": {
-        "source": "local",
-        "path": "./plugins/codex/github-pm"
-      },
-      "description": "GitHub Project Director"
+      "description": "Repository Director"
     },
     {
       "name": "design-research",

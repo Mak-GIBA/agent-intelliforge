@@ -20,23 +20,14 @@
 # Edit: tools/codex-ux-stack/kit.json
 # Inspect: intelliforge inspect --only ux-stack
 # Regenerate: python tools/intelliforge/build.py
-# Kit: speckit — SpecKit Upstream
-# Skills: upstream-new, upstream-existing, upstream-change, upstream-bug, upstream-refactor, upstream-check, upstream-review, upstream-approve
-# Source: https://github.com/github/spec-kit (verified base d3f46e0d591b45cb2423317030a489b91566e891 plus maintained upgrade layers)
-# Destination: {skills_home}/upstream-*
-# Destination: {data_home}/speckit-upstream
-# Destination: {bin_home}/swb
-# Settings: owned per-user CLI/skills; per-project initialization remains explicit
-# Edit: tools/speckit-upstream/kit.json
-# Inspect: intelliforge inspect --only speckit
-# Regenerate: python tools/intelliforge/build.py
-# Kit: github-pm — GitHub Project Director
-# Skills: github-project-director
-# Source: https://cli.github.com/ (existing pinned source or official plugin policy; inspect source definition below)
-# Destination: {skills_home}/github-project-director
-# Settings: owned user-level AGENTS guidance only; no GitHub mutations during install
-# Edit: tools/codex-github-pm/kit.json
-# Inspect: intelliforge inspect --only github-pm
+# Kit: repository-director — Repository Director
+# Skills: repository-director
+# Source: https://github.com/Mak-GIBA/agent-intelliforge (maintained Repository Director sources; no SpecKit dependency)
+# Destination: {skills_home}/repository-director
+# Destination: {bin_home}/repository-director
+# Settings: owned global AGENTS routing block; project documents only during explicit initialization
+# Edit: tools/repository-director/kit.json
+# Inspect: intelliforge inspect --only repository-director
 # Regenerate: python tools/intelliforge/build.py
 # Kit: design-research — Design Research
 # Skills: design-research

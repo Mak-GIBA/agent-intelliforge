@@ -108,8 +108,7 @@ intelliforge install --only kotonoha --apply
 |---|---|---|
 | `workgraph` | [Basic Memory Workgraph](docs/basic-memory-workgraph/README.md) | 試行・つまずき・検証済みの対処、修正指示から、次の仕事にも使える知識を蓄積する。 |
 | `ux-stack` | [Codex UX Stack](docs/codex-ux-stack/README.md) | 対象と操作を中心に画面を設計し、実装、画像付きレビュー、ブラウザーでの操作確認を進める。 |
-| `speckit` | [SpecKit Upstream](docs/speckit-upstream/README.md) | 利用者の目的・懸念・ユースケースを要件にし、方式研究を設計と検証計画へ反映する。 |
-| `github-pm` | [GitHub Project Director](docs/codex-github-pm/README.md) | Issue・PR・Projectsを調査・整理し、担当、期限、依存関係、進捗を会話から扱う。 |
+| `repository-director` | [Repository Director](docs/repository-director/README.md) | 新規・既存コードの上流文書と運営方針を整え、GitHub/GitLabで開発を進める。 |
 | `design-research` | [Design Research](docs/design-research/README.md) | コアロジックの方式を一次資料と実験で比較し、条件・結果・未検証事項を報告にまとめる。 |
 | `ecc` | [Codex ECC](docs/codex-ecc/README.md) | ECCの原本を保持し、Python実装、エラー処理、安全性レビューなどの手順を必要なときに読む。 |
 | `office` | [Office Workbench](docs/codex-office/README.md) | PDF・Word・PowerPointを読み、原本を保護しながら編集と差分・描画の確認を行う。 |
@@ -125,7 +124,7 @@ intelliforge install --only kotonoha --apply
 ### 作るものと検証方法を整理する
 
 ```text
-$upstream-new 社内文書を検索し、根拠を確認して回答できるアプリを作りたい。利用者、要件、設計、検証計画を整理して。
+$repository-director 社内文書を検索し、根拠を確認して回答できるアプリを作りたい。利用者、要件、設計、検証計画を整理して。
 ```
 
 ### 技術選定に比較の根拠を持たせる
@@ -140,12 +139,12 @@ $design-research このプロジェクトの検索精度を改善する方法を
 $kotonoha この設計書を、技術用語と条件を保って、仕組みや実際の変化が伝わる日本語に整えて。
 ```
 
-全体の要件・設計はUpstream、特定の方式の比較はDesign Researchから始めます。
+全体の要件・設計と既存コードの文書整備はRepository Director、特定の方式の比較はDesign Researchから始めます。
 たとえば検索アプリなら、検索方式の比較結果を全体設計へ反映し、UX Stackで検索画面と操作を確認できます。
 kotonohaは設計書や報告文を仕上げる工程で使えます。
 
 各キットは単独でも利用できます。組み合わせる場合も、研究結果の採用、設計の承認、アプリの実装はそれぞれの手順に沿って進めます。
-[上流工程の使い方](docs/speckit-upstream/usage.md)と[研究テーマの分割・設計の見直し](docs/speckit-upstream/reassessment.md)に、連携の流れをまとめています。
+[上流工程の使い方](docs/repository-director/usage.md)と[既存コードからの文書整備](docs/repository-director/usage.md)に、連携の流れをまとめています。
 
 ## 導入と運用の設計
 
@@ -253,7 +252,7 @@ WSLを起動し直し、Linux側で`free -h`と`swapon --show`を確認してく
 ルートの`install_*.sh`は従来の導入入口です。共通CLIは`src/agent_intelliforge/`、正本とキット定義は`tools/`で管理します。生成するPluginは`plugins/`、利用ガイドと評価資料は`docs/`、回帰テストは`tests/`にあります。
 生成資材を直接編集せず、正本を直して再生成します。[配布資材の編集と検証](docs/cross-platform-development.md)に手順をまとめています。
 一括インストーラー、Workgraph、Codex ECCはリポジトリ一式で使います。それ以外のキットは個別スクリプト単体でも使えます。
-Design ResearchとUpstreamは固定版ベースを取得・照合して組み立てるため、オフライン利用には[個別の準備](docs/design-research/installation.md#組み立てとオフライン利用)が必要です。
+Design ResearchとRepository Directorは固定版ベースを取得・照合して組み立てるため、オフライン利用には[個別の準備](docs/design-research/installation.md#組み立てとオフライン利用)が必要です。
 
 このリポジトリは、独自の作業手順と導入・管理ツールを、外部のSkill・Plugin・CLIと組み合わせています。
 Codex、Basic Memory、SpecKit、ECC、Playwright、meiseki、yomiyasu等の上流プロジェクトは各提供元が管理しています。

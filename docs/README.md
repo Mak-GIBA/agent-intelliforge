@@ -14,8 +14,7 @@ Linux / WSL2でCodexへ導入する場合は[一括インストール](installat
 |---|---|---|---|
 | 知識を蓄積する | [Basic Memory Workgraph](basic-memory-workgraph/README.md) | [導入手順](basic-memory-workgraph/installation.md) | [使い方と設定](basic-memory-workgraph/usage.md) |
 | OOUIからUI/UXを設計し、実装・画像付き検証・改善を進める | [Codex UX Stack](codex-ux-stack/README.md) | [導入手順](codex-ux-stack/installation.md) | [使い方](codex-ux-stack/usage.md) |
-| ストーリーから要件・方式研究・全体設計へ進める | [SpecKit Upstream](speckit-upstream/README.md) | [導入手順](speckit-upstream/installation.md) | [使い方](speckit-upstream/usage.md) |
-| GitHubのIssue・PR・Projects・進捗を整理する | [GitHub Project Director](codex-github-pm/README.md) | [導入手順](codex-github-pm/installation.md) | [使い方](codex-github-pm/usage.md) |
+| 既存コード・新規開発の文書と運営方針を整える | [Repository Director](repository-director/README.md) | [Installation](repository-director/installation.md) | [Usage](repository-director/usage.md) |
 | コアロジックをテーマ別に比較・実測・再評価する | [Design Research](design-research/README.md) | [導入手順](design-research/installation.md) | [使い方](design-research/usage.md) |
 | ECCを導入し、必要なスキルだけ参照する | [Codex ECC](codex-ecc/README.md) | [導入・更新・復元](codex-ecc/installation.md) | [使い方](codex-ecc/usage.md) |
 | PDF・Word・PowerPointを閲覧・編集する | [Office Workbench](codex-office/README.md) | [導入手順](codex-office/installation.md) | [使い方](codex-office/usage.md) |
@@ -26,17 +25,15 @@ Linux / WSL2でCodexへ導入する場合は[一括インストール](installat
 
 画面の設計と日本語UI文言にはUX Stackとkotonohaを使えます。UX Stackで対象・操作・状態を整理し、kotonohaでラベルや説明を推敲します。短いラベルは長文化せず、必要な情報を隠さないことを優先します。
 
-### Design ResearchとUpstreamを組み合わせる
+### Design ResearchとRepository Directorを組み合わせる
 
-まず[出力先と確認の順序](upstream-research-workflow.md)を読み、対象アプリの確認ページから正本・研究報告・採用した証拠へ進みます。8つのコマンドの確認事項と、予約管理・検索改善の具体例をまとめています。
+Repository Directorで目的・要件・設計・検証を整理します。既存コードからの仕様整理にも使えます。
+技術的な不確実性が判断を左右する場合はDesign Researchで比較・実測し、結果と採用理由を関連設計へ戻します。
+通常の開発や現状の文書化に研究を一律に要求しません。
 
-機能・システム全体の設計は`$upstream-new`・`$upstream-change`、特定の方式の研究は`$design-research`から始めます。
-短い依頼から、ストーリー・懸念・ユースケース・要件、テーマ別研究、統合設計、検証計画へ進みます。
-
-- [Upstreamの使い方](speckit-upstream/usage.md)：作業の順序、図・画面例、レビューと明示承認。
-- [研究テーマの分割と既存判断の見直し](speckit-upstream/reassessment.md)：複数テーマの依存・統合と場面別の入口。
-- [Design Researchの使い方](design-research/usage.md)：候補比較、報告、再評価・中断再開・状況確認。
-- [組み立てと現在の検証範囲](design-research/validation.md)：同梱試験、組み立て・更新・診断の結果と、修正前の停止条件。
+- [Repository Directorの使い方](repository-director/usage.md)
+- [Design Researchの使い方](design-research/usage.md)
+- [統合版の検証範囲](repository-director/validation.md)
 
 ## Workgraphを詳しく使う
 

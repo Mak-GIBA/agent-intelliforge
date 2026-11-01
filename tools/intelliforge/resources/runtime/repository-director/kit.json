@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "repository-director",
+  "name": "Repository Director",
+  "version": "1.0.0",
+  "legacy": {
+    "script": "install_repository_director.sh",
+    "actions": {
+      "install": [
+        "--apply"
+      ],
+      "update": [
+        "--update",
+        "--apply"
+      ],
+      "doctor": [
+        "--doctor"
+      ],
+      "uninstall": [
+        "--uninstall",
+        "--apply"
+      ]
+    },
+    "platforms": [
+      "linux",
+      "wsl2"
+    ]
+  },
+  "skills": [
+    {
+      "name": "repository-director",
+      "source": "tools/repository-director/skill",
+      "assembled": false
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/Mak-GIBA/agent-intelliforge",
+      "revision": "maintained Repository Director sources; no SpecKit dependency"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Python >=3.11",
+      "condition": "required"
+    },
+    {
+      "name": "git",
+      "condition": "repository difference inspection"
+    },
+    {
+      "name": "authenticated gh / glab or an existing connector",
+      "condition": "only for the selected GitHub / GitLab operation"
+    }
+  ],
+  "destinations": [
+    "{skills_home}/repository-director",
+    "{bin_home}/repository-director"
+  ],
+  "settings": [
+    "owned global AGENTS routing block; project documents only during explicit initialization"
+  ],
+  "plugin": {
+    "name": "repository-director",
+    "enabled": true,
+    "codex": "optional",
+    "claude": "experimental",
+    "runtime": "intelliforge kit-run repository-director"
+  },
+  "editable_sources": [
+    "tools/repository-director"
+  ],
+  "compatibility": "Old kit IDs/commands retired; explicit hash-verified legacy migration preserves project documents.",
+  "package_version": "0.2.0",
+  "version_kind": "local kit version"
+}

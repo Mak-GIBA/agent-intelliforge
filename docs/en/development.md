@@ -48,8 +48,8 @@ python3 -m unittest discover -s tests -v
 bash -n install_all.sh
 bash -n install_basic_memory_workgraph.sh
 bash -n install_codex_ux_stack.sh
-bash -n install_speckit_upstream.sh
-bash -n install_codex_github_pm.sh
+bash -n install_repository_director.sh
+bash install_repository_director.sh --self-test
 bash -n install_design_research.sh
 bash -n install_ecc.sh
 bash -n install_codex_office.sh
@@ -69,8 +69,7 @@ Before changing distributed templates, preserve the previous version under `tool
 | Bulk | `python3 -m unittest discover -s tests -p 'test_install_all.py' -v`, Bash syntax: temporary HOME/mock installers; selection, preview, setting-preserving updates, failure aggregation, interruption; not real all-kits download |
 | Workgraph | Python tests for local settings/formats/sharing/update; not real external installs |
 | UX | Python/Skill/distribution checks, optional real Chromium; references, protection, iteration/stop, state/navigation/evidence. Real model iteration and GUI invocation remain outside these tests; see [validation (Japanese)](../codex-ux-stack/validation.md) |
-| SpecKit | `bash install_speckit_upstream.sh --bundle-self-test`, pinned assembly, embedded tests; assembly and 166 upstream tests plus recorded machine update/diagnosis; see [results (Japanese)](../design-research/validation.md) |
-| GitHub PM | `bash install_codex_github_pm.sh --self-test`: temporary lifecycle/helpers/static rules, not real GitHub writes or writing quality |
+| Repository Director | `bash install_repository_director.sh --self-test` | Isolated lifecycle, document and migration checks. [Validation](repository-director/validation.md) |
 | Research | `bash install_design_research.sh --bundle-self-test`, assembly: 2.5.0 bundled 330 tests and both distributions' self-tests; [model scope (Japanese)](../design-research/validation.md) separate |
 | ECC | `python3 -m unittest discover -s tests -p 'test*ecc*.py' -v`, Bash: mocked Codex lifecycle, retry/recovery/settings/original resolution; real fresh downloads separate |
 | Office | `bash install_codex_office.sh --self-test`: temporary lifecycle/edit protection/document processing; mocked network/Codex, unavailable PDF libraries skipped; real OfficeCLI/rendering E2E separate |
@@ -79,7 +78,7 @@ Before changing distributed templates, preserve the previous version under `tool
 
 Existing Research/Upstream checks may target ordinary 2.0.1 installers; do not apply their regeneration-equivalence checks unchanged to current assembly bootstraps. Distinguish base, upgrades, assembled tests, and real model evaluation.
 
-Do not run normal installers just to review documentation/syntax. Workgraph, UX, GitHub PM, Research, and Herdr install without arguments. `--extract` writes files. Research/Upstream `--extract-bundle` is offline, whereas `--extract`, `--doctor`, and `--self-test` may first assemble and contact sources.
+Do not run normal installers just to review documentation/syntax. Workgraph, UX, Research, and Herdr install without arguments. Repository Director previews by default. `--extract` writes files. Research/Upstream `--extract-bundle` is offline, whereas `--extract`, `--doctor`, and `--self-test` may first assemble and contact sources.
 
 ## Add an installer guide
 
@@ -107,39 +106,21 @@ Split long subjects into linked pages, as with Workgraph sharing/reference/troub
 
 Use argument parsing and execution as the authority; identify discrepancies with help/comments. Distinguish tool capabilities, installer actions, and user preparation. Do not invent preview/update/uninstall options. Check sources, fixed/latest selection, existing settings, and reruns. Confirm external claims from official/bundled material with dates/versions as relevant. Use placeholders rather than personal paths/secrets. Keep policy/schema/template sources under their maintained locations, not copies in docs. Preserve links/anchors when moving material.
 
-## SpecKit embedded assets
+## Repository Director
 
-Research and Upstream embed the same upgrade ZIP. Both original installers are checked against `d3f46e0d591b45cb2423317030a489b91566e891`, upgraded/generated/tested temporarily, and emitted as standalone installers.
+<a id="speckit-embedded-assets"></a>
 
-```bash
-bash install_speckit_upstream.sh --extract-bundle /tmp/codex-research-upgrade
-bash install_speckit_upstream.sh --bundle-self-test
-```
-
-Extracted `codex_interface_upgrade/` includes the following maintained layers; their contract tests are separate from model evaluation.
-
-| Source | Responsibility |
-|---|---|
-| `bootstrap.py`, `build_installers.py`, `pinned_base.py` | Entry, pinned-base retrieval/verification, assembly |
-| `integrate.py`, `installer_commands.py`, `command_assets.py` | Apply upgrades, unified entry, retire owned shortcuts |
-| `overlay/tools/design-research/skill/` | Codex dispatch, status, preparation |
-| `core_upgrade/`, `previous_report_upgrade/` | Workstreams, reassessment, proposed-method reports, v2 integration |
-| Layer `tests/` | Independent contracts |
+Maintain the Skill, helpers, migration engine and tests under `tools/repository-director/`.
 
 ```bash
-bash install_speckit_upstream.sh \
-  --base-dir /absolute/path/pinned-base --offline --build-only /absolute/path/empty-output
+python3 tools/repository-director/build_installer.py
+python3 tools/repository-director/build_installer.py --check
+bash install_repository_director.sh --self-test
 ```
 
-Use genuine unchanged base installers, not current wrappers. Successful assembly emits both installers, `build-summary.json`, validation logs, and `sources/`. Match layers/versions across both distributions. Old `tools/speckit-upstream/build_single.py` and `tools/design-research/build_installer.py` generate intermediate ordinary installers; do not overwrite current root bootstraps with them.
-
-Bundled and assembled tests differ. On 2026-10-10 the initial 249 bundled tests passed while upstream 166 tests stopped with 2 failures / 6 errors. After fixes, assembly/self-tests/machine updates passed; 2.4.0 bundled 287 passed, and 2.5.0 bundled 330 plus upstream 166 passed. See [conditions/results (Japanese)](../design-research/validation.md).
-
-Compare `RESEARCH_FIRST.md` / `RESEARCH_WORKSTREAMS.md` and guides: goals/concerns/use cases precede requirements; required review/approval precedes research; new or changed mechanisms need research/integration before design finalization; standard choices need evidence. Unavailable research leaves it unexecuted while As-Is/requirements can progress. v2 ties hashes, theme runs, archived reports, integration, and UX evidence; do not rewrite v1. Apply real UX Skills to screen examples and distinguish images/prototypes/actual operations. Skill instructions, CLI contracts, and observed model behavior are separate evidence.
-
-## GitHub Project Director embedded assets
-
-Extract with `bash install_codex_github_pm.sh --extract /tmp/github-pm-review` into empty/unused storage. Inspect `README_EXTRACTED.md`, `scripts/install_github_pm.py`, and `skills/github-project-director/`. Maintain user documentation in the [guide](codex-github-pm/README.md), rather than duplicating extracted helper assets.
+The new installer is offline and independent of the historical Research/Upstream assembly.
+Research retains its historical parsing/binding support internally, but its assembly no longer exports an Upstream installer.
+Generate Plugins/runtimes with the shared builder. See [installation and migration](repository-director/installation.md).
 
 ## Design Research embedded assets
 
@@ -165,7 +146,7 @@ Save conditions/input hashes/full outputs/blind ratings and manually compare fac
 
 ### Revise Japanese documentation
 
-Use kotonoha with before/after UTF-8 copies, textlint/markdownlint, and `check.py compare`; see [examples](kotonoha/usage.md#check-saved-files). Preserve commands, settings, numbers, conditions, negation, and certainty. Keep useful tables/procedures; do not change meaning merely to silence findings.
+Use kotonoha with before/after UTF-8 copies, textlint/markdownlint, and `check.py compare`; see [examples](kotonoha/usage.md). Preserve commands, settings, numbers, conditions, negation, and certainty. Keep useful tables/procedures; do not change meaning merely to silence findings.
 
 ## Documentation-only checks
 

@@ -1,0 +1,41 @@
+[
+  {
+    "variant": "old",
+    "source_and_test_hashes_unchanged": true,
+    "local_link_errors": [],
+    "h1_counts": {
+      "AGENTS.md": 2,
+      "README.md": 1,
+      "docs/INDEX.md": 1,
+      "docs/requirements.md": 1,
+      "docs/core-logic.md": 1
+    },
+    "existing_rule_retained": true
+  },
+  {
+    "variant": "initial-new",
+    "source_and_test_hashes_unchanged": true,
+    "local_link_errors": [],
+    "h1_counts": {
+      "AGENTS.md": 2,
+      "README.md": 1,
+      "docs/INDEX.md": 1,
+      "docs/requirements.md": 1,
+      "docs/core-logic.md": 1
+    },
+    "existing_rule_retained": true
+  },
+  {
+    "variant": "revised-new",
+    "source_and_test_hashes_unchanged": true,
+    "local_link_errors": [],
+    "h1_counts": {
+      "AGENTS.md": 1,
+      "README.md": 1,
+      "docs/INDEX.md": 1,
+      "docs/requirements.md": 1,
+      "docs/core-logic.md": 1
+    },
+    "existing_rule_retained": true
+  }
+]

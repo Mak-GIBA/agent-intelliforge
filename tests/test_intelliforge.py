@@ -44,7 +44,7 @@ class DistributionTests(unittest.TestCase):
     def test_catalog_selection_is_fixed_and_complete(self):
         catalog = definitions(ROOT)
         self.assertEqual([k['id'] for k in selection(['kotonoha,workgraph','kotonoha'],catalog)], ['workgraph','kotonoha'])
-        self.assertEqual(len(catalog['speckit']['skills']),8)
+        self.assertEqual([s['name'] for s in catalog['repository-director']['skills']],['repository-director'])
         self.assertEqual([k['id'] for k in selection(['kotonoha'],catalog)],['kotonoha'])
         with self.assertRaises(ForgeError): selection(['kotonoha,typo'],catalog)
         output=io.StringIO()
@@ -89,9 +89,11 @@ class DistributionTests(unittest.TestCase):
                 self.assertEqual(json.loads(manifest.read_text(encoding='utf-8'))['name'],item['name'])
                 self.assertTrue(directory.resolve().is_relative_to(ROOT))
 
-    def test_upstream_commands_remain_explicit(self):
-        for path in (ROOT/'plugins/claude/speckit/skills').glob('*/SKILL.md'):
-            self.assertIn('disable-model-invocation: true',path.read_text(encoding='utf-8').split('---',2)[1])
+    def test_repository_director_replaces_old_plugin_exports(self):
+        for host in ('codex','claude'):
+            self.assertTrue((ROOT/'plugins'/host/'repository-director/skills/repository-director/SKILL.md').is_file())
+            self.assertFalse((ROOT/'plugins'/host/'speckit').exists())
+            self.assertFalse((ROOT/'plugins'/host/'github-pm').exists())
 
     def test_ports_preserve_inline_code_and_unicode(self):
         specification=importlib.util.spec_from_file_location('forge_builder',ROOT/'tools/intelliforge/build.py')

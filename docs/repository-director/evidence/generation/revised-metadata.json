@@ -1,0 +1,68 @@
+{
+  "cases": [
+    {
+      "id": "small-bug",
+      "request": "コミットメッセージとPR本文を日本語で作って。",
+      "facts": "検索条件を変更してもページ位置が残り、3ページ目で絞り込むと結果があっても空になる。変更は条件変更時にpage=1へ戻す。通常のページ移動は維持。単体テストは条件変更と通常の移動の2件成功。ブラウザーは未確認。"
+    },
+    {
+      "id": "feature-pending",
+      "request": "GitLabのMR本文を日本語で作って。",
+      "facts": "入力途中の申込みを利用者本人だけが再開できる機能を追加。保存APIと復元画面を実装。保存失敗時は保存済みと表示しない。本人以外のアクセス拒否と保存失敗のテストは成功。再ログイン後の復元テストは未実行。公開は未実施。"
+    },
+    {
+      "id": "core-change",
+      "request": "コミットメッセージとPR本文を日本語で作って。",
+      "facts": "検索候補を毎回計算すると遅いため、プロジェクト単位のキャッシュへ変更。別プロジェクトの結果は共有しない。更新時に失効。応答形式は維持。分離と失効のテスト成功。速度は未計測。"
+    },
+    {
+      "id": "review",
+      "request": "必須修正と任意改善が伝わるレビューコメントを日本語で作って。",
+      "facts": "src/profile.ts:18で未ログイン時にもuser.nameを参照するため例外になる。nullの場合はサインインへ誘導する必要がある。変数名pの改名は任意。指摘は会話に返すだけで投稿しない。"
+    },
+    {
+      "id": "blocked",
+      "request": "引き渡し用コメント案を日本語で作って。",
+      "facts": "申込み保存APIが停止しており結合確認できない。画面の実装とモックによる保存失敗テストは完了。実APIでの保存は未確認。復旧を待つかテスト用APIを使うか判断が必要。同じ経過を何度もIssueへ投稿しない。"
+    },
+    {
+      "id": "existing-docs",
+      "request": "下記の既存コードと資料から、AGENTS、README、docs/INDEX、要件とコアロジック説明を、ファイル名と本文のJSON配列として提案して。コード修正はしない。お任せで方針を整理して。",
+      "facts": {
+        "files": {
+          "search.py": "def search(rows, query, page):\n    filtered = [r for r in rows if query.lower() in r.lower()]\n    return filtered[(page-1)*20:page*20]\n",
+          "tests/test_search.py": "def test_casefold():\n    assert search([\"Apple\"], \"apple\", 1) == [\"Apple\"]\n",
+          "README.md": "# Catalog\n商品名を検索する試作。\n",
+          "AGENTS.md": "# 既存ルール\n外部APIや本番DBに接続しない。\n"
+        },
+        "unknowns": [
+          "事業目的",
+          "正式な件数・ページ番号の要件",
+          "本番環境",
+          "テスト実行結果"
+        ],
+        "constraints": "テストファイルは存在するが今回未実行。事業目的を捏造しない。既存ルールを保持。入力コードへ修正案を適用しない。"
+      }
+    }
+  ],
+  "conditions": "Same fictional inputs and Codex CLI defaults; ephemeral/read-only, user configuration not loaded. No tools requested. One batch per variant; not a statistical study.",
+  "variants": {
+    "new": {
+      "prompt_sha256": "e3c4956f7d28121d52fcc0dd74aeaf191e950385e7a39e2c26113a770a5932b2",
+      "executed": true,
+      "exit_code": 0,
+      "tool_calls": 0,
+      "usage": [
+        {
+          "input_tokens": 27316,
+          "cached_input_tokens": 12288,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 3013,
+          "reasoning_output_tokens": 12
+        }
+      ],
+      "model": "CLI default; no model ID exposed in captured events"
+    }
+  },
+  "cli_version": "codex-cli 0.166.0"
+}

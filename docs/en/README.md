@@ -12,8 +12,7 @@ Choose a kit by purpose, then read its overview, installation guide, and usage g
 |---|---|---|---|
 | Retain reusable knowledge | [Basic Memory Workgraph](basic-memory-workgraph/README.md) | [Install](basic-memory-workgraph/installation.md) | [Usage and settings](basic-memory-workgraph/usage.md) |
 | Design, implement, and verify interfaces | [Codex UX Stack](codex-ux-stack/README.md) | [Install](codex-ux-stack/installation.md) | [Usage](codex-ux-stack/usage.md) |
-| Develop requirements and overall design | [SpecKit Upstream](speckit-upstream/README.md) | [Install](speckit-upstream/installation.md) | [Usage](speckit-upstream/usage.md) |
-| Manage GitHub work and progress | [GitHub Project Director](codex-github-pm/README.md) | [Install](codex-github-pm/installation.md) | [Usage](codex-github-pm/usage.md) |
+| Repository policies and specifications from new or existing code | [Repository Director](repository-director/README.md) | [Installation](repository-director/installation.md) | [Usage](repository-director/usage.md) |
 | Compare and evaluate core approaches | [Design Research](design-research/README.md) | [Install](design-research/installation.md) | [Usage](design-research/usage.md) |
 | Read ECC procedures when needed | [Codex ECC](codex-ecc/README.md) | [Install, update, restore](codex-ecc/installation.md) | [Usage](codex-ecc/usage.md) |
 | Read and edit Office files | [Office Workbench](codex-office/README.md) | [Install](codex-office/installation.md) | [Usage](codex-office/usage.md) |
@@ -24,16 +23,15 @@ Choose a kit by purpose, then read its overview, installation guide, and usage g
 
 Use UX Stack to organize objects, actions, and states, then kotonoha to polish Japanese labels and explanations. Keep short labels short and required information visible.
 
-### Design Research and Upstream
+### Design Research and Repository Director
 
-Start with [outputs and review order](upstream-research-workflow.md) for the overview, primary documents, research reports, and selected evidence. It includes review targets for all eight entries and booking/search examples.
+Repository Director organizes purpose, requirements, architecture and verification for new or existing code.
+Use Design Research when technical uncertainty warrants comparisons or experiments, then link the findings back to the design.
+Research is not mandatory for every development task.
 
-Use `$upstream-new` / `$upstream-change` for system requirements and overall design, and `$design-research` for a specific technical question. The workflow connects goals, concerns, use cases, requirements, research workstreams, integrated design, and verification plans.
-
-- [Upstream usage](speckit-upstream/usage.md): workflow, diagrams, screen examples, reviews, and explicit approval.
-- [Workstreams and reassessment](speckit-upstream/reassessment.md): dependencies, integration, and choosing an entry point.
-- [Research usage](design-research/usage.md): comparison, reporting, reassessment, resumption, and status.
-- [Builds and validation (Japanese)](../design-research/validation.md): bundled tests, installation checks, and earlier failure conditions.
+- [Repository Director usage](repository-director/usage.md)
+- [Research usage](design-research/usage.md)
+- [Validation](repository-director/validation.md)
 
 ## Workgraph details
 

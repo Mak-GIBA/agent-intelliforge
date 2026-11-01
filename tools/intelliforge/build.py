@@ -2,7 +2,7 @@
 """Build inspectable plugin/package resources without installing any kit.
 
 Edit tools/<kit>/kit.json, the referenced source assets, and this small packaging
-adapter. Design Research/Upstream use their verified assembly, never the old base
+adapter. Design Research uses its verified assembly, never the old base
 assets directly. No existing installer execution behavior is changed.
 """
 from __future__ import annotations
@@ -125,6 +125,9 @@ def render_skill(data: bytes, kit: dict, agent: str, name: str) -> bytes:
         text = text.replace('existing Codex model/auth settings', 'existing selected-agent model/auth settings')
     if kit["id"] == "ecc":
         text = text.replace("python3 {{MANAGER}}", f"intelliforge kit-run ecc --agent {agent} --")
+    if kit['id'] == 'repository-director':
+        text = text.replace('python3 <skill-dir>/scripts/repository.py', f'intelliforge kit-run repository-director --agent {agent} --')
+        text = text.replace('python3 <skill-dir>/scripts/forge_inspect.py', f'intelliforge kit-run repository-director --agent {agent} --tool forge_inspect.py --')
     if kit["id"] == "office":
         text = text.replace("{{LAUNCHER}}", f"intelliforge kit-run office --agent {agent} --")
         text = text.replace("{{RELEASE}}", f"<runtime shown by intelliforge locate --only office --agent {agent}>")
@@ -150,7 +153,7 @@ def render_skill(data: bytes, kit: dict, agent: str, name: str) -> bytes:
 
 def bundle_for(kit: dict, assembled: Path) -> dict[str, bytes]:
     directory = Path(kit["definition"]).parent
-    source = assembled / directory if kit["id"] in ("speckit", "design-research") else ROOT / directory
+    source = assembled / directory if kit["id"] == "design-research" else ROOT / directory
     files = files_under(source)
     files["kit.json"] = (ROOT / kit["definition"]).read_bytes()
     return {name: portable_python(data, name) if name.endswith(".py") else data for name, data in files.items()}
@@ -162,10 +165,6 @@ def build_outputs(assembled: Path) -> dict[str, bytes]:
         bundle = bundle_for(kit, assembled)
         for name, data in bundle.items(): output[f"resources/runtime/{kit['id']}/{name}"] = data
         skills = list(kit["skills"])
-        if kit["id"] == "speckit":
-            common = load_module(assembled / "tools/speckit-upstream/workbench/command_skills.py", "intelliforge_command_skills")
-            if {s['name'] for s in skills} != set(common.COMMANDS): raise ValueError('Upstream catalog differs from command_skills.py')
-            kit = dict(kit, skills=skills)
         if not kit["plugin"]["enabled"]: continue
         for agent in ("codex", "claude"):
             prefix = f"plugins/{agent}/{kit['id']}"
@@ -178,32 +177,26 @@ def build_outputs(assembled: Path) -> dict[str, bytes]:
                 output[prefix + "/.claude-plugin/plugin.json"] = (json.dumps(manifest, indent=2) + "\n").encode()
             for skill in skills:
                 name = skill["name"]
-                if skill.get('generated'):
-                    body = common.render_skill(name, Path("__INTELLIFORGE_SWB__"), Path("__INTELLIFORGE_ASSETS__"))
-                    body = body.replace("__INTELLIFORGE_SWB__", f"intelliforge kit-run speckit --agent {agent} --")
-                    body = body.replace("__INTELLIFORGE_ASSETS__", "../../assets")
-                    data = {"SKILL.md": body.encode(), "agents/openai.yaml": b"policy:\n  allow_implicit_invocation: false\n"}
-                else:
-                    base = assembled if skill.get("assembled") else ROOT
-                    data = files_under(source_path(base, skill["source"]))
-                    if kit["id"] == "kotonoha" and name == "kotonoha":
-                        data = {key: value for key, value in data.items() if not key.startswith(("kotonoha/", "paragraph-writing/", "japanese-direct-writing/"))}
+                base = assembled if skill.get("assembled") else ROOT
+                data = files_under(source_path(base, skill["source"]))
+                if kit["id"] == "kotonoha" and name == "kotonoha":
+                    data = {key: value for key, value in data.items() if not key.startswith(("kotonoha/", "paragraph-writing/", "japanese-direct-writing/"))}
                 if kit['id'] == 'kotonoha' and agent == 'codex':
                     data['agents/openai.yaml'] = ('policy:\n  allow_implicit_invocation: '+str(True).lower()+'\n').encode()
                 for path, raw in data.items():
                     if path == "SKILL.md": raw = render_skill(raw, kit, agent, name)
+                    elif kit['id']=='repository-director' and path.endswith('.md'):
+                        text=raw.decode('utf-8')
+                        for helper in ('repository.py','forge_inspect.py','github_inspect.py'):
+                            invocation=f'intelliforge kit-run repository-director --agent {agent} --' if helper=='repository.py' else f'intelliforge kit-run repository-director --agent {agent} --tool {helper} --'
+                            text=text.replace('python3 <skill-dir>/scripts/'+helper,invocation)
+                        raw=text.encode('utf-8')
                     # Original writing checkers are hash-bound resources. Port only
                     # our adapter; rewriting originals invalidates resources.json.
                     original = kit['id']=='kotonoha' and path.startswith(('upstream/','meiseki-upstream/'))
                     if path.endswith(".py") and not original: raw = portable_python(raw, path)
                     if agent == "claude" and path == "agents/openai.yaml": continue
-                    if agent == "claude" and path == "SKILL.md" and (name.startswith("upstream-")):
-                        parts = raw.decode().split('---', 2)
-                        raw = ('---' + parts[1] + 'disable-model-invocation: true\n---' + parts[2]).encode()
                     output[prefix + f"/skills/{name}/{path}"] = raw
-            if kit["id"] == "speckit":
-                for name, raw in files_under(assembled / "tools/speckit-upstream/assets").items():
-                    output[prefix + "/assets/" + name] = raw
             if kit["id"] == "workgraph":
                 # Official hooks carry the existing policy; no new auto-save rules.
                 hooks = {"hooks": {event: [{"hooks": [{"type": "command", "command": f"intelliforge hook --agent {agent} {action}"}]}]

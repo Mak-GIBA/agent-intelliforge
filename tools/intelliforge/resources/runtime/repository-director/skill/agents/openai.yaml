@@ -1,0 +1,6 @@
+interface:
+  display_name: "Repository Director"
+  short_description: "リポジトリ方針・上流文書・既存コードの仕様整理・GitHub/GitLab運用"
+  default_prompt: "Use $repository-director to organize this repository and carry out the requested work."
+policy:
+  allow_implicit_invocation: true

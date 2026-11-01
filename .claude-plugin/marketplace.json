@@ -15,14 +15,9 @@
       "description": "UX Stack"
     },
     {
-      "name": "speckit",
-      "source": "./plugins/claude/speckit",
-      "description": "SpecKit Upstream"
-    },
-    {
-      "name": "github-pm",
-      "source": "./plugins/claude/github-pm",
-      "description": "GitHub Project Director"
+      "name": "repository-director",
+      "source": "./plugins/claude/repository-director",
+      "description": "Repository Director"
     },
     {
       "name": "design-research",

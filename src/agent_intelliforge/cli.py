@@ -32,6 +32,16 @@ def inspect_plan(kits: list[dict], agent: str, plugin: bool, state: Path) -> dic
                 from .kotonoha_migration import describe
                 migration=describe(state,host)
                 if migration: method=migration['method']
+            elif kit['id']=='repository-director':
+                from .director_migration import describe
+                from .runtime import settings
+                previous=describe(state,host)
+                migration={'from':[row['id'] for row in previous],'to':'repository-director'} if previous else None
+                current=settings(state/host/kit['id'])
+                if current.get('installed',False):
+                    if current.get('method') not in ('native','plugin'):raise ForgeError('Unknown Repository Director installation route; preserving it')
+                    method=current['method']
+                elif previous:method='plugin' if any(row['config']['method']=='plugin' for row in previous) else 'native'
             else: migration=None
             target_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) if host == "codex" else Path(os.environ.get("CLAUDE_CONFIG_DIR", Path.home() / ".claude"))
             places = {"agent_home": str(target_home), "skills_home": str(Path.home() / (".agents/skills" if host == "codex" else ".claude/skills")),
@@ -71,10 +81,12 @@ def show_plan(value: dict, as_json: bool) -> None:
     print(value["unresolved"])
 
 
-def legacy_action(root: Path, kits: list[dict], action: str) -> int:
+def legacy_action(root: Path, kits: list[dict], action: str, migrate_legacy=False) -> int:
     if not shutil.which("bash"):
         raise ForgeError("The existing installer requires Bash; native Windows uses the portable path.")
     if action == "install":
+        if migrate_legacy:
+            return subprocess.call(['bash',str(root/'install_repository_director.sh'),'--migrate-legacy','--apply'])
         return subprocess.call(["bash", str(root / "install_all.sh"), "--only",
                                 ",".join(kit["id"] for kit in kits), "--apply"])
     from .runtime import diagnose
@@ -85,7 +97,8 @@ def legacy_action(root: Path, kits: list[dict], action: str) -> int:
             if action == "doctor":
                 results.append(diagnose(kit, "codex", state_root(), legacy=True)); continue
             raise ForgeError(f"{kit['id']} has no existing {action} action; use its documented procedure. No replacement behavior was invented.")
-        code = subprocess.call(["bash", str(root / kit["legacy"]["script"]), *args])
+        code = subprocess.call(["bash", str(root / kit["legacy"]["script"]), *args,
+                                *(['--migrate-legacy'] if migrate_legacy else [])])
         if code in (130, 143):
             return code
         results.append({"kit": kit["id"], "exit_code": code})
@@ -114,6 +127,7 @@ def main(argv=None) -> int:
             mode.add_argument("--dry-run", action="store_true")
             command.add_argument("--upstream-only", action="store_true", help="kotonoha upstream check only")
             command.add_argument("--mode", choices=("auto", "explicit"))
+            command.add_argument('--migrate-legacy',action='store_true',help='Explicitly retire owned github-pm/speckit entries when installing repository-director')
         if action == "locate":
             command.add_argument("--upstream", action="store_true")
         if action == 'doctor': command.add_argument('--isolation-smoke', action='store_true', help='probe a temporary read-only boundary; no model calls')
@@ -146,6 +160,10 @@ def main(argv=None) -> int:
                     print(f"{kit['id']:<16} {kit['name']} — edit {kit['definition']}")
             return 0
         plan = inspect_plan(kits, args.agent, args.plugin, state)
+        if getattr(args,'migrate_legacy',False):
+            if args.action not in ('install','update') or [kit['id'] for kit in kits]!=['repository-director']:
+                raise ForgeError('--migrate-legacy requires install/update --only repository-director')
+            for operation in plan['operations']:operation['migration']='owned legacy repository kits; edited/foreign resources stop migration'
         if args.action == "locate":
             if len(kits) != 1 or args.agent == "both":
                 raise ForgeError("locate requires one --only kit and one agent")
@@ -175,7 +193,7 @@ def main(argv=None) -> int:
                 if args.upstream_only: command.append("--upstream-only")
                 if args.mode: command += ["--mode", args.mode]
                 return subprocess.call(command)
-            return legacy_action(root, kits, args.action)
+            return legacy_action(root, kits, args.action, getattr(args,'migrate_legacy',False))
         from .runtime import portable_action
         return portable_action(root, kits, plan, args, state)
     except (ForgeError, OSError, ValueError, subprocess.SubprocessError) as error:
