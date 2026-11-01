@@ -180,12 +180,12 @@ def prepare_dependencies(kit, agent, home, bundle, config, state):
     if identity == 'github-pm' and not shutil.which('gh'):
         raise ForgeError('GitHub management requires the official GitHub CLI (gh). Install it and authenticate first.')
     if identity == 'workgraph':
-        if not config.get('python'):
-            directory = dependency_directory(home, 'workgraph-python')
-            venv.EnvBuilder(with_pip=True).create(directory)
-            executable = python_in(directory)
-            checked([str(executable), '-m', 'pip', 'install', '--disable-pip-version-check', '-r', str(bundle / 'requirements-export.txt')], timeout=300)
-            config['python'] = str(executable)
+        recall_runtime = load(bundle / 'recall_runtime.py', '_workgraph_runtime')
+        if not config.get('python') or not recall_runtime.probe(config['python'])['yaml']:
+            # dependency_directory allocates an empty parent; provision only its
+            # absent child so unmanaged/older environments are never overwritten.
+            directory = dependency_directory(home, 'workgraph-python') / 'venv'
+            config['python'] = recall_runtime.provision(directory, bundle / 'requirements-export.txt')['python']
         policy = home / 'policy'; policy.mkdir(parents=True, exist_ok=True)
         replace_tree(policy / 'assets', owner('workgraph-policy', agent), {
             name: data for name, data in files(bundle).items()
@@ -254,6 +254,10 @@ def diagnose(kit, agent, state, legacy=False):
         missing = []
         for key in ('python', 'binary', 'specify'):
             if config.get(key) and not Path(config[key]).is_file(): missing.append(key)
+        if kit['id'] == 'workgraph':
+            helper = load(home / 'bundle/recall_runtime.py', '_workgraph_doctor')
+            result['recall_runtime'] = helper.probe(config.get('python', sys.executable))
+            if not result['recall_runtime']['yaml']: missing.append('recall PyYAML runtime')
         if config.get('writing_runtime'):
             helper=load(home/'bundle/assets/kotonoha/scripts/writing_runtime.py','_kotonoha_health')
             result['writing_runtime']=helper.diagnose(Path(config['writing_runtime']))
@@ -466,6 +470,16 @@ def kit_run(identity, agent, arguments, state):
 def hook_run(agent, arguments, state):
     if os.environ.get('DR_GAN_CHILD') or os.environ.get('UX_GAN_CHILD'): return 0
     home = state / agent / 'workgraph'; verify(home / 'bundle', owner('workgraph', agent))
+    helper = load(home / 'bundle/recall_runtime.py', '_workgraph_hook_runtime')
+    selected = settings(home).get('python')
+    different = selected and os.path.normcase(os.path.abspath(selected)) != os.path.normcase(os.path.abspath(sys.executable))
+    if selected and (different or not helper.current_report()['yaml']) and helper.probe(selected)['yaml']:
+        # The hook host can be a dependency-free pipx/uv environment. Relaunch before
+        # consuming stdin so inline recall and helper commands share the kit runtime.
+        if not os.environ.get('_WORKGRAPH_HOOK_REEXEC'):
+            return subprocess.call([selected, '-B', '-m', 'agent_intelliforge.cli',
+                                    'kit-run', 'workgraph', '--agent', agent, '--', *arguments],
+                                   env={**environment(home, agent, state), '_WORKGRAPH_HOOK_REEXEC': '1'})
     module = load(home / 'bundle/hooks/basic_memory_workgraph.py', '_intelliforge_hook')
     policy = Path(settings(home)['policy']); module.ROOT = policy
     # Templates/policy remain hash-bound; configuration is intentionally editable.

@@ -42,7 +42,15 @@ command -v python3 >/dev/null || die "python3 が必要です。"
 case "${1:-}" in
   --update)
     shift
-    exec python3 "$WORKGRAPH_DIR/update_workgraph.py" --codex-dir "$CODEX_HOME_DIR" "$@"
+    RUNTIME_OPTIONS=(--prepare)
+    for option in "$@"; do
+      case "$option" in
+        --dry-run) RUNTIME_OPTIONS=() ;;
+        --help|-h) exec python3 "$WORKGRAPH_DIR/update_workgraph.py" --codex-dir "$CODEX_HOME_DIR" "$@" ;;
+      esac
+    done
+    RECALL_PYTHON="$(python3 "$WORKGRAPH_DIR/recall_runtime.py" --codex-dir "$CODEX_HOME_DIR" "${RUNTIME_OPTIONS[@]}")"
+    exec "$RECALL_PYTHON" "$WORKGRAPH_DIR/update_workgraph.py" --codex-dir "$CODEX_HOME_DIR" "$@"
     ;;
   --configure-only)
     [[ $# -eq 1 ]] || die "--configure-only に追加の引数は指定できません。"
@@ -52,10 +60,11 @@ case "${1:-}" in
     ;;
   --help|-h)
     echo "Usage: bash install_basic_memory_workgraph.sh [--configure-only | --update [--dry-run]]"
-    echo "--update: 登録済みの保存先を検出し、設定・hooks・CLI・スキーマを更新。コード取得やパッケージ更新は行いません。"
+    echo "--update: 登録済みの保存先を検出し、設定・hooks・CLI・スキーマを更新。必要なら検索用PyYAMLを準備します。コード取得やBasic Memory本体の更新は行いません。"
     echo "--configure-only: 設定とフックだけを更新。既存の保存先とモードを維持。"
     echo "MEMORY_PROJECT / BM_AUTO_MODE / BM_CORRECTION_MODE / BM_CASE_MODE / BM_SKILL_MODE で設定を指定します。"
     echo "BM_RECALL_CLI には、使用するBasic Memory実行ファイルのパスを指定できます。"
+    echo "BM_RECALL_PYTHON で検索用Pythonを指定できます。通常の導入・更新時は必要なら専用venvにPyYAMLを準備します。"
     exit 0
     ;;
   "") [[ $# -eq 0 ]] || die "不正な引数です。" ;;
@@ -180,14 +189,15 @@ mkdir -p \
 # STEP 6: Schema notes
 # ------------------------------------------------------------
 
+RECALL_PYTHON="$(python3 "$WORKGRAPH_DIR/recall_runtime.py" --codex-dir "$CODEX_HOME_DIR" --prepare)"
 SCHEMA_RESULT=0
-python3 "$WORKGRAPH_DIR/install_schemas.py" --memory-dir "$MEMORY_DIR" || SCHEMA_RESULT=$?
+"$RECALL_PYTHON" "$WORKGRAPH_DIR/install_schemas.py" --memory-dir "$MEMORY_DIR" || SCHEMA_RESULT=$?
 [[ "$SCHEMA_RESULT" -eq 0 || "$SCHEMA_RESULT" -eq 2 ]] || die "スキーマ更新に失敗しました。"
 
 # ------------------------------------------------------------
 # STEP 7: 共通ポリシー / Codex設定 / 追加Hook
 # ------------------------------------------------------------
-python3 "$WORKGRAPH_DIR/configure_workgraph.py" \
+BM_RECALL_PYTHON="$RECALL_PYTHON" "$RECALL_PYTHON" "$WORKGRAPH_DIR/configure_workgraph.py" \
   --codex-dir "$CODEX_HOME_DIR" --project "$MEMORY_PROJECT" --mode "$BM_AUTO_MODE" \
   --recall-cli "${BM_RECALL_CLI:-$(command -v bm)}"
 

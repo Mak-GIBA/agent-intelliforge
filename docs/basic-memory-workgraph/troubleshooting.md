@@ -24,7 +24,7 @@
 | 終了時の評価が出ない | Planでは正常。実装モードでも当該ターンの有効化が必要。更新後は新しいセッションを開始する |
 | 具体事例が増えない | 既定は `caseMode=off`。明示保存依頼、`reusable`、`progressive` を用途に応じて使う |
 | Skillが作成されない | 既定は `skillMode=review`。`auto` でもCreator・検証・追加価値が必要 |
-| `PyYAML` が必要と表示された | [Python環境の準備](installation.md#python-tools)を実行し、同じ環境でコマンドを使う |
+| `PyYAML` が必要と表示された | `bash install_basic_memory_workgraph.sh --update`で検索用環境を検出・準備する。Pythonを指定する場合は`BM_RECALL_PYTHON`を使う。[環境の詳細](installation.md#python-tools) |
 | 更新で終了コード2になった | `preserved` を確認。対象を上書きせず保持した通知であり、全更新の失敗ではない |
 | 保存先が見つからない／不一致 | `primaryProject` とBasic Memory登録情報を確認。[更新の詳細](installation.md#update-details)を参照 |
 | 記憶の順序や解釈がおかしい | [audit](#audit)で構造を確認し、会話の根拠と照合する |

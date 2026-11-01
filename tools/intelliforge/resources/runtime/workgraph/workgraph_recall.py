@@ -2,6 +2,7 @@
 """Bounded memory retrieval and ephemeral application checks; never write graph notes."""
 from __future__ import annotations
 import argparse
+import importlib.util
 from contextlib import contextmanager
 from agent_intelliforge import fcntl_compat as fcntl
 import hashlib
@@ -16,6 +17,13 @@ import time
 TYPES=('correction','rule','workflow','validation','case')
 MAX_BODY=6000
 SENSITIVE=re.compile(r'(?i)(?:bearer\s+\S+|(?:api[_-]?key|password|secret|token)\s*[:=]\s*[^\s]{6,}|https?://[^\s/]+:[^\s/]+@|\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})')
+
+
+def runtime_helper():
+    spec = importlib.util.spec_from_file_location('workgraph_recall_runtime', Path(__file__).with_name('recall_runtime.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def digest(value):
@@ -221,6 +229,8 @@ class Recall:
         status='unavailable' if unavailable else 'found' if notes else 'no_results'
         result={'status':status,'notes':notes,'candidates':len(refs),
                 'message':'Retrieval failed or incomplete; never report as no matching memories.' if unavailable else 'Select applicable notes and translate each into task conditions.'}
+        if unavailable and not runtime_helper().current_report()['yaml']:
+            result.update(error='missing_pyyaml', repair=runtime_helper().REPAIR)
         if mode=='implementation' and self.config().get('mode','smart')!='off':
             signature=digest([query,str(workdir),projects])
             with self.lock():
@@ -317,15 +327,35 @@ def main():
         if path.stat().st_size>16000:raise ValueError('Oversized input')
         return json.loads(path.read_text(encoding='utf-8'))
     try:
+        runtime = runtime_helper()
+        runtime.reexec_if_needed(service.config())
         if args.action=='prepare':result=service.prepare(args.ticket,args.query,args.cwd,args.mode)
         elif args.action=='select':result=service.select(args.ticket,input_data(args.input),args.mode)
         elif args.action=='check':result=service.check(args.ticket,input_data(args.input) if args.input else [],args.close,args.mode)
         else:
-            reader=CliReader(service.config().get('recallCli'));version=subprocess.run([*reader.command,'--version'],capture_output=True,text=True,timeout=5)
-            result={'status':'available' if version.returncode==0 else 'unavailable','version':version.stdout.strip(),
+            report = runtime.current_report()
+            configured = service.config().get('recallPython')
+            report['configuredPython'] = configured
+            report['matchesConfigured'] = configured is None or os.path.abspath(configured) == os.path.abspath(report['python'])
+            ready = report['yaml'] and report['matchesConfigured']
+            result={'status':'available' if ready else 'unavailable', 'runtime':report,
+                    'cloud_cli':'not_configured',
                     'search_mode':'text; no embedding model download','note':'Run prepare to verify retrieval from registered local Markdown or the configured Cloud CLI; events/flush never produce graph notes.'}
+            if service.config().get('recallCli'):
+                try:
+                    reader=CliReader(service.config()['recallCli'])
+                    version=subprocess.run([*reader.command,'--version'],capture_output=True,text=True,timeout=5)
+                    result['cloud_cli']='available' if version.returncode==0 else 'unavailable'
+                    if version.returncode == 0: result['version'] = version.stdout.strip()
+                except (OSError, ValueError, subprocess.TimeoutExpired):
+                    result['cloud_cli']='unavailable'
+                if result['cloud_cli']=='unavailable':
+                    ready=False
+                    result['status']='unavailable'
+            if not ready:
+                result['repair'] = runtime.REPAIR
         print(json.dumps(result,ensure_ascii=False))
-        return 0
+        return 1 if args.action=='doctor' and result['status']=='unavailable' else 0
     except (OSError,ValueError,KeyError,TypeError,ImportError,subprocess.TimeoutExpired):
         print(json.dumps({'status':'error','message':'Memory operation failed; check configuration, task ID, sanitized input and mode.'}));return 1
 

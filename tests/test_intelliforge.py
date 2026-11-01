@@ -23,6 +23,24 @@ from agent_intelliforge.catalog import ForgeError, definitions, safe_relative, s
 
 
 class DistributionTests(unittest.TestCase):
+    def test_workgraph_dependency_preparation_uses_an_unoccupied_venv_path(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            home = Path(temporary) / 'kit'
+            bundle = ROOT / 'tools/intelliforge/resources/runtime/workgraph'
+            original_load = runtime.load
+            def load(path, name):
+                helper = original_load(path, name)
+                if path.name == 'recall_runtime.py':
+                    def provision(directory, requirements):
+                        self.assertFalse(directory.exists(), 'Do not treat the newly allocated empty parent as an owned venv')
+                        return {'python': sys.executable}
+                    helper.provision = provision
+                return helper
+            config = {}
+            with patch.object(runtime, 'load', side_effect=load):
+                runtime.prepare_dependencies({'id':'workgraph'}, 'codex', home, bundle, config, Path(temporary))
+            self.assertEqual(config['python'], sys.executable)
+
     def test_catalog_selection_is_fixed_and_complete(self):
         catalog = definitions(ROOT)
         self.assertEqual([k['id'] for k in selection(['kotonoha,workgraph','kotonoha'],catalog)], ['workgraph','kotonoha'])
@@ -381,6 +399,14 @@ class HookTests(unittest.TestCase):
             prefix=shlex.split(line.removeprefix('Helper: '))
             self.assertIn(str(policy/'assets/memory-policy.md'),context)
             self.assertEqual(prefix[:3],['intelliforge','kit-run','workgraph'])
+            # Simulate a dependency-free host without changing the kit's Python.
+            host = subprocess.run([sys.executable, '-S', '-B', '-m', 'agent_intelliforge.cli',
+                                   'kit-run', 'workgraph', '--agent', 'codex', '--', 'recall'],
+                                  input=json.dumps(event), cwd=work, env=env,
+                                  capture_output=True, text=True)
+            self.assertEqual(host.returncode, 0, host.stderr)
+            host_context = json.loads(host.stdout)['hookSpecificOutput']['additionalContext']
+            self.assertIn('"status":"found"', host_context)
             base=[sys.executable,'-B','-m','agent_intelliforge.cli',*prefix[1:]]
             ticket='d'*64
             def run(*args):

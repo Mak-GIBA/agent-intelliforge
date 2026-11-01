@@ -79,12 +79,20 @@ bash install_basic_memory_workgraph.sh
 
 <a id="python-tools"></a>
 
-### 更新・共有・Skill登録に使うPython環境を準備する
+### 検索・更新に使うPython環境
 
 `--update`、共有・JSONL出力・Skill登録CLIと、ローカルメモリーの検索にはPyYAMLが必要です。
-設定ファイルの配置は標準ライブラリだけで行えますが、検索用ランタイムは別途確認します。
+通常の導入・`--update`は、PyYAMLでYAMLを読める環境を選びます。
+登録済みのPython、Basic MemoryのPython環境、実行中のPython、管理下の専用venvの順に確認します。
+見つからなければ `CODEX_HOME/basic-memory-workgraph/runtime/` に専用venvを準備します。
+既存環境へのパッケージ追加や、システムPythonの変更はしません。
 
-依存を分離して導入するには、リポジトリで次を実行します。
+`--configure-only`と`--dry-run`、検索・診断中は依存をインストールしません。
+利用可能な環境がない場合は、通常の`--update`で準備してください。
+venv機能やネットワークが使えず準備に失敗した場合、既存設定は維持されます。
+専用venvの配置先に未管理のディレクトリがある場合も上書きしません。
+
+共有・JSONL出力・Skill登録CLIを手動で使うPythonを用意する場合は、次を実行します。
 
 ```bash
 python3 -m venv .venv
@@ -102,16 +110,34 @@ Skill自動登録を使う場合も、登録CLIを実行するPythonからPyYAML
 
 ### 検索用ランタイムを指定する
 
-初回導入ではBasic Memoryの実行ファイルと、その環境のPythonを確認して検索に使います。既存環境で実行ファイルを指定する場合は、手元にある対応版の絶対パスを渡します。
+検索用Pythonの絶対パスを`config.json`の`recallPython`へ登録し、フックと検索ヘルパーで共用します。
+通常は自動選択で使えます。特定のPythonを使いたい場合は`BM_RECALL_PYTHON`を指定します。
+
+```bash
+BM_RECALL_PYTHON="/absolute/path/to/venv/bin/python" \
+bash install_basic_memory_workgraph.sh --configure-only
+```
+
+Cloudなどで使うBasic Memoryの実行ファイルは、別途指定できます。
 
 ```bash
 BM_RECALL_CLI="/absolute/path/to/basic-memory" \
 bash install_basic_memory_workgraph.sh --configure-only
 ```
 
-`--update`でも同じ環境変数を使えます。`configure_workgraph.py --recall-cli`による直接指定も可能です。指定を省略した設定更新では既存の指定を保持します。実行ファイルの版とPyYAMLを確認してから設定を書き、途中で書き込みに失敗した場合は変更した設定ファイルを戻します。Basic Memory本体の更新やDB移行は、この指定では行いません。
+`--update`でも同じ環境変数を使えます。`configure_workgraph.py --recall-cli`による直接指定も可能です。
+指定を省略した場合、有効な既存設定を優先します。明示指定が無効なら、別環境へ黙って切り替えずエラーにします。
+CLIだけを明示指定した場合は、そのCLIと同じ環境のPythonを確認します。
+別のPythonを使う場合は`BM_RECALL_PYTHON`も指定してください。
+設定書き込みに失敗した場合は変更した設定ファイルを戻します。Basic Memory本体の更新やDB移行は行いません。
 
-登録済みのローカルプロジェクトはMarkdownを直接読みます。Cloudプロジェクトでは指定CLIを使い、接続に失敗したら利用不能として返します。実行可能かどうかは`workgraph_recall.py doctor`、登録先を検索できるかどうかは`prepare --mode plan`で確認します。`doctor`の成功だけでは検索の成功を証明しません。
+登録済みのローカルプロジェクトはMarkdownを直接読み、CLIの指定は不要です。
+Cloudプロジェクトでは指定CLIを使い、接続に失敗したら利用不能として返します。
+`workgraph_recall.py doctor`は実行Python・PyYAML・登録済みPythonとの一致を確認します。
+依存不足や不一致では非ゼロ終了し、復旧方法を表示します。
+ヘルパーをPyYAMLのないPythonで起動した場合は、有効な登録済みPythonへ一度だけ切り替えます。
+登録先を検索できるかどうかは`prepare --mode plan`で別途確認してください。
+`doctor`の成功だけでは検索の成功を証明しません。
 
 <a id="update"></a>
 
@@ -140,11 +166,9 @@ Gitを使わない場合は、改定版のリポジトリ一式を配置して�
 
 ### 手順2：更新内容を確認して適用する
 
-初回のみ[Python環境の準備](#python-tools)を済ませます。その後、リポジトリで実行します。
+リポジトリで実行します。dry-runの前に検索用環境が必要なら、[Python環境の準備](#python-tools)を行います。
 
 ```bash
-source .venv/bin/activate
-
 # 更新予定を確認する。この段階では書き込まない。
 bash install_basic_memory_workgraph.sh --update --dry-run
 
