@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-31",
+  "baseline_git_head": "0807de084a5ed8459fd9a114d6270b6f0acd1260",
+  "rows": [
+    {
+      "candidate": "A",
+      "ratings": {
+        "documents": {
+          "hierarchy": 4,
+          "readability": 3,
+          "simplicity": 5,
+          "consistency": 3,
+          "fidelity": 4
+        },
+        "settings": {
+          "hierarchy": 5,
+          "readability": 5,
+          "simplicity": 5,
+          "consistency": 5,
+          "fidelity": 4
+        },
+        "landing": {
+          "hierarchy": 5,
+          "readability": 4,
+          "simplicity": 5,
+          "consistency": 5,
+          "fidelity": 5
+        }
+      },
+      "case_means": {
+        "documents": 3.8,
+        "settings": 4.8,
+        "landing": 4.8
+      },
+      "operation_checks": {
+        "raw_passed": 22,
+        "total": 22,
+        "after_focus_calibration_passed": 22
+      },
+      "generation_seconds": 210.21796655654907,
+      "generation_completed": 3
+    },
+    {
+      "candidate": "B",
+      "ratings": {
+        "documents": {
+          "hierarchy": 5,
+          "readability": 5,
+          "simplicity": 5,
+          "consistency": 5,
+          "fidelity": 4
+        },
+        "settings": {
+          "hierarchy": 5,
+          "readability": 5,
+          "simplicity": 5,
+          "consistency": 5,
+          "fidelity": 4
+        },
+        "landing": {
+          "hierarchy": 5,
+          "readability": 4,
+          "simplicity": 4,
+          "consistency": 5,
+          "fidelity": 4
+        }
+      },
+      "case_means": {
+        "documents": 4.8,
+        "settings": 4.8,
+        "landing": 4.4
+      },
+      "operation_checks": {
+        "raw_passed": 22,
+        "total": 22,
+        "after_focus_calibration_passed": 22
+      },
+      "generation_seconds": 191.78728771209717,
+      "generation_completed": 3
+    },
+    {
+      "candidate": "C",
+      "ratings": {
+        "documents": {
+          "hierarchy": 5,
+          "readability": 5,
+          "simplicity": 5,
+          "consistency": 5,
+          "fidelity": 4
+        },
+        "settings": {
+          "hierarchy": 5,
+          "readability": 5,
+          "simplicity": 5,
+          "consistency": 5,
+          "fidelity": 3
+        },
+        "landing": {
+          "hierarchy": 5,
+          "readability": 5,
+          "simplicity": 5,
+          "consistency": 5,
+          "fidelity": 4
+        }
+      },
+      "case_means": {
+        "documents": 4.8,
+        "settings": 4.6,
+        "landing": 4.8
+      },
+      "operation_checks": {
+        "raw_passed": 20,
+        "total": 22,
+        "after_focus_calibration_passed": 22
+      },
+      "generation_seconds": 185.51971864700317,
+      "generation_completed": 3
+    }
+  ],
+  "decision": "Do not adopt the wholesale B/C prompt rewrites: neither improves at least two cases. Retain current entry and add local display checks, opt-in scoping and strict evidence metadata improvements based on observed defects and regression tests.",
+  "calibration": "Original C focus failures retained. v1 inspected only the input; v2 includes visible ancestor focus-within indicators, applied to every candidate. No task outputs or visual ratings changed.",
+  "limitations": [
+    "3 synthetic tasks; one trial each",
+    "AI visual judgement, not human usability testing",
+    "Latency is descriptive; provider load and sampling seed are uncontrolled",
+    "Initial screenshots cannot prove hidden-state functionality; operation checks recorded separately",
+    "Design Research run blocked on source dossier validation; not research_complete"
+  ]
+}

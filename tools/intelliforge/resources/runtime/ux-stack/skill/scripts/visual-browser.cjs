@@ -14,6 +14,7 @@ const out = path.resolve(process.env.UX_GAN_SCREENSHOTS || '.');
 const target = new URL(process.env.UX_GAN_TARGET || 'http://localhost');
 const smoke = process.argv.includes('--smoke');
 let browser, context, page, index = 0;
+const recentFrames = [];
 const tools = [
   ['ux_navigate', 'Open a URL and return its actual screenshot. Do this before reading UI source.', {url:{type:'string'}}],
   ['ux_capture', 'Look at the current rendered screen as an image; get a recorded screenshot.', {}],
@@ -52,6 +53,8 @@ async function frame(label) {
   const viewport = page.viewportSize();
   const meta = {id,path:file,label,url,viewport,source:new URL(url).origin===target.origin?'live':'official_reference',sha256:crypto.createHash('sha256').update(buf).digest('hex'),captured_at:new Date().toISOString()};
   receipt({kind:'frame',...meta});
+  recentFrames.push(meta);
+  if (recentFrames.length>12) recentFrames.shift();
   return {meta,image:{type:'image',data:buf.toString('base64'),mimeType:'image/png'}};
 }
 function externalGuard(action) {
@@ -66,7 +69,7 @@ async function call(name,a) {
     return {content:[{type:'text',text:JSON.stringify({url:page.url(),pending_dialog:dialog.message()})}]};
   if (dialog && !['ux_dialog','ux_inspect'].includes(name))
     throw new Error('A browser dialog is pending; use ux_dialog to accept or cancel it first.');
-  if (name==='ux_inspect') return {content:[{type:'text',text:JSON.stringify({url:page.url(),title:await page.title(),visible_text:await page.locator('body').innerText(),console:errors.slice(-30)})}]};
+  if (name==='ux_inspect') return {content:[{type:'text',text:JSON.stringify({url:page.url(),title:await page.title(),visible_text:await page.locator('body').innerText(),console:errors.slice(-30),recent_frames:recentFrames})}]};
   const frames=[];
   if (!['ux_navigate','ux_capture','ux_dialog'].includes(name)) frames.push(await frame('before '+name));
   const dialogAppears = new Promise(resolve=>{dialogWake=resolve;});

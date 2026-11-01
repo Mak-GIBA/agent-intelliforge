@@ -123,6 +123,22 @@ print(json.dumps({"type":"turn.completed","usage":{"input_tokens":10,"output_tok
 
 
 class HarnessTests(unittest.TestCase):
+    def test_focused_run_skips_unrequested_references_and_declares_scope(self):
+        self.assertEqual(self.invoke("run", "--profile", "focused", "--focus", "投稿の保存"), 0)
+        state, folder = self.state()
+        self.assertEqual(state['config']['viewports'], ['desktop', 'mobile'])
+        self.assertEqual(state['references']['status'], 'not_required')
+        self.assertEqual(json.loads((folder/'status.json').read_text())['review_scope']['profile'], 'focused')
+        self.assertFalse((folder/'000-references').exists())
+        report = (self.project/'docs/ui-ux-review.md').read_text()
+        self.assertIn('focused', report)
+        self.assertIn('投稿の保存', report)
+
+    def test_focused_without_scope_fails_before_artifacts(self):
+        with self.assertRaisesRegex(h.Blocked, '--focus'):
+            self.invoke('audit', '--profile', 'focused')
+        self.assertFalse((self.project/'artifacts').exists())
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.base = Path(self.tmp.name)

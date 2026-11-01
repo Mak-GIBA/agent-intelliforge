@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>文書管理</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#24332f;background:#f5f7f6;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #63a99a;outline-offset:4px}[hidden]{display:none!important}.top{height:80px;border-bottom:1px solid #dce3df;background:#fff;display:flex;align-items:center;padding:0 48px;gap:13px}.brand-icon{display:grid;place-items:center;background:#236456;color:white;border-radius:9px;width:36px;height:39px}.top strong{font-size:19px;letter-spacing:.04em}svg{flex-shrink:0}main{max-width:1088px;margin:64px auto;padding:0 32px}h1{font-size:30px;letter-spacing:.04em;margin:0 0 30px;line-height:1.5}.search-label{display:block;font-size:14px;font-weight:600;margin-bottom:10px}.search-box{position:relative;max-width:560px;margin-bottom:32px}.search-box svg{position:absolute;left:16px;top:17px;color:#63766d}input{width:100%;height:54px;background:#fff;border:1px solid #aebdb5;border-radius:8px;padding:12px 16px 12px 47px;color:#24332f}input::placeholder{color:#74817a}.documents{background:white;border:1px solid #dbe3de;border-radius:12px;overflow:hidden}.table-head,.doc-row{display:grid;grid-template-columns:minmax(180px,1fr) 140px 160px 116px;align-items:center;gap:24px;padding:20px 28px}.table-head{background:#edf2ef;color:#5a6b62;font-size:13px;font-weight:600;padding-top:15px;padding-bottom:15px}.doc-row{min-height:106px;border-top:1px solid #e5eae7}.doc-name{display:flex;align-items:center;gap:16px;font-size:17px;font-weight:600}.file-icon{width:40px;height:48px;display:grid;place-items:center;border:1px solid #dbe3de;border-radius:6px;color:#5d776a;background:#f8faf9}.format{font-size:14px;color:#647269}.status{font-size:13px;display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:5px;background:#edf3fa;color:#385c82;white-space:nowrap;width:max-content}.status:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.status.wait{background:#fcf2dc;color:#81621c}.status.done{background:#eaf3ee;color:#397052}.open{display:flex;justify-content:center;align-items:center;gap:12px;border:1px solid #bbcfc5;background:white;color:#245b49;border-radius:6px;padding:10px 13px;font-size:14px;font-weight:600;white-space:nowrap}.open:hover{background:#edf5f0;border-color:#568570}.empty{padding:36px;color:#647269}.back{display:flex;align-items:center;gap:10px;background:none;border:0;padding:7px 0;color:#386b59;font-size:14px;margin-bottom:27px}.back:hover{text-decoration:underline}.detail{background:white;border:1px solid #dbe3de;border-radius:12px;padding:36px 40px}.detail-header{border-bottom:1px solid #e1e7e3;padding-bottom:26px;margin-bottom:30px}.detail h1{margin-bottom:17px}.metadata{display:flex;gap:20px;align-items:center;color:#647269;font-size:14px}.note-label{display:block;font-size:17px;font-weight:600;margin-bottom:12px}textarea{display:block;width:100%;min-height:210px;resize:vertical;padding:16px;border:1px solid #aebdb5;border-radius:7px;line-height:1.8;color:#24332f;background:#fff}.note-hint{font-size:12px;color:#65756b;margin:9px 0 0}.related-area{border-top:1px solid #e1e7e3;margin-top:32px;padding-top:26px}.related-area h2{font-size:16px;margin:0 0 14px}.related{display:flex;align-items:center;gap:14px;background:#f5f8f6;border:1px solid #d6e1da;border-radius:7px;padding:15px 18px;color:#285f4d;font-weight:600;min-width:225px}.related svg:last-child{margin-left:auto}.related:hover{background:#eaf2ed}@media(max-width:640px){.top{height:68px;padding:0 22px}.top strong{font-size:17px}.brand-icon{width:31px;height:34px}main{margin:32px auto;padding:0 20px}h1{font-size:26px;margin-bottom:25px}.search-box{margin-bottom:25px}.table-head{display:none}.doc-row{grid-template-columns:1fr auto;gap:13px 12px;padding:22px 18px;position:relative}.doc-row:first-of-type{border-top:0}.doc-name{grid-column:1;gap:12px;font-size:17px}.file-icon{width:32px;height:39px}.format{grid-column:1;grid-row:2;margin-left:44px;font-size:13px}.status{grid-column:1;grid-row:3;margin-left:44px}.open{grid-column:2;grid-row:1 / 4;padding:11px 12px;gap:8px}.detail{padding:25px 21px}.detail-header{padding-bottom:23px;margin-bottom:24px}.back{margin-bottom:21px}.metadata{gap:15px}textarea{min-height:240px}.related{width:100%;min-width:0}.related-area{margin-top:26px}.note-hint{line-height:1.7}}
+</style>
+</head>
+<body>
+<header class="top"><span class="brand-icon" aria-hidden="true"><svg width="21" height="24" viewBox="0 0 24 26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 2h9l5 5v17H5z"/><path d="M14 2v6h5M8 13h8M8 17h8"/></svg></span><strong>文書管理</strong></header>
+<main>
+<section id="list-view" aria-labelledby="list-title">
+<h1 id="list-title">文書一覧</h1>
+<label class="search-label" for="search">文書を検索</label>
+<div class="search-box"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="文書名・形式・状態で検索" autocomplete="off"></div>
+<div class="documents"><div class="table-head" aria-hidden="true"><span>文書名</span><span>形式</span><span>状態</span><span></span></div><div id="rows"></div><p id="empty" class="empty" role="status" hidden>該当する文書がありません。</p></div>
+</section>
+<section id="detail-view" hidden aria-labelledby="doc-title">
+<button id="back" class="back" type="button"><span aria-hidden="true">←</span> 文書一覧へ戻る</button>
+<article class="detail"><div class="detail-header"><h1 id="doc-title" tabindex="-1"></h1><div class="metadata"><span id="doc-format"></span><span id="doc-status" class="status"></span></div></div>
+<label class="note-label" for="note">メモ</label><textarea id="note"></textarea><p class="note-hint">メモは入力時に自動保存されます。</p>
+<div id="related-area" class="related-area"><h2>関連文書</h2><button id="related" class="related" type="button"><span id="related-name"></span><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m9 5 7 7-7 7"/></svg></button></div></article>
+</section>
+</main>
+<script>
+'use strict';
+const docs=[{id:'a',name:'設計仕様',format:'PDF',status:'進行中',style:'',related:'b'},{id:'b',name:'契約書',format:'PDF',status:'確認待ち',style:'wait',related:'a'},{id:'c',name:'議事録',format:'テキスト',status:'完了',style:'done'}];
+const $=id=>document.getElementById(id);
+let notes={},current=null,lastOpened=null;
+try{notes=JSON.parse(localStorage.getItem('document-notes')||'{}')||{};}catch{}
+const fileIcon='<span class="file-icon" aria-hidden="true"><svg width="20" height="24" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 2h10l6 6v18H4z"/><path d="M14 2v7h6M8 15h8M8 19h8"/></svg></span>';
+function renderList(){const query=$('search').value.trim().toLocaleLowerCase();const filtered=docs.filter(d=>[d.name,d.format,d.status].some(v=>v.toLocaleLowerCase().includes(query)));$('rows').innerHTML=filtered.map(d=>`<div class="doc-row"><div class="doc-name">${fileIcon}<span>${d.name}</span></div><span class="format">${d.format}</span><span class="status ${d.style}">${d.status}</span><button class="open" type="button" data-open="${d.id}" aria-label="${d.name}の詳細を開く">詳細を開く <span aria-hidden="true">→</span></button></div>`).join('');$('empty').hidden=filtered.length>0;}
+function openDoc(id){const d=docs.find(doc=>doc.id===id);if(!d)return;current=id;$('doc-title').textContent=d.name;$('doc-format').textContent=d.format;$('doc-status').textContent=d.status;$('doc-status').className='status '+d.style;$('note').value=typeof notes[id]==='string'?notes[id]:'';$('related-area').hidden=!d.related;if(d.related){$('related-name').textContent=docs.find(doc=>doc.id===d.related).name;}$('list-view').hidden=true;$('detail-view').hidden=false;$('doc-title').focus();window.scrollTo(0,0);}
+$('search').addEventListener('input',renderList);
+$('rows').addEventListener('click',e=>{const button=e.target.closest('[data-open]');if(button){lastOpened=button.dataset.open;openDoc(lastOpened);}});
+$('note').addEventListener('input',()=>{if(current){notes[current]=$('note').value;try{localStorage.setItem('document-notes',JSON.stringify(notes));}catch{}}});
+$('related').addEventListener('click',()=>{const d=docs.find(doc=>doc.id===current);if(d.related)openDoc(d.related);});
+$('back').addEventListener('click',()=>{$('detail-view').hidden=true;$('list-view').hidden=false;const button=document.querySelector(`[data-open="${lastOpened}"]`);(button||$('search')).focus();});
+renderList();
+</script>
+</body>
+</html>

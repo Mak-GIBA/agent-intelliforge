@@ -104,6 +104,21 @@ Medium/Low details can remain as work items. Reaching the limit or two iteration
 
 ## Outputs and evidence
 
+### Focused checks
+
+For a localized change, declare the screen and operation:
+
+```bash
+ux-gan-harness audit --project /path/to/app --url http://localhost:3000 \
+  --profile focused --focus 'Save the display name and retain input after cancellation'
+```
+
+Focused checks default to desktop/mobile and the first-time/mistake perspectives. Repeat `--viewport desktop|tablet|mobile` to select widths. Reference comparison is omitted unless `--reference-url` is supplied. The report declares the scope; a focused pass is not whole-app approval.
+
+The default remains `--profile full`, with all three widths, four perspectives, and reference comparison. `--focus` and `--viewport` require focused mode. Resume preserves the saved scope; older records without a profile remain full reviews.
+
+The local browser's `ux_inspect` includes the latest twelve frame records, including the actual URL after redirects, viewport, path and hash. Copy those values into evidence only after viewing the images. Mismatches still stop a run and now identify the evidence ID and differing fields; do not edit archived results to make them pass.
+
 | App-relative location | Content |
 |---|---|
 | `docs/ui-ux-review.md` | Required 11 chapters, observed screens/flows, severity counts, priorities |

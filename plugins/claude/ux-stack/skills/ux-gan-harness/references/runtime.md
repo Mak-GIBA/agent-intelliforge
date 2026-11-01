@@ -4,6 +4,13 @@
 
 Common flags: `--project PATH`, `--url URL`, `--start-command COMMAND`, repeatable `--test-command COMMAND`, `--review PATH`, repeatable `--reference-url URL`, `--max-iterations N`, `--phase-timeout SECONDS`, `--model MODEL`, `--browser auto|local-playwright`. The normal browser order is Browser plugin, configured Playwright MCP, then the bundled local Playwright bridge after a recorded failure. Explicit `local-playwright` chooses that bridge directly.
 
+Version 1.3.0 adds opt-in `--profile focused --focus '<screen and operation>'`. Full remains the default.
+Focused defaults to desktop/mobile and first_time/mistake; repeat `--viewport` to select widths.
+Reference comparison is required only when reference URLs are supplied. Reports declare the scope and cannot certify the whole app.
+Resume retains its recorded profile; missing legacy profile means full. Focused planning maps the target without repeating the reviewer's operation matrix.
+`ux_inspect.recent_frames` exposes the latest twelve browser-generated frame records. Use their actual URL after redirects,
+viewport, path and hash after viewing the image. Mismatches remain failures; diagnostics name the evidence/fields instead of weakening checks.
+
 New runs from 1.2.0 use workspace-write for all roles. `--role-sandbox read-only|workspace-write` controls non-fixer roles; fixers always use workspace-write. Audit remains source-preserving by instruction and before/after checks, rather than OS write prevention. Unexpected edits stop the run and remain for inspection. Resume retains saved policy (legacy missing policy means read-only); an explicit override is recorded separately from frozen config and affects future invocations only.
 
 `doctor --check-mcp` tests the bundled local MCP without a model: initialization, tool discovery, three real browser operations and hashes of saved images/receipts, in a disposable workspace under the selected command sandbox. This does not establish native Plugin/MCP or model authentication readiness. The role's invocation records effective sandbox/network settings; missing structured output also leaves classified diagnostics. Only observed browser failures can switch to the local fallback. HOME/CODEX_HOME remain unchanged, transient caches live inside the role, and installed Playwright browser discovery is preserved.

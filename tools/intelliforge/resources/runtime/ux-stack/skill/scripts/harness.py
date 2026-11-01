@@ -32,7 +32,7 @@ sys.path.insert(0, str(HERE))
 from role_runtime import (browser_failure, child_environment, event_errors, failure_kind,
                           override_sandbox, role_sandbox)
 
-VERSION = "1.2.0"
+VERSION = "1.3.0"
 VIEWPORTS = {"desktop": (1440, 900), "tablet": (768, 1024), "mobile": (390, 844)}
 PERSPECTIVES = ["first_time", "mistake", "hurried", "skips_explanation"]
 STATES = ["normal", "empty", "invalid_input", "cancel", "back", "double_click",
@@ -443,11 +443,13 @@ def validated_evidence(result, role_dir, backend, project, run_id):
             raise Blocked("Missing/oversized screenshot: " + str(p))
         size = png_dimensions(p)
         if size != (e["viewport"]["width"], e["viewport"]["height"]):
-            raise Blocked("Screenshot size does not match recorded viewport")
+            raise Blocked(f"Screenshot size does not match recorded viewport: {e['id']}; actual={size}, recorded={e['viewport']}. Copy the browser frame metadata or recapture; do not guess dimensions.")
         if backend == "local-playwright":
             frame = receipts.get(p)
-            if not frame or frame["sha256"] != digest(p) or frame["url"] != e["url"] or frame.get("source") != e["source"]:
-                raise Blocked("Screenshot lacks a matching browser-generated receipt")
+            mismatches = [key for key, expected in (("sha256", digest(p)), ("url", e["url"]), ("source", e["source"]))
+                          if not frame or frame.get(key) != expected]
+            if mismatches:
+                raise Blocked(f"Screenshot lacks a matching browser-generated receipt: {e['id']} ({', '.join(mismatches)}). Use the actual frame URL/source/hash from ux_inspect.recent_frames, including redirects; replay instead of editing saved results.")
         dest = project / "docs/ui-ux-review-assets" / run_id / role_dir.name / p.relative_to(role_dir / "screenshots")
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(p, dest)
@@ -510,7 +512,7 @@ def validate_audit(audit, evidence, plan, previous=None):
                 if not e or e["source"] != "live":
                     raise Blocked("Operation lacks live before/after images")
                 if (e["viewport"]["width"], e["viewport"]["height"]) != VIEWPORTS[c["viewport"]]:
-                    raise Blocked("Coverage viewport does not match its actual image")
+                    raise Blocked(f"Coverage viewport does not match its actual image: {step[key]} / {c['viewport']} / {e['viewport']}. Replay at the declared viewport and use its frame metadata.")
     review_ids = [r["screen_id"] for r in audit["screen_reviews"]]
     if len(review_ids) != len(set(review_ids)) or any(
             i not in screen_ids or not any(e["screen_id"] == i and e["source"] == "live"
@@ -525,7 +527,29 @@ def validate_audit(audit, evidence, plan, previous=None):
         raise Blocked("Simplicity judgement lacks current screenshot evidence")
 
 
-def gate(audit, plan, references, tests):
+def review_scope(config=None):
+    config = config or {}
+    profile = config.get("profile", "full")
+    if profile not in ("full", "focused"):
+        raise Blocked("Unknown review profile")
+    focus = config.get("focus", [])
+    if not isinstance(focus, list) or any(not isinstance(item, str) for item in focus):
+        raise Blocked("Invalid focus specification")
+    if profile == "focused" and not any(item.strip() for item in focus):
+        raise Blocked("Focused review requires --focus")
+    viewports = config.get("viewports") or (["desktop", "mobile"] if profile == "focused" else list(VIEWPORTS))
+    if not isinstance(viewports, list) or not viewports or any(v not in VIEWPORTS for v in viewports):
+        raise Blocked("Invalid review viewports")
+    if profile == "full" and viewports != list(VIEWPORTS):
+        raise Blocked("Full review requires all standard viewports")
+    return {"profile": profile, "focus": focus,
+            "viewports": list(dict.fromkeys(viewports)),
+            "perspectives": PERSPECTIVES if profile == "full" else ["first_time", "mistake"],
+            "references_required": profile == "full" or bool(config.get("reference_urls"))}
+
+
+def gate(audit, plan, references, tests, config=None):
+    scope = review_scope(config)
     reasons = []
     remaining = [i for i in audit["issues"] if i["status"] != "resolved"]
     if any(i["severity"] in ("Critical", "High") for i in remaining):
@@ -542,7 +566,7 @@ def gate(audit, plan, references, tests):
         for c in audit["coverage"]:
             if c["flow_id"] == flow["id"] and (c["state"] == "normal" or c["state"] in flow["states"]) and c["result"] != "passed":
                 reasons.append(f"Required case unverified/failed: {flow['id']} / {c['viewport']} / {c['state']} / {c['perspective']}")
-        for viewport in VIEWPORTS:
+        for viewport in scope["viewports"]:
             if not any(c["flow_id"] == flow["id"] and c["viewport"] == viewport
                        and c["state"] == "normal" and c["result"] == "passed"
                        for c in audit["coverage"]):
@@ -551,10 +575,10 @@ def gate(audit, plan, references, tests):
             if not any(c["flow_id"] == flow["id"] and c["state"] == state
                        and c["result"] == "passed" for c in audit["coverage"]):
                 reasons.append(f"Required state unverified/failed: {flow['id']} / {state}")
-    if not audit["second_pass_complete"] or not set(PERSPECTIVES).issubset(
+    if not audit["second_pass_complete"] or not set(scope["perspectives"]).issubset(
             {c["perspective"] for c in audit["coverage"] if c["result"] != "not_tested"}):
-        reasons.append("Second pass / four perspectives incomplete")
-    if not references or references["status"] != "ready":
+        reasons.append("Second pass / four perspectives incomplete" if scope["profile"] == "full" else "Second pass / focused perspectives incomplete")
+    if scope["references_required"] and (not references or references["status"] != "ready"):
         reasons.append("Reference comparison incomplete")
     if not tests or not all(t["passed"] for t in tests):
         reasons.append("Required checks not completed")
@@ -695,11 +719,13 @@ Do not quota-limit findings: cover the app, then revisit the top and main flows.
 
 
 def role_prompt(role, state, role_dir):
+    scope = review_scope(state["config"])
     data = {"project": state["config"]["project"], "url": state["config"]["url"],
             "screenshots_directory": str(role_dir / "screenshots"),
             "browser_backend": state["backend"], "fallback_reason": state["fallback_reason"],
             "user_brief": state["config"]["brief"], "reference_urls": state["config"]["reference_urls"],
-            "repository_rule_files": state["rules"], "design_guidance": design_guidance()}
+            "repository_rule_files": state["rules"], "design_guidance": design_guidance(),
+            "review_scope": scope}
     instructions = {
         "planner": """FIRST open the top page, look at its image, and record your first impression
 before reading application UI source. Identify purpose, next step, primary action,
@@ -772,7 +798,26 @@ You are not authorized to call an issue resolved; a separate reviewer will verif
         data["reference_apps"] = state.get("references")
     if state.get("input_review"):
         data["prior_review_archive"] = state["input_review"]
-    return BASE_PROMPT + "\nROLE: " + role + "\n" + instructions[role] + "\n\nINPUT:\n" + json.dumps(data, ensure_ascii=False)
+    viewport_text = ", ".join(f"{name} {VIEWPORTS[name][0]}x{VIEWPORTS[name][1]}" for name in scope["viewports"])
+    instructions[role] = instructions[role].replace("Capture all three viewport widths.", "Capture the declared viewport widths: " + viewport_text + ".")
+    instructions[role] = instructions[role].replace("desktop 1440x900,\ntablet 768x1024 and mobile 390x844", viewport_text)
+    if scope["profile"] == "focused":
+        instructions[role] = instructions[role].replace("Operate ALL available major flows.", "Operate the declared focus and its directly affected return/recovery paths.")
+        instructions[role] = instructions[role].replace("with four perspectives: first_time,\nmistake, hurried, skips_explanation", "with the required perspectives: first_time, mistake")
+        instructions[role] += "\nFocused review: stay within review_scope.focus. State exclusions; never claim whole-app quality. "
+    instructions[role] += ("\nCopy evidence path, actual URL (including redirects), source, viewport and ID from browser-generated frame metadata/receipt; do not substitute the originally requested URL or infer dimensions from appearance. "
+                           "Use ux_inspect's recent_frames when metadata is needed after viewing the actual images. "
+                           "Reuse supplied already-read Memory and writing checks instead of restarting them. Short labels must remain readable without awkward wrapping.")
+    if role != "references":
+        instructions[role] += " For applicable target-app forms/dialogs, operate Tab/Enter/Escape, visible focus, validation and focus restoration; state not-applicable cases."
+    base = BASE_PROMPT
+    if scope["profile"] == "focused":
+        base = base.replace("cover the app, then revisit the top and main flows", "cover the declared focus, then revisit that task")
+        if role == "planner":
+            instructions[role] += "\nFocused planner: map the requested scope from an initial screenshot and necessary navigation only; leave the operation/state matrix to the reviewer instead of executing it twice. Do not promote unrelated flows to required."
+        if role == "reviewer":
+            instructions[role] += "\nReview the required scoped flows. A missing/broken app control is a reviewed issue with failed coverage, not an environment block: record the screenshot and return findings without repeatedly working around it. Optional unrelated flows remain outside scope."
+    return base + "\nROLE: " + role + "\n" + instructions[role] + "\n\nINPUT:\n" + json.dumps(data, ensure_ascii=False)
 
 
 def run_role(role, schema, state, run_dir, iteration):
@@ -1004,6 +1049,8 @@ def publish(state, run_dir):
             + " / ".join(f"{s} {stats[s]}件" for s in SEVERITIES) + "（未解消件数）。",
             f"発見した対象は{len(plan['screens'])}画面、{len(plan['flows'])}主要フロー。未確認はcoverageで区別。",
             "AIが初見ユーザーの視点で実画面を評価した結果。人間のユーザーテストは未実施。", ""]
+    scope = review_scope(state["config"])
+    text += [f"検証範囲: {scope['profile']} / 対象: {', '.join(scope['focus']) or '主要フロー全体'} / 画面幅: {', '.join(scope['viewports'])}。focusedは対象範囲だけの結果です。", ""]
     text += ["OOUIの構造、認知負荷、機能の充足、表示、実操作を分けて確認します。"
              "適用した共通基準・参照資料と版は各ロールのprompt.txtに保存しています。", ""]
     for k, label in [("purpose", "何のサービスか"), ("next_action", "最初の操作"),
@@ -1146,6 +1193,7 @@ def persist(state, run_dir):
     atomic_json(run_dir / "state.json", state)
     atomic_json(run_dir / "status.json", {
         "run_id": state["run_id"], "status": state["status"], "reason": state.get("reason", ""),
+        "review_scope": review_scope(state["config"]),
         "iteration": state["iteration"], "updated_at": now(),
         "counts": counts(state["audit"]) if state.get("audit") else {},
         "screens": observed_counts(state)[0],
@@ -1162,6 +1210,10 @@ def workflow(state, run_dir):
         state["plan"], state["plan_evidence"] = result, evidence
         state["evidence"] = evidence
         persist(state, run_dir)
+    if not state.get("references") and not review_scope(state["config"])["references_required"]:
+        state["references"] = {"status": "not_required", "reason": "Focused scope; no reference URLs requested", "apps": []}
+        state["reference_evidence"] = {}
+        persist(state, run_dir)
     if not state.get("references"):
         result, evidence, _ = run_role("references", REFERENCE_SCHEMA, state, run_dir, 0)
         reference_valid(result, evidence)
@@ -1177,14 +1229,14 @@ def workflow(state, run_dir):
     if state["config"]["mode"] == "audit":
         state["status"] = "reviewed"
         state["reason"] = "レビューのみ。アプリコードの修正は行っていません。"
-        if state["references"]["status"] != "ready":
+        if state["references"]["status"] not in ("ready", "not_required"):
             state["reason"] += " 類似アプリ比較は未完了: " + state["references"]["reason"]
         publish(state, run_dir)
         persist(state, run_dir)
         return 0
     if not state.get("tests"):
         state["tests"] = run_tests(state, run_dir)
-    reasons = gate(state["audit"], state["plan"], state["references"], state["tests"])
+    reasons = gate(state["audit"], state["plan"], state["references"], state["tests"], state["config"])
     score = metric(state["audit"], reasons)
     state.setdefault("best_metric", score)
     state.setdefault("plateau", 0)
@@ -1229,7 +1281,7 @@ def workflow(state, run_dir):
         validate_audit(result, evidence, state["plan"], old)
         state["audit"], state["evidence"] = result, evidence
         state["pending_review"] = False
-        reasons = gate(result, state["plan"], state["references"], state["tests"])
+        reasons = gate(result, state["plan"], state["references"], state["tests"], state["config"])
         current = metric(result, reasons)
         if current < state["best_metric"]:
             state["best_metric"], state["plateau"] = current, 0
@@ -1293,6 +1345,8 @@ def execution(args):
                       "phase_timeout": args.phase_timeout, "model": args.model,
                       "browser": args.browser, "brief": args.brief}
             config["role_sandbox"] = args.role_sandbox or "workspace-write"
+            config.update(profile=args.profile, focus=args.focus,
+                          viewports=args.viewport or (["desktop", "mobile"] if args.profile == "focused" else list(VIEWPORTS)))
             rule_paths = []
             for parent in [*reversed(project.parents), project]:
                 for name in ("AGENTS.md", "CONTRIBUTING.md"):
@@ -1378,6 +1432,9 @@ def parser():
             cmd.add_argument("run_id")
             continue
         cmd.add_argument("--url", required=True)
+        cmd.add_argument("--profile", choices=["full", "focused"], default="full")
+        cmd.add_argument("--focus", action="append", default=[])
+        cmd.add_argument("--viewport", action="append", choices=list(VIEWPORTS))
         cmd.add_argument("--start-command")
         cmd.add_argument("--test-command", action="append", default=[])
         cmd.add_argument("--review")
@@ -1392,6 +1449,11 @@ def parser():
 
 def main(argv=None):
     args = parser().parse_args(argv)
+    if args.mode not in ("doctor", "resume"):
+        if args.profile == "focused" and not any(x.strip() for x in args.focus):
+            raise Blocked("Focused review requires --focus")
+        if args.profile == "full" and (args.focus or args.viewport):
+            raise Blocked("Use --profile focused for --focus/--viewport; full requirements remain unchanged")
     if args.mode not in ("doctor", "resume") and (args.max_iterations < 1 or args.phase_timeout < 1):
         raise Blocked("Iteration/time limits must be positive")
     def interrupt(_sig, _frame):
