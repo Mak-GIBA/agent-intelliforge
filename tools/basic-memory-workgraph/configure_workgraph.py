@@ -2,6 +2,7 @@
 """Install policy and hooks without touching Basic Memory projects or notes."""
 
 import argparse
+import importlib.util
 from datetime import datetime, timezone
 import json
 import os
@@ -11,6 +12,14 @@ import shutil
 import subprocess
 import sys
 import tempfile
+
+
+def recall_environment(*args, **kwargs):
+    spec = importlib.util.spec_from_file_location('workgraph_configuration_runtime',
+                                                Path(__file__).with_name('recall_runtime.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.ensure(*args, **kwargs)
 
 
 SOURCE = Path(__file__).resolve().parent
@@ -85,14 +94,11 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
         result = subprocess.run([executable, "--version"], capture_output=True, text=True, timeout=5)
         if result.returncode:
             raise ValueError("Recall CLI version check failed")
-        python = Path(executable).parent / "python"
-        if not python.is_file(): python = Path(sys.executable)
-        check = subprocess.run([str(python), "-c", "import yaml"], capture_output=True, timeout=5)
-        if check.returncode:
-            raise ValueError("Recall runtime requires PyYAML; use the Basic Memory environment or requirements-export.txt")
-        auto_config["recallPython"] = os.path.abspath(python)
         auto_config["recallCli"] = [os.path.abspath(executable)]
         auto_config["recallVersion"] = result.stdout.strip()
+    runtime = recall_environment(codex_dir, auto_config, explicit_cli=recall_cli)
+    if runtime:
+        auto_config["recallPython"] = runtime["python"]
     auto_config["compactContext"] = True
     bm["primaryProject"] = selected_project
     for key, value in {
@@ -141,7 +147,7 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
         if source.is_file():
             changes.append((auto_dir / "templates" / source.relative_to(SOURCE / "templates"),
                             source.read_text(encoding="utf-8")))
-    for name in ("workgraph_tools.py", "workgraph_sequence.py", "workgraph_github.py", "workgraph_recall.py", "requirements-export.txt"):
+    for name in ("workgraph_tools.py", "workgraph_sequence.py", "workgraph_github.py", "workgraph_recall.py", "recall_runtime.py", "requirements-export.txt"):
         changes.append((auto_dir / name, (SOURCE / name).read_text(encoding="utf-8")))
     # This entrypoint applies only to explicit memory sharing requests. It never
     # grants sharing permission or schedules uploads from automatic save hooks.
@@ -181,6 +187,8 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
             changes.append((legacy, wrapper))
     message = (f"Configured {codex_dir}: project={selected_project}, mode={selected_mode}, "
                f"correction={auto_config['correctionMode']}, case={auto_config['caseMode']}, skill={auto_config['skillMode']}, checkpointOnCompact=false")
+    if runtime is None:
+        message += "\nRecall runtime unavailable: run bash install_basic_memory_workgraph.sh --update to prepare PyYAML."
     return changes, message
 
 

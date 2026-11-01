@@ -114,7 +114,9 @@ class WorkgraphTest(unittest.TestCase):
         self.assertEqual(bm["custom"], [1])
         self.assertEqual(bm["rememberFolder"], "manual")
         self.assertEqual(bm["placementConventions"], POLICY)
-        self.assertEqual(self.read_json("basic-memory-workgraph/config.json"),
+        runtime_config = self.read_json("basic-memory-workgraph/config.json")
+        self.assertTrue(Path(runtime_config.pop('recallPython')).is_file())
+        self.assertEqual(runtime_config,
                          {"mode": "off", "other": 3, "caseMode": "off", "skillMode": "review", "correctionMode": "off", "compactContext": True})
         hooks = self.read_json("hooks.json")
         self.assertEqual(hooks["custom"], "keep")
@@ -174,7 +176,8 @@ class WorkgraphTest(unittest.TestCase):
             path.chmod(0o755)
         result = subprocess.run(
             ["bash", str(REPO / "install_basic_memory_workgraph.sh")],
-            env={**self.env, "PATH": str(binaries) + os.pathsep + os.environ["PATH"]},
+            env={**self.env, "PATH": str(binaries) + os.pathsep + os.environ["PATH"],
+                 "BM_RECALL_PYTHON": sys.executable},
             cwd=self.home, capture_output=True, text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -347,6 +350,7 @@ class WorkgraphTest(unittest.TestCase):
         self.assertEqual(self.install(BM_CORRECTION_MODE="scoped").returncode, 0)
         self.assertEqual(self.install().returncode, 0)
         config = self.read_json("basic-memory-workgraph/config.json")
+        self.assertTrue(Path(config.pop('recallPython')).is_file())
         self.assertEqual(config, {"mode": "smart", "caseMode": "off",
                                   "skillMode": "review", "correctionMode": "scoped", "compactContext": True})
         context = self.hook("recall", {})["hookSpecificOutput"]["additionalContext"]

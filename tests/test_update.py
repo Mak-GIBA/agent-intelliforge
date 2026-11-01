@@ -59,6 +59,7 @@ class UpdateTest(unittest.TestCase):
         self.assertEqual(result['preserved'], [])
         self.assertTrue(result['changed'])
         config=json.loads((self.codex/'basic-memory-workgraph/config.json').read_text())
+        self.assertTrue(Path(config.pop('recallPython')).is_file())
         self.assertEqual(config, {'mode': 'off', 'caseMode': 'reusable', 'skillMode': 'auto', 'custom': 9, 'correctionMode': 'off', 'compactContext': True})
         for path in (self.memory/'schemas').glob('*.md'):
             meta, _, _ = schemas.split_note(path.read_text())

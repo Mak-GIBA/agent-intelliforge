@@ -61,9 +61,13 @@ Start a new session and inspect `/plugins` for `codex@basic-memory`. In `/hooks`
 
 <a id="python-tools"></a>
 
-### Prepare Python for updates, exports, and Skill registration
+### Python for retrieval and updates
 
-`--update`, sharing/JSONL/registration, and local memory retrieval need PyYAML. Placing configuration files uses the standard library; retrieval runtime validation is separate.
+`--update`, sharing/JSONL/registration, and local memory retrieval need PyYAML. Normal installation and `--update` check the saved Python, the Basic Memory environment, the current Python, and the managed venv, in that order. If none can parse YAML, the installer prepares a dedicated venv under `CODEX_HOME/basic-memory-workgraph/runtime/`. It does not add packages to existing environments or modify system Python.
+
+`--configure-only`, `--dry-run`, retrieval, and diagnostics never install dependencies. If no working runtime exists, run a normal `--update`. Missing venv support or a failed download leaves existing configuration intact. Unmanaged directories at the runtime location are preserved.
+
+For manual sharing, JSONL, or Skill registration commands, you can prepare a separate Python:
 
 ```bash
 python3 -m venv .venv
@@ -78,16 +82,23 @@ Activate this environment for later examples. In another terminal, return to the
 
 ### Bind a retrieval runtime
 
-First installation checks the Basic Memory executable and its Python environment. For an existing installation, bind an installed compatible executable by absolute path:
+The selected absolute Python path is saved as `recallPython` in `config.json` and shared by hooks and retrieval helpers. To override automatic selection:
+
+```bash
+BM_RECALL_PYTHON="/absolute/path/to/venv/bin/python" \
+bash install_basic_memory_workgraph.sh --configure-only
+```
+
+Bind a Basic Memory CLI separately when needed, for example for Cloud projects:
 
 ```bash
 BM_RECALL_CLI="/absolute/path/to/basic-memory" \
 bash install_basic_memory_workgraph.sh --configure-only
 ```
 
-`--update` accepts the same environment variable; the configuration helper also accepts `--recall-cli`. Omitting it preserves the existing binding. Configuration checks the executable version and PyYAML before writing, rolling back modified configuration files on write failure. Binding does not upgrade Basic Memory or migrate its database.
+`--update` accepts the same environment variables; the configuration helper also accepts `--recall-cli`. Omitting overrides prefers valid saved bindings. Invalid explicit choices fail rather than silently selecting another environment. When only the CLI is explicitly selected, its Python environment must support PyYAML; set `BM_RECALL_PYTHON` as well to use a separate Python. Configuration writes roll back on failure. Binding does not upgrade Basic Memory or migrate its database.
 
-Local projects read registered Markdown directly. Cloud projects use the bound CLI and report connection failures as unavailable. `workgraph_recall.py doctor` checks execution; `prepare --mode plan` checks project retrieval. A successful version check alone does not prove retrieval works.
+Local projects read registered Markdown directly and do not require a CLI binding. Cloud projects use the bound CLI and report connection failures as unavailable. `workgraph_recall.py doctor` checks the running Python, PyYAML, and agreement with the saved Python. Missing dependencies or a mismatch produce a nonzero exit status and repair guidance. A helper launched without PyYAML can restart once in a validated saved Python. Run `prepare --mode plan` separately to verify project retrieval; successful diagnostics alone do not prove retrieval works.
 
 <a id="update"></a>
 
@@ -111,11 +122,9 @@ Inspect and preserve uncommitted changes first. Skip Git retrieval when applying
 
 ### Preview and apply
 
-Prepare [Python](#python-tools) once, then run:
+Run in the repository. If preview has no usable runtime yet, [prepare Python](#python-tools) first:
 
 ```bash
-source .venv/bin/activate
-
 # Preview updates without writing
 bash install_basic_memory_workgraph.sh --update --dry-run
 

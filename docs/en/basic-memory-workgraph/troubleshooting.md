@@ -23,7 +23,7 @@ Run commands at the repository root; requests go in Codex.
 | No Stop evaluation | Normal in Plan; implementation still needs this turn armed. Start a new session after update |
 | No Cases | Default `caseMode=off`; use explicit requests, `reusable`, or `progressive` |
 | No Skill created | Default `skillMode=review`; `auto` still needs creator, validation, and added value |
-| PyYAML missing | Prepare [the environment](installation.md#python-tools) and use the same Python |
+| PyYAML missing | Run `bash install_basic_memory_workgraph.sh --update` to detect or prepare the retrieval runtime. Set `BM_RECALL_PYTHON` to select a Python explicitly. See [environment details](installation.md#python-tools) |
 | Update exit 2 | Inspect `preserved`; retained custom files do not mean total failure |
 | Storage missing/mismatched | Inspect `primaryProject` and registration; see [update details](installation.md#update-details) |
 | Chronology/interpretation wrong | [Audit](#audit), then compare actual conversation evidence |

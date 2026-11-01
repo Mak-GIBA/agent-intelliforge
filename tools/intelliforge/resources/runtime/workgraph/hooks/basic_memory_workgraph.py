@@ -140,6 +140,8 @@ def recall_service(workdir=None):
 def recall_view(result):
     """Hook-only projection. Preserve source bodies and applicability metadata verbatim."""
     view = {"status": result["status"]}
+    for key in ("error", "repair"):
+        if result.get(key): view[key] = result[key]
     if result.get("candidates"): view["candidates"] = result["candidates"]
     if result.get("notes"):
         view["notes"] = [{key: note[key] for key in ("id", "title", "content", "metadata", "blocked", "warning")
@@ -151,7 +153,11 @@ def retrieved_context(event, state):
     helper = globals().get("RECALL_SOURCE", ROOT / "workgraph_recall.py")
     if not helper.is_file(): return "Memory retrieval unavailable: recall helper is missing."
     ticket = state.stem if state else hashlib.sha256(json.dumps([event.get("session_id"), event.get("turn_id")]).encode()).hexdigest()
-    command = globals().get("RECALL_COMMAND") or shlex.join([sys.executable, str(helper), "--codex-dir", str(ROOT.parent)])
+    try:
+        python = read_object(ROOT / "config.json").get("recallPython", sys.executable)
+    except (OSError, ValueError):
+        python = sys.executable
+    command = globals().get("RECALL_COMMAND") or shlex.join([python, str(helper), "--codex-dir", str(ROOT.parent)])
     instructions = (
         "Before drafting, prepare sanitized purpose/audience/output/constraints; read scope/exceptions. "
         "Select adopted/excluded/deferred; adopted needs condition/action/verification and checked artifacts. "
@@ -173,7 +179,7 @@ def retrieved_context(event, state):
         query = service.seed_query(event.get("prompt", ""))
         result = service.prepare(ticket, query[:180], Path(event.get("cwd") or os.getcwd()), "plan")
         return instructions + "Seed (refine inadequate terms; unavailable != no_results; needs_context needs terms):\n" + json.dumps(recall_view(result), ensure_ascii=False, separators=(",", ":"))
-    except (OSError, ValueError, TypeError, AttributeError):
+    except (OSError, ValueError, TypeError, AttributeError, ImportError):
         return instructions + "Memory retrieval unavailable; do not report no matching notes."
 
 
@@ -270,6 +276,16 @@ def evaluate(event, action):
 
 
 def main():
+    # Old sessions may still launch a cached bare-python hook command.
+    try:
+        import importlib.util
+        source = ROOT / 'recall_runtime.py'
+        if source.is_file():
+            spec = importlib.util.spec_from_file_location('workgraph_hook_runtime', source)
+            helper = importlib.util.module_from_spec(spec); spec.loader.exec_module(helper)
+            helper.reexec_if_needed(read_object(ROOT / 'config.json'), force_binding=True)
+    except (OSError, ValueError, ImportError):
+        pass
     if len(sys.argv) > 1 and sys.argv[1] == "arm":
         parser = argparse.ArgumentParser(description="Attest implementation mode for this turn only")
         parser.add_argument("--ticket", required=True)
