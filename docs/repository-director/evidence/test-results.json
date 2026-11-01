@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-31",
+  "environment": "Isolated copy of tracked and new source files; Python 3.12.13, PyYAML 6.0.3. Ignored local archives/caches excluded.",
+  "source_manifest_sha256": "297a5b48b899826bdbf29874832e473613d07625eb69803b04384636c25f7c1d",
+  "standalone_sha256": "de669522031271698d8249080b7dc7af2d6c8df49037c96f83ef01a9b0cef02d",
+  "results": {
+    "full_suite": {
+      "run": 506,
+      "skipped": 5,
+      "failures": 0,
+      "errors": 0
+    },
+    "repository_director": {
+      "run": 32,
+      "failures": 0,
+      "errors": 0
+    },
+    "standalone_self_test": {
+      "run": 25,
+      "failures": 0,
+      "errors": 0
+    },
+    "research_bundle_suites": {
+      "run": [
+        234,
+        115,
+        56,
+        8
+      ],
+      "skipped": 5,
+      "failures": 0,
+      "errors": 0
+    },
+    "new_engine_and_migration_statement_coverage_percent": 88,
+    "documentation_link_checks": {
+      "pages": 39,
+      "errors": 0
+    },
+    "generated_distribution_files_checked": 636,
+    "package_build": "wheel and sdist built; wheel installed into a temporary venv; both host previews and old-ID rejection verified"
+  },
+  "limits": [
+    "No live GitHub/GitLab writes",
+    "No native Windows test",
+    "No Claude model run",
+    "Text-generation evaluation is not an autonomous repository-editing E2E"
+  ]
+}

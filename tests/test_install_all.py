@@ -12,8 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 INSTALLERS = [
     ("workgraph", "install_basic_memory_workgraph.sh", []),
     ("ux-stack", "install_codex_ux_stack.sh", []),
-    ("speckit", "install_speckit_upstream.sh", ["--apply"]),
-    ("github-pm", "install_codex_github_pm.sh", []),
+    ("repository-director", "install_repository_director.sh", ["--apply"]),
     ("design-research", "install_design_research.sh", []),
     ("ecc", "install_ecc.sh", ["--apply"]),
     ("office", "install_codex_office.sh", ["--apply"]),
@@ -90,7 +89,7 @@ class BatchInstallerTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("PREVIEW", result.stdout)
         self.assertIn("--update", result.stdout)
-        self.assertEqual(len([line for line in result.stdout.splitlines() if line.startswith("[codex-tools]")]), 10)
+        self.assertEqual(len([line for line in result.stdout.splitlines() if line.startswith("[codex-tools]")]), 9)
         self.assertEqual(self.calls(), [])
         self.assertEqual(before, {p.relative_to(self.home): p.read_bytes() for p in self.home.rglob("*") if p.is_file()})
 
@@ -109,7 +108,7 @@ class BatchInstallerTests(unittest.TestCase):
         result = self.invoke("--apply")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(self.calls(), self.expected())
-        self.assertIn("COMPLETE: 9", result.stdout)
+        self.assertIn("COMPLETE: 8", result.stdout)
         self.assertNotIn("--force", result.stdout)
 
     def test_repeated_selection_is_deduplicated_and_runs_from_any_directory(self):
@@ -187,14 +186,14 @@ class BatchInstallerTests(unittest.TestCase):
         self.assertEqual(self.calls(), self.expected("herdr"))
 
     def test_failures_are_reported_and_other_tools_still_run(self):
-        self.env["BULK_TEST_FAILURES"] = json.dumps({INSTALLERS[0][1]: 2, INSTALLERS[6][1]: 7})
+        self.env["BULK_TEST_FAILURES"] = json.dumps({INSTALLERS[0][1]: 2, INSTALLERS[5][1]: 7})
         result = self.invoke("--apply")
         self.assertEqual(result.returncode, 1, result.stderr)
         self.assertEqual(self.calls(), self.expected())
         self.assertIn("workgraph: INCOMPLETE (exit 2)", result.stdout)
         self.assertIn("office: INCOMPLETE (exit 7)", result.stdout)
         self.assertIn("herdr: OK", result.stdout)
-        self.assertIn("成功 7 / 未完了 2", result.stderr)
+        self.assertIn("成功 6 / 未完了 2", result.stderr)
         self.assertNotIn("[codex-tools] COMPLETE", result.stdout)
 
     def test_interrupt_exit_stops_subsequent_installers(self):

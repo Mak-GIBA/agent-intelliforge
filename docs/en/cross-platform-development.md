@@ -25,7 +25,7 @@ GitHub/Office sources were extracted from verified ZIPs. `EXTRACTED.json` record
 # Generate/check standalone installers from their maintained sources
 python tools/kotonoha/build_installer.py
 python tools/kotonoha/build_installer.py --check
-python tools/codex-github-pm/build_installer.py --check
+python tools/repository-director/build_installer.py --check
 python tools/codex-office/build_installer.py --check
 python tools/herdr/build_installer.py --check
 

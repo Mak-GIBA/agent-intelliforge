@@ -10,7 +10,7 @@
 
 Clone the complete repository: the bulk script alone lacks installers/assets. Installing all standard kits targets Linux / WSL2 and needs Bash, Python 3.11+ as `python3` with venv/pip, Node.js 20+/npm, Git, curl, installed Codex CLI, and network access to distributions. Updating Workgraph needs PyYAML in the same Python; see [Python setup](basic-memory-workgraph/installation.md#python-tools).
 
-Codex must provide the required Plugin, MCP, and app-server commands. Individual selection needs only that kit's prerequisites. kotonoha alone prepares missing Python/Node.js user-locally. Design Research 2.5.0 / Upstream 2.0.6 builds require Python 3.11+. GitHub authentication, model login, and document rendering need the separate preparation described in each guide.
+Codex must provide the required Plugin, MCP, and app-server commands. Individual selection needs only that kit's prerequisites. kotonoha alone prepares missing Python/Node.js user-locally. Design Research builds require Python 3.11+. GitHub authentication, model login, and document rendering need the separate preparation described in each guide.
 
 ## Install
 
@@ -28,8 +28,7 @@ No arguments / `--dry-run` displays commands without invoking individual install
 |---|---|---|
 | `workgraph` | Basic Memory, official Plugin, Workgraph/hooks/project; existing installation uses settings-preserving `--update` | [Guide](basic-memory-workgraph/installation.md) |
 | `ux-stack` | OOUI, cognitive guidance, visual UX verification, Product Design / Build Web Apps, browser tools | [Guide](codex-ux-stack/installation.md) |
-| `speckit` | Build/verify both research tools from pinned base, install SpecKit CLI and Workbench/Skills | [Guide](speckit-upstream/installation.md) |
-| `github-pm` | Skill and common Codex guidance; gh is separately selected | [Guide](codex-github-pm/installation.md) |
+| `repository-director` | Repository policies, specifications, GitHub/GitLab; no SpecKit dependency | [Guide](repository-director/installation.md) |
 | `design-research` | Build/verify both distributions, install research Skill/harness | [Guide](design-research/installation.md) |
 | `ecc` | Native ECC originals and on-demand entries | [Guide](codex-ecc/installation.md) |
 | `office` | OfficeCLI, document libraries, Workbench | [Guide](codex-office/installation.md) |
@@ -45,20 +44,20 @@ bash install_all.sh --only ux-stack,kotonoha --apply
 
 `--only` accepts comma-separated names or repeated flags; duplicate IDs collapse and execution follows table order. Asset paths are based on the script location, so absolute invocation from another directory works.
 
-Upstream and Design Research must each be selected; neither installs the other:
+Repository Director and Design Research must each be selected; neither installs the other:
 
 ```bash
-bash install_all.sh --only speckit,design-research,kotonoha --dry-run
-bash install_all.sh --only speckit,design-research,kotonoha --apply
+bash install_all.sh --only repository-director,design-research,kotonoha --dry-run
+bash install_all.sh --only repository-director,design-research,kotonoha --apply
 ```
 
-Both distributions normally fetch/verify pinned original installers and build them. Bulk installation does not forward `--base-dir`, `--offline`, or `--build-only`. Use the [Research](design-research/installation.md#assembly-and-offline-use) / [Upstream](speckit-upstream/installation.md#assembly-and-offline-use) procedures for offline builds/redistribution. See [validation (Japanese)](../design-research/validation.md) for build/update/diagnosis results and earlier stopping conditions.
+Repository Director installs offline. Design Research fetches/verifies pinned base resources for assembly. Bulk installation does not forward `--base-dir`, `--offline`, or `--build-only`. Use the [Research](design-research/installation.md#assembly-and-offline-use) procedures for offline builds/redistribution. See [validation (Japanese)](../design-research/validation.md) for build/update/diagnosis results and earlier stopping conditions.
 
 ## Rerun, update, and remove
 
 Individual protection rules control existing settings and edits; bulk installation never forwards `--force`. Existing Workgraph is detected under `CODEX_HOME`, default `~/.codex`, and updated while preserving project/modes. This path does not upgrade Basic Memory or external Plugins, or fall back to first-install reset for incomplete state.
 
-Other kits use their normal installation paths; rerunning all kits is not a guarantee of upgrading every kit. Design Research updates need individual `--update`, Upstream `--apply --update`. Select versions, optional features, custom destinations, and removal through each guide. Herdr has no uninstall switch; remove its managed Bash integration manually. Optional Office MCP, Docling, and OS packages are not selected by the bulk wrapper.
+Other kits use their normal installation paths; rerunning all kits is not a guarantee of upgrading every kit. Design Research updates need individual `--update`, Repository Director `--apply --update`. Select versions, optional features, custom destinations, and removal through each guide. Herdr has no uninstall switch; remove its managed Bash integration manually. Optional Office MCP, Docling, and OS packages are not selected by the bulk wrapper.
 
 ## Partial failure
 

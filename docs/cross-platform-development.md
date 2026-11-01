@@ -27,7 +27,7 @@ GitHub管理とOfficeは、以前のZIP資材を検証して読みやすいソ�
 # 各正本から既存の単一ファイルを生成・確認
 python tools/kotonoha/build_installer.py
 python tools/kotonoha/build_installer.py --check
-python tools/codex-github-pm/build_installer.py --check
+python tools/repository-director/build_installer.py --check
 python tools/codex-office/build_installer.py --check
 python tools/herdr/build_installer.py --check
 

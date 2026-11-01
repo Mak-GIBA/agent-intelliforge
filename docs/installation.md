@@ -21,7 +21,7 @@ Node.js 20以降・npm、Git、curl、導入済みCodex CLI、外部配布元へ
 Codex CLIには、各ツールが使うplugin・MCP・app-server等のコマンドが必要です。
 選択したツールだけを入れる場合は、そのツールの前提条件を確認してください。
 kotonoha単独では不足するPython・Node.jsを専用領域へ自動準備します。他キットの前提条件はそれぞれの導入ガイドを参照してください。
-Design Research 2.5.0とUpstream 2.0.6の組み立てにはPython 3.11以上が必要です。
+Design Researchの組み立てにはPython 3.11以上が必要です。
 導入後のGitHub接続、モデルの認証、文書描画など、実際の利用に必要な準備は各ガイドで説明しています。
 
 ## 導入する
@@ -43,8 +43,7 @@ bash install_all.sh --apply
 |---|---|---|
 | `workgraph` | Basic Memory、公式plugin、Workgraph・hooks・保存プロジェクト。導入済みなら設定を保持する`--update` | [導入・更新](basic-memory-workgraph/installation.md) |
 | `ux-stack` | ooui-design、認知負荷のガイド、画像付きUX検証、Product Design・Build Web Apps、UIレビュー、Playwright | [導入・更新](codex-ux-stack/installation.md) |
-| `speckit` | 固定版から両ツールを組み立て・検証し、SpecKit CLIとWorkbench・上流工程のSkillを導入 | [導入・更新](speckit-upstream/installation.md) |
-| `github-pm` | GitHub Project DirectorとCodex共通指示。ghの導入は別途指定 | [導入・更新](codex-github-pm/installation.md) |
+| `repository-director` | 運営方針・既存コードの仕様整理・GitHub/GitLab運用。SpecKitは必須にしない | [Guide](repository-director/installation.md) |
 | `design-research` | 固定版から両ツールを組み立て・検証し、単一入口の研究Skillとハーネスを導入 | [導入・更新](design-research/installation.md) |
 | `ecc` | Codex標準ECC pluginと必要時に参照する入口。`--apply`で導入・設定 | [導入・更新・復元](codex-ecc/installation.md) |
 | `office` | OfficeCLI、文書処理ライブラリ、Office Workbench。`--apply`で導入 | [導入・更新](codex-office/installation.md) |
@@ -62,16 +61,16 @@ bash install_all.sh --only ux-stack,kotonoha --apply
 `--only`はカンマ区切りでも、複数回でも指定できます。同じIDの重複は1回にまとめ、上の表の順序で実行します。
 スクリプト自身の場所を基準に資材を参照するため、別の作業ディレクトリから絶対パスで呼び出すこともできます。
 
-UpstreamとDesign Researchを組み合わせる場合は、両方を選びます。片方の導入で、もう片方が自動導入されるわけではありません。
+Repository DirectorとDesign Researchを組み合わせる場合は、両方を選びます。片方の導入で、もう片方が自動導入されるわけではありません。
 
 ```bash
-bash install_all.sh --only speckit,design-research,kotonoha --dry-run
-bash install_all.sh --only speckit,design-research,kotonoha --apply
+bash install_all.sh --only repository-director,design-research,kotonoha --dry-run
+bash install_all.sh --only repository-director,design-research,kotonoha --apply
 ```
 
 両配布スクリプトは、固定コミットの元インストーラー2本を取得・照合して組み立てるため、通常は通信します。
 一括スクリプトは`--base-dir`・`--offline`・`--build-only`を転送しません。
-オフラインの組み立て・再配布は、[Design Research](design-research/installation.md#組み立てとオフライン利用)または[Upstream](speckit-upstream/installation.md#組み立てとオフライン利用)の個別手順を使います。
+オフラインの組み立て・再配布は、[Design Research](design-research/installation.md#組み立てとオフライン利用)の個別手順を使います。
 組み立て・自己テスト・更新・診断の確認結果と過去の停止条件は、[検証結果](design-research/validation.md)に記載しています。
 
 ## 再実行・更新・解除
@@ -85,7 +84,7 @@ bash install_all.sh --only speckit,design-research,kotonoha --apply
 
 ほかのツールは通常の導入経路を使います。すでにある管理対象をそのまま保持するツールもあるため、
 一括導入の再実行がすべてのツールの最新版への更新になるわけではありません。
-Design Researchの更新には`--update`、Upstreamの更新には`--apply --update`を個別に指定します。
+Design Researchの更新には`--update`、Repository Directorの更新には`--apply --update`を個別に指定します。
 特定の版への更新、任意機能、配置先変更は、表の導入ガイドに沿って個別インストーラーで指定します。
 解除も各ガイドに従って行います。Herdrは専用の解除オプションがなく、管理対象のBash設定等を手動で取り除きます。
 OfficeのMCP・Docling・OSパッケージ導入などの任意機能は、一括スクリプトからは指定しません。

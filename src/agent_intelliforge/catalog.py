@@ -5,7 +5,7 @@ import json
 import os
 from pathlib import Path
 
-ORDER = ("workgraph", "ux-stack", "speckit", "github-pm", "design-research",
+ORDER = ("workgraph", "ux-stack", "repository-director", "design-research",
          "ecc", "office", "kotonoha", "herdr")
 MARKETPLACE = "agent-intelliforge"
 
@@ -63,6 +63,8 @@ def selection(value: list[str] | None, catalog: dict[str, dict]) -> list[dict]:
     ids = []
     for part in value or []:
         ids.extend(part.split(","))
+    if set(ids) & {'speckit', 'github-pm'}:
+        raise ForgeError('speckit/github-pm were retired; use --only repository-director. See its legacy migration guide.')
     if "yomiyasu" in ids:
         raise ForgeError("The yomiyasu kit ID was retired; use --only kotonoha.")
     if any(not item or item not in catalog for item in ids):

@@ -92,8 +92,7 @@ Follow a kit's link for its overview, installation, and examples. Use its ID wit
 |---|---|---|
 | `workgraph` | [Basic Memory Workgraph](docs/en/basic-memory-workgraph/README.md) | Save reusable knowledge from attempts, obstacles, verified workarounds, and contextual corrections. |
 | `ux-stack` | [Codex UX Stack](docs/en/codex-ux-stack/README.md) | Design screens around objects and actions, then implement and review them with screenshots and browser operations. |
-| `speckit` | [SpecKit Upstream](docs/en/speckit-upstream/README.md) | Turn goals, concerns, and use cases into requirements; integrate technical research into design and verification plans. |
-| `github-pm` | [GitHub Project Director](docs/en/codex-github-pm/README.md) | Investigate and organize Issues, PRs, Projects, ownership, deadlines, dependencies, and progress through conversation. |
+| `repository-director` | [Repository Director](docs/en/repository-director/README.md) | Repository policies, indexed specifications from existing code or new goals, and GitHub/GitLab collaboration. |
 | `design-research` | [Design Research](docs/en/design-research/README.md) | Compare core approaches using primary sources and experiments, reporting conditions, results, and unverified claims. |
 | `ecc` | [Codex ECC](docs/en/codex-ecc/README.md) | Keep ECC originals and read specialized Python, error-handling, and security procedures when needed. |
 | `office` | [Office Workbench](docs/en/codex-office/README.md) | Read and edit PDF, Word, and PowerPoint files while protecting originals and checking differences and rendering. |
@@ -109,7 +108,7 @@ Open the target project in Codex and enter a request in the conversation. These 
 ### Clarify what to build and how to verify it
 
 ```text
-$upstream-new I want an app that searches internal documents and answers with supporting evidence. Organize the users, requirements, design, and verification plan.
+$repository-director I want an app that searches internal documents and answers with supporting evidence. Organize the users, requirements, design, and verification plan.
 ```
 
 ### Compare approaches before choosing technology
@@ -124,9 +123,9 @@ $design-research Compare ways to improve this project's search accuracy and test
 $kotonoha Revise this design document in Japanese so readers can follow the mechanism and practical changes. Preserve technical terms and conditions.
 ```
 
-Start with Upstream for overall requirements and design, or Design Research for a specific technical comparison. For a search app, integrate the research findings into the overall design and use UX Stack to check the search screens and interactions. Use kotonoha to finish Japanese design documents and reports.
+Start with Repository Director for overall requirements and design, or Design Research for a specific technical comparison. For a search app, integrate the research findings into the overall design and use UX Stack to check the search screens and interactions. Use kotonoha to finish Japanese design documents and reports.
 
-Each kit also works independently. When combining them, follow the separate procedures for adopting research findings, approving designs, and implementing the app. See [upstream workflows](docs/en/speckit-upstream/usage.md) and [research workstreams and reassessment](docs/en/speckit-upstream/reassessment.md).
+Each kit also works independently. When combining them, follow the separate procedures for adopting research findings, approving designs, and implementing the app. See [upstream workflows](docs/en/repository-director/usage.md) and [existing-code documentation](docs/en/repository-director/usage.md).
 
 ## Installation and operation
 
@@ -226,7 +225,7 @@ Restart WSL and check `free -h` and `swapon --show` inside Linux. This setting a
 
 Root-level `install_*.sh` files are the existing installation entry points. The shared CLI lives in `src/agent_intelliforge/`, maintained sources and kit definitions in `tools/`, generated Plugins in `plugins/`, guides and evaluation material in `docs/`, and regression tests in `tests/`. Edit maintained sources and regenerate distribution files; see [distribution development](docs/en/cross-platform-development.md).
 
-The bulk installer, Workgraph, and Codex ECC need the complete repository. Other kits can use their individual scripts alone. Design Research and Upstream fetch and verify a pinned base before building; offline use needs [advance preparation](docs/en/design-research/installation.md#assembly-and-offline-use).
+The bulk installer, Workgraph, and Codex ECC need the complete repository. Other kits can use their individual scripts alone. Design Research fetches and verifies a pinned base before building; offline use needs [advance preparation](docs/en/design-research/installation.md#assembly-and-offline-use).
 
 This repository combines custom workflows and management tools with external Skills, Plugins, and CLIs. Codex, Basic Memory, SpecKit, ECC, Playwright, meiseki, and yomiyasu remain maintained by their respective providers. Kit guides identify their sources and distinguish upstream components from custom functionality.
 

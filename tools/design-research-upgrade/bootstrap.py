@@ -72,25 +72,24 @@ def extract(data,destination):
 def parse(argv):
     p=argparse.ArgumentParser(description=__doc__,allow_abbrev=False,
       formatter_class=argparse.RawDescriptionHelpFormatter,
-      epilog='''Default: design-research installs; upstream only plans unless --apply is passed.
+      epilog='''Default: Design Research installs. Repository Director is a separate offline kit.
 Installer options (passed to the original managed installer after build):
   design-research: --update --skills-dir DIR --project DIR --force --uninstall
                   --status --doctor --self-test --extract DIR --json
-  upstream:       --apply --update --skip-specify --doctor --self-test --extract DIR
 
 Examples (Codex entry points are typed in Codex, not in your shell):
   bash install_design_research.sh --dry-run --update
   bash install_design_research.sh --update
-  bash install_speckit_upstream.sh --apply --update
+  bash install_repository_director.sh --apply
   bash install_design_research.sh --list-skills
   bash install_design_research.sh --bundle-self-test
   bash install_design_research.sh --build-only ./offline-installers
 
 --dry-run does not download, install, or inspect an existing destination.
---build-only outputs both rebuilt scripts and build logs, without installing.
+--build-only outputs the rebuilt Research script, sources and build logs, without installing.
 --base-dir requires the ORIGINAL pinned 2.0.1 files, not previous upgrade wrappers.
-A generated Design Research installer installs offline. Upstream's --skip-specify
-prevents its original optional SpecKit dependency installation.
+A generated Design Research installer installs offline. Historical Upstream base
+resources are retained internally for research compatibility, not as an active kit.
 ''')
     p.add_argument('--base-dir',type=Path,help='Directory with both original pinned installers')
     p.add_argument('--offline',action='store_true',help='Do not fetch base files; --base-dir required for a build')

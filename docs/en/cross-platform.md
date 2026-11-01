@@ -89,13 +89,13 @@ Updates verify ownership/hashes and refuse unmanaged/edited assets, symlinks/jun
 
 ## Execute research and UX evaluation
 
-Existing Skill entries remain; Claude names include `/design-research:design-research`, `/ux-stack:ux-gan-harness`, and `/speckit:upstream-new`. Generated commands connect to shared dispatch:
+Existing Skill entries remain; Claude names include `/design-research:design-research`, `/ux-stack:ux-gan-harness`, and `/repository-director:repository-director`. Generated commands connect to shared dispatch:
 
 ```bash
 intelliforge kit-run design-research --agent claude -- doctor --project <project>
 intelliforge kit-run design-research --agent claude -- research --project <project> --brief "Approaches and constraints to compare" --slug comparison --allow-network
 intelliforge kit-run ux-stack --agent claude -- audit --project <project> --url http://localhost:3000
-intelliforge kit-run speckit --agent claude -- doctor --project <project>
+intelliforge kit-run repository-director --agent claude -- check --project <project>
 ```
 
 Claude reuses role prompts, JSON schemas, budgets, and artifact checks, parsing structured `claude -p` output. Unstructured/failed executions cannot count as success. UX uses bundled Playwright rather than assuming another product's browser capability. Existing authorization, fact preservation, independent review, and evidence rules remain.

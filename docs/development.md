@@ -63,8 +63,8 @@ python3 -m unittest discover -s tests -v
 bash -n install_all.sh
 bash -n install_basic_memory_workgraph.sh
 bash -n install_codex_ux_stack.sh
-bash -n install_speckit_upstream.sh
-bash -n install_codex_github_pm.sh
+bash -n install_repository_director.sh
+bash install_repository_director.sh --self-test
 bash -n install_design_research.sh
 bash -n install_ecc.sh
 bash -n install_codex_office.sh
@@ -90,8 +90,7 @@ policy変更はリポジトリの `tools/basic-memory-workgraph/memory-policy.md
 | 一括インストーラー | `python3 -m unittest discover -s tests -p 'test_install_all.py' -v`、Bash構文確認 | 一時HOMEと模擬インストーラーで全ツール・個別選択・予定表示・設定保持の更新経路・失敗集計・中断を確認。実取得や全ツールの連続導入は含まない |
 | Workgraph | 上記のPythonテスト | 設定、保存形式、共有、更新等のローカル処理。実際の外部パッケージ導入は含まない |
 | UX Stack | Pythonテスト、Skill・配布物の検査、任意の実Chromiumチェック | OOUI資料の標準導入・更新・共有、編集保護、反復・停止、関連移動と状態保持、画像管理を一時環境で確認。実モデル反復の完了とGUI呼び出しは未確認。[検証範囲](codex-ux-stack/validation.md) |
-| SpecKit Upstream | `bash install_speckit_upstream.sh --bundle-self-test`、固定版からの組み立てと内蔵試験 | 同梱契約試験と組み立て後の本体試験を区別する。組み立て・内蔵166件と、このPCでの更新・診断を確認。[検証結果](design-research/validation.md) |
-| GitHub Project Director | `bash install_codex_github_pm.sh --self-test` | 一時環境での導入・更新・解除、読み取り補助、Skillの静的な指示内容を検証。実GitHubへの書き込みやモデルの出力品質を保証しない |
+| Repository Director | `bash install_repository_director.sh --self-test` | Isolated lifecycle, document and migration checks. [Validation](repository-director/validation.md) |
 | Design Research | `bash install_design_research.sh --bundle-self-test`、固定版からの組み立てと内蔵試験 | 両配布物に同じ更新資材を内蔵。2.5.0の同梱330件と両ツールの組み立て・自己テストを確認。実モデルの検証範囲は[検証結果](design-research/validation.md)を参照 |
 | Codex ECC | `python3 -m unittest discover -s tests -p 'test*ecc*.py' -v`、Bash構文確認 | 模擬Codexによる新規導入、既存再利用、更新失敗・再実行、復元、設定維持と原本取得。新規環境への実ダウンロードは別途確認が必要 |
 | Office Workbench | `bash install_codex_office.sh --self-test` | 一時環境で導入・編集保護・文書処理を検証。通信・Codexは模擬し、実PDFライブラリがない対象はSKIP。実OfficeCLIや描画のE2E確認は別途必要 |
@@ -151,69 +150,21 @@ cp docs/_templates/installer/*.md docs/example-tool/
 - 保存方針・スキーマ・機械が参照するテンプレートは、それぞれの保守元に維持し、docsでは説明とリンクを提供します。通常は`tools/<installer-id>/`、研究の組み立て版は固定版ベースと内蔵の更新資材を確認します。
 - 文書の移動では相対リンクと既存アンカーを確認し、古い入口からも新しい説明へ移動できるようにします。
 
-### SpecKitの埋め込み資料
+### Repository Director
 
-現在のDesign ResearchとUpstreamは、同じ更新用ZIPを配布スクリプトへ内蔵しています。
-固定コミット`d3f46e0d591b45cb2423317030a489b91566e891`の元インストーラー2本を照合し、
-一時領域で更新を適用・生成・検証してから、通常の単一ファイル配布物を出力します。
+<a id="speckitの埋め込み資料"></a>
 
-更新元を読むには、未使用または空の一時ディレクトリへ展開します。通信・導入は行いません。
+`tools/repository-director/`がSkill・文書ヘルパー・移行処理・テストの正本です。
+`python3 tools/repository-director/build_installer.py --check`で単体配布物との一致を確認します。
+`python3 tools/intelliforge/build.py --assembled-source <research-assembly>`でPluginと実行資材を生成します。
 
-```bash
-bash install_speckit_upstream.sh --extract-bundle /tmp/codex-research-upgrade
-bash install_speckit_upstream.sh --bundle-self-test
-```
-
-展開される`codex_interface_upgrade/`で、次の役割を確認します。
-
-| 保守元 | 役割 |
-|---|---|
-| `bootstrap.py`・`build_installers.py`・`pinned_base.py` | 配布入口、固定版の取得・照合、組み立てと検証 |
-| `integrate.py`・`installer_commands.py`・`command_assets.py` | 更新の適用、単一研究入口、旧ショートカットの退役 |
-| `overlay/tools/design-research/skill/` | Codexからの入口選択、状態確認と実行準備 |
-| `core_upgrade/`とその`previous_report_upgrade/` | 研究分割、再評価、提案方式の報告、Upstreamのv2連携 |
-| `tests/`と各更新層の`tests/` | 独立した契約試験。実モデルの評価とは別 |
-
-組み立てを確認する場合は、固定版の元スクリプト2本を用意します。
-更新用ラッパーや、固定版を編集したファイルはベースに使えません。
-
-```bash
-bash install_speckit_upstream.sh \
-  --base-dir /absolute/path/pinned-base --offline --build-only /absolute/path/empty-output
-```
-
-成功時の出力は両インストーラー、`build-summary.json`、`validation/`のログ、`sources/`の組み立て済みソースです。
-組み立て版を保守するときは、展開した更新元と固定版への適用を照合し、両配布物の更新資材・版を揃えます。
-既存の`tools/speckit-upstream/build_single.py`や`tools/design-research/build_installer.py`は、組み立て途中の通常配布物を作るビルダーです。
-現在のリポジトリでそのまま実行して、ルートの組み立て用スクリプトを旧形式で上書きしないでください。
-
-`--bundle-self-test`と、組み立て後の`--self-test`は異なります。
-2026-10-10の初回確認では同梱249件は成功し、組み立て後のUpstream試験166件は2 failure・6 errorで停止しました。
-停止原因の修正後は組み立て・自己テスト・このPCの更新が成功し、2.4.0では同梱287件も成功しています。2.5.0では保存単位と完了条件の試験を加え、同梱330件と組み立て後のUpstream 166件が成功しています。
-[再現条件と検証結果](design-research/validation.md)
-
-Upstreamの連携方針は、更新元の`RESEARCH_FIRST.md`・`RESEARCH_WORKSTREAMS.md`と利用ガイドを照合します。
-
-- ストーリー・懸念・ユースケースから要件へ進み、必要なレビュー・明示承認後に研究へ渡す。
-- 新規・実現方式を変える設計は、該当テーマの研究と統合を経て確定する。標準実装は根拠付きで分類する。
-- 未導入・実行不能では必要な研究を未実行にし、要件・As-Isを整理しても方式設計を確定しない。
-- v2の要件・計画ハッシュ、テーマ別run・保存版報告、統合状態とUI/UX適用を対応させる。旧v1を勝手に書き換えない。
-- 画面例に実際のUI/UX Skillを適用し、静止画・プロトタイプ・実際の操作確認を区別する。
-
-これらはSkillの指示・CLIの契約・実行結果を分けて確認します。
-実Codexで短い依頼から研究が選ばれ、設計へ反映されるかは別途評価が必要です。
-
-### GitHub Project Directorの埋め込み資料
-
-GitHub Project Directorも単一ファイル内に資料と実装を持ちます。
-`bash install_codex_github_pm.sh --extract /tmp/github-pm-review`で、未使用または空のディレクトリへ展開できます。
-`README_EXTRACTED.md`、`scripts/install_github_pm.py`、`skills/github-project-director/`を確認し、
-利用者向けの説明は[専用ガイド](codex-github-pm/README.md)で保守します。
-展開物を補助ディレクトリへ複製する必要はありません。
+統合版は通信せずに導入でき、旧Upstreamの組み立てに依存しません。
+Researchの組み立ては過去形式の読取・連携を内部で維持しますが、Upstreamインストーラーを現行配布物として出力しません。
+[統合版の概要](repository-director/README.md)と[移行手順](repository-director/installation.md)を参照してください。
 
 ### Design Researchの埋め込み資料
 
-組み立てと展開の共通手順は[SpecKitの埋め込み資料](#speckitの埋め込み資料)を参照してください。
+組み立てと展開の共通手順は[Repository Directorの配布資材](#speckitの埋め込み資料)を参照してください。
 更新元の`workflow-guide.md`、`readable-documents.md`、`reassessment.md`、`workstreams.md`と、
 `codex_interface.py`・`workflow_overview.py`・`research_workstreams.py`を照合します。
 
@@ -254,7 +205,7 @@ python3 tools/kotonoha/evaluate_writing.py --out /tmp/paragraph-writing-comparis
 
 ### 日本語の説明を推敲する
 
-kotonohaを使う場合は、修正前後を別のUTF-8ファイルに残します。textlint・markdownlintによる表現と構造の点検に加え、`check.py compare`で数値・コード等の変化を調べます。実行例は[日本語文書の検査手順](kotonoha/usage.md#保存する文章を検査する)を参照してください。
+kotonohaを使う場合は、修正前後を別のUTF-8ファイルに残します。textlint・markdownlintによる表現と構造の点検に加え、`check.py compare`で数値・コード等の変化を調べます。実行例は[日本語文書の検査手順](kotonoha/usage.md#ファイルの検査)を参照してください。
 コマンド、設定名、数値、条件、否定、断定の強さを保持し、表や番号付き手順は用途に合えば残します。
 検査結果は見直し候補として扱い、警告を消すためだけに意味を変えません。
 

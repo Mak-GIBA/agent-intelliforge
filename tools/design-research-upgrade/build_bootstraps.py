@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministically embed the maintained upgrade sources in both bootstraps."""
+"""Deterministically embed the maintained upgrade sources in the Design Research bootstrap."""
 from __future__ import annotations
 import argparse
 import base64
@@ -43,7 +43,7 @@ def main():
     parser.add_argument("--out", type=Path, default=ROOT.parents[1])
     args = parser.parse_args()
     data = bundle()
-    for component, name in (("design-research", "install_design_research.sh"), ("upstream", "install_speckit_upstream.sh")):
+    for component, name in (("design-research", "install_design_research.sh"),):
         path = args.out / name
         expected = render(component, data)
         if args.check:
