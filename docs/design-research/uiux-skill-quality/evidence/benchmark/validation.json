@@ -1,0 +1,17 @@
+{
+  "unit_tests": {
+    "scope": "clean copy of Git-eligible files",
+    "run": 474,
+    "failures": 0,
+    "skipped": 5
+  },
+  "real_chromium": {
+    "run": 5,
+    "failures": 0
+  },
+  "worktree_test_failure": "one retired-entrypoint existence check sees pre-existing ignored tools/codex-yomiyasu data; preserved unchanged",
+  "skill_validation": "both valid",
+  "source_distribution": "hashes verified; single-file UX installer regenerated deterministically",
+  "personal_installation_changed": false,
+  "commit_or_push": false
+}

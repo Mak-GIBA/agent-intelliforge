@@ -1,0 +1,709 @@
+{
+  "reason": "v1 inspected focused element only and missed legitimate focus-within ancestor outline; same corrected check applied to all candidates; original results retained",
+  "results": [
+    {
+      "candidate": "A",
+      "task": "documents",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "search",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(113, 155, 230)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 44, 61)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 44, 61)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "list-view",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 44, 61)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "A",
+      "task": "documents",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "search",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(113, 155, 230)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 44, 61)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 44, 61)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "list-view",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 44, 61)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "A",
+      "task": "settings",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "display-name",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(61, 131, 156)",
+          "shadow": "none"
+        },
+        {
+          "tag": "FORM",
+          "id": "name-form",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 53)",
+          "shadow": "rgba(33, 51, 61, 0.02) 0px 4px 18px 0px"
+        },
+        {
+          "tag": "MAIN",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 53)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "A",
+      "task": "settings",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "display-name",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(61, 131, 156)",
+          "shadow": "none"
+        },
+        {
+          "tag": "FORM",
+          "id": "name-form",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 53)",
+          "shadow": "rgba(33, 51, 61, 0.02) 0px 4px 18px 0px"
+        },
+        {
+          "tag": "MAIN",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 53)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "A",
+      "task": "landing",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "A",
+          "id": "",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(164, 107, 48)",
+          "shadow": "none"
+        },
+        {
+          "tag": "BODY",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 60, 50)",
+          "shadow": "none"
+        },
+        {
+          "tag": "HTML",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(0, 0, 0)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "A",
+      "task": "landing",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "A",
+          "id": "",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(164, 107, 48)",
+          "shadow": "none"
+        },
+        {
+          "tag": "BODY",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 60, 50)",
+          "shadow": "none"
+        },
+        {
+          "tag": "HTML",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(0, 0, 0)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "B",
+      "task": "documents",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "search",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(99, 169, 154)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 51, 47)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "list-view",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 51, 47)",
+          "shadow": "none"
+        },
+        {
+          "tag": "MAIN",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 51, 47)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "B",
+      "task": "documents",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "search",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(99, 169, 154)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 51, 47)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "list-view",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 51, 47)",
+          "shadow": "none"
+        },
+        {
+          "tag": "MAIN",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 51, 47)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "B",
+      "task": "settings",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "display-name",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(54, 133, 108)",
+          "shadow": "none"
+        },
+        {
+          "tag": "FORM",
+          "id": "name-form",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 48)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 48)",
+          "shadow": "rgba(32, 63, 47, 0.016) 0px 4px 16px 0px"
+        },
+        {
+          "tag": "MAIN",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 48)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "B",
+      "task": "settings",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "display-name",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(54, 133, 108)",
+          "shadow": "none"
+        },
+        {
+          "tag": "FORM",
+          "id": "name-form",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 48)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 48)",
+          "shadow": "rgba(32, 63, 47, 0.016) 0px 4px 16px 0px"
+        },
+        {
+          "tag": "MAIN",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 45, 48)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "B",
+      "task": "landing",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "A",
+          "id": "",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(109, 133, 67)",
+          "shadow": "none"
+        },
+        {
+          "tag": "HEADER",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 62, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "BODY",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 62, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "HTML",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(0, 0, 0)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "B",
+      "task": "landing",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "A",
+          "id": "",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(109, 133, 67)",
+          "shadow": "none"
+        },
+        {
+          "tag": "HEADER",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 62, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "BODY",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 62, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "HTML",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(0, 0, 0)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "C",
+      "task": "documents",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "search",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 54, 50)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(64, 140, 113)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 54, 50)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "list-view",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 54, 50)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "C",
+      "task": "documents",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "search",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 54, 50)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(64, 140, 113)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 54, 50)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "list-view",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(36, 54, 50)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "C",
+      "task": "settings",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "display-name",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgba(34, 99, 78, 0.15)",
+          "shadow": "none"
+        },
+        {
+          "tag": "FORM",
+          "id": "name-form",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 52, 47)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 52, 47)",
+          "shadow": "rgba(38, 56, 46, 0.02) 0px 6px 28px 0px"
+        },
+        {
+          "tag": "MAIN",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 52, 47)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "C",
+      "task": "settings",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "INPUT",
+          "id": "display-name",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgba(34, 99, 78, 0.15)",
+          "shadow": "none"
+        },
+        {
+          "tag": "FORM",
+          "id": "name-form",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 52, 47)",
+          "shadow": "none"
+        },
+        {
+          "tag": "SECTION",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 52, 47)",
+          "shadow": "rgba(38, 56, 46, 0.02) 0px 6px 28px 0px"
+        },
+        {
+          "tag": "MAIN",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(35, 52, 47)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "C",
+      "task": "landing",
+      "viewport": "desktop",
+      "indicators": [
+        {
+          "tag": "A",
+          "id": "",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(173, 100, 45)",
+          "shadow": "none"
+        },
+        {
+          "tag": "HEADER",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 63, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 63, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "BODY",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 63, 53)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "candidate": "C",
+      "task": "landing",
+      "viewport": "mobile",
+      "indicators": [
+        {
+          "tag": "A",
+          "id": "",
+          "outline": "solid",
+          "width": "3px",
+          "color": "rgb(173, 100, 45)",
+          "shadow": "none"
+        },
+        {
+          "tag": "HEADER",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 63, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "DIV",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 63, 53)",
+          "shadow": "none"
+        },
+        {
+          "tag": "BODY",
+          "id": "",
+          "outline": "none",
+          "width": "3px",
+          "color": "rgb(32, 63, 53)",
+          "shadow": "none"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

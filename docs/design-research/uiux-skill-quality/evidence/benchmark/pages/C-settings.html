@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>表示名の設定</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif;color:#23342f;background:#f4f6f3;font-synthesis:none;line-height:1.65}*{box-sizing:border-box}body{margin:0}main{max-width:680px;margin:112px auto;padding:0 28px}.eyebrow{margin:0 0 12px;color:#52675e;font-size:14px;font-weight:600}h1{margin:0;font-size:30px;line-height:1.4;letter-spacing:.03em}header{margin-bottom:32px}.panel{background:#fff;border:1px solid #dce3dc;border-radius:16px;box-shadow:0 6px 28px #26382e05;padding:36px}label{display:block;font-size:16px;font-weight:650;margin-bottom:10px}.required{font-size:12px;font-weight:500;color:#57675f;margin-left:10px;background:#eef2ee;border-radius:4px;padding:3px 7px}input{display:block;width:100%;min-width:0;height:52px;padding:11px 14px;border:1px solid #8b9b91;border-radius:7px;background:#fff;color:#23342f;font:inherit;font-size:17px}input:focus{border-color:#22634e;outline:3px solid #22634e26;outline-offset:1px}input[aria-invalid="true"]{border-color:#b33332}.error{color:#a52b2b;font-size:14px;margin:9px 0 0}.error:empty{display:none}.actions{display:flex;justify-content:flex-end;margin-top:30px;padding-top:24px;border-top:1px solid #e7ece6;gap:12px}button{min-height:46px;border:1px solid transparent;border-radius:7px;padding:10px 24px;font:inherit;font-size:15px;font-weight:650;cursor:pointer;white-space:nowrap}.primary{background:#24634f;color:#fff}.primary:hover{background:#194c3b}.secondary{color:#33483e;background:#fff;border-color:#a8b5ac}.secondary:hover{background:#f0f4f0}button:focus-visible{outline:3px solid #398569;outline-offset:4px}#status{font-size:15px;color:#24634f;margin:20px 0 0;min-height:25px}dialog{width:calc(100% - 40px);max-width:460px;border:1px solid #dce3dc;border-radius:16px;padding:30px;color:#23342f;box-shadow:0 20px 80px #10291e30}dialog::backdrop{background:#172a2266}dialog h2{font-size:21px;line-height:1.5;margin:0 0 18px}dialog p{margin:0 0 12px;color:#52675e;font-size:15px}.name-preview{background:#f3f6f2;border-radius:7px;padding:14px 16px;font-size:19px;font-weight:600;overflow-wrap:anywhere}.dialog-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}@media(max-width:600px){main{margin:48px auto;padding:0 20px}header{margin-bottom:24px}h1{font-size:26px}.panel{padding:24px 20px;border-radius:12px}.actions{margin-top:28px;padding-top:22px}.actions button{width:100%}dialog{padding:24px}.dialog-actions button{flex:1;padding-inline:16px}}
+</style>
+</head>
+<body>
+<main>
+<header><p class="eyebrow">設定</p><h1>表示名の設定</h1></header>
+<section class="panel" aria-label="表示名の編集">
+<form id="name-form" novalidate>
+<label for="display-name">表示名<span class="required">必須</span></label>
+<input id="display-name" name="display-name" type="text" value="山田 花子" autocomplete="nickname" aria-describedby="error">
+<p id="error" class="error" role="alert"></p>
+<div class="actions"><button id="save" class="primary" type="submit">保存</button></div>
+</form>
+</section>
+<p id="status" role="status" aria-live="polite"></p>
+</main>
+<dialog id="confirmation" aria-labelledby="confirmation-title" aria-describedby="confirmation-description">
+<h2 id="confirmation-title">表示名を保存しますか？</h2>
+<p id="confirmation-description">次の表示名で保存します。</p>
+<div id="name-preview" class="name-preview"></div>
+<div class="dialog-actions"><button id="cancel" class="secondary" type="button" autofocus>取消</button><button id="confirm" class="primary" type="button">確定</button></div>
+</dialog>
+<script>
+'use strict';
+const form = document.getElementById('name-form');
+const input = document.getElementById('display-name');
+const save = document.getElementById('save');
+const error = document.getElementById('error');
+const dialog = document.getElementById('confirmation');
+const status = document.getElementById('status');
+let pendingName = '';
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  status.textContent = '';
+  if (!input.value.trim()) {
+    error.textContent = '表示名が空欄です。表示名を入力してください。';
+    input.setAttribute('aria-invalid', 'true');
+    input.focus();
+    return;
+  }
+  error.textContent = '';
+  input.removeAttribute('aria-invalid');
+  pendingName = input.value.trim();
+  document.getElementById('name-preview').textContent = pendingName;
+  dialog.showModal();
+});
+input.addEventListener('input', () => {
+  status.textContent = '';
+  if (input.value.trim()) {
+    error.textContent = '';
+    input.removeAttribute('aria-invalid');
+  }
+});
+document.getElementById('cancel').addEventListener('click', () => dialog.close());
+document.getElementById('confirm').addEventListener('click', () => {
+  input.value = pendingName;
+  status.textContent = '表示名を「' + pendingName + '」に保存しました。';
+  dialog.close();
+});
+dialog.addEventListener('close', () => save.focus());
+</script>
+</body>
+</html>

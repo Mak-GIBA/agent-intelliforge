@@ -1,0 +1,332 @@
+[
+  {
+    "candidate": "C",
+    "task": "documents",
+    "viewport": "desktop",
+    "checks": [
+      {
+        "name": "no_horizontal_overflow",
+        "passed": true
+      },
+      {
+        "name": "keyboard_focus_visible",
+        "passed": false,
+        "error": "{\"active\":\"INPUT\",\"outline\":\"none\",\"width\":\"3px\",\"shadow\":\"none\"}"
+      },
+      {
+        "name": "search_detail_related_back_and_draft",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "evidence": [
+      {
+        "label": "initial",
+        "file": "screens/C-documents-desktop-initial.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "7750d59642a8072b0162dfb67dd1391982b2c4d14ba8a3ab4285f3da8a299df3"
+      },
+      {
+        "label": "detail",
+        "file": "screens/C-documents-desktop-detail.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "7b5326364885dcd23a7ae664318f3938a858c20a389f6e5bf1581c62f364d484"
+      }
+    ]
+  },
+  {
+    "candidate": "C",
+    "task": "documents",
+    "viewport": "mobile",
+    "checks": [
+      {
+        "name": "no_horizontal_overflow",
+        "passed": true
+      },
+      {
+        "name": "keyboard_focus_visible",
+        "passed": false,
+        "error": "{\"active\":\"INPUT\",\"outline\":\"none\",\"width\":\"3px\",\"shadow\":\"none\"}"
+      },
+      {
+        "name": "search_detail_related_back_and_draft",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "evidence": [
+      {
+        "label": "initial",
+        "file": "screens/C-documents-mobile-initial.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "462ebd90be59a3eb3c37d43cb20ea3a839baa812d3d6f61af0fdbd354539d817"
+      },
+      {
+        "label": "detail",
+        "file": "screens/C-documents-mobile-detail.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "0967c1b3203b48e0cdb6f71f974f8aa3c9511584149bc4a91858627b13369acd"
+      }
+    ]
+  },
+  {
+    "candidate": "C",
+    "task": "settings",
+    "viewport": "desktop",
+    "checks": [
+      {
+        "name": "no_horizontal_overflow",
+        "passed": true
+      },
+      {
+        "name": "keyboard_focus_visible",
+        "passed": true
+      },
+      {
+        "name": "empty_name_error",
+        "passed": true
+      },
+      {
+        "name": "cancel_retains_input_and_restores_focus",
+        "passed": true
+      },
+      {
+        "name": "confirm_save",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "evidence": [
+      {
+        "label": "initial",
+        "file": "screens/C-settings-desktop-initial.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "d8fa4f469430a51f240772f01c175f28417f8b2a9d9745ae9205e9f4357e98a3"
+      },
+      {
+        "label": "keyboard",
+        "file": "screens/C-settings-desktop-keyboard.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "a265b885919b7d473db83465af23ecdfbe73581ad4812706978db99e7a5a6938"
+      },
+      {
+        "label": "error",
+        "file": "screens/C-settings-desktop-error.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "d85fbad6b17aaf080f8092f91d92c26894587fa64b52b3ceb6923466bc9c730a"
+      },
+      {
+        "label": "dialog",
+        "file": "screens/C-settings-desktop-dialog.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "3a23295ec4c940fad91cbc8fa08fc717f7da322286411def750d687a90ae5093"
+      },
+      {
+        "label": "saved",
+        "file": "screens/C-settings-desktop-saved.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "0197a8d684b49a102408d9155f4de5cff76072f27d95720c55871e8f23d6846f"
+      }
+    ]
+  },
+  {
+    "candidate": "C",
+    "task": "settings",
+    "viewport": "mobile",
+    "checks": [
+      {
+        "name": "no_horizontal_overflow",
+        "passed": true
+      },
+      {
+        "name": "keyboard_focus_visible",
+        "passed": true
+      },
+      {
+        "name": "empty_name_error",
+        "passed": true
+      },
+      {
+        "name": "cancel_retains_input_and_restores_focus",
+        "passed": true
+      },
+      {
+        "name": "confirm_save",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "evidence": [
+      {
+        "label": "initial",
+        "file": "screens/C-settings-mobile-initial.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "4f493964430f9b6b2ce821d39422c8f6b72bbfed6511ff3bccb8d7361c3fc38d"
+      },
+      {
+        "label": "keyboard",
+        "file": "screens/C-settings-mobile-keyboard.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "944038eef429f6e08b3f751c402815a84e4a5c9ef0763637ace6b8fed76d8d05"
+      },
+      {
+        "label": "error",
+        "file": "screens/C-settings-mobile-error.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "1442830d8e74db5b9ca014bfbc9e1b1007a9266f311e78dc0fd2250414ebe33e"
+      },
+      {
+        "label": "dialog",
+        "file": "screens/C-settings-mobile-dialog.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "156692f8183492574ad60aedbbdac69efdafc3c147b6830fbc7c3ad8c49ead77"
+      },
+      {
+        "label": "saved",
+        "file": "screens/C-settings-mobile-saved.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "46a2171fe92c1dc4cb8a86f4b33df7ecb1f8f198e4f98ec42971b6df375189c3"
+      }
+    ]
+  },
+  {
+    "candidate": "C",
+    "task": "landing",
+    "viewport": "desktop",
+    "checks": [
+      {
+        "name": "no_horizontal_overflow",
+        "passed": true
+      },
+      {
+        "name": "keyboard_focus_visible",
+        "passed": true
+      },
+      {
+        "name": "pricing_navigation_and_required_content",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "evidence": [
+      {
+        "label": "initial",
+        "file": "screens/C-landing-desktop-initial.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "92c106d0b089a6ffa266717e66027413f26d02f2734a98f697ef3595e053e433"
+      },
+      {
+        "label": "keyboard",
+        "file": "screens/C-landing-desktop-keyboard.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "e99e9a5df7a9d7f29b2b6beaf7bd78acaf1cb67549b811328c5fba1db065536a"
+      },
+      {
+        "label": "pricing",
+        "file": "screens/C-landing-desktop-pricing.png",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "sha256": "0f7c210af005f26f0d14512b99663e436160dc9bb75259b57e7e5663bff5791b"
+      }
+    ]
+  },
+  {
+    "candidate": "C",
+    "task": "landing",
+    "viewport": "mobile",
+    "checks": [
+      {
+        "name": "no_horizontal_overflow",
+        "passed": true
+      },
+      {
+        "name": "keyboard_focus_visible",
+        "passed": true
+      },
+      {
+        "name": "pricing_navigation_and_required_content",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "evidence": [
+      {
+        "label": "initial",
+        "file": "screens/C-landing-mobile-initial.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "8c9a22fd90ee994b4a62feb8adebe3f446cd75d1f2d26f6a573fecfce78abb3c"
+      },
+      {
+        "label": "keyboard",
+        "file": "screens/C-landing-mobile-keyboard.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "507fdbe98ad35355571676ab35be06454cc629f014246b327782025c891d0eb0"
+      },
+      {
+        "label": "pricing",
+        "file": "screens/C-landing-mobile-pricing.png",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "sha256": "02928f11604f43314fdd047fbd6f9cc38d33ea3d1971789de9b5ceac29fd7017"
+      }
+    ]
+  }
+]

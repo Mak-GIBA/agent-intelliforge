@@ -70,11 +70,36 @@ addEventListener('hashchange',render);render();
 
 
 class Quiet(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/redirect':
+            self.send_response(302)
+            self.send_header('Location', '/')
+            self.end_headers()
+        else:
+            super().do_GET()
+
     def log_message(self,*args):pass
 
 
 @unittest.skipUnless(os.getenv("UX_GAN_RUNTIME"),"Set UX_GAN_RUNTIME to an installed test runtime")
 class BrowserTests(unittest.TestCase):
+    def test_inspect_retains_exact_frame_metadata_after_redirect_and_resize(self):
+        self.tool('ux_navigate', url=self.url+'/redirect')
+        self.tool('ux_resize', width=390, height=844)
+        result=json.loads(self.tool('ux_inspect')['content'][0]['text'])
+        frames=result['recent_frames']
+        self.assertGreater(len(frames),0)
+        self.assertLessEqual(len(frames),12)
+        frame=frames[-1]
+        self.assertEqual(frame['url'],self.url+'/')
+        self.assertEqual(frame['viewport'],{'width':390,'height':844})
+        self.assertEqual(frame['sha256'],hashlib.sha256(Path(frame['path']).read_bytes()).hexdigest())
+        for _ in range(13):
+            self.tool('ux_capture')
+        latest=json.loads(self.tool('ux_inspect')['content'][0]['text'])['recent_frames']
+        self.assertEqual(len(latest),12)
+        self.assertNotIn(frames[0]['id'],[item['id'] for item in latest])
+
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory(prefix="ux-browser-check-")
         self.base=Path(self.tmp.name)

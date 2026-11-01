@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文書管理</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;color:#202c3d;background:#f5f7fa;font-synthesis:none;line-height:1.6}*{box-sizing:border-box}body{margin:0}button,input,textarea{font:inherit}button{cursor:pointer}button,input,textarea{touch-action:manipulation}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #719be6;outline-offset:3px}[hidden]{display:none!important}.topbar{height:76px;background:#fff;border-bottom:1px solid #dde3eb;display:flex;align-items:center;padding:0 48px;gap:12px}.brand-icon{width:34px;height:34px;background:#244e85;border-radius:8px;display:grid;place-items:center;color:#fff}.brand{font-size:18px;font-weight:700;letter-spacing:.04em}.wrap{max-width:1120px;margin:0 auto;padding:54px 32px 80px}.page-heading{margin-bottom:30px}h1{font-size:30px;letter-spacing:.03em;line-height:1.4;margin:0 0 10px;font-weight:700}.muted{color:#617083;font-size:14px;margin:0}.search-area{margin-bottom:28px;max-width:560px}label{display:block;font-size:14px;font-weight:600;margin-bottom:8px}.search-box{position:relative}.search-icon{position:absolute;left:16px;top:17px;color:#69798c;pointer-events:none}input{width:100%;height:54px;border:1px solid #bfcad8;border-radius:8px;background:#fff;color:#202c3d;padding:12px 16px 12px 46px;font-size:16px}input::placeholder,textarea::placeholder{color:#758194}.list-panel{background:#fff;border:1px solid #dce3eb;border-radius:12px;overflow:hidden}.list-head,.doc-row{display:grid;grid-template-columns:minmax(0,1fr) 140px 160px 120px;align-items:center;gap:20px;padding:0 28px}.list-head{min-height:50px;background:#f9fafc;border-bottom:1px solid #e0e6ee;color:#647184;font-size:13px;font-weight:600}.doc-row{min-height:105px;border-bottom:1px solid #e6ebf1}.doc-row:last-child{border-bottom:0}.doc-name{display:flex;gap:15px;align-items:center;min-width:0}.file-icon{width:42px;height:48px;border:1px solid #d9e2ef;border-radius:7px;display:grid;place-items:center;background:#f3f6fb;color:#476b98;flex-shrink:0}.name{font-size:17px;font-weight:600}.format{font-size:14px;color:#566579}.badge{font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:7px;padding:4px 11px;border-radius:5px;width:max-content}.badge:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.progress{color:#295c98;background:#eaf1fb}.waiting{color:#876012;background:#fbf2dc}.done{color:#386d58;background:#e9f3ed}.open{height:40px;border:1px solid #ced9e7;border-radius:6px;background:#fff;color:#27558f;font-size:14px;font-weight:600;padding:0 14px;display:flex;align-items:center;justify-content:center;gap:12px}.open:hover,.back:hover{background:#edf3fb;border-color:#9cb4d3}.empty{padding:42px 24px;text-align:center;color:#59697c}.back{display:inline-flex;align-items:center;gap:8px;border:1px solid #ced9e7;background:#fff;border-radius:6px;color:#345579;min-height:42px;padding:8px 14px;font-size:14px;margin-bottom:28px}.detail-panel{background:#fff;border:1px solid #dce3eb;border-radius:12px;padding:32px}.detail-header{padding-bottom:28px;border-bottom:1px solid #e2e7ee}.detail-header h1{margin-bottom:20px}.attributes{display:flex;gap:48px;margin:0}.attributes div{display:flex;align-items:center;gap:14px}.attributes dt{font-size:14px;color:#617083}.attributes dd{margin:0}.note-section{margin-top:28px}.note-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px}.note-heading label{margin:0;font-size:17px}.save-state{font-size:13px;color:#617083}textarea{display:block;width:100%;min-height:190px;resize:vertical;border:1px solid #bfcad8;border-radius:7px;padding:14px 16px;font-size:16px;color:#202c3d;background:#fff;line-height:1.8}.related-section{margin-top:30px;padding-top:24px;border-top:1px solid #e2e7ee}.related-section h2{font-size:17px;margin:0 0 13px}.related{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;background:#f8fafd;border:1px solid #dce4ef;border-radius:7px;padding:16px 18px;color:#27558f;text-align:left;font-size:16px;font-weight:600}.related:hover{background:#edf3fb}.related-meta{display:block;font-size:13px;font-weight:400;color:#617083;margin-top:3px}svg{display:block;flex-shrink:0}.mobile-label{display:none}
+@media(max-width:600px){.topbar{height:64px;padding:0 20px}.brand{font-size:17px}.brand-icon{width:31px;height:31px}.wrap{padding:30px 20px 48px}h1{font-size:26px}.page-heading{margin-bottom:24px}.search-area{margin-bottom:24px}.list-head{display:none}.doc-row{grid-template-columns:1fr auto;gap:12px 14px;padding:22px 18px;min-height:148px}.doc-name{grid-column:1/-1;gap:12px}.file-icon{width:35px;height:41px}.name{font-size:17px}.format{grid-column:1;grid-row:2;display:flex;align-items:center;gap:10px}.mobile-label{display:inline;font-size:12px;color:#617083}.status-cell{grid-column:1;grid-row:3}.open{grid-column:2;grid-row:2/4;min-height:44px;padding:0 12px;gap:9px}.doc-row{row-gap:8px}.detail-panel{padding:23px 19px}.back{margin-bottom:22px}.detail-header{padding-bottom:23px}.attributes{gap:20px;flex-wrap:wrap}.attributes div{gap:10px}.note-section{margin-top:23px}.note-heading{align-items:baseline}.save-state{font-size:12px}textarea{min-height:210px}.related-section{margin-top:24px}.related{padding:14px}.muted{font-size:13px}}
+</style>
+</head>
+<body>
+<header class="topbar"><span class="brand-icon" aria-hidden="true"><svg width="21" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h4M9 12h6M9 16h6"/></svg></span><span class="brand">文書管理</span></header>
+<main class="wrap">
+<!-- 設計: 文書を対象とし、名前・形式・状態を一覧と詳細で共通表示。aとbを関連付ける。検索条件と文書別メモはページ内で保持し、一覧への復帰時に再入力を不要にする。 -->
+<section id="list-view" aria-labelledby="list-title">
+<div class="page-heading"><h1 id="list-title">文書一覧</h1><p class="muted">文書を検索し、詳細やメモを確認できます。</p></div>
+<div class="search-area"><label for="search">文書を検索</label><div class="search-box"><svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="文書名・形式・状態で検索" autocomplete="off"></div></div>
+<div class="list-panel"><div class="list-head" aria-hidden="true"><span>文書名</span><span>形式</span><span>状態</span><span></span></div><div id="documents"></div><p id="empty" class="empty" hidden role="status">該当する文書がありません。<br>検索キーワードを変更してください。</p></div>
+</section>
+<section id="detail-view" hidden aria-labelledby="doc-title"><button type="button" id="back" class="back"><span aria-hidden="true">←</span> 文書一覧へ戻る</button><article class="detail-panel"><header class="detail-header"><h1 id="doc-title" tabindex="-1"></h1><dl class="attributes"><div><dt>形式</dt><dd id="doc-format"></dd></div><div><dt>状態</dt><dd id="doc-status"></dd></div></dl></header><div class="note-section"><div class="note-heading"><label for="note">メモ</label><span id="save-state" class="save-state" role="status">入力すると保持されます</span></div><textarea id="note" placeholder="この文書のメモを入力" aria-describedby="save-state"></textarea></div><section class="related-section" aria-labelledby="related-heading"><h2 id="related-heading">関連文書</h2><button type="button" id="related" class="related"><span><span id="related-name"></span><span id="related-meta" class="related-meta"></span></span><span aria-hidden="true">→</span></button><p id="no-related" class="muted" hidden>関連文書はありません。</p></section></article></section>
+</main>
+<script>
+'use strict';
+const docs=[{id:'a',name:'設計仕様',format:'PDF',status:'進行中',tone:'progress',related:'b'},{id:'b',name:'契約書',format:'PDF',status:'確認待ち',tone:'waiting',related:'a'},{id:'c',name:'議事録',format:'テキスト',status:'完了',tone:'done',related:null}];
+const notes={a:'',b:'',c:''};
+const $=id=>document.getElementById(id);
+let current=null,lastOpened=null,listScroll=0;
+const fileIcon='<span class="file-icon" aria-hidden="true"><svg width="22" height="26" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 2h10l6 6v18H4z"/><path d="M14 2v7h6M8 14h8M8 19h8"/></svg></span>';
+const badge=doc=>'<span class="badge '+doc.tone+'">'+doc.status+'</span>';
+function renderList(){
+ const query=$('search').value.trim().normalize('NFKC').toLocaleLowerCase('ja');
+ const filtered=docs.filter(doc=>[doc.name,doc.format,doc.status].some(value=>value.normalize('NFKC').toLocaleLowerCase('ja').includes(query)));
+ $('documents').innerHTML=filtered.map(doc=>'<div class="doc-row"><div class="doc-name">'+fileIcon+'<span class="name">'+doc.name+'</span></div><div class="format"><span class="mobile-label">形式</span>'+doc.format+'</div><div class="status-cell">'+badge(doc)+'</div><button type="button" class="open" data-open="'+doc.id+'" aria-label="'+doc.name+'の詳細を開く">詳細を開く <span aria-hidden="true">→</span></button></div>').join('');
+ $('empty').hidden=filtered.length!==0;
+}
+function openDoc(id){
+ const doc=docs.find(item=>item.id===id);if(!doc)return;
+ if(!$('list-view').hidden){listScroll=window.scrollY;lastOpened=id;}
+ current=id;
+ $('doc-title').textContent=doc.name;
+ $('doc-format').textContent=doc.format;
+ $('doc-status').innerHTML=badge(doc);
+ $('note').value=notes[id];
+ $('save-state').textContent=notes[id]?'メモを保持しています':'入力すると保持されます';
+ const linked=docs.find(item=>item.id===doc.related);
+ $('related').hidden=!linked;$('no-related').hidden=!!linked;
+ if(linked){$('related-name').textContent=linked.name;$('related-meta').textContent=linked.format+' · '+linked.status;}
+ $('list-view').hidden=true;$('detail-view').hidden=false;
+ window.scrollTo(0,0);$('doc-title').focus({preventScroll:true});
+}
+$('search').addEventListener('input',renderList);
+$('documents').addEventListener('click',event=>{const button=event.target.closest('[data-open]');if(button)openDoc(button.dataset.open);});
+$('note').addEventListener('input',()=>{if(current){notes[current]=$('note').value;$('save-state').textContent='メモを保持しています';}});
+$('related').addEventListener('click',()=>{const doc=docs.find(item=>item.id===current);if(doc&&doc.related)openDoc(doc.related);});
+$('back').addEventListener('click',()=>{$('detail-view').hidden=true;$('list-view').hidden=false;current=null;const button=document.querySelector('[data-open="'+lastOpened+'"]');if(button)button.focus({preventScroll:true});window.scrollTo(0,listScroll);});
+renderList();
+</script>
+</body>
+</html>

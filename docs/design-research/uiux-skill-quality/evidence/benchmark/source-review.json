@@ -1,0 +1,42 @@
+[
+  {
+    "id": "object-model",
+    "topic": "既存OOUIと状態保持",
+    "source": "tools/codex-ux-stack/ooui-design/references/ooui-modeling.md",
+    "finding": "原形を維持する。対象が固定の処理を無理に一覧化しない。",
+    "checked_as_of": "2026-10-31",
+    "reuse": "principle only; no external source code copied"
+  },
+  {
+    "id": "visible-focus",
+    "topic": "キーボードのフォーカス可視化",
+    "source": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html",
+    "finding": "可視性は画像とTab操作で確認。適合全体の証明ではない。",
+    "checked_as_of": "2026-10-31",
+    "reuse": "principle only; no external source code copied"
+  },
+  {
+    "id": "modal",
+    "topic": "モーダルのキーボードと復帰",
+    "source": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+    "finding": "Tab閉じ込め・Escape・適切な復帰先を確認。既存ダイアログを無条件に追加しない。",
+    "checked_as_of": "2026-10-31",
+    "reuse": "principle only; no external source code copied"
+  },
+  {
+    "id": "errors",
+    "topic": "入力エラーの位置と対応付け",
+    "source": "https://design-system.service.gov.uk/components/error-summary/",
+    "finding": "複数入力の要約と個別エラーの文脈。単一項目に要約パネルを機械的に追加しない。",
+    "checked_as_of": "2026-10-31",
+    "reuse": "principle only; no external source code copied"
+  },
+  {
+    "id": "checks",
+    "topic": "自動検査と手動操作の分離",
+    "source": "https://playwright.dev/docs/accessibility-testing",
+    "finding": "自動検査だけでアクセシビリティ全体の合格を宣言しない。",
+    "checked_as_of": "2026-10-31",
+    "reuse": "principle only; no external source code copied"
+  }
+]

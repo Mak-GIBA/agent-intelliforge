@@ -31,6 +31,10 @@ or no matching notes does not block a run.
 
 1. Read the target repository's rules. Discover its start command, test commands and URL from the supplied context, README, manifests and running servers. This setup discovery is allowed before screenshots; do not infer UX findings from UI code.
 2. Choose `audit` when the user asks for review only, forbids code edits, or has not requested fixes. Choose `run` when fixes are requested. A request to install or author this harness does not authorize fixing an unrelated app.
+   Full review is the default. For a localized change use `--profile focused --focus '<screen and operation>'`;
+   it checks desktop/mobile unless `--viewport` selects another subset. References are optional unless URLs are supplied.
+   Report the scope and exclusions; focused completion is never whole-app approval. New design starts with ooui-design;
+   reuse its design memo, already-read Memory and writing results when handing work to implementation or review.
 3. Resolve this skill's own directory. Run `bash <skill-dir>/scripts/gan-harness.sh doctor --project <app-dir>`; add `--check-mcp` for browser/MCP startup failures to test actual operations and evidence writes. Address discoverable setup problems within the authorized scope. Do not change the user's personal Codex settings to make a test pass.
 4. Launch the Bash entry point, reporting the exact command and run ID:
 

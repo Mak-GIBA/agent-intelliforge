@@ -53,11 +53,11 @@ Existing Skills are checked in the specified location, Codex Skills, and `~/.age
 
 | Asset | Version/source | New destination |
 |---|---|---|
-| ooui-design/references | Bundled 1.2.0 OOUI/cognitive guidance | `~/.agents/skills/ooui-design/` |
+| ooui-design/references | Bundled 1.3.0 OOUI/cognitive guidance | `~/.agents/skills/ooui-design/` |
 | Product Design / Build Web Apps | Codex-managed `openai-curated-remote`; actual versions recorded | Codex Plugin environment |
 | web-design-guidelines | `vercel-labs/agent-skills`, `063bee94c3f4df8453406c830b0a7df0f2860278` | `~/.agents/skills/web-design-guidelines/` |
 | ux-critique | `Thecsiz/ux-critique`, `3da293cafb639195bf71797590081d4ffb0045ba` | `~/.agents/skills/ux-critique/` |
-| Harness/Skill/shared guidance | Bundled 1.2.0 | `~/.agents/skills/ux-gan-harness/` |
+| Harness/Skill/shared guidance | Bundled 1.3.0 | `~/.agents/skills/ux-gan-harness/` |
 | Browser runtime | Playwright 1.63.0 / MCP 0.0.83, embedded lockfile | `CODEX_HOME/ux-stack/runtime/` |
 | Launcher | Calls bundled Bash harness | `~/.local/bin/ux-gan-harness` |
 | State/backups | Hashes, versions, outcomes, previous files | `CODEX_HOME/ux-stack/` |

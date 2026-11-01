@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>表示名の設定</title>
+<style>
+:root{color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;color:#202d30;background:#f4f6f5;font-synthesis:none}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh}
+main{max-width:672px;margin:0 auto;padding:112px 24px 64px}
+.eyebrow{font-size:14px;font-weight:600;color:#536760;margin:0 0 12px;letter-spacing:.08em}
+h1{font-size:30px;line-height:1.5;letter-spacing:.02em;margin:0 0 12px;font-weight:700}
+.intro{font-size:16px;line-height:1.8;color:#52615e;margin:0 0 32px}
+.card{background:#fff;border:1px solid #dce3df;border-radius:16px;padding:32px;box-shadow:0 4px 16px #203f2f04}
+label{display:block;font-size:16px;font-weight:650;margin-bottom:12px}
+.required{display:inline-block;margin-left:10px;padding:2px 7px;border-radius:4px;background:#edf3ef;color:#486254;font-size:12px;vertical-align:2px;font-weight:500}
+input{display:block;width:100%;height:52px;border:1px solid #81938a;border-radius:7px;padding:0 14px;font:inherit;font-size:17px;color:#202d30;background:white;transition:border-color .15s,box-shadow .15s}
+input:hover{border-color:#395e4d}input[aria-invalid="true"]{border-color:#b03930}
+button{min-height:46px;border:1px solid transparent;border-radius:7px;padding:11px 22px;font:inherit;font-size:15px;font-weight:650;cursor:pointer;white-space:nowrap;line-height:1.5}
+.primary{background:#24664e;color:#fff}.primary:hover{background:#19523d}.secondary{background:#fff;border-color:#c3cec8;color:#344c41}.secondary:hover{background:#f1f5f2}
+:focus-visible{outline:3px solid #36856c;outline-offset:4px}input:focus-visible{outline-offset:2px}
+#error{margin:10px 0 0;color:#aa302a;font-size:14px;line-height:1.6}
+[hidden]{display:none!important}
+.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:30px;padding-top:24px;border-top:1px solid #e7ece9}
+#status{font-size:15px;line-height:1.7;color:#246044;margin:20px 0 0;min-height:26px}
+#status:empty{margin:0;min-height:0}
+dialog{width:calc(100% - 40px);max-width:460px;border:1px solid #dce3df;border-radius:16px;padding:30px;color:#202d30;box-shadow:0 24px 80px #142e3329}
+dialog::backdrop{background:#162a2566}
+h2{font-size:22px;line-height:1.5;margin:0 0 14px}
+.dialog-copy{font-size:15px;line-height:1.8;color:#52615e;margin:0 0 20px}
+.preview{margin:0;padding:18px;background:#f4f6f5;border-radius:8px}
+.preview dt{font-size:13px;color:#52615e;margin:0 0 6px}.preview dd{font-size:18px;font-weight:600;margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+dialog .actions{border:0;padding:0;margin-top:28px}
+@media(max-width:600px){main{padding:48px 20px}h1{font-size:26px}.intro{margin-bottom:26px}.card{padding:24px 20px;border-radius:12px}.actions{gap:10px}.actions button{padding-left:16px;padding-right:16px}dialog{padding:24px}h2{font-size:21px}}
+</style>
+</head>
+<body>
+<main>
+<p class="eyebrow">設定</p>
+<h1>表示名</h1>
+<p class="intro">表示名を入力して、保存してください。</p>
+<section class="card" aria-label="表示名の設定">
+<form id="name-form" novalidate>
+<label for="display-name">表示名<span class="required">必須</span></label>
+<input id="display-name" name="display-name" type="text" value="山田 花子" autocomplete="nickname" required aria-describedby="error">
+<p id="error" role="alert" hidden>表示名が空欄です。名前を入力してください。</p>
+<div class="actions">
+<button type="button" class="secondary" id="reset">取り消す</button>
+<button type="submit" class="primary" id="save">保存</button>
+</div>
+<p id="status" role="status" aria-live="polite" aria-atomic="true"></p>
+</form>
+</section>
+</main>
+<dialog id="confirmation" aria-labelledby="confirmation-title" aria-describedby="confirmation-description">
+<h2 id="confirmation-title">表示名を保存しますか？</h2>
+<p class="dialog-copy" id="confirmation-description">次の表示名で保存します。</p>
+<dl class="preview"><dt>表示名</dt><dd id="name-preview"></dd></dl>
+<div class="actions">
+<button type="button" class="secondary" id="cancel" autofocus>取消</button>
+<button type="button" class="primary" id="confirm">確定</button>
+</div>
+</dialog>
+<script>
+'use strict';
+const input=document.getElementById('display-name');
+const form=document.getElementById('name-form');
+const error=document.getElementById('error');
+const dialog=document.getElementById('confirmation');
+const save=document.getElementById('save');
+const status=document.getElementById('status');
+let savedName='山田 花子';
+let pendingName='';
+function clearError(){error.hidden=true;input.removeAttribute('aria-invalid');}
+input.addEventListener('input',()=>{status.textContent='';if(input.value.trim())clearError();});
+form.addEventListener('submit',event=>{
+ event.preventDefault();status.textContent='';
+ if(!input.value.trim()){error.hidden=false;input.setAttribute('aria-invalid','true');input.focus();return;}
+ clearError();pendingName=input.value.trim();
+ document.getElementById('name-preview').textContent=pendingName;
+ dialog.showModal();
+});
+document.getElementById('cancel').addEventListener('click',()=>dialog.close());
+document.getElementById('confirm').addEventListener('click',()=>{
+ savedName=pendingName;input.value=savedName;
+ dialog.close();status.textContent='表示名を「'+savedName+'」で保存しました。';
+});
+dialog.addEventListener('close',()=>save.focus());
+document.getElementById('reset').addEventListener('click',()=>{
+ input.value=savedName;clearError();status.textContent='';input.focus();
+});
+</script>
+</body>
+</html>

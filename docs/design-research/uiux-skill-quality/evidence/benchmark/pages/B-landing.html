@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="小さな教室の予約管理に。予約一覧・日程変更・受付状況の確認を一か所で行える、予約ノート。">
+<title>予約ノート｜小さな教室の予約管理</title>
+<style>
+:root{--paper:#faf9f5;--ink:#233e35;--muted:#59675e;--line:#d8ded4;--accent:#dce8bb;--white:#fffefa}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:28px}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}a:focus-visible{outline:3px solid #6d8543;outline-offset:6px}header,main,footer{width:min(1200px,calc(100% - 96px));margin:auto}header{height:100px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:inline-flex;gap:12px;align-items:center;font-size:23px;font-weight:700;letter-spacing:.04em}.brand-icon{width:27px;height:30px;border:2px solid var(--ink);border-radius:3px;position:relative;background:linear-gradient(to right,transparent 5px,var(--ink) 5px,var(--ink) 7px,transparent 7px)}.brand-icon:after{content:"";position:absolute;left:11px;right:4px;top:9px;height:2px;background:var(--ink);box-shadow:0 6px var(--ink)}nav{display:flex;align-items:center;gap:34px;font-size:14px;font-weight:600}nav a{padding:12px 0}nav a:hover{text-decoration:underline;text-underline-offset:6px}.hero{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:65px;padding:86px 0 88px}.eyebrow{font-size:14px;font-weight:600;letter-spacing:.12em;margin:0 0 24px}h1{font-size:clamp(36px,3.65vw,53px);line-height:1.55;letter-spacing:.025em;margin:0;font-weight:700}.intro{font-size:16px;line-height:2.05;color:var(--muted);margin:24px 0 30px}.cta{display:inline-flex;justify-content:space-between;gap:36px;align-items:center;min-height:56px;padding:14px 24px;background:var(--ink);color:white;border-radius:4px;font-size:15px;font-weight:600;transition:background .15s}.cta:hover{background:#36594a}.arrow{font-size:23px;line-height:1;font-weight:400}.visual{min-width:0;background:#e9eddf;border-radius:48% 48% 6px 6px;padding:53px 25px 28px;position:relative}.notebook{background:var(--white);border:1px solid #cbd3c3;border-radius:6px;box-shadow:9px 12px 0 #d4ddc9;transform:rotate(-3deg);padding:26px 25px 22px 39px;position:relative}.notebook:before{content:"";position:absolute;left:19px;top:0;bottom:0;border-left:1px solid #dce1d4}.note-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:24px;font-size:16px;font-weight:700}.dots{display:flex;gap:4px}.dots i{display:block;width:4px;height:4px;border-radius:50%;background:#84917e}.note-row{padding:17px 0;border-top:1px solid #dfe4d9;display:grid;grid-template-columns:34px 1fr 22px;align-items:center;gap:10px;font-size:15px;font-weight:600}.note-row .number{font-family:Georgia,serif;font-size:22px;color:#798870;font-weight:400}.note-row .row-arrow{font-size:20px;color:#7d8974}.note-caption{margin:20px 0 0;text-align:right;font-size:11px;letter-spacing:.06em;color:#59675e}.features{border-top:1px solid var(--line);padding:58px 0 66px}.section-head{display:flex;align-items:baseline;gap:24px;margin-bottom:36px}h2{font-size:28px;line-height:1.6;margin:0;letter-spacing:.03em}.section-label{font-family:Georgia,serif;font-size:14px;font-style:italic;color:var(--muted)}.feature-list{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}.feature{padding-left:20px;border-left:2px solid #b9c7a1}h3{font-size:19px;margin:0 0 12px;line-height:1.6}.feature p{font-size:15px;line-height:1.9;margin:0;color:var(--muted)}.pricing{padding:58px 0 68px;border-top:1px solid var(--line)}.pricing .section-head{margin-bottom:28px}.plans{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);background:#f0f2e9;border-radius:6px}.plan{padding:30px 36px;display:flex;justify-content:space-between;align-items:center;gap:20px}.plan+.plan{border-left:1px solid var(--line)}.plan h3{margin:0;font-size:18px}.price{white-space:nowrap;font-size:14px}.price strong{font-size:36px;letter-spacing:-.03em;font-weight:500;font-variant-numeric:tabular-nums}.price span{margin-left:5px}footer{border-top:1px solid var(--line);padding:27px 0 32px;font-size:14px;font-weight:600}section:focus{outline:none}
+@media(min-width:1441px){.hero{padding-top:100px;padding-bottom:100px}}
+@media(max-width:900px){header,main,footer{width:calc(100% - 56px)}.hero{gap:30px;padding:64px 0}.visual{padding:40px 18px 25px}.notebook{padding-left:32px;padding-right:17px}h1{font-size:36px}.intro br{display:none}.plan{display:block;padding:26px}.plan h3{margin-bottom:12px}.feature-list{gap:24px}}
+@media(max-width:600px){html{scroll-padding-top:20px}header,main,footer{width:calc(100% - 40px)}header{height:80px}.brand{font-size:20px;gap:9px}.brand-icon{width:23px;height:27px}nav{gap:20px;font-size:13px}.hero{grid-template-columns:1fr;gap:38px;padding:42px 0 45px}.eyebrow{font-size:12px;letter-spacing:.08em;margin-bottom:18px}h1{font-size:35px;line-height:1.6;letter-spacing:.015em}.intro{font-size:15px;line-height:1.9;margin:19px 0 24px}.cta{min-height:54px;font-size:14px;padding:14px 22px;gap:43px}.visual{width:100%;padding:30px 23px 21px;border-radius:110px 110px 5px 5px}.notebook{padding:19px 20px 15px 34px;box-shadow:6px 8px 0 #d4ddc9;transform:rotate(-2deg)}.note-top{font-size:14px;margin-bottom:16px}.note-row{font-size:14px;padding:12px 0;grid-template-columns:29px 1fr 19px}.note-row .number{font-size:20px}.note-caption{margin-top:16px;font-size:10px}.features{padding:36px 0 40px}.section-head{gap:16px;margin-bottom:26px}h2{font-size:23px}.section-label{font-size:13px}.feature-list{grid-template-columns:1fr;gap:26px}.feature{padding-left:17px}h3{font-size:18px;margin-bottom:6px}.feature p{font-size:14px;line-height:1.9}.pricing{padding:35px 0 42px}.plans{grid-template-columns:1fr}.plan{display:flex;padding:24px 20px;gap:12px}.plan h3{font-size:16px;margin:0}.plan+.plan{border-left:0;border-top:1px solid var(--line)}.price{font-size:12px}.price strong{font-size:30px}.price span{margin-left:3px}footer{padding:24px 0;font-size:13px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cta{transition:none}}
+</style>
+</head>
+<body>
+<header>
+<a class="brand" href="#" aria-label="予約ノート トップ"><span class="brand-icon" aria-hidden="true"></span>予約ノート</a>
+<nav aria-label="メインナビゲーション"><a href="#features">サービス</a><a href="#pricing">料金</a></nav>
+</header>
+<main>
+<section class="hero" aria-labelledby="hero-title">
+<div>
+<p class="eyebrow">小さな教室のための予約管理</p>
+<h1 id="hero-title">教室の予約を、<br>ひとつのノートに。</h1>
+<p class="intro">予約一覧も、日程変更も、受付状況も。<br>教室の予約にまつわる確認と操作を、<br>一か所にまとめる「予約ノート」。</p>
+<a class="cta" href="#pricing">料金を確認<span class="arrow" aria-hidden="true">→</span></a>
+</div>
+<div class="visual" role="img" aria-label="予約一覧・日程変更・受付状況を一か所にまとめたノートのイメージ">
+<div class="notebook" aria-hidden="true">
+<div class="note-top"><span>教室の予約</span><span class="dots"><i></i><i></i><i></i></span></div>
+<div class="note-row"><span class="number">01</span><span>予約一覧</span><span class="row-arrow">↗</span></div>
+<div class="note-row"><span class="number">02</span><span>日程変更</span><span class="row-arrow">↗</span></div>
+<div class="note-row"><span class="number">03</span><span>受付状況</span><span class="row-arrow">↗</span></div>
+</div>
+<p class="note-caption" aria-hidden="true">サービスのイメージ</p>
+</div>
+</section>
+<section class="features" id="features" tabindex="-1" aria-labelledby="features-title">
+<div class="section-head"><h2 id="features-title">予約のことを、一か所で。</h2><span class="section-label" lang="en">Features</span></div>
+<div class="feature-list">
+<article class="feature"><h3>予約一覧を確認</h3><p>教室に入っている予約を一覧で確認。<br>予約の全体を見渡せます。</p></article>
+<article class="feature"><h3>日程を変更</h3><p>予約の日程変更も同じ場所で。<br>予定の調整を進められます。</p></article>
+<article class="feature"><h3>受付状況を確認</h3><p>予約の受付状況を確認。<br>いまの状況を把握できます。</p></article>
+</div>
+</section>
+<section class="pricing" id="pricing" tabindex="-1" aria-labelledby="pricing-title">
+<div class="section-head"><h2 id="pricing-title">料金プラン</h2><span class="section-label" lang="en">Pricing</span></div>
+<div class="plans">
+<article class="plan"><h3>基本プラン</h3><p class="price">月額 <strong>1,000</strong><span>円</span></p></article>
+<article class="plan"><h3>チームプラン</h3><p class="price">月額 <strong>3,000</strong><span>円</span></p></article>
+</div>
+</section>
+</main>
+<footer>予約ノート</footer>
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(function(link){
+  link.addEventListener('click',function(){
+    var id=link.getAttribute('href').slice(1);
+    var section=id ? document.getElementById(id) : null;
+    if(section) section.focus({preventScroll:true});
+  });
+});
+</script>
+</body>
+</html>

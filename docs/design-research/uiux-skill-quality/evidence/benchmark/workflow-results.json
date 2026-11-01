@@ -1,0 +1,46 @@
+[
+  {
+    "case": "design-research",
+    "run_id": "20261031T080401Z-d212165f",
+    "status": "blocked",
+    "reason": "producer-originals source dossier schema validation failed; not research_complete"
+  },
+  {
+    "case": "baseline-full",
+    "run_id": "20261031T080858Z-309436e4",
+    "status": "blocked",
+    "reason": "Screenshot lacks a matching browser-generated receipt",
+    "iteration": 0,
+    "completed_plan": true,
+    "completed_audit": false,
+    "phase_screenshots": {
+      "000-planner": 23,
+      "000-references": 10
+    }
+  },
+  {
+    "case": "focused-multi-flow",
+    "run_id": "20261031T081408Z-6f0bae66",
+    "status": "blocked",
+    "reason": "Phase timeout (180s): 000-reviewer",
+    "iteration": 0,
+    "completed_plan": true,
+    "completed_audit": false,
+    "phase_screenshots": {
+      "000-planner": 23,
+      "000-reviewer": 36
+    }
+  },
+  {
+    "case": "focused-single-flow",
+    "run_id": "20261031T082221Z-8b7dcc51",
+    "status": "blocked",
+    "reason": "Phase timeout (180s): 000-planner",
+    "iteration": 0,
+    "completed_plan": false,
+    "completed_audit": false,
+    "phase_screenshots": {
+      "000-planner": 1
+    }
+  }
+]

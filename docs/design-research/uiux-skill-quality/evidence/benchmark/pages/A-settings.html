@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>表示名の設定</title>
+<style>
+:root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif; color: #202d35; background: #f5f7f8; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { width: min(100% - 64px, 720px); margin: 112px auto; }
+.page-heading { margin-bottom: 32px; }
+h1 { margin: 0 0 12px; font-size: 30px; line-height: 1.5; letter-spacing: .02em; font-weight: 700; }
+p { margin: 0; line-height: 1.8; }
+.description { color: #53636e; font-size: 16px; }
+.panel { background: #fff; border: 1px solid #dce3e7; border-radius: 16px; box-shadow: 0 4px 18px #21333d05; padding: 36px; }
+label { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 16px; font-weight: 650; }
+.required { color: #52636e; background: #eef2f4; border-radius: 4px; padding: 2px 7px; font-size: 12px; font-weight: 500; }
+input { width: 100%; border: 1px solid #85959f; border-radius: 8px; padding: 13px 15px; line-height: 1.5; font: inherit; font-size: 18px; color: #202d35; background: #fff; }
+input:hover { border-color: #526974; }
+input[aria-invalid="true"] { border: 2px solid #af2929; padding: 12px 14px; }
+:focus-visible { outline: 3px solid #3d839c; outline-offset: 4px; }
+input:focus-visible { outline-offset: 2px; }
+.error { color: #a92525; font-size: 14px; margin-top: 10px; }
+[hidden] { display: none !important; }
+.actions { display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid #e5eaed; padding-top: 24px; margin-top: 32px; }
+button { font: inherit; font-weight: 650; line-height: 1.5; min-height: 48px; border-radius: 8px; padding: 11px 25px; cursor: pointer; border: 1px solid #bcc8ce; background: #fff; color: #344954; }
+button:hover { background: #eff4f6; }
+button:active { transform: translateY(1px); }
+.primary { background: #155b70; border-color: #155b70; color: #fff; }
+.primary:hover { background: #10495b; border-color: #10495b; }
+.status { color: #215e49; font-size: 15px; padding: 14px 18px; border: 1px solid #bcd8c9; border-radius: 8px; background: #eef7f1; margin-top: 20px; overflow-wrap: anywhere; }
+.status:empty { display: none; }
+dialog { padding: 32px; border: 1px solid #dce3e7; border-radius: 16px; width: min(480px, calc(100% - 40px)); color: #202d35; background: #fff; box-shadow: 0 20px 80px #142c3533; max-height: calc(100dvh - 40px); overflow-y: auto; }
+dialog::backdrop { background: #182f3c80; }
+h2 { margin: 0 0 12px; font-size: 23px; line-height: 1.5; }
+.preview { background: #f3f6f7; border-radius: 8px; padding: 18px; margin-top: 22px; }
+.preview dt { font-size: 13px; color: #53636e; margin-bottom: 6px; }
+.preview dd { margin: 0; font-size: 20px; font-weight: 650; line-height: 1.6; overflow-wrap: anywhere; white-space: pre-wrap; }
+dialog .actions { margin-top: 24px; }
+@media (max-width: 600px) {
+ main { width: calc(100% - 40px); margin: 48px auto; }
+ .page-heading { margin-bottom: 24px; }
+ h1 { font-size: 26px; margin-bottom: 10px; }
+ .panel { padding: 24px 20px; border-radius: 12px; }
+ .actions { margin-top: 28px; gap: 10px; }
+ .actions button { flex: 1; padding-left: 12px; padding-right: 12px; }
+ dialog { padding: 24px; }
+ h2 { font-size: 21px; }
+}
+</style>
+</head>
+<body>
+<main>
+ <header class="page-heading">
+  <h1>表示名の設定</h1>
+  <p class="description">表示名を入力して、保存してください。</p>
+ </header>
+ <section class="panel" aria-label="表示名の編集">
+  <form id="name-form" novalidate>
+   <label for="display-name">表示名 <span class="required">必須</span></label>
+   <input id="display-name" name="display-name" type="text" value="山田 花子" required autocomplete="nickname" aria-describedby="error">
+   <p id="error" class="error" role="alert" hidden>表示名が空欄です。名前を入力してください。</p>
+   <div class="actions">
+    <button id="reset" type="button">取消</button>
+    <button id="save" class="primary" type="submit">保存</button>
+   </div>
+  </form>
+ </section>
+ <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>
+</main>
+<dialog id="confirmation" aria-labelledby="confirmation-title" aria-describedby="confirmation-description">
+ <h2 id="confirmation-title">表示名を保存しますか？</h2>
+ <p id="confirmation-description" class="description">次の表示名で保存します。</p>
+ <dl class="preview"><dt>表示名</dt><dd id="name-preview"></dd></dl>
+ <div class="actions">
+  <button id="cancel" type="button" autofocus>取消</button>
+  <button id="confirm" class="primary" type="button">確定</button>
+ </div>
+</dialog>
+<script>
+'use strict';
+const input = document.getElementById('display-name');
+const error = document.getElementById('error');
+const dialog = document.getElementById('confirmation');
+const save = document.getElementById('save');
+const status = document.getElementById('status');
+let savedName = '山田 花子';
+let pendingName = '';
+function clearError() {
+ error.hidden = true;
+ input.removeAttribute('aria-invalid');
+}
+document.getElementById('name-form').addEventListener('submit', (event) => {
+ event.preventDefault();
+ status.textContent = '';
+ if (!input.value.trim()) {
+  error.hidden = false;
+  input.setAttribute('aria-invalid', 'true');
+  input.focus();
+  return;
+ }
+ clearError();
+ pendingName = input.value.trim();
+ document.getElementById('name-preview').textContent = pendingName;
+ dialog.showModal();
+});
+input.addEventListener('input', () => {
+ status.textContent = '';
+ if (input.value.trim()) clearError();
+});
+document.getElementById('reset').addEventListener('click', () => {
+ input.value = savedName;
+ clearError();
+ status.textContent = '';
+ input.focus();
+});
+document.getElementById('cancel').addEventListener('click', () => dialog.close());
+document.getElementById('confirm').addEventListener('click', () => {
+ savedName = pendingName;
+ input.value = savedName;
+ status.textContent = `表示名「${savedName}」を保存しました。`;
+ dialog.close();
+});
+dialog.addEventListener('close', () => save.focus());
+</script>
+</body>
+</html>

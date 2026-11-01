@@ -1,0 +1,33 @@
+{
+  "model": "gpt-6.1-sol",
+  "reasoning": "medium",
+  "generation_timeout": 150,
+  "task_inputs": {
+    "documents": "日本語の文書管理アプリ。対象は初めて使う事務担当者。\nデータは設計仕様/PDF/進行中(id=a)、契約書/PDF/確認待ち(id=b)、議事録/テキスト/完了(id=c)。架空の検証データである。\n一覧で検索し、文書の詳細を開き、メモを書き、関連文書へ移り、一覧へ戻れること。検索条件と文書ごとのメモを保持する。\n自動検証用: 検索input id=search。詳細を開くbuttonにはdata-open=a,b,c。詳細名id=doc-title、メモtextarea id=note、関連文書button id=related、一覧へ戻るbutton id=back。aの関連文書はb、bはa。メモは入力時に保持する。\n初期表示は一覧。不要なダッシュボード、数値サマリー、補助パネルを追加しない。",
+    "settings": "日本語の表示名設定。既定の表示名は「山田 花子」。初めての利用者が入力・保存・取消できる。\n空欄は保存できず入力欄の近くに理由を表示する。保存前に確認ダイアログを開き、取消で戻っても入力を保つ。保存後は完了が分かる。\n自動検証用: input id=display-name、保存button id=save、エラーid=error、HTML dialog id=confirmation、その中に取消button id=cancelと確定button id=confirm、保存結果id=status。\nキーボードで完了でき、ダイアログ終了時はsaveへフォーカスを戻す。メール入力や新しい設定項目は追加しない。",
+    "landing": "日本語の予約管理サービス「予約ノート」の公開ページ。\n対象は小さな教室の運営者。予約一覧・日程変更・受付状況の確認を一か所で行えることを伝える。\n基本プランは月額1,000円、チームプランは月額3,000円。いずれも合成の比較用仕様。実績・導入社数・顧客の声・割引を創作しない。\n主要CTA「料金を確認」はhref=#pricing。料金section id=pricing、サービス説明section id=features。読者が内容を理解して料金へ移動できる。\n不要なバッジ・カードの重複・過剰な装飾を増やさず、読みやすく魅力的なページにする。外部送信する申込フォームは不要。"
+  },
+  "common": "これはUI Skillの比較実験です。指定のSkillを読み、その方針で要求を実装してください。\nindex.html一つにHTML/CSS/JSを実装。日本語、Desktop 1440x900とMobile 390x844に対応。\n外部依存、ネットワーク、画像生成、新パッケージ、別ハーネス、Memory保存、commit/pushは禁止。\n上記は全候補共通の実験制約であり、通常のSkill全機能の評価とは区別します。\n要求にない機能・文言・架空の実績を追加しない。意味のあるラベル、読みやすい文字、明確な情報階層を使う。\n指定されたid/data属性はテストの接続用なので保持し、見た目は独自に設計してよい。\nまずindex.htmlを完成させる。時間内の確認は静的確認に限定し、実ブラウザー検証は親が別途同条件で行う。\nこの作業ディレクトリ以外のファイルを変更しない。最後に完了/未完了を短く報告する。",
+  "trials_per_case": 1,
+  "candidates": {
+    "A": "unmodified ooui-design",
+    "B": "routing and instruction consolidation only",
+    "C": "B plus focused evidence and explicit a11y checks"
+  },
+  "viewports": {
+    "desktop": [
+      1440,
+      900
+    ],
+    "mobile": [
+      390,
+      844
+    ]
+  },
+  "metrics": {
+    "operations": "deterministic pass/fail, errors retained",
+    "visual": "blind independent 1..5 anchored ratings: hierarchy, readability, simplicity, consistency, requirement fidelity; 1=blocks understanding, 3=usable with visible friction, 5=clear and coherent"
+  },
+  "acceptance": "no missing required feature or new major defect; improve visual/operation outcomes in at least two cases; do not claim equivalence for timeouts",
+  "limits": "three synthetic tasks, one trial, AI visual judgement, no human usability measurement, CLI sampling seed unavailable"
+}
