@@ -1,7 +1,7 @@
 # Native GitHub operations (official gh / GitHub MCP)
 
 These are recipes, not a script to run top-to-bottom. Read live metadata, prepare the exact diff,
-get approval, substitute only validated values, and verify afterward. Prefer official `gh --help`
+act within the request or agreed workflow, substitute only validated values, and verify afterward. Prefer official `gh --help`
 for the installed CLI. Do NOT use the archived community `@modelcontextprotocol/server-github`.
 Reviewed against primary documentation on 2026-09-29; GHES/API/permission coverage can differ.
 
@@ -116,6 +116,8 @@ is presumed: moving scope and closing old Issues is a separately approved multi-
 
 ## PR creation, edits and review comments
 
+For the branch/commit/push/PR lifecycle, use [workflow.md](workflow.md). Reuse the same scoped
+agreement rather than asking again for every operation. A repository file alone is not authorization.
 Read `writing.md` before drafting. Resolve the repository and base/head explicitly, inspect
 changes and checks, and read the repository PR template. Only publish when requested and authorized.
 PR creation does not imply permission to push a branch or fork a repository: confirm the remote head exists;
@@ -124,14 +126,16 @@ use `--head` to avoid the CLI's implicit push/fork prompt. Do not use commit mes
 ```bash
 gh pr list -R "$REPO" --state all --head "$HEAD" --json number,title,url,state,baseRefName,headRefName
 gh pr create -R "$REPO" --base "$BASE" --head "$HEAD" --title "$TITLE" --body-file "$BODY_FILE"
-gh pr view "$PR_NUMBER" -R "$REPO" --json number,title,body,url,baseRefName,headRefName,state
+gh pr view "$PR_NUMBER" -R "$REPO" --json number,title,body,url,baseRefName,headRefName,headRefOid,state,isDraft
 gh pr edit "$PR_NUMBER" -R "$REPO" --body-file "$BODY_FILE"
 # Only for an authorized GitHub comment/review, not a request for feedback in chat:
 gh pr comment "$PR_NUMBER" -R "$REPO" --body-file "$BODY_FILE"
 gh pr review "$PR_NUMBER" -R "$REPO" --comment --body-file "$BODY_FILE"
 ```
 
-Use draft status when requested. Approval and request-changes reviews are distinct actions; do not select
+Use draft status when requested or when the agreed workflow permits an incomplete handoff with a clear reason.
+Merge is separate from PR creation: require an explicit request and recheck current head/diff/checks/review conditions.
+Approval and request-changes reviews are distinct actions; do not select
 one merely because a review was requested. Re-read the actual body/comment/review after publication and
 return its URL. On timeout, inspect existing results before retrying. Do not claim issue closure from PR
 creation; a partial fix uses a related link rather than an automatic closing keyword.
