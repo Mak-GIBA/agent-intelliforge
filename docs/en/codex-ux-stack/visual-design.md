@@ -79,9 +79,16 @@ The host freezes the contract and selects the bundled browser for screenshot-bou
 `ux_check_contract` observes routes, state-specific acceptance conditions, action targets, transitions
 and retained values. If an input unmounts, its value remains unverified until it reappears.
 Missing screens, wrong actions/routes, lost inputs, failed assertions and missing evidence prevent a pass.
+Verify the source state again after resizing. Enter/Space activation of a declared button also counts
+as its action; a failed browser call never proves a transition. For a negative/no-op test without
+its own declared transition, check the state alone rather than tagging it as the normal transition.
 Human design changes invalidate a frozen run and require reconciliation. Do not weaken the design to
 match broken code. Review current screenshots for appearance, contrast, cognitive load and consistency.
 Automated checks and AI ratings are distinct from human usability testing.
+
+Use `--role-sandbox read-only` to separate non-fixer file permissions as well. The fixer retains
+implementation write access; the browser owns screenshots/receipts in its evidence directory.
+Resume preserves the recorded policy unless the override is explicitly supplied again.
 
 Additional distribution users run helpers with
 `intelliforge kit-run ux-stack --agent codex --tool ux_contract.py -- <arguments>` and the harness

@@ -106,5 +106,9 @@ ux-gan-harness run --project . --url http://localhost:3000 \
 承認済みの外観、コントラスト、レイアウト、認知負荷は画像と独立レビューでも確認します。
 自動操作・AI評価と、人間によるユーザビリティテストは区別します。
 
+レビュー役のファイル権限も分ける場合は `--role-sandbox read-only` を付けます。
+fixerは実装を編集し、画像・receiptはブラウザーが専用の証拠ディレクトリへ記録します。
+再開時は既存の権限設定を維持するため、切り替える場合も同じオプションを明示します。
+
 追加配布経路では、Pythonヘルパーを `intelliforge kit-run ux-stack --agent codex --tool ux_contract.py -- <引数>`、
 ハーネスを `intelliforge kit-run ux-stack --agent codex -- <引数>` から呼び出せます。
