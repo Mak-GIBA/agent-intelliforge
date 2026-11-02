@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "dfe49c16ac910b554970febb2e3cc05203d5d2a6",
+  "candidate_commit": "59e4912",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "max",
+  "cases": ["documents", "application"],
+  "trial": 1,
+  "phase_seconds": 420,
+  "iterations": 1,
+  "viewports": ["desktop", "tablet", "mobile"],
+  "profile": "focused",
+  "reference_urls": [],
+  "source": "Copies of generated trial1 applications; original results preserved",
+  "regressions": {
+    "documents": {"selector": "#back", "effect": "display:none!important", "focus": "文書を開きメモを入力し、一覧へ戻って検索条件・選択・メモを保持する導線。関連文書から一覧への戻り方も含む。"},
+    "application": {"selector": "#continue-confirm", "effect": "display:none!important", "focus": "申込情報を入力し、確認から模擬決済へ進み、確認へ戻って入力を保持する導線。実決済は禁止。"}
+  },
+  "required_test": "Fixed Chromium operations with corrected async/cancel checks; failures remain failures",
+  "candidate_contract": "Scoped canonical Journey/Screen/action/transition assertions supplied to candidate; baseline receives same design JSON as repository context but has no --ux-contract feature",
+  "limits": "At most one repair batch and independent re-review; no implicit retry or larger caps. This is a focused synthetic regression, not whole-app approval."
+}

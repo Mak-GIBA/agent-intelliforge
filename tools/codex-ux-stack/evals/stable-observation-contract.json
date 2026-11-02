@@ -1,0 +1,13 @@
+{
+  "purpose": "Correct static image measurement after a real screenshot showed a partial opacity entrance animation",
+  "targets": "The same sixteen unchanged generated artifacts and anonymous mapping, both versions and all three viewports",
+  "operations": "Same revision-three checks and read-only bounded waits; no model generation or app source edits",
+  "static_capture": "Wait finite browser animations at most five seconds and stable scroll position at most two seconds; Playwright animations=disabled for static screenshots",
+  "reason": "DOM state and URL can match while entrance opacity/transform or smooth scrolling is incomplete; those frames cannot establish the final visual appearance",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "max",
+  "ratings": "One independent A/B rating per case/trial, eight calls, same rubric and 180-second cap; no retry of timeouts",
+  "budget": "Shared original 240-minute total; run only after the concurrent local recovery releases its reservation",
+  "records": "Write revision four operations-stable/screens-stable and ratings-stable; retain all previous operations, images and ratings",
+  "limits": "Static appearance only, not animation quality or human usability; timing-corrected ratings are supplementary measurements, not additional independent generation trials"
+}

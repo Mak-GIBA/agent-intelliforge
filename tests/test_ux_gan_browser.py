@@ -110,6 +110,8 @@ class BrowserTests(unittest.TestCase):
         self.url=f"http://127.0.0.1:{self.server.server_port}"
         self.out=self.base/"screenshots"
         env=dict(os.environ,UX_GAN_SCREENSHOTS=str(self.out),UX_GAN_TARGET=self.url)
+        if hasattr(self,'configure_contract'):env['UX_GAN_CONTRACT']=str(self.configure_contract())
+        if hasattr(self,'contract_journeys'):env['UX_GAN_JOURNEYS']=json.dumps(self.contract_journeys)
         self.proc=subprocess.Popen(["node",str(BRIDGE)],stdin=subprocess.PIPE,stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE,text=True,env=env)
         self.request_id=0

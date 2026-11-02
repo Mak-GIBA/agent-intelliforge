@@ -69,6 +69,107 @@ for name in ["playwright","@playwright/mcp"]:
 
 
 class InstallerTests(unittest.TestCase):
+    def test_dry_run_never_starts_native_tools_or_their_caches(self):
+        before=set(self.home.rglob('*'))
+        with patch.object(mod.subprocess,'run',side_effect=AssertionError('native process in dry-run')),patch.object(mod.subprocess,'Popen',side_effect=AssertionError('native process in dry-run')):
+            self.assertEqual(self.invoke('--dry-run','--visual-tools','whimsical,figma'),0)
+        self.assertEqual(set(self.home.rglob('*')),before)
+    def test_vendor_listing_failure_reports_core_health_without_losing_json(self):
+        self.assertEqual(self.invoke(),0)
+        with patch.object(mod.Installer,'plugin_list',side_effect=mod.InstallError('listing unavailable')):
+            code,value=self.status()
+        self.assertEqual(code,1);self.assertFalse(value['ready']);self.assertTrue(value['core_ready'])
+        self.assertTrue(any(c.get('diagnostic')=='listing_unavailable' for c in value['checks']))
+    @contextlib.contextmanager
+    def design_backend(self,fail=False,auth='oAuth'):
+        # Native host transport is tested separately. This fixture only exercises
+        # installer ownership, lifecycle and failure bookkeeping.
+        def service(installer):
+            module=installer.visual_module()
+            class Client:
+                home=installer.codex_home
+                def rpc(client,method,params):
+                    path=self.home/'.codex/design-fixture.json'
+                    servers=json.loads(path.read_text()) if path.exists() else {}
+                    if fail:raise module.MCPError('connection_failed')
+                    if method=='config/read':return {'config':{'mcp_servers':servers},'version':'fixture'}
+                    if method=='config/value/write':
+                        servers[params['keyPath'].split('.')[-1]]=params['value'];path.write_text(json.dumps(servers));return {}
+                    if method=='mcpServerStatus/list':return {'data':[{'name':params['serverName'],'authStatus':auth,'tools':{}}]}
+                    raise AssertionError(method)
+            return module.DesignMCP(Client())
+        @contextlib.contextmanager
+        def factory(installer):yield service(installer)
+        def mcp_list(installer):
+            base=original(installer);path=self.home/'.codex/design-fixture.json'
+            return base+[{'name':name,**value} for name,value in (json.loads(path.read_text()) if path.exists() else {}).items()]
+        original=mod.Installer.mcp_list
+        with patch.object(mod.Installer,'design_service',factory),patch.object(mod.Installer,'mcp_list',mcp_list):yield
+
+    def test_selected_mcp_failure_keeps_core_and_can_be_retried(self):
+        with self.design_backend(fail=True):self.assertEqual(self.invoke('--visual-tools','figma'),1)
+        self.assertTrue((self.home/'.agents/skills/ux-visual-design/SKILL.md').is_file())
+        self.assertEqual(self.manifest()['design_mcp_pending']['figma']['status'],'incomplete')
+        with self.design_backend():
+            self.assertEqual(self.invoke('--visual-tools','figma'),0)
+            first=self.manifest()['components']['design-mcp-figma'];self.assertEqual(self.invoke('--visual-tools','figma'),0)
+            self.assertEqual(self.manifest()['components']['design-mcp-figma'],first)
+        self.assertEqual(self.manifest()['design_mcp_pending'],{})
+
+    def test_design_update_does_not_restore_removed_or_add_new_registration(self):
+        with self.design_backend():self.assertEqual(self.invoke('--visual-tools','figma'),0)
+        path=self.home/'.codex/design-fixture.json';path.write_text('{}')
+        with self.design_backend():self.assertEqual(self.invoke('--update','--visual-tools','whimsical'),0)
+        self.assertEqual(json.loads(path.read_text()),{})
+
+    def test_manual_disabled_design_mcp_is_reused_without_ownership(self):
+        (self.home/'.codex').mkdir();path=self.home/'.codex/design-fixture.json'
+        value={'my-figma':{'url':'https://mcp.figma.com/mcp','enabled':False,'tool_timeout_sec':90}};path.write_text(json.dumps(value))
+        with self.design_backend():self.assertEqual(self.invoke('--visual-tools','figma'),0)
+        self.assertEqual(json.loads(path.read_text()),value);self.assertNotIn('design-mcp-figma',self.manifest()['components'])
+
+    def test_auth_incomplete_doctor_does_not_mark_core_unavailable(self):
+        with self.design_backend(auth='notLoggedIn'):
+            self.assertEqual(self.invoke('--visual-tools','figma'),0)
+            with patch.object(mod.Installer,'design_service',side_effect=AssertionError('status started host')):
+                code,value=self.status();self.assertEqual(code,0);self.assertIsNone(value['design_mcp_ready'])
+            output=io.StringIO()
+            with contextlib.redirect_stdout(output):code=mod.main(['--doctor','--check-design-mcp'])
+            value=json.loads(output.getvalue());self.assertEqual(code,0);self.assertTrue(value['core_ready']);self.assertFalse(value['design_mcp_ready'])
+            self.assertEqual(value['design_mcp'][0]['authentication'],'required')
+
+    def test_uninstall_preserves_edited_design_mcp(self):
+        with self.design_backend():self.assertEqual(self.invoke('--visual-tools','figma'),0)
+        path=self.home/'.codex/design-fixture.json';value=json.loads(path.read_text());value['figma']['tool_timeout_sec']=180;path.write_text(json.dumps(value))
+        before=path.read_bytes()
+        with self.design_backend():self.assertEqual(self.invoke('--uninstall'),1)
+        self.assertEqual(path.read_bytes(),before);self.assertIn('design-mcp-figma',self.manifest()['components'])
+
+    def test_edited_design_update_records_incomplete_instead_of_still_checking(self):
+        with self.design_backend():self.assertEqual(self.invoke('--visual-tools','figma'),0)
+        path=self.home/'.codex/design-fixture.json';value=json.loads(path.read_text());value['figma']['tool_timeout_sec']=180;path.write_text(json.dumps(value));before=path.read_bytes()
+        with self.design_backend():self.assertEqual(self.invoke('--update'),1)
+        self.assertEqual(path.read_bytes(),before);self.assertEqual(self.manifest()['design_mcp_pending']['figma']['status'],'incomplete')
+    def test_visual_skill_is_part_of_standard_core(self):
+        self.assertEqual(self.invoke(),0)
+        self.assertTrue((self.home/'.agents/skills/ux-visual-design/SKILL.md').is_file())
+        self.assertTrue((self.home/'.agents/skills/ux-visual-design/assets/contract.schema.json').is_file())
+
+    def test_update_adds_new_core_skill_without_registering_design_services(self):
+        self.assertEqual(self.invoke(),0)
+        visual=self.home/'.agents/skills/ux-visual-design'
+        if visual.exists():shutil.rmtree(visual)
+        path=self.home/'.codex/ux-stack/manifest.json';state=json.loads(path.read_text())
+        state['components'].pop('ux-visual-design',None);state['version']='1.3.0';path.write_text(json.dumps(state))
+        self.assertEqual(self.invoke('--update'),0)
+        self.assertTrue((visual/'SKILL.md').is_file())
+        self.assertFalse(any(p['name'] in ('figma','whimsical') for p in self.mock_state()['servers']))
+
+    def test_design_mcp_selection_dry_run_does_not_call_mutating_backend(self):
+        before=set(self.home.rglob('*'))
+        self.assertEqual(self.invoke('--dry-run','--visual-tools','whimsical,figma'),0)
+        self.assertEqual(set(self.home.rglob('*')),before)
+
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
         self.base=Path(self.tmp.name)
@@ -413,7 +514,7 @@ class InstallerTests(unittest.TestCase):
                          cwd=self.base,capture_output=True,text=True)
         self.assertEqual(r.returncode,0,r.stderr)
         expected = {Path("install_ux_stack.py"),Path("sources.json")}
-        expected.update(p.relative_to(SOURCE) for folder in ("skill","browser","ooui-design")
+        expected.update(p.relative_to(SOURCE) for folder in ("skill","browser","ooui-design","ux-visual-design")
                         for p in (SOURCE/folder).rglob("*")
                         if p.is_file() and "__pycache__" not in p.parts and "node_modules" not in p.parts)
         actual = {p.relative_to(dest) for p in dest.rglob("*") if p.is_file()}

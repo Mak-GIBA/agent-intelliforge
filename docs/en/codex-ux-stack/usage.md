@@ -1,5 +1,9 @@
 # Use Codex UX Stack
 
+For editable flows, wireframes, collaborative design and implementation contracts, use
+[ux-visual-design](visual-design.md). It adds visualization for substantial/multiscreen work
+while preserving the existing OOUI and UX-GAN entry points.
+
 **English** | [日本語](../../codex-ux-stack/usage.md)
 
 [Overview](README.md) · [Installation](installation.md) · [Validation (Japanese)](../../codex-ux-stack/validation.md) · [Documentation](../README.md)

@@ -1,0 +1,22 @@
+{
+  "purpose": "Supplemental real-model harness validation; separate from the fixed old/new UX comparison",
+  "source_commit": "b42892d2c0bafe63d61256572b61c098bf40f73c",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "cases": [
+    "document_return",
+    "application_confirmation"
+  ],
+  "fixture": "Two-screen local interactive wireframe; a required control is hidden by one CSS rule",
+  "profile": "focused",
+  "viewports": [
+    "desktop"
+  ],
+  "phase_seconds": 300,
+  "max_iterations": 1,
+  "trials": 1,
+  "budget": "Shared original 240-minute cumulative budget; no extra allowance",
+  "reason": "Original three-viewport generated-app reviews can stop at their fixed phase cap. Verify the actual repair and independent re-review mechanism at a narrower declared scope without retrying or relabelling those runs.",
+  "configuration_scope": "This functional mechanism test fixes medium effort before its first model call. It does not change the max-effort comparison, user settings, or its failed results.",
+  "limits": "Synthetic frontend prototype and desktop scope only. No human usability, general quality advantage, real SaaS operation or whole-app approval claim."
+}

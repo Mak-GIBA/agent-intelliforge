@@ -4,6 +4,12 @@
 
 [docs一覧](../README.md) · [導入手順](installation.md) · [使い方](usage.md) · [検証範囲](validation.md)
 
+1.4.0では、既存のOOUI設計と画像付き検証へ `ux-visual-design` を追加しました。
+複数画面の導線を編集可能な図とワイヤーフレームへ可視化し、ローカルの設計契約を実装・操作テストと対応付けます。
+Whimsical／Figmaは明示選択する任意連携です。未接続でもMermaid・SVG・HTMLで進められます。[設計・共同編集の使い方](visual-design.md)
+
+導入・操作・比較の実測と未検証項目は、[1.4.0の検証報告](verification-1.4.0.md)へ分けています。
+
 Webアプリで利用者が扱う対象を起点に、画面と操作を設計するキットです。この考え方をOOUI（オブジェクト指向UI）と呼びます。
 たとえば予約管理なら、予約の一覧・詳細と、選んだ予約を変更・取り消す操作を対応付けます。実装後は画像とブラウザー操作から、必要な情報が見つかるか、主要操作を完了できるかを確認します。
 入口は[install_codex_ux_stack.sh](../../install_codex_ux_stack.sh)です。スクリプト単体で使え、WorkgraphやSpecKitは前提にしません。
@@ -13,17 +19,19 @@ Webアプリで利用者が扱う対象を起点に、画面と操作を設計�
 | ツール | 提供元・形式 | 用途 | 条件 |
 |---|---|---|---|
 | ooui-design | このリポジトリのSkill・参照資料 | 対象・画面・操作の設計、認知負荷の点検、実装と確認への引き継ぎ | 標準 |
+| ux-visual-design | このリポジトリのSkill・JSON・Python | Journey・画面・状態・遷移の可視化、共同編集、設計契約と実装の照合 | 標準 |
 | UI/UX GAN Harness | このリポジトリのBash・Python・Skill | 画像付きレビュー、類似アプリ比較、修正、独立した再確認 | 標準 |
 | Product Design | OpenAIのplugin | デザイン案、試作、既存体験のレビュー | 標準 |
 | Build Web Apps | OpenAIのplugin | フロントエンドの構築とブラウザーテスト | 標準 |
 | web-design-guidelines | VercelのSkill | 観察した問題についてUIコードの品質を確認 | 標準 |
 | Playwright MCP | MicrosoftのMCP | Codexからブラウザーを操作 | 標準 |
 | ローカルPlaywright | Microsoftのライブラリと専用アダプター | 通常の経路が使えない場合に操作前後の画像を記録 | 標準 |
+| Whimsical / Figma Remote MCP | 各社の公式MCP | 導線図・ワイヤーフレーム・UIの共同編集、デザイン参照 | --visual-toolsで明示選択 |
 | ux-critique | Thecsizの第三者Skill | UX知識ベースを使った詳細な批評 | --deep |
 | kotonoha（yomiyasu互換） | 別配布の日本語推敲Skill | 日本語UI文言、設計メモ、レビュー・改善レポートの推敲 | 利用を推奨。UX Stackからは導入しない |
 | Basic Memory | 既存のMemoryツール | 関連する過去の指摘と適用範囲の参照 | 利用可能な場合に読み取りのみで参照 |
 
-新規アプリでは、**OOUI設計 → デザイン・実装 → ブラウザー検証**の順で進めます。
+新規アプリでは、**OOUI設計 → 導線と画面の可視化 → デザイン・実装 → ブラウザー検証**の順で進めます。
 ooui-designで利用者、対象、属性、関係、一覧と詳細、操作、状態保持を整理し、短い設計メモを
 Product Design / Build Web Appsへ渡します。画像生成や実装にも必須機能と情報の優先順位を引き継ぎます。
 

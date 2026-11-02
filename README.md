@@ -91,7 +91,7 @@ Follow a kit's link for its overview, installation, and examples. Use its ID wit
 | ID | Kit | Purpose |
 |---|---|---|
 | `workgraph` | [Basic Memory Workgraph](docs/en/basic-memory-workgraph/README.md) | Save reusable knowledge from attempts, obstacles, verified workarounds, and contextual corrections. |
-| `ux-stack` | [Codex UX Stack](docs/en/codex-ux-stack/README.md) | Design screens around objects and actions, then implement and review them with screenshots and browser operations. |
+| `ux-stack` | [Codex UX Stack](docs/en/codex-ux-stack/README.md) | Design objects, flows and editable wireframes, reconcile human edits, then verify implementation with screenshots and browser operations. Optional Whimsical/Figma MCP. |
 | `repository-director` | [Repository Director](docs/en/repository-director/README.md) | Repository policies, indexed specifications from existing code or new goals, and GitHub/GitLab collaboration. |
 | `design-research` | [Design Research](docs/en/design-research/README.md) | Compare core approaches using primary sources and experiments, reporting conditions, results, and unverified claims. |
 | `ecc` | [Codex ECC](docs/en/codex-ecc/README.md) | Keep ECC originals and read specialized Python, error-handling, and security procedures when needed. |

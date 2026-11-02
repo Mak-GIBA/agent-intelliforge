@@ -11,7 +11,10 @@ bash install_codex_ux_stack.sh --update
 ux-gan-harness doctor --project /path/to/app --check-mcp
 ```
 
-`--update` updates existing managed components without adding missing Plugins, MCP servers or optional Skills. It backs up previous versions, preserves manually edited assets and reports an incomplete update. No arguments still performs installation; `--force` can also add missing components. After updating, check the model-free MCP probe and an actual additional UX audit.
+`--update` updates managed components and adds the new bundled Core Skill, `ux-visual-design`.
+It does not add missing Plugins, external MCP servers or optional Skills, or restore removed/disabled servers.
+Previous versions are backed up; manual edits and unmanaged same-name resources remain protected.
+No arguments still installs; `--force` can add missing components.
 
 ## Requirements and installation
 
@@ -34,6 +37,8 @@ bash install_codex_ux_stack.sh --doctor
 |---|---|
 | None | Install missing standard components |
 | `--deep` | Also install pinned ux-critique |
+| `--visual-tools whimsical,figma` | Register selected official Remote MCP; preserve manual/disabled settings; authenticate separately |
+| `--doctor --check-design-mcp` | Diagnose connection, authentication and advertised capabilities without external writes |
 | `--update` | Update existing managed components without adding missing Plugins/MCP |
 | `--force` | Replace/re-register unchanged owned assets |
 | `--dry-run` | Preview install/removal |
@@ -53,11 +58,12 @@ Existing Skills are checked in the specified location, Codex Skills, and `~/.age
 
 | Asset | Version/source | New destination |
 |---|---|---|
-| ooui-design/references | Bundled 1.3.0 OOUI/cognitive guidance | `~/.agents/skills/ooui-design/` |
+| ooui-design/references | Bundled 1.4.0 OOUI/cognitive guidance | `~/.agents/skills/ooui-design/` |
+| ux-visual-design | Bundled 1.4.0 Skill, contracts, editable output and MCP helper | `~/.agents/skills/ux-visual-design/` |
 | Product Design / Build Web Apps | Codex-managed `openai-curated-remote`; actual versions recorded | Codex Plugin environment |
 | web-design-guidelines | `vercel-labs/agent-skills`, `063bee94c3f4df8453406c830b0a7df0f2860278` | `~/.agents/skills/web-design-guidelines/` |
 | ux-critique | `Thecsiz/ux-critique`, `3da293cafb639195bf71797590081d4ffb0045ba` | `~/.agents/skills/ux-critique/` |
-| Harness/Skill/shared guidance | Bundled 1.3.0 | `~/.agents/skills/ux-gan-harness/` |
+| Harness/Skill/shared guidance | Bundled 1.4.0 | `~/.agents/skills/ux-gan-harness/` |
 | Browser runtime | Playwright 1.63.0 / MCP 0.0.83, embedded lockfile | `CODEX_HOME/ux-stack/runtime/` |
 | Launcher | Calls bundled Bash harness | `~/.local/bin/ux-gan-harness` |
 | State/backups | Hashes, versions, outcomes, previous files | `CODEX_HOME/ux-stack/` |
@@ -81,6 +87,44 @@ bash install_codex_ux_stack.sh --deep --force
 Use `--update` to update existing managed components only. No arguments adds missing ooui-design but retains an existing unchanged harness. Diagnosis checks new references and reports old harness assets as unready. Unmanaged/edited same-name Skills remain protected.
 
 Per-component output is `INSTALLED`, `SKIP`, or `FAILED`. Failure returns exit 1 / `INCOMPLETE`; earlier components remain and can be retried. There is no global Plugin/MCP rollback. Failed file replacement restores its immediately previous assets. `COMPLETE` means install operations ended, not model/app/browser success. Restart Codex if `$ooui-design` / `$ux-gan-harness` is absent; an absolute launcher path works outside PATH.
+
+## Optional design MCP
+
+```bash
+bash install_codex_ux_stack.sh --visual-tools whimsical,figma
+codex mcp login whimsical
+codex mcp login figma
+bash install_codex_ux_stack.sh --doctor --check-design-mcp
+```
+
+Official URLs are `https://mcp.whimsical.com/mcp` and `https://mcp.figma.com/mcp`.
+Registration uses the native Codex app-server configuration API and changes only selected entries.
+Registration and OAuth are separate. If diagnosis reports an existing alternate registration name,
+use it with `codex mcp login`. Credentials remain in the native host and out of the install manifest.
+
+Status does not connect and reports `not_probed`. Doctor distinguishes missing configuration,
+connection failure, required authentication, advertised tools and target write access.
+It never writes to an external design, so `write_permission: not_tested` is expected.
+Runtime discovery uses names, descriptions and schemas rather than assuming legacy names.
+Limit writes to requested files/frames/nodes; code-based Figma tools use the official host Skill.
+
+Core remains installed after optional setup failure. `design_mcp_pending` records retryable state.
+If registration succeeded but verification was interrupted, a rerun reuses the entry without
+assuming ownership; it remains on uninstall. Manual and edited entries are protected.
+`core_ready` and `design_mcp_ready` are independent. Update never adds an unowned provider.
+`integrations_ready` covers standard vendor Plugins and Playwright MCP. Listing failures remain
+structured JSON diagnostics; local Skills/references/browser health stays separate. Legacy `ready`
+and exit status still describe overall readiness. Dry-run starts no native host process or cache;
+it previews registrations that will be inspected/reused when applied.
+
+The additional distribution supports
+`intelliforge install --only ux-stack --agent codex --plugin --visual-tools whimsical,figma --apply` and
+`intelliforge doctor --only ux-stack --agent codex --plugin --check-design-mcp`.
+Omit `--apply` or use `--dry-run` for a nonmutating preview. Codex-specific registration is rejected for Claude.
+
+Official instructions: [Whimsical](https://whimsical.com/integrations/codex),
+[Figma Remote MCP](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/),
+[Codex MCP](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 
 ## Remove and recover
 

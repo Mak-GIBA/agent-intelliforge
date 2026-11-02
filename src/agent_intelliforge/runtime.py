@@ -326,12 +326,22 @@ def _portable_action(root, kits, plan, args, state):
         if item['method'] == 'legacy':
             from .cli import legacy_action
             results.append({'kit': kit['id'], 'agent': agent, 'exit_code': legacy_action(root, [kit], args.action, getattr(args,'migrate_legacy',False))}); continue
-        if args.action == 'doctor': results.append(diagnose(kit, agent, state)); continue
+        if args.action == 'doctor':
+            result=diagnose(kit, agent, state)
+            if kit['id']=='ux-stack' and agent=='codex' and getattr(args,'check_design_mcp',False):
+                if result.get('installed'):
+                    from .ux_port import design_action
+                    result['design_mcp']=design_action(home,home/'bundle',settings(home),'doctor')
+                else:result['design_mcp']=[{'provider':p,'ready':False,'connection':'core_not_installed','authentication':'not_tested','write_permission':'not_tested'} for p in ('whimsical','figma')]
+            results.append(result);continue
         home.mkdir(parents=True, exist_ok=True)
         with file_lock(home / '.operation.lock'):
             config = settings(home)
             if args.action == 'uninstall':
                 if not config: raise ForgeError('No owned installation to uninstall: ' + str(home))
+                if kit['id']=='ux-stack' and agent=='codex':
+                    from .ux_port import design_action
+                    design_action(home,home/'bundle',config,'uninstall')
                 if config['method'] == 'plugin': plugins.manage(root, kit, agent, 'uninstall', state)
                 else:
                     for target in config.get('skills', []): remove_tree(Path(target), owner(Path(target).name, agent))
@@ -413,6 +423,11 @@ def _portable_action(root, kits, plan, args, state):
                 else: atomic_write(home / 'settings.json', old_config)
                 raise
             results.append({'kit': kit['id'], 'agent': agent, 'version': kit['version'], 'method': item['method'], 'runtime': str(home)})
+            if kit['id']=='ux-stack' and agent=='codex':
+                from .ux_port import design_action
+                external=design_action(home,bundle,config,args.action,getattr(args,'visual_tools',[]))
+                results[-1]['design_mcp']=external
+                if any(r.get('status')=='incomplete' for r in external):results[-1]['exit_code']=1
     print(json.dumps({'results': results}, ensure_ascii=False, indent=2))
     return int(any(value.get('exit_code', 0) for value in results))
 
@@ -454,7 +469,7 @@ def kit_run(identity, agent, arguments, state):
         if len(matches) != 1: raise ForgeError('Helper not found or ambiguous: ' + options.tool)
         allowed = {'workgraph': {'workgraph_tools.py','workgraph_github.py','workgraph_recall.py','install_schemas.py'},
                    'office': {'office.py'}, 'kotonoha': {'check.py','writing_lint.py'},
-                   'repository-director': {'repository.py','forge_inspect.py','github_inspect.py'}, 'ux-stack': {'harness.py'}}
+                   'repository-director': {'repository.py','forge_inspect.py','github_inspect.py'}, 'ux-stack': {'harness.py','ux_contract.py','design_mcp.py'}}
         if identity in allowed and options.tool not in allowed[identity]:
             raise ForgeError('Installer/configuration helpers are not executable through the portable Skill entry')
         if identity == 'design-research' and matches[0].parent != bundle / 'skill/scripts':

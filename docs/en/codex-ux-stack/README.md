@@ -1,5 +1,13 @@
 # Codex UX Stack
 
+Version 1.4.0 adds **ux-visual-design** alongside the existing OOUI and UX-GAN workflow.
+It creates editable flows/wireframes, reconciles human edits into a local UX contract,
+and checks implementation through browser-owned evidence. Whimsical and Figma Remote MCP
+are explicitly selected options; Mermaid, SVG and HTML work without them.
+See [visual design and collaboration](visual-design.md).
+The [1.4.0 verification report (Japanese)](../../codex-ux-stack/verification-1.4.0.md)
+separates local regression tests, actual browser operations, model comparisons and unverified SaaS authentication.
+
 **English** | [日本語](../../codex-ux-stack/README.md)
 
 [Documentation](../README.md) · [Installation](installation.md) · [Usage](usage.md) · [Validation (Japanese)](../../codex-ux-stack/validation.md)
@@ -13,12 +21,14 @@ Design screens around the objects users work with: object-oriented UI, or OOUI. 
 | Component | Source / format | Purpose | Selection |
 |---|---|---|---|
 | ooui-design | Repository Skill/references | Object/view/action design, cognitive-load checks, implementation handoff | Standard |
+| ux-visual-design | Repository Skill/contract/helpers | Editable flows and wireframes, co-edit reconciliation, implementation conformance | Standard |
 | UI/UX GAN Harness | Repository Bash/Python/Skill | Screenshot reviews, reference comparisons, fixes, independent verification | Standard |
 | Product Design | OpenAI Plugin | Design ideas, prototypes, existing-flow review | Standard |
 | Build Web Apps | OpenAI Plugin | Frontend implementation/browser tests | Standard |
 | web-design-guidelines | Vercel Skill | Code checks for observed UI issues | Standard |
 | Playwright MCP | Microsoft MCP | Browser operations from Codex | Standard |
 | Local Playwright | Microsoft library/custom adapter | Screenshot/action fallback when normal routes fail | Standard |
+| Whimsical / Figma Remote MCP | Official provider endpoints | Editable flows, wireframes, UI design and collaboration | Explicit `--visual-tools` selection |
 | ux-critique | Thecsiz Skill | Additional knowledge-base critique | `--deep` |
 | kotonoha / yomiyasu compatibility | Separate writing kit | Japanese copy and report revision | Recommended, not installed here |
 | Basic Memory | Existing Memory tools | Contextually relevant past feedback | Read-only when available |

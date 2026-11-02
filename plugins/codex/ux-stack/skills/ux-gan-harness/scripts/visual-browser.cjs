@@ -15,6 +15,7 @@ const target = new URL(process.env.UX_GAN_TARGET || 'http://localhost');
 const smoke = process.argv.includes('--smoke');
 let browser, context, page, index = 0;
 const recentFrames = [];
+const contract = process.env.UX_GAN_CONTRACT ? new (require('./contract-browser.cjs').ContractObserver)(process.env.UX_GAN_CONTRACT,process.env.UX_GAN_JOURNEYS?JSON.parse(process.env.UX_GAN_JOURNEYS):undefined) : null;
 const tools = [
   ['ux_navigate', 'Open a URL and return its actual screenshot. Do this before reading UI source.', {url:{type:'string'}}],
   ['ux_capture', 'Look at the current rendered screen as an image; get a recorded screenshot.', {}],
@@ -29,6 +30,7 @@ const tools = [
   ['ux_offline', 'Simulate a network failure/recovery in this test browser; captures before/after.', {offline:{type:'boolean'}}],
   ['ux_dialog', 'Accept or cancel a pending browser confirm/alert; captures after the dialog.', {accept:{type:'boolean'},text:{type:'string'}}],
   ['ux_inspect', 'Read visible text/URL/console for locating an element AFTER looking at a screenshot. Not a substitute for visual review.', {}]
+  ,['ux_check_contract', 'Observe the frozen local UX contract at this screen/state. Check a transition immediately after its declared action. Saves screenshot-bound browser receipts; never supplies model-written success.', {screen_id:{type:'string'},state:{type:'string'},transition_id:{type:'string'}}]
 ].map(([name,description,properties])=>({name,description,inputSchema:{type:'object',properties,additionalProperties:false}}));
 let dialog, dialogWake, pendingAction, errors = [];
 async function boot() {
@@ -70,6 +72,13 @@ async function call(name,a) {
   if (dialog && !['ux_dialog','ux_inspect'].includes(name))
     throw new Error('A browser dialog is pending; use ux_dialog to accept or cancel it first.');
   if (name==='ux_inspect') return {content:[{type:'text',text:JSON.stringify({url:page.url(),title:await page.title(),visible_text:await page.locator('body').innerText(),console:errors.slice(-30),recent_frames:recentFrames})}]};
+  if(name==='ux_check_contract') {
+    if(!contract)throw Error('No frozen UX contract configured for this run');
+    const result=await contract.check(page,a),picture=await frame('UX contract '+a.screen_id+' / '+a.state);
+    receipt({kind:'contract_check',...result,frame_id:picture.meta.id,url:picture.meta.url,viewport:picture.meta.viewport,captured_at:new Date().toISOString()});
+    return {content:[{type:'text',text:JSON.stringify({...result,frame:picture.meta})},picture.image]};
+  }
+  if(contract)await contract.before(page,name,a);
   const frames=[];
   if (!['ux_navigate','ux_capture','ux_dialog'].includes(name)) frames.push(await frame('before '+name));
   const dialogAppears = new Promise(resolve=>{dialogWake=resolve;});
@@ -103,11 +112,12 @@ async function call(name,a) {
   try { await Promise.race([operation,dialogAppears]); }
   finally {dialogWake=undefined;}
   if(dialog) {
-    pendingAction=operation.catch(e=>{errors.push({type:'dialog_action',text:e.message});});
+    pendingAction=operation.catch(e=>{if(contract)contract.failed(name);errors.push({type:'dialog_action',text:e.message});});
     receipt({kind:'action',tool:name,args:a,before:frames.map(x=>x.meta.id),dialog:dialog.message(),captured_at:new Date().toISOString()});
     return {content:[{type:'text',text:JSON.stringify({pending_dialog:dialog.message(),before:frames.map(x=>x.meta)})},...frames.map(x=>x.image)]};
   }
   if(name!=='ux_wait') await page.waitForTimeout(200);
+  if(contract)contract.complete(name);
   frames.push(await frame(name==='ux_capture'?'current':'after '+name));
   const state={url:page.url(),title:await page.title(),frames:frames.map(x=>x.meta),console:errors.slice(-10)};
   receipt({kind:'action',tool:name,args:a,frames:state.frames.map(x=>x.id),url:state.url,captured_at:new Date().toISOString()});
@@ -134,7 +144,7 @@ async function main() {
         case 'tools/list': result={tools}; break;
         case 'tools/call':
           try {result=await call(req.params.name,req.params.arguments||{});}
-          catch(e) {result={isError:true,content:[{type:'text',text:e.message}]};}
+          catch(e) {if(contract)contract.failed(req.params.name);result={isError:true,content:[{type:'text',text:e.message}]};}
           break;
         default: process.stdout.write(JSON.stringify({jsonrpc:'2.0',id:req.id,error:{code:-32601,message:'Method not found'}})+'\n'); return;
       }
