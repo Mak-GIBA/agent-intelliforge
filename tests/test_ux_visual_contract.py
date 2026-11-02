@@ -41,6 +41,24 @@ def example():
 
 
 class UXContractTests(unittest.TestCase):
+    def test_unchanged_editable_sources_do_not_change_the_contract(self):
+        for without_layout in (False, True):
+            c=example()
+            if without_layout:
+                for s in c['screens']:s.pop('layout')
+            with tempfile.TemporaryDirectory() as td:
+                root=Path(td);ux.render_bundle(c,root)
+                for name in ('wireframes.svg','flow.mmd'):
+                    self.assertEqual(ux.import_design(c,root/name),c,name)
+
+    def test_error_edges_cannot_be_deleted_or_rebound_silently(self):
+        c=example();c['transitions'][0]['on_error']={'screen_id':'S-detail','state':'failure'}
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);ux.render_bundle(c,root);p=root/'flow.mmd';original=p.read_text()
+            edge=next(line for line in original.splitlines() if 'T-open__on_error:' in line)
+            for altered in (original.replace(edge+'\n',''),original.replace(edge,edge.replace('S-list__normal','S-detail__normal',1))):
+                p.write_text(altered)
+                with self.assertRaises(ux.ContractError):ux.import_design(c,p)
     def test_flow_exposes_states_and_error_recovery(self):
         contract=example();contract['transitions'][0]['on_error']={'screen_id':'S-detail','state':'failure'}
         with tempfile.TemporaryDirectory() as td:
