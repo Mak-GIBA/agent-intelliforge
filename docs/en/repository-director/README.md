@@ -4,18 +4,19 @@
 
 [Install and migrate](installation.md) · [Usage](usage.md) · [Validation](validation.md) · [Docs](../README.md)
 
-Define repository goals and policies, connect upstream documents through an index, and develop against those documents.
+Document repository goals and implementation for developers, and develop against those documents.
 Use it for new projects or to document existing code and add AGENTS/README guidance without changing the application.
 It also handles GitHub Issues/PRs/Projects, GitLab Issues/MRs, and clear commit messages.
 
 This custom kit replaces GitHub Project Director and SpecKit Upstream. The old scripts, kit IDs and Skill entrypoints are retired without aliases.
 Official SpecKit, custom metadata, approval ledgers and research tools are not required. Existing documents and history can be retained.
 
-Keep README and AGENTS short and link them to an index, purpose/background, repository policy, requirements, architecture, core logic, and verification/operations.
-Reuse existing documents and naming. Add feature-specific documents when useful. Preserve requester feedback as a summary of context, reasons, adoption or deferral, and its effect on requirements.
-
-LISTBOX's actual guides, index and six specifications informed the role separation, links and distinction between observed behavior and unknown requirements.
-Its framework and project-specific testing restrictions are not imposed elsewhere.
+README is the repository entrypoint: overview, prerequisites, installation, usage, commands, document links and license.
+Keep business goals/background in docs/purpose.md, file responsibilities/entrypoints/call and data flows in docs/architecture.md,
+and development/testing/change/operations procedures in docs/development.md. These are the three default documents.
+AGENTS contains agent rules and references. Reuse existing names, indexes and specifications instead of duplicating them.
+Explain major flows with annotated trees and Mermaid diagrams tied to actual files/functions. Preserve business context and
+design rationale, while keeping investigation scope, document-creation history and work reports out of the document body.
 
 ```text
 $repository-director

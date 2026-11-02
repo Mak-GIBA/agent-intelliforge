@@ -1,0 +1,6 @@
+interface:
+  display_name: "UX"
+  short_description: "UI/UXの相談・レビュー・再設計・実装を目的に応じて進める共通入口"
+  default_prompt: "$ux このアプリの利用者と目的、依頼範囲に合わせて、必要な分析・設計・実装・確認を進めてください。"
+policy:
+  allow_implicit_invocation: true

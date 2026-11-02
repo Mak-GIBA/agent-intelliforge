@@ -1,12 +1,26 @@
 # Use Codex UX Stack
 
-For editable flows, wireframes, collaborative design and implementation contracts, use
-[ux-visual-design](visual-design.md). It adds visualization for substantial/multiscreen work
-while preserving the existing OOUI and UX-GAN entry points.
+Use `$ux` for consultation, review, redesign, implementation and improvement. It combines only the needed
+stages and respects the requested changes. For focused diagram/co-edit work, the direct
+[ux-visual-design workflow](visual-design.md) remains available.
 
 **English** | [日本語](../../codex-ux-stack/usage.md)
 
 [Overview](README.md) · [Installation](installation.md) · [Validation (Japanese)](../../codex-ux-stack/validation.md) · [Documentation](../README.md)
+
+## Common entry
+
+```text
+$ux Review why this app is hard to use. Include structural or navigation redesign proposals when useful. Stop at proposals; do not edit the app.
+```
+
+A review is not restricted to audit findings: observations can lead to OOUI analysis and visual redesign proposals.
+A findings-only request does not add large design artifacts. Design-only stops before implementation; no-file-change
+requests stay in the conversation. Implementation requests proceed through the appropriate design, coding and checks.
+Small copy/CSS fixes do not require a whole design contract or full audit.
+
+Specialists remain directly callable as `$ooui-design`, `$ux-visual-design`, and `$ux-gan-harness`.
+The following runtime commands are for direct use of the existing harness.
 
 ## Child permissions and MCP diagnostics
 
@@ -28,10 +42,10 @@ Each `invocation.json` records effective permissions, command networking and the
 
 ## Design and implement a new app
 
-Open the app in Codex and select `$ooui-design`; automatic selection is also allowed.
+Open the app in Codex and select `$ux`; automatic selection is also allowed.
 
 ```text
-$ooui-design Design and implement an internal app for documents and reader groups. First organize objects, attributes, relations, lists/details, navigation, actions, and retained state. Hand this to Product Design / Build Web Apps, then verify required features, mobile layout, unsaved input, and recovery in the browser. Avoid unnecessary decoration, permanent explanations, and controls. Polish Japanese copy with available kotonoha, falling back to yomiyasu.
+$ux Design and implement an internal app for documents and reader groups. First organize objects, attributes, relations, lists/details, navigation, actions, and retained state. Hand this to Product Design / Build Web Apps, then verify required features, mobile layout, unsaved input, and recovery in the browser. Avoid unnecessary decoration, permanent explanations, and controls. Polish Japanese copy with available kotonoha, falling back to yomiyasu.
 ```
 
 Specify users/features for the actual project. Reuse existing specifications and a short design memo. Small fixes need relevant checks, not a full redesign or document suite. Design-only requests do not start implementation or the harness.
@@ -40,10 +54,10 @@ Prioritize OOUI for exploring/comparing/editing multiple objects; fixed-target p
 
 ## Review and improve an implemented app
 
-Select `$ux-gan-harness`. Resolve the URL/startup from the request, README, or running server.
+Select `$ux`. Resolve the URL/startup from the request, README, or running server.
 
 ```text
-$ux-gan-harness Actually run the installed gan-harness.sh. Review this app from screenshots as a first-time user, compare useful ideas from similar apps with images, and iterate fixes and independent verification. Make main tasks clear without continually adding explanations or buttons.
+$ux Review this app from screenshots as a first-time user, compare useful ideas from similar apps with images, and iterate fixes and independent verification. Make main tasks clear without continually adding explanations or buttons.
 ```
 
 Report the actual command, RUN_ID, and stage. Research, fixes, and evaluation are separate Codex executions; the parent conversation does not substitute its own prose review for running the harness.
@@ -51,7 +65,7 @@ Report the actual command, RUN_ID, and stage. Research, fixes, and evaluation ar
 ## Review only
 
 ```text
-$ux-gan-harness Run audit with the installed gan-harness.sh. Review screenshots and operations and write concrete recommendations to docs/ui-ux-review.md. Do not change app code.
+$ux Review screenshots and operations and write concrete recommendations to docs/ui-ux-review.md. Include structural/navigation redesign proposals when useful. Do not change app code.
 ```
 
 `audit` saves evidence/review without modifying the app. `reviewed` means review completed, not the app passed.

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "ux-stack",
   "name": "UX Stack",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "legacy": {
     "script": "install_codex_ux_stack.sh",
     "actions": {
@@ -23,6 +23,11 @@
     ]
   },
   "skills": [
+    {
+      "name": "ux",
+      "source": "tools/codex-ux-stack/ux",
+      "assembled": false
+    },
     {
       "name": "ux-gan-harness",
       "source": "tools/codex-ux-stack/skill",
@@ -68,6 +73,7 @@
     }
   ],
   "destinations": [
+    "{skills_home}/ux",
     "{skills_home}/ux-gan-harness",
     "{skills_home}/ooui-design",
     "{agent_home}/ux-stack/runtime",

@@ -11,7 +11,7 @@ bash install_codex_ux_stack.sh --update
 ux-gan-harness doctor --project /path/to/app --check-mcp
 ```
 
-`--update`は導入済みの管理対象を更新します。1.4.0では標準構成に加わった `ux-visual-design` も追加します。
+`--update`は導入済みの管理対象を更新し、標準の共通入口`ux`と、未導入なら`ux-visual-design`も追加します。
 未導入のPlugin・外部MCP・任意Skillは追加せず、解除・無効化したMCPも復元しません。
 旧版はバックアップし、手動編集済み・未管理の同名資材は保持して未完了を報告します。
 新規導入は従来の引数なし、未導入分を含めた再適用は`--force`を使います。
@@ -61,12 +61,13 @@ bash install_codex_ux_stack.sh --doctor
 
 | 対象 | 取得・版 | 新規の保存先 |
 |---|---|---|
-| ooui-design・参照資料 | 配布物1.4.0。OOUIと認知負荷の基準を同梱 | ~/.agents/skills/ooui-design/ |
-| ux-visual-design | 配布物1.4.0。Skill・契約・編集可能な成果物・MCPヘルパー | ~/.agents/skills/ux-visual-design/ |
+| ux | 相談・レビュー・再設計・実装の共通入口 | ~/.agents/skills/ux/ |
+| ooui-design・参照資料 | OOUIと認知負荷の基準を同梱 | ~/.agents/skills/ooui-design/ |
+| ux-visual-design | Skill・契約・編集可能な成果物・MCPヘルパー | ~/.agents/skills/ux-visual-design/ |
 | Product Design / Build Web Apps | openai-curated-remoteのCodex管理版。実際の版を記録 | Codexのplugin環境 |
 | web-design-guidelines | vercel-labs/agent-skillsのコミット063bee94c3f4df8453406c830b0a7df0f2860278 | ~/.agents/skills/web-design-guidelines/ |
 | ux-critique | Thecsiz/ux-critiqueのコミット3da293cafb639195bf71797590081d4ffb0045ba | ~/.agents/skills/ux-critique/ |
-| ハーネス・専用Skill・共通設計基準 | 配布物1.4.0 | ~/.agents/skills/ux-gan-harness/ |
+| ハーネス・専用Skill・共通設計基準 | 同梱の実行部品と参照資料 | ~/.agents/skills/ux-gan-harness/ |
 | ブラウザー環境 | Playwright 1.63.0 / Playwright MCP 0.0.83、埋め込みnpm lockfile | CODEX_HOME/ux-stack/runtime/ |
 | 起動コマンド | ハーネスのBashへ渡すラッパー | ~/.local/bin/ux-gan-harness |
 | 導入記録・バックアップ | ハッシュ、版、処理結果、旧資材 | CODEX_HOME/ux-stack/ |
@@ -105,7 +106,7 @@ bash install_codex_ux_stack.sh --deep --force
 ファイルの置き換えに失敗した場合は直前の資材を復元します。
 
 COMPLETEは導入処理の完了です。ブラウザー、Codexサンドボックス、モデル、アプリの操作は別の確認です。
-Skillが候補に出なければCodexを再起動して$ooui-designまたは$ux-gan-harnessを入力してください。
+通常は`$ux`を指定します。候補に出なければCodexを再起動してください。専門Skillの直接呼び出しも維持しています。
 起動コマンドがPATHにない場合は、保存先の絶対パスでも使えます。
 
 ## Whimsical／Figmaの任意連携

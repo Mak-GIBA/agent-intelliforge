@@ -9,9 +9,10 @@
 # Inspect: intelliforge inspect --only workgraph
 # Regenerate: python tools/intelliforge/build.py
 # Kit: ux-stack — UX Stack
-# Skills: ux-gan-harness, ooui-design, ux-visual-design
+# Skills: ux, ux-gan-harness, ooui-design, ux-visual-design
 # Source: https://github.com/vercel-labs/agent-skills (063bee94c3f4df8453406c830b0a7df0f2860278)
 # Source: https://github.com/Thecsiz/ux-critique (3da293cafb639195bf71797590081d4ffb0045ba (optional deep install))
+# Destination: {skills_home}/ux
 # Destination: {skills_home}/ux-gan-harness
 # Destination: {skills_home}/ooui-design
 # Destination: {agent_home}/ux-stack/runtime

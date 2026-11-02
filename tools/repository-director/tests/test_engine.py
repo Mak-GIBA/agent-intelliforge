@@ -42,6 +42,72 @@ class ProjectTests(unittest.TestCase):
         self.assertFalse(plan['applied']);self.assertEqual(before,self.files())
         self.assertNotIn('do-not-copy',json.dumps(plan))
 
+    def test_default_bootstrap_has_three_documents_and_readme_navigation(self):
+        repository.initialize(self.root,'existing','delegate',True,'codex')
+        self.assertEqual({p.name for p in (self.root/'docs').iterdir()},
+                         {'purpose.md','architecture.md','development.md'})
+        self.assertEqual(repository.inspect(self.root)['index'],'README.md')
+        self.assertEqual(repository.check(self.root)['errors'],[])
+        self.assertTrue(repository.check(self.root)['warnings'])
+        before=self.files()
+        self.assertEqual(repository.initialize(self.root,'auto','delegate',True,'codex')['changes'],[])
+        self.assertEqual(self.files(),before)
+
+    def test_compact_drafts_keep_status_out_of_visible_document_text(self):
+        repository.initialize(self.root,'auto','dialogue',True,'codex')
+        for path in (self.root/'docs').glob('*.md'):
+            text=path.read_text()
+            self.assertIn('<!-- repository-director:draft -->',text)
+            self.assertNotIn('文書状態：',text)
+            self.assertNotIn('調査範囲',text)
+            self.assertNotIn('未調査',text)
+        architecture=(self.root/'docs/architecture.md').read_text()
+        self.assertIn('ファイル構成',architecture)
+        self.assertIn('エントリーポイント',architecture)
+
+    def test_existing_six_document_layout_is_preserved_without_extra_files(self):
+        docs=self.root/'docs';docs.mkdir()
+        for filename in ('purpose.md','repository-policy.md','requirements.md','architecture.md','core-logic.md','verification.md'):
+            (docs/filename).write_text('# Human document\n\nKeep this content.\n')
+        (docs/'INDEX.md').write_text('# Existing index\n')
+        before={p:p.read_bytes() for p in docs.iterdir()}
+        repository.initialize(self.root,'existing','dialogue',True,'codex')
+        self.assertEqual(set(docs.iterdir()),set(before))
+        for p,content in before.items():
+            if p.name!='INDEX.md':self.assertEqual(p.read_bytes(),content)
+        self.assertEqual(repository.check(self.root)['errors'],[])
+
+    def test_grouped_custom_documents_are_reused_without_default_duplicates(self):
+        (self.root/'specs').mkdir()
+        for name in ('why.md','structure.md','contributing.md'):(self.root/'specs'/name).write_text('# Human document\n')
+        mapping=['purpose=specs/why.md','architecture=specs/structure.md','policy=specs/contributing.md']
+        repository.initialize(self.root,'existing','dialogue',True,'codex',mapping)
+        self.assertFalse((self.root/'docs').exists())
+        before=self.files()
+        self.assertEqual(repository.initialize(self.root,'auto','dialogue',True,'codex')['changes'],[])
+        self.assertEqual(before,self.files())
+
+    def test_explicit_mapping_takes_precedence_before_grouping_missing_roles(self):
+        (self.root/'docs').mkdir();(self.root/'docs/purpose.md').write_text('# Previous purpose\n')
+        (self.root/'specs').mkdir();(self.root/'specs/business.md').write_text('# Business purpose\n')
+        result=repository.initialize(self.root,'existing','dialogue',True,'codex',['purpose=specs/business.md'])
+        self.assertEqual(result['facts']['roles']['purpose'],['specs/business.md'])
+        self.assertEqual(result['facts']['roles']['requirements'],['specs/business.md'])
+        self.assertFalse((self.root/'docs/requirements.md').exists())
+
+    def test_one_existing_document_can_hold_multiple_groups_across_reruns(self):
+        (self.root/'specs').mkdir();(self.root/'specs/handbook.md').write_text('# Human handbook\n')
+        mappings=[r+'=specs/handbook.md' for r in ('purpose','architecture','policy')]
+        repository.initialize(self.root,'existing','dialogue',True,'codex',mappings)
+        self.assertFalse((self.root/'docs').exists())
+        before=self.files()
+        repository.initialize(self.root,'existing','dialogue',True,'codex')
+        self.assertEqual(before,self.files())
+
+    def test_documenting_the_draft_marker_does_not_mark_a_finished_doc_as_draft(self):
+        (self.root/'README.md').write_text('# Guide\n\nRemove the marker `<!-- repository-director:draft -->` when finished.\n\n```html\n<!-- repository-director:draft -->\n```\n')
+        self.assertEqual(repository.check(self.root)['warnings'],[])
+
     def test_existing_bootstrap_preserves_sources_reuses_docs_and_is_idempotent(self):
         docs=self.root/'docs';docs.mkdir()
         (docs/'機能仕様.md').write_text('# 機能仕様\n\nHuman requirements.\n')
@@ -53,7 +119,7 @@ class ProjectTests(unittest.TestCase):
             if name.endswith('.md') and '/' not in name:self.assertTrue(after[name].startswith(content))
             else:self.assertEqual(after[name],content)
         self.assertNotIn('docs/requirements.md',after)
-        self.assertIn('機能仕様.md',(docs/'INDEX.md').read_text())
+        self.assertIn('機能仕様.md',(self.root/'README.md').read_text())
         self.assertEqual(repository.check(self.root)['errors'],[])
         self.assertTrue(repository.check(self.root)['warnings'])
         result=repository.initialize(self.root,'auto','delegate',True,'claude')
@@ -63,7 +129,7 @@ class ProjectTests(unittest.TestCase):
         (self.root/'specs').mkdir();(self.root/'specs/contract.md').write_text('# Contract\n')
         repository.initialize(self.root,'existing','dialogue',True,'codex',['requirements=specs/contract.md'])
         self.assertFalse((self.root/'docs/requirements.md').exists())
-        self.assertIn('../specs/contract.md',(self.root/'docs/INDEX.md').read_text())
+        self.assertIn('specs/contract.md',(self.root/'README.md').read_text())
         repository.initialize(self.root,'existing','dialogue',True,'codex')
         self.assertFalse((self.root/'docs/requirements.md').exists())
 

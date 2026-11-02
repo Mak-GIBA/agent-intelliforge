@@ -35,6 +35,42 @@ It generates commits, PR/MR descriptions, reviews, handoff comments and existing
 Installation/self-test never call a model. Lint/string matches alone do not establish quality. No posts, commits or pushes are requested.
 The [Japanese results](../../repository-director/validation.md) record the observed outcome and limitations.
 
+## Branch and PR/MR workflow
+
+Version 1.1.0 adds scoped initial agreement and the branch → verify → commit → push → create/update
+PR/MR procedure, with the human deciding merge. On 2026-11-02, the repository suite ran 565 tests
+with 16 skips and no failures or errors; five isolated Git/forge fixture checks passed.
+
+Four actual model cases ran once each. Initial setup reached a mock PR using a work copy, including
+reconciliation after a simulated creation timeout. Other cases retained existing rules and uncertainty,
+but protected Git metadata or model capacity prevented some steps from completing. These are not four
+end-to-end passes. The [Japanese review](../../repository-director/evidence/workflow-review.md) records
+the actual prose, observer corrections, incomplete steps and later changes that were not model-retested.
+No live GitHub/GitLab writes were performed.
+
+## Compact documents and implementation flows
+
+Version 1.2.0 defaults to purpose, architecture and development docs, with README as the repository entrypoint.
+On 2026-11-02, the repository suite ran 572 tests with 16 skips and no failures/errors. The kit's 32 tests
+and the five Git/forge fixture tests passed. One actual-model trial each for a CLI and Web/API produced
+three docs, preserved source/rules, and included business context, file responsibilities and source-matching flows.
+Prose review found excessive detail and task-only conditions leaking into permanent docs. Instructions were
+corrected, without additional model trials. See the [review and edited example](../../repository-director/evidence/document-layout-review.md).
+
+## Read-only branch evidence
+
+Version 1.3.0 adds `work-status`. All 45 kit tests passed on Git 2.34.1 and Python 3.11.12.
+The repository suite passed 589 tests with 16 skips and no failures/errors; standalone and 677 generated files matched.
+The 13 added cases cover pending changes, renames, Unicode/newline filenames, divergent histories,
+linked worktrees, gitlinks, detached/unborn HEAD, failed reads and refs moving during inspection.
+Before/after snapshots verified unchanged working files, index and refs, including the filter case.
+Git fixtures use a private empty global config and ignore system config; scenario-specific filters remain local.
+A reproduced clean-filter callback during status led to callback suppression and explicit uncertainty,
+followed by related regression checks. The Skill stays at 89 lines with fewer bytes; the existing
+workflow reference grows from 66 to 76 lines. No additional model trial of task separation, conflict
+resolution or merging was run. Shared paths do not prove conflicts or behavioral compatibility;
+remote freshness and submodule working files remain unchecked.
+
 ## Limits
 
 Live GitHub/GitLab writes, native Windows and actual Claude model behavior are outside these local checks.

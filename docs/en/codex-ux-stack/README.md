@@ -1,12 +1,16 @@
 # Codex UX Stack
 
-Version 1.4.0 adds **ux-visual-design** alongside the existing OOUI and UX-GAN workflow.
-It creates editable flows/wireframes, reconciles human edits into a local UX contract,
+Use **`$ux`** as the common entry for consultation, review, redesign, implementation and improvement.
+It selects and combines the specialist workflows according to the goal and permitted changes.
+Reviews may include structural analysis and redesign proposals without applying them to app code or approved designs.
+The visual workflow creates editable flows/wireframes, reconciles human edits into a local UX contract,
 and checks implementation through browser-owned evidence. Whimsical and Figma Remote MCP
 are explicitly selected options; Mermaid, SVG and HTML work without them.
 See [visual design and collaboration](visual-design.md).
 The [1.4.0 verification report (Japanese)](../../codex-ux-stack/verification-1.4.0.md)
 separates local regression tests, actual browser operations, model comparisons and unverified SaaS authentication.
+See the [1.5.0 entrypoint checks (Japanese)](../../codex-ux-stack/verification-1.5.0.md) for installation,
+scope decisions, the single seven-case model trial and its limits.
 
 **English** | [日本語](../../codex-ux-stack/README.md)
 
@@ -20,6 +24,7 @@ Design screens around the objects users work with: object-oriented UI, or OOUI. 
 
 | Component | Source / format | Purpose | Selection |
 |---|---|---|---|
+| ux | Repository Skill | Common entry selecting analysis, design, implementation and verification | Standard |
 | ooui-design | Repository Skill/references | Object/view/action design, cognitive-load checks, implementation handoff | Standard |
 | ux-visual-design | Repository Skill/contract/helpers | Editable flows and wireframes, co-edit reconciliation, implementation conformance | Standard |
 | UI/UX GAN Harness | Repository Bash/Python/Skill | Screenshot reviews, reference comparisons, fixes, independent verification | Standard |
@@ -46,13 +51,13 @@ The custom existing-app harness references [ECC's iteration structure](https://g
 ## First request
 
 ```text
-$ooui-design Design and implement this app around the objects users work with. Organize screens and actions before visual design; verify required features and retained state in the browser. Avoid unnecessary decoration, explanation, and permanent controls. Polish Japanese copy with available kotonoha, or yomiyasu if missing.
+$ux Design and implement this app around the objects users work with. Organize screens and actions before visual design; verify required features and retained state in the browser. Avoid unnecessary decoration, explanation, and permanent controls. Polish Japanese copy with available kotonoha, or yomiyasu if missing.
 ```
 
 For an implemented app:
 
 ```text
-$ux-gan-harness Run the installed gan-harness.sh to review this app using screenshots, then iterate fixes and independent rechecks. Prioritize clear main actions without adding excessive explanations or buttons.
+$ux Review this app using screenshots and operations. Include structural or navigation redesign proposals when useful. Stop at proposals; do not change app code.
 ```
 
 Specify no code changes for review-only. Installation itself does not modify an app; execution needs the target, URL, and test environment. AI observations are separate from human usability testing. See [usage](usage.md) and [validation limits (Japanese)](../../codex-ux-stack/validation.md).
