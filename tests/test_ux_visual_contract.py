@@ -5,6 +5,8 @@ import importlib.util
 import json
 import tempfile
 import unittest
+import os
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT/'tools/codex-ux-stack/ux-visual-design/scripts/ux_contract.py'
@@ -39,6 +41,12 @@ def example():
 
 
 class UXContractTests(unittest.TestCase):
+    def test_flow_exposes_states_and_error_recovery(self):
+        contract=example();contract['transitions'][0]['on_error']={'screen_id':'S-detail','state':'failure'}
+        with tempfile.TemporaryDirectory() as td:
+            ux.render_bundle(contract,Path(td));text=(Path(td)/'flow.mmd').read_text()
+            self.assertIn('failure',text);self.assertIn('on_error',text)
+            self.assertIn('S-list__normal',text);self.assertIn('S-detail__normal',text)
     def test_valid_contract_and_missing_reference(self):
         contract=example();self.assertEqual(ux.validate(contract),[])
         contract['transitions'][0]['to']['screen_id']='missing'
@@ -90,6 +98,27 @@ class UXContractTests(unittest.TestCase):
             with self.assertRaises(ux.ContractError):ux.import_design(example(),svg)
             svg.write_text('<!DOCTYPE svg [<!ENTITY x "expanded">]><svg>&x;</svg>')
             with self.assertRaises(ux.ContractError):ux.import_design(example(),svg)
+
+    @unittest.skipUnless(os.environ.get('UX_GAN_RUNTIME'),'Real Chromium runtime required')
+    def test_preview_retains_destination_state_and_input_without_inventing_internal_fields(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);c=example();c['screens'][0]['fields']=[{'id':'query','label':'文書を検索','type':'search'}]
+            c['transitions'][0]['to']['state']='failure'
+            ux.render_bundle(c,root)
+            script="""const {chromium}=require(process.env.UX_GAN_RUNTIME+'/node_modules/playwright');
+(async()=>{const b=await chromium.launch({headless:true});const p=await b.newPage();
+await p.goto(process.argv[1]);
+await p.locator('[data-action-id="A-open"]').click();
+if(await p.locator('#screen').getAttribute('data-state')!=='failure')throw Error('Destination state lost');
+if(await p.getByLabel('query',{exact:true}).count())throw Error('Internal retention field became a control');
+await p.locator('[data-screen-target="S-list"]').click();
+await p.getByLabel('文書を検索',{exact:true}).fill('契約');
+await p.locator('[data-action-id="A-open"]').click();
+await p.locator('[data-screen-target="S-list"]').click();
+if(await p.getByLabel('文書を検索',{exact:true}).inputValue()!=='契約')throw Error('Input lost');
+await b.close();})().catch(e=>{console.error(e);process.exit(1)});"""
+            result=subprocess.run(['node','-e',script,(root/'wireframes.html').as_uri()],capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr)
 
 
 if __name__=='__main__':unittest.main()
