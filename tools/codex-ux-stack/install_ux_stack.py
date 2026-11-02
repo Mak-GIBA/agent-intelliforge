@@ -474,13 +474,19 @@ class Installer:
             if "path" in owned:
                 ok = tree_hash(Path(owned["path"])) == owned.get("sha256")
                 results.append({"name": name, "ok": ok, "path": owned["path"]})
+        plugin_error=False
+        try:plugins=self.plugin_list()
+        except InstallError:plugins=[];plugin_error=True
         for ref in PLUGINS:
             name, market = ref.split("@")
             ok = any(p.get("name") == name and p.get("marketplaceName") == market
-                     and p.get("enabled", True) for p in self.plugin_list())
-            results.append({"name": ref, "ok": ok})
-        mcp = any(p.get("name") == "playwright" and p.get("enabled", True) for p in self.mcp_list())
-        results.append({"name": "playwright-mcp", "ok": mcp})
+                     and p.get("enabled", True) for p in plugins)
+            results.append({"name": ref, "ok": ok, **({'diagnostic':'listing_unavailable'} if plugin_error else {})})
+        mcp_error=False
+        try:servers=self.mcp_list()
+        except InstallError:servers=[];mcp_error=True
+        mcp = any(p.get("name") == "playwright" and p.get("enabled", True) for p in servers)
+        results.append({"name": "playwright-mcp", "ok": mcp, **({'diagnostic':'listing_unavailable'} if mcp_error else {})})
         for name in ("web-design-guidelines", "ooui-design", "ux-gan-harness", "ux-visual-design"):
             results.append({"name": name + "-skill",
                             "ok": (self.locate_skill(name) / "SKILL.md").is_file()})
@@ -520,13 +526,15 @@ class Installer:
             except (module.MCPError,OSError,ValueError) as error:
                 design=[{'provider':p,'ready':False,'connection':getattr(error,'kind','configuration_or_transport'),'authentication':'not_tested','write_permission':'not_tested'} for p in selected or ['whimsical','figma']]
         else:
-            module=self.visual_module();servers=self.mcp_list()
+            module=self.visual_module()
             for provider in selected or ['whimsical','figma']:
                 matches=[s for s in servers if module.endpoint(s)==module.PROVIDERS[provider]]
                 design.append({'provider':provider,'registered':bool(matches),'name':matches[0].get('name') if len(matches)==1 else None,
-                    'connection':'disabled' if len(matches)==1 and not matches[0].get('enabled',True) else 'not_probed' if matches else 'not_configured',
+                    'connection':'listing_unavailable' if mcp_error else 'disabled' if len(matches)==1 and not matches[0].get('enabled',True) else 'not_probed' if matches else 'not_configured',
                     'authentication':'not_tested','write_permission':'not_tested','ready':None})
-        print(json.dumps({"version": VERSION, "ready": all(r["ok"] for r in results), "core_ready":all(r['ok'] for r in results),
+        integrations=set(PLUGINS)|{'playwright-mcp'}
+        print(json.dumps({"version": VERSION, "ready": all(r["ok"] for r in results), "core_ready":all(r['ok'] for r in results if r['name'] not in integrations|{'ux-critique'}),
+                          'integrations_ready':all(r['ok'] for r in results if r['name'] in integrations),
                           "design_mcp":design,"design_mcp_ready":all(p['ready'] for p in design) if self.args.check_design_mcp else None,
                           "checks": results, "recommendations": [recommendation]}, ensure_ascii=False, indent=2))
         return 0 if all(r["ok"] for r in results) else 1
@@ -566,6 +574,8 @@ class Installer:
                         self.record(name,result['status'])
                     except module.MCPError as error:raise InstallError('Design MCP preserved: '+error.kind) from None
                 elif name == "playwright-mcp":
+                    if self.args.dry_run:
+                        self.record(name,'planned',message='Inspect/remove owned unchanged MCP when applied');continue
                     exists = any(s.get("name") == owned["name"] for s in self.mcp_list())
                     if exists:
                         cfg = self.cli_json(["codex", "mcp", "get", owned["name"], "--json"])
@@ -603,6 +613,8 @@ class Installer:
         for name, task in tasks:
             if self.args.update and name!='ux-visual-design' and not self.owned(name):
                 continue
+            if self.args.dry_run and (name in PLUGINS or name=='playwright-mcp' or name.startswith('design-mcp-')):
+                self.record(name,'planned',message='Inspect/reuse selected native registration when applied; no host process started');continue
             if name in ("ux-gan-harness", "playwright-mcp") and runtime_failed:
                 self.record(name, "failed", message="Browser runtime failed; not registering broken paths")
                 continue
@@ -681,7 +693,7 @@ def main(argv=None):
         say("EXTRACTED", str(dest))
         return 0
     installer = Installer(args)
-    installer.preflight()
+    if not args.dry_run:installer.preflight()
     if args.doctor or args.status:
         return installer.inspect(launch=args.doctor)
     if args.dry_run:

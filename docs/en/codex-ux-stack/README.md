@@ -1,6 +1,6 @@
 # Codex UX Stack
 
-Version1.4.0 adds **ux-visual-design** alongside the existing OOUI and UX-GAN workflow.
+Version 1.4.0 adds **ux-visual-design** alongside the existing OOUI and UX-GAN workflow.
 It creates editable flows/wireframes, reconciles human edits into a local UX contract,
 and checks implementation through browser-owned evidence. Whimsical and Figma Remote MCP
 are explicitly selected options; Mermaid, SVG and HTML work without them.

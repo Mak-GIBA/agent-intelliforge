@@ -669,24 +669,24 @@ def select_backend(config):
         return 'local-playwright', 'UX contract assertions use the bundled browser with host-validated receipts'
     if config["browser"] != "auto":
         return config["browser"], "Explicitly selected local Playwright"
-    plugins = command(["codex", "plugin", "list", "--json"])
-    if plugins.returncode:
-        raise Blocked("Could not inspect Codex browser plugins")
     try:
+        plugins = command(["codex", "plugin", "list", "--json"])
+        if plugins.returncode:
+            return 'local-playwright', 'Native browser plugin inspection failed; using the bundled browser'
         raw = json.loads(plugins.stdout)
         installed = raw.get("installed", []) if isinstance(raw, dict) else raw
         if any(p.get("name") == "browser" and p.get("enabled", True) for p in installed):
             return "browser-plugin", ""
         mcp = command(["codex", "mcp", "list", "--json"])
         if mcp.returncode:
-            raise Blocked("Could not inspect Codex MCP servers")
+            return 'local-playwright', 'Native browser MCP inspection failed; using the bundled browser'
         servers = json.loads(mcp.stdout)
         if isinstance(servers, dict):
             servers = servers.get("servers", [])
         if any(p.get("name") == "playwright" and p.get("enabled", True) for p in servers):
             return "playwright-mcp", "Browser plugin not available"
-    except (ValueError, AttributeError) as e:
-        raise Blocked("Malformed Codex browser capability output") from e
+    except (Blocked, ValueError, AttributeError, TypeError):
+        return 'local-playwright', 'Native browser capability inspection unavailable or malformed; using the bundled browser'
     return "local-playwright", "Browser plugin and configured Playwright MCP not available"
 
 

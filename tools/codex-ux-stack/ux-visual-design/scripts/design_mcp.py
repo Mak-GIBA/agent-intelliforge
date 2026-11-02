@@ -230,7 +230,9 @@ class DesignMCP:
         if not isinstance(target,dict) or not isinstance(target.get('file_id'),str) or not target['file_id']:raise MCPError('target_required')
         file_id=target['file_id'];url=target.get('url','');parsed=urlparse(url)
         allowed=('figma.com','www.figma.com') if provider=='figma' else ('whimsical.com','www.whimsical.com')
-        if parsed.scheme!='https' or parsed.hostname not in allowed or parsed.username or parsed.password or file_id not in parsed.path:raise MCPError('invalid_target')
+        parts=parsed.path.strip('/').split('/')
+        bound=(len(parts)>1 and parts[0] in ('design','file','board','proto') and parts[1]==file_id) if provider=='figma' else (bool(parts) and (parts[-1]==file_id or parts[-1].endswith('-'+file_id)))
+        if parsed.scheme!='https' or parsed.hostname not in allowed or parsed.username or parsed.password or not bound:raise MCPError('invalid_target')
         if not isinstance(arguments,dict):raise MCPError('invalid_arguments')
         def targets(value):
             if isinstance(value,dict):
@@ -248,11 +250,17 @@ class DesignMCP:
         def code(value):
             if isinstance(value,dict):return any(k in ('code','javascript','script') or code(v) for k,v in value.items())
             return any(code(v) for v in value) if isinstance(value,list) else False
-        if code(arguments):raise MCPError('use_host_skill_for_code_tools')
+        if tool=='use_figma' or code(arguments):raise MCPError('use_host_skill_for_code_tools')
         schema=tools[tool].get('inputSchema',{})
         if any(k not in arguments for k in schema.get('required',[])):raise MCPError('missing_tool_argument')
         result=self.client.rpc('mcpServer/tool/call',{'threadId':thread,'server':name,'tool':tool,'arguments':arguments})
-        if result.get('isError'):raise MCPError('provider_tool_failed')
+        if result.get('isError'):
+            # Classify without copying provider content (which can contain a
+            # private document or credential) into diagnostics or install logs.
+            message=json.dumps(result,ensure_ascii=False).lower()
+            if any(word in message for word in ('401','oauth','authentication required','not logged')):raise MCPError('authentication_required')
+            if any(word in message for word in ('403','permission','forbidden','access denied')):raise MCPError('permission_denied')
+            raise MCPError('provider_tool_failed')
         return {'provider':provider,'tool':tool,'file_id':file_id,'result':result,'permission_verified':'read' if read_only else 'write'}
 
 

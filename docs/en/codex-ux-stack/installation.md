@@ -112,6 +112,10 @@ Core remains installed after optional setup failure. `design_mcp_pending` record
 If registration succeeded but verification was interrupted, a rerun reuses the entry without
 assuming ownership; it remains on uninstall. Manual and edited entries are protected.
 `core_ready` and `design_mcp_ready` are independent. Update never adds an unowned provider.
+`integrations_ready` covers standard vendor Plugins and Playwright MCP. Listing failures remain
+structured JSON diagnostics; local Skills/references/browser health stays separate. Legacy `ready`
+and exit status still describe overall readiness. Dry-run starts no native host process or cache;
+it previews registrations that will be inspected/reused when applied.
 
 The additional distribution supports
 `intelliforge install --only ux-stack --agent codex --plugin --visual-tools whimsical,figma --apply` and

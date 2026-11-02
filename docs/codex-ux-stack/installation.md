@@ -137,6 +137,9 @@ manifestの `design_mcp_pending` に未完了を記録し、原因解消後に�
 登録成功後の検証だけが中断した場合は、再実行時に既存登録として再利用し、所有権を推測して取得しません。
 手動登録と同様に解除対象外として残るため、必要なら公式CLIで対象名を確認して解除します。
 `core_ready` と `design_mcp_ready` は独立しており、外部MCPの未接続だけでCoreを利用不能にはしません。
+`integrations_ready` は標準の外部Plugin・Playwright MCPの状態です。外部一覧が取得できない場合もJSONの診断結果を残し、
+ローカルSkill・参照資料・ブラウザーの `core_ready` と分けます。既存の `ready` と終了コードは全体の準備状態を表します。
+dry-runはネイティブCLIも起動せず、適用時に確認する登録を予定として表示します。
 
 追加配布経路では `intelliforge install --only ux-stack --agent codex --plugin --visual-tools whimsical,figma --apply`、
 診断は `intelliforge doctor --only ux-stack --agent codex --plugin --check-design-mcp` です。
