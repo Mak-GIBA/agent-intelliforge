@@ -4,8 +4,8 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require(path.join(process.env.UX_GAN_RUNTIME,'node_modules/playwright'));
 async function run(job,caseName) {
-  const settled=process.argv.includes('--settled-observations'),corrected=settled||process.argv.includes('--corrected-async');
-  const app=path.join(job,'app'),out=path.join(job,settled?'screens-settled':corrected?'screens-corrected':'screens');fs.mkdirSync(out,{recursive:true});
+  const stable=process.argv.includes('--stable-frames'),settled=stable||process.argv.includes('--settled-observations'),corrected=settled||process.argv.includes('--corrected-async');
+  const app=path.join(job,'app'),out=path.join(job,stable?'screens-stable':settled?'screens-settled':corrected?'screens-corrected':'screens');fs.mkdirSync(out,{recursive:true});
   const server=http.createServer((req,res)=>{
     const relative=decodeURIComponent(new URL(req.url,'http://localhost').pathname);const file=path.resolve(app,'.'+relative);
     if(!file.startsWith(path.resolve(app)+path.sep)&&file!==path.resolve(app)){res.writeHead(403).end();return;}
@@ -16,7 +16,15 @@ async function run(job,caseName) {
     for(const [view,width,height] of [['desktop',1440,900],['tablet',768,1024],['mobile',390,844]]) {
       const context=await b.newContext({viewport:{width,height},deviceScaleFactor:1}),p=await context.newPage();p.setDefaultTimeout(1600);
       const errors=[];p.on('pageerror',e=>errors.push(e.message));
-      async function shot(state){const file=path.join(out,view+'-'+state+'.png');await p.screenshot({path:file,fullPage:false});images.push({path:file,viewport:{width,height},state,url:p.url()});}
+      async function shot(state){
+        if(stable)await p.evaluate(async()=>{
+          const finite=document.getAnimations().filter(a=>Number.isFinite(a.effect?.getComputedTiming().endTime));
+          await Promise.race([Promise.allSettled(finite.map(a=>a.finished)),new Promise(r=>setTimeout(r,5000))]);
+          let previous='',unchanged=0;const until=Date.now()+2000;
+          do{await new Promise(r=>setTimeout(r,50));const current=scrollX+','+scrollY;unchanged=current===previous?unchanged+1:0;previous=current;}while(unchanged<3&&Date.now()<until);
+        });
+        const file=path.join(out,view+'-'+state+'.png');await p.screenshot({path:file,fullPage:false,...(stable?{animations:'disabled'}:{})});images.push({path:file,viewport:{width,height},state,url:p.url()});
+      }
       async function check(id,operation){let observed;try{observed=await operation();checks.push({id,viewport:view,passed:observed!==false,observed});return observed!==false;}catch(e){checks.push({id,viewport:view,passed:false,error:e.message.slice(0,400)});return false;}}
       async function observe(read){if(!settled)return read();const until=Date.now()+5000;do{try{if(await read())return true;}catch{}await p.waitForTimeout(50);}while(Date.now()<until);return false;}
       await p.goto(url,{waitUntil:'domcontentloaded'});await shot('initial');
@@ -58,8 +66,8 @@ async function run(job,caseName) {
       await check('no-browser-errors',()=>errors.length===0);await context.close();
     }
   } finally {await b.close();await new Promise(resolve=>server.close(resolve));}
-  const result={case:caseName,revision:settled?3:corrected?2:1,checks,images,passed:checks.filter(c=>c.passed).length,failed:checks.filter(c=>!c.passed).length,source:'actual Chromium; fixed synthetic task; not human usability testing'};
-  fs.writeFileSync(path.join(job,settled?'operations-settled.json':corrected?'operations-corrected.json':'operations.json'),JSON.stringify(result,null,2)+'\n',{mode:0o600});console.log(JSON.stringify({job,revision:result.revision,passed:result.passed,failed:result.failed}));
+  const result={case:caseName,revision:stable?4:settled?3:corrected?2:1,checks,images,passed:checks.filter(c=>c.passed).length,failed:checks.filter(c=>!c.passed).length,source:'actual Chromium; fixed synthetic task; not human usability testing',...(stable?{capture_policy:'Wait finite animations <=5s and scrolling <=2s, then disable animations only for static capture; no claim about motion quality'}:{})};
+  fs.writeFileSync(path.join(job,stable?'operations-stable.json':settled?'operations-settled.json':corrected?'operations-corrected.json':'operations.json'),JSON.stringify(result,null,2)+'\n',{mode:0o600});console.log(JSON.stringify({job,revision:result.revision,passed:result.passed,failed:result.failed}));
   if(process.argv.includes('--require-pass')&&result.failed)process.exitCode=1;
 }
 run(path.resolve(process.argv[2]),process.argv[3]).catch(e=>{console.error(e);process.exit(1)});
