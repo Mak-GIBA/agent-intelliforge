@@ -16,7 +16,13 @@ class VisualEvaluationTests(unittest.TestCase):
         for mode in ['settled','stable']:
             with self.subTest(mode=mode),tempfile.TemporaryDirectory() as directory:
                 runner=benchmark.Benchmark(directory)
-                with patch.object(runner,'call') as call:
+                for case in runner.conditions['cases']:
+                    for trial in range(1,runner.conditions['trials']+1):
+                        for label in ['baseline','candidate']:
+                            p=Path(directory)/'generation'/f'{label}-{case}-{trial}';p.mkdir(parents=True)
+                            (p/'operations.json').write_text(json.dumps({'revision':1,'checks':[]}))
+                            (p/'result.json').write_text(json.dumps({'status':'completed'}))
+                with patch.object(runner,'call',side_effect=AssertionError('Paid rating must not start')) as call:
                     with self.assertRaisesRegex(ValueError,'Missing requested observations'):
                         runner.ratings(settled=mode=='settled',stable=mode=='stable')
                     call.assert_not_called()
@@ -28,8 +34,9 @@ class VisualEvaluationTests(unittest.TestCase):
                 for trial in range(1,runner.conditions['trials']+1):
                     for label in ['baseline','candidate']:
                         p=Path(directory)/'generation'/f'{label}-{case}-{trial}'/'operations-stable.json'
-                        p.parent.mkdir(parents=True);p.write_text(json.dumps({'revision':3}))
-            with patch.object(runner,'call') as call:
+                        p.parent.mkdir(parents=True);p.write_text(json.dumps({'revision':3,'checks':[]}))
+                        (p.parent/'result.json').write_text(json.dumps({'status':'completed'}))
+            with patch.object(runner,'call',side_effect=AssertionError('Paid rating must not start')) as call:
                 with self.assertRaisesRegex(ValueError,'Wrong observation revision'):
                     runner.ratings(stable=True)
                 call.assert_not_called()
