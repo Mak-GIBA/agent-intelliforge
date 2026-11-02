@@ -69,6 +69,11 @@ for name in ["playwright","@playwright/mcp"]:
 
 
 class InstallerTests(unittest.TestCase):
+    def test_dry_run_never_starts_native_tools_or_their_caches(self):
+        before=set(self.home.rglob('*'))
+        with patch.object(mod.subprocess,'run',side_effect=AssertionError('native process in dry-run')),patch.object(mod.subprocess,'Popen',side_effect=AssertionError('native process in dry-run')):
+            self.assertEqual(self.invoke('--dry-run','--visual-tools','whimsical,figma'),0)
+        self.assertEqual(set(self.home.rglob('*')),before)
     def test_vendor_listing_failure_reports_core_health_without_losing_json(self):
         self.assertEqual(self.invoke(),0)
         with patch.object(mod.Installer,'plugin_list',side_effect=mod.InstallError('listing unavailable')):
