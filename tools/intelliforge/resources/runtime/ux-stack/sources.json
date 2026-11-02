@@ -1,8 +1,19 @@
 {
-  "version": "1.3.0",
+  "version": "1.4.0",
+  "visual": {
+    "directory": "ux-visual-design",
+    "version": "1.4.0",
+    "contract_schema": "assets/contract.schema.json",
+    "providers": {
+      "whimsical": "https://mcp.whimsical.com/mcp",
+      "figma": "https://mcp.figma.com/mcp"
+    },
+    "optional_extensions": ["Google Stitch", "tldraw", "Penpot"],
+    "extension_status": "candidates only; no automatic registration or verified adapters"
+  },
   "design": {
     "directory": "ooui-design",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "entry": "review-policy.md",
     "references": [
       "review-policy.md",

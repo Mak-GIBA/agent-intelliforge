@@ -31,8 +31,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from role_runtime import (browser_failure, child_environment, event_errors, failure_kind,
                           override_sandbox, role_sandbox)
+import contract_runtime
 
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 VIEWPORTS = {"desktop": (1440, 900), "tablet": (768, 1024), "mobile": (390, 844)}
 PERSPECTIVES = ["first_time", "mistake", "hurried", "skips_explanation"]
 STATES = ["normal", "empty", "invalid_input", "cancel", "back", "double_click",
@@ -548,9 +549,11 @@ def review_scope(config=None):
             "references_required": profile == "full" or bool(config.get("reference_urls"))}
 
 
-def gate(audit, plan, references, tests, config=None):
+def gate(audit, plan, references, tests, config=None, contract_report=None):
     scope = review_scope(config)
     reasons = []
+    if (config or {}).get('ux_contract_path') and not (contract_report or {}).get('ready'):
+        reasons.append('UX contract checks failed or remain unverified in browser receipts')
     remaining = [i for i in audit["issues"] if i["status"] != "resolved"]
     if any(i["severity"] in ("Critical", "High") for i in remaining):
         reasons.append("Critical/High issues remain")
@@ -662,6 +665,8 @@ def stream_process(argv, cwd, env, log_path, timeout):
 
 
 def select_backend(config):
+    if config.get('ux_contract_path'):
+        return 'local-playwright', 'UX contract assertions use the bundled browser with host-validated receipts'
     if config["browser"] != "auto":
         return config["browser"], "Explicitly selected local Playwright"
     plugins = command(["codex", "plugin", "list", "--json"])
@@ -788,6 +793,18 @@ Do not touch harness outputs, screenshot evidence, repo rules or final report fi
 You are not authorized to call an issue resolved; a separate reviewer will verify it."""
     }
     data["plan"] = state.get("plan")
+    if state.get('ux_contract'):
+        data['ux_design'] = contract_runtime.context(state['ux_contract'])
+        instructions[role] += ('\nPreserve the selected Journey IDs as required flow IDs and the Screen IDs. '
+            'The frozen local UX contract is authoritative; do not weaken it to match broken code. '
+            'Use ux_check_contract(screen_id,state) after reaching each required state, and '
+            'ux_check_contract(screen_id,state,transition_id) immediately after each required transition action. '
+            'Contract checks are browser observations, not model assertions. Exercise error, retention, cancel, retry and back paths. '
+            'Keep domain state names in contract checks and notes; use the existing audit state categories in coverage. '
+            'If checks fail, record an issue; if the design changes, stop for reconciliation.')
+        instructions[role] += (' Compare any frozen design_references with current live screens: hierarchy, spacing, tokens, component/state consistency and responsive intent. '
+            'Record the reference ID/revision and concrete deviations in existing findings. Never claim visual design alignment from JSON checks alone. '
+            'Missing/inaccessible references for an approved design or an unperformed comparison must remain an unverified issue; do not infer approval.')
     if role == "reviewer":
         data["previous_audit"] = state.get("audit")
         data["baseline_simplicity"] = state.get("baseline_simplicity")
@@ -821,6 +838,7 @@ You are not authorized to call an issue resolved; a separate reviewer will verif
 
 
 def run_role(role, schema, state, run_dir, iteration):
+    contract_runtime.assert_current(state.get('ux_contract'))
     tag = f"{iteration:03d}-{role}"
     role_dir = run_dir / tag
     attempt = 0
@@ -860,6 +878,9 @@ def run_role(role, schema, state, run_dir, iteration):
                 # Do not change approvals for native/user-configured MCP servers.
                 "default_tools_approval_mode": "approve"
             }
+            if state.get('ux_contract'):
+                bridge['env']['UX_GAN_CONTRACT'] = state['ux_contract']['snapshot']
+                bridge['env']['UX_GAN_JOURNEYS'] = json.dumps(state['ux_contract']['journeys'])
             for key in ("TMPDIR", "TMP", "TEMP", "XDG_CACHE_HOME", "UV_CACHE_DIR", "npm_config_cache"):
                 bridge["env"][key] = env[key]
             bridge["env"].update(browser_launch_environment())
@@ -881,6 +902,9 @@ def run_role(role, schema, state, run_dir, iteration):
                         if e["source"] == "live"][:4]
             for p in attached:
                 argv += ["--image", p]
+        if role in ('fixer','reviewer') and state.get('ux_contract'):
+            for reference in state['ux_contract'].get('design_references',[])[:4]:
+                argv += ['--image',reference['snapshot']];attached.append(reference['snapshot'])
         # Pass prompt through an argv element; never interpolate it into shell code.
         argv += ["--", prompt]
         atomic_json(actual_dir / "invocation.json",
@@ -891,6 +915,7 @@ def run_role(role, schema, state, run_dir, iteration):
         log(f"{tag}: {state['backend']} / {state['config'].get('model') or 'Codex設定のモデル'}")
         code = stream_process(argv, state["config"]["project"], env,
                               actual_dir / "events.jsonl", state["config"]["phase_timeout"])
+        contract_runtime.assert_current(state.get('ux_contract'))
         if role != "fixer":
             assert_source(state["expected_source"], Path(state["config"]["project"]))
         if not output_path.is_file():
@@ -942,6 +967,9 @@ def run_role(role, schema, state, run_dir, iteration):
         if not evidence and not (role == "references" and result["status"] == "partial"):
             raise Blocked(f"{tag}: no actual screenshot evidence")
         atomic_json(actual_dir / "evidence.json", evidence)
+        if role == 'reviewer' and state.get('ux_contract'):
+            state['ux_contract_report'] = contract_runtime.observations(state['ux_contract'], actual_dir, review_scope(state['config'])['viewports'])
+            atomic_json(actual_dir / 'ux-contract-report.json', state['ux_contract_report'])
         return result, evidence, actual_dir
 
 
@@ -1051,6 +1079,9 @@ def publish(state, run_dir):
             "AIが初見ユーザーの視点で実画面を評価した結果。人間のユーザーテストは未実施。", ""]
     scope = review_scope(state["config"])
     text += [f"検証範囲: {scope['profile']} / 対象: {', '.join(scope['focus']) or '主要フロー全体'} / 画面幅: {', '.join(scope['viewports'])}。focusedは対象範囲だけの結果です。", ""]
+    if state.get('ux_contract'):
+        report = state.get('ux_contract_report', {})
+        text += [f"UX設計契約: {'確認済み' if report.get('ready') else '未達または未検証'}。ブラウザー証拠 {report.get('verified',0)}/{report.get('required',0)}件。詳細はrunのux-contract-report.json。設計のSHA-256: {state['ux_contract']['sha256']}。", '']
     text += ["OOUIの構造、認知負荷、機能の充足、表示、実操作を分けて確認します。"
              "適用した共通基準・参照資料と版は各ロールのprompt.txtに保存しています。", ""]
     for k, label in [("purpose", "何のサービスか"), ("next_action", "最初の操作"),
@@ -1204,9 +1235,11 @@ def persist(state, run_dir):
 def workflow(state, run_dir):
     project = Path(state["config"]["project"])
     assert_source(state["expected_source"], project)
+    contract_runtime.assert_current(state.get('ux_contract'))
     if not state.get("plan"):
         result, evidence, _ = run_role("planner", PLAN_SCHEMA, state, run_dir, 0)
         validate_plan(result, evidence)
+        if state.get('ux_contract'):contract_runtime.validate_plan(result, state['ux_contract'])
         state["plan"], state["plan_evidence"] = result, evidence
         state["evidence"] = evidence
         persist(state, run_dir)
@@ -1236,7 +1269,7 @@ def workflow(state, run_dir):
         return 0
     if not state.get("tests"):
         state["tests"] = run_tests(state, run_dir)
-    reasons = gate(state["audit"], state["plan"], state["references"], state["tests"], state["config"])
+    reasons = gate(state["audit"], state["plan"], state["references"], state["tests"], state["config"], state.get('ux_contract_report'))
     score = metric(state["audit"], reasons)
     state.setdefault("best_metric", score)
     state.setdefault("plateau", 0)
@@ -1281,7 +1314,7 @@ def workflow(state, run_dir):
         validate_audit(result, evidence, state["plan"], old)
         state["audit"], state["evidence"] = result, evidence
         state["pending_review"] = False
-        reasons = gate(result, state["plan"], state["references"], state["tests"], state["config"])
+        reasons = gate(result, state["plan"], state["references"], state["tests"], state["config"], state.get('ux_contract_report'))
         current = metric(result, reasons)
         if current < state["best_metric"]:
             state["best_metric"], state["plateau"] = current, 0
@@ -1294,6 +1327,7 @@ def workflow(state, run_dir):
             state["status"] = "stalled"
             break
     if not reasons:
+        contract_runtime.assert_current(state.get('ux_contract'))
         state["status"], state["reason"] = "passed", "主要操作・重大問題・画像・検証・簡潔さの条件を確認しました。"
     elif state["status"] != "stalled":
         state["status"], state["reason"] = "incomplete", "; ".join(reasons)
@@ -1328,6 +1362,7 @@ def execution(args):
             if state.get("fix_in_progress"):
                 raise Blocked("Fix phase was interrupted or unvalidated; preserve the diff and start a new audit/run")
             assert_source(state["expected_source"], project)
+            contract_runtime.assert_current(state.get('ux_contract'))
             if state["status"] in ("passed", "reviewed"):
                 log("Already complete: " + state["run_id"])
                 return 0
@@ -1347,6 +1382,8 @@ def execution(args):
             config["role_sandbox"] = args.role_sandbox or "workspace-write"
             config.update(profile=args.profile, focus=args.focus,
                           viewports=args.viewport or (["desktop", "mobile"] if args.profile == "focused" else list(VIEWPORTS)))
+            if args.ux_contract:
+                config['ux_contract_path'] = str((project / args.ux_contract).absolute())
             rule_paths = []
             for parent in [*reversed(project.parents), project]:
                 for name in ("AGENTS.md", "CONTRIBUTING.md"):
@@ -1358,6 +1395,8 @@ def execution(args):
                      "report_hashes": {r: digest(project / "docs" / r) if (project / "docs" / r).exists()
                                       else None for r in REPORTS},
                      "started_at": now(), "reason": ""}
+            if args.ux_contract:
+                state['ux_contract'] = contract_runtime.freeze(config['ux_contract_path'], project, run_dir, args.journey)
             review = Path(args.review).resolve() if args.review else project / "docs/ui-ux-review.md"
             state["input_review"] = snapshot_review(review, run_dir)
             for report in REPORTS[1:]:
@@ -1432,6 +1471,8 @@ def parser():
             cmd.add_argument("run_id")
             continue
         cmd.add_argument("--url", required=True)
+        cmd.add_argument('--ux-contract', help='Canonical local UX contract; required checks need browser receipts')
+        cmd.add_argument('--journey', action='append', help='Selected existing Journey ID; requires --ux-contract')
         cmd.add_argument("--profile", choices=["full", "focused"], default="full")
         cmd.add_argument("--focus", action="append", default=[])
         cmd.add_argument("--viewport", action="append", choices=list(VIEWPORTS))
@@ -1450,6 +1491,7 @@ def parser():
 def main(argv=None):
     args = parser().parse_args(argv)
     if args.mode not in ("doctor", "resume"):
+        if args.journey and not args.ux_contract:raise Blocked('--journey requires --ux-contract')
         if args.profile == "focused" and not any(x.strip() for x in args.focus):
             raise Blocked("Focused review requires --focus")
         if args.profile == "full" and (args.focus or args.viewport):

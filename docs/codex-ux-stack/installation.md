@@ -11,7 +11,10 @@ bash install_codex_ux_stack.sh --update
 ux-gan-harness doctor --project /path/to/app --check-mcp
 ```
 
-`--update`は導入済みの管理対象だけを更新し、未導入のPlugin・MCP・任意Skillを追加しません。旧版をバックアップし、手動編集済みの資材は保持して未完了を報告します。新規導入は従来の引数なし、未導入分を含めた再適用は`--force`を使います。モデルを使わないMCP診断と、実際の追加UX監査を更新後に確認してください。
+`--update`は導入済みの管理対象を更新します。1.4.0では標準構成に加わった `ux-visual-design` も追加します。
+未導入のPlugin・外部MCP・任意Skillは追加せず、解除・無効化したMCPも復元しません。
+旧版はバックアップし、手動編集済み・未管理の同名資材は保持して未完了を報告します。
+新規導入は従来の引数なし、未導入分を含めた再適用は`--force`を使います。
 
 ## 前提条件と導入
 
@@ -36,6 +39,8 @@ bash install_codex_ux_stack.sh --doctor
 |---|---|
 | なし | 不足する標準構成を導入 |
 | --deep | 固定コミットのux-critiqueも導入 |
+| --visual-tools whimsical,figma | 選択した公式Remote MCPを登録。既存設定・無効化を保持し、認証は別に実行 |
+| --doctor --check-design-mcp | 任意MCPの登録・接続・認証・広告された機能を分けて診断。外部への書き込みはしない |
 | --update | 導入済みの管理対象だけを更新し、未導入のPlugin・MCPは追加しない |
 | --force | このインストーラーが導入した未編集の対象を再配置・再登録 |
 | --dry-run | 導入・解除の予定表示 |
@@ -56,11 +61,12 @@ bash install_codex_ux_stack.sh --doctor
 
 | 対象 | 取得・版 | 新規の保存先 |
 |---|---|---|
-| ooui-design・参照資料 | 配布物1.3.0。OOUIと認知負荷の基準を同梱 | ~/.agents/skills/ooui-design/ |
+| ooui-design・参照資料 | 配布物1.4.0。OOUIと認知負荷の基準を同梱 | ~/.agents/skills/ooui-design/ |
+| ux-visual-design | 配布物1.4.0。Skill・契約・編集可能な成果物・MCPヘルパー | ~/.agents/skills/ux-visual-design/ |
 | Product Design / Build Web Apps | openai-curated-remoteのCodex管理版。実際の版を記録 | Codexのplugin環境 |
 | web-design-guidelines | vercel-labs/agent-skillsのコミット063bee94c3f4df8453406c830b0a7df0f2860278 | ~/.agents/skills/web-design-guidelines/ |
 | ux-critique | Thecsiz/ux-critiqueのコミット3da293cafb639195bf71797590081d4ffb0045ba | ~/.agents/skills/ux-critique/ |
-| ハーネス・専用Skill・共通設計基準 | 配布物1.3.0 | ~/.agents/skills/ux-gan-harness/ |
+| ハーネス・専用Skill・共通設計基準 | 配布物1.4.0 | ~/.agents/skills/ux-gan-harness/ |
 | ブラウザー環境 | Playwright 1.63.0 / Playwright MCP 0.0.83、埋め込みnpm lockfile | CODEX_HOME/ux-stack/runtime/ |
 | 起動コマンド | ハーネスのBashへ渡すラッパー | ~/.local/bin/ux-gan-harness |
 | 導入記録・バックアップ | ハッシュ、版、処理結果、旧資材 | CODEX_HOME/ux-stack/ |
@@ -90,7 +96,7 @@ bash install_codex_ux_stack.sh --force
 bash install_codex_ux_stack.sh --deep --force
 ~~~
 
-既存の管理対象だけを更新する場合は`--update`を使います。引数なしでは不足するooui-designが追加されますが、
+管理対象を更新し、新しい標準Skillを追加する場合は`--update`を使います。引数なしでは不足する標準Skillが追加されますが、
 既存の未編集ハーネスはそのままです。status / doctorは新スキルとハーネスの参照資料も確認するため、
 旧ハーネスのままでは未準備として報告します。未管理・編集済みの同名Skillは保護します。
 
@@ -101,6 +107,44 @@ bash install_codex_ux_stack.sh --deep --force
 COMPLETEは導入処理の完了です。ブラウザー、Codexサンドボックス、モデル、アプリの操作は別の確認です。
 Skillが候補に出なければCodexを再起動して$ooui-designまたは$ux-gan-harnessを入力してください。
 起動コマンドがPATHにない場合は、保存先の絶対パスでも使えます。
+
+## Whimsical／Figmaの任意連携
+
+```bash
+bash install_codex_ux_stack.sh --visual-tools whimsical
+bash install_codex_ux_stack.sh --visual-tools figma
+bash install_codex_ux_stack.sh --visual-tools whimsical,figma
+bash install_codex_ux_stack.sh --doctor --check-design-mcp
+```
+
+登録先は公式の `https://mcp.whimsical.com/mcp` と `https://mcp.figma.com/mcp` です。
+Codexネイティブのapp-server設定APIで選択先だけを更新し、既存の手動設定を再利用します。
+登録とOAuth認証は別です。診断に表示された登録名で、公式の認証フローを実行します。
+
+```bash
+codex mcp login whimsical
+codex mcp login figma
+bash install_codex_ux_stack.sh --doctor --check-design-mcp
+```
+
+同じURLが別名で登録されている場合は、その名前を使います。重複登録、既存の認証情報の複製、
+無効化されたサービスの再有効化は行いません。OAuth未完了、接続失敗、機能取得失敗、対象への書き込み権限は別の状態です。
+doctorは外部ファイルへ書き込まないため、`write_permission: not_tested` は正常な診断結果です。
+実行時にツール一覧と引数スキーマを確認し、実際に編集するファイル・フレーム・ノードを限定します。
+
+`--status` は接続せず `not_probed` を返します。選択したMCPの登録が失敗しても、導入済みのCoreは残ります。
+manifestの `design_mcp_pending` に未完了を記録し、原因解消後に同じ選択で再実行できます。
+登録成功後の検証だけが中断した場合は、再実行時に既存登録として再利用し、所有権を推測して取得しません。
+手動登録と同様に解除対象外として残るため、必要なら公式CLIで対象名を確認して解除します。
+`core_ready` と `design_mcp_ready` は独立しており、外部MCPの未接続だけでCoreを利用不能にはしません。
+
+追加配布経路では `intelliforge install --only ux-stack --agent codex --plugin --visual-tools whimsical,figma --apply`、
+診断は `intelliforge doctor --only ux-stack --agent codex --plugin --check-design-mcp` です。
+プレビューは `--apply` を省略するか `--dry-run` を付けます。Claude経路へのCodex用MCP登録は行いません。
+
+現在の接続方法は [WhimsicalのCodex連携](https://whimsical.com/integrations/codex)、
+[Figma Remote MCP](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/)、
+[Codex MCP](https://learn.chatgpt.com/docs/extend/mcp?surface=cli)を参照してください。
 
 ## 解除・復旧
 

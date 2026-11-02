@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "revision": 1,
+  "project": {
+    "name": "文書管理",
+    "users": [
+      {
+        "id": "staff",
+        "context": "文書を探してメモを残す"
+      }
+    ],
+    "goals": [
+      "目的の文書を見つける"
+    ],
+    "objects": [
+      {
+        "id": "document",
+        "attributes": [
+          "title"
+        ],
+        "operations": [
+          "open"
+        ]
+      }
+    ]
+  },
+  "journeys": [
+    {
+      "id": "J-doc",
+      "purpose": "文書を開いて一覧へ戻る",
+      "actions": [
+        "A-open",
+        "A-retry",
+        "A-back"
+      ],
+      "required": true
+    }
+  ],
+  "screens": [
+    {
+      "id": "S-list",
+      "title": "文書",
+      "purpose": "文書を選ぶ",
+      "route": "/",
+      "states": [
+        "normal",
+        "empty"
+      ],
+      "component": {
+        "path": "index.html",
+        "symbol": "list"
+      },
+      "layout": {
+        "x": 24,
+        "y": 32,
+        "width": 340,
+        "height": 420
+      },
+      "fields": [
+        {
+          "id": "query",
+          "label": "文書を検索",
+          "type": "search",
+          "locator": {
+            "selector": "#query"
+          }
+        }
+      ]
+    },
+    {
+      "id": "S-detail",
+      "title": "文書の詳細",
+      "purpose": "文書とメモを読む",
+      "route": "/#detail",
+      "states": [
+        "normal",
+        "failure"
+      ],
+      "component": {
+        "path": "index.html",
+        "symbol": "detail"
+      },
+      "layout": {
+        "x": 410,
+        "y": 32,
+        "width": 340,
+        "height": 420
+      },
+      "fields": [
+        {
+          "id": "note",
+          "label": "文書のメモ",
+          "type": "textarea",
+          "locator": {
+            "selector": "#note"
+          }
+        }
+      ],
+      "state_messages": {
+        "failure": "文書を読み込めませんでした。メモを保持して再試行できます。"
+      }
+    }
+  ],
+  "actions": [
+    {
+      "id": "A-open",
+      "screen_id": "S-list",
+      "label": "文書を開く",
+      "kind": "click",
+      "locator": {
+        "selector": "#open"
+      }
+    },
+    {
+      "id": "A-back",
+      "screen_id": "S-detail",
+      "label": "文書一覧へ戻る",
+      "kind": "click",
+      "locator": {
+        "selector": "#back"
+      }
+    },
+    {
+      "id": "A-retry",
+      "screen_id": "S-detail",
+      "label": "再試行",
+      "kind": "click",
+      "locator": {
+        "selector": "#retry"
+      }
+    }
+  ],
+  "transitions": [
+    {
+      "id": "T-open",
+      "action_id": "A-open",
+      "from": {
+        "screen_id": "S-list",
+        "state": "normal"
+      },
+      "condition": "文書が取得できた",
+      "to": {
+        "screen_id": "S-detail",
+        "state": "normal"
+      },
+      "on_error": {
+        "screen_id": "S-detail",
+        "state": "failure"
+      },
+      "retained_fields": [
+        "query"
+      ]
+    },
+    {
+      "id": "T-back",
+      "action_id": "A-back",
+      "from": {
+        "screen_id": "S-detail",
+        "state": "normal"
+      },
+      "condition": "一覧へ戻る",
+      "to": {
+        "screen_id": "S-list",
+        "state": "normal"
+      },
+      "on_error": null,
+      "retained_fields": [
+        "query",
+        "note"
+      ]
+    },
+    {
+      "id": "T-retry",
+      "action_id": "A-retry",
+      "from": {
+        "screen_id": "S-detail",
+        "state": "failure"
+      },
+      "condition": "文書を再取得できた",
+      "to": {
+        "screen_id": "S-detail",
+        "state": "normal"
+      },
+      "on_error": {
+        "screen_id": "S-detail",
+        "state": "failure"
+      },
+      "retained_fields": [
+        "note"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R-doc",
+      "journey_id": "J-doc",
+      "purpose": "一覧と詳細を往復できる",
+      "required": true,
+      "acceptance": [
+        {
+          "id": "AC-list",
+          "screen_id": "S-list",
+          "state": "normal",
+          "type": "visible",
+          "locator": {
+            "selector": "#list"
+          },
+          "expected": true
+        },
+        {
+          "id": "AC-detail",
+          "screen_id": "S-detail",
+          "state": "normal",
+          "type": "visible",
+          "locator": {
+            "selector": "#detail"
+          },
+          "expected": true
+        },
+        {
+          "id": "AC-error",
+          "screen_id": "S-detail",
+          "state": "failure",
+          "type": "visible",
+          "locator": {
+            "selector": "#error"
+          },
+          "expected": true
+        }
+      ]
+    }
+  ],
+  "artifacts": [],
+  "approval": {
+    "status": "not_requested",
+    "source": "implementation requested"
+  }
+}

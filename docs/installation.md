@@ -42,7 +42,7 @@ bash install_all.sh --apply
 | ID | 導入対象・標準動作 | 詳細 |
 |---|---|---|
 | `workgraph` | Basic Memory、公式plugin、Workgraph・hooks・保存プロジェクト。導入済みなら設定を保持する`--update` | [導入・更新](basic-memory-workgraph/installation.md) |
-| `ux-stack` | ooui-design、認知負荷のガイド、画像付きUX検証、Product Design・Build Web Apps、UIレビュー、Playwright | [導入・更新](codex-ux-stack/installation.md) |
+| `ux-stack` | ooui-design、ux-visual-design、設計契約、画像付きUX検証、Product Design・Build Web Apps、Playwright。Whimsical／Figmaは任意 | [導入・更新](codex-ux-stack/installation.md) |
 | `repository-director` | 運営方針・既存コードの仕様整理・GitHub/GitLab運用。SpecKitは必須にしない | [Guide](repository-director/installation.md) |
 | `design-research` | 固定版から両ツールを組み立て・検証し、単一入口の研究Skillとハーネスを導入 | [導入・更新](design-research/installation.md) |
 | `ecc` | Codex標準ECC pluginと必要時に参照する入口。`--apply`で導入・設定 | [導入・更新・復元](codex-ecc/installation.md) |

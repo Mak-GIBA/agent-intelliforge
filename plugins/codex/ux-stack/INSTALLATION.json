@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "ux-stack",
   "name": "UX Stack",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "legacy": {
     "script": "install_codex_ux_stack.sh",
     "actions": {
@@ -31,6 +31,11 @@
     {
       "name": "ooui-design",
       "source": "tools/codex-ux-stack/ooui-design",
+      "assembled": false
+    },
+    {
+      "name": "ux-visual-design",
+      "source": "tools/codex-ux-stack/ux-visual-design",
       "assembled": false
     }
   ],
@@ -65,7 +70,8 @@
   "destinations": [
     "{skills_home}/ux-gan-harness",
     "{skills_home}/ooui-design",
-    "{agent_home}/ux-stack/runtime"
+    "{agent_home}/ux-stack/runtime",
+    "{skills_home}/ux-visual-design"
   ],
   "settings": [
     "selected plugins and MCP configuration; owned CLI launchers"

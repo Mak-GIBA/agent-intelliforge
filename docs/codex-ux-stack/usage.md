@@ -1,5 +1,8 @@
 # Codex UX Stack：使い方
 
+導線図・ワイヤーフレーム・共同編集・設計契約には、[ux-visual-designの手順](visual-design.md)を使います。
+既存のOOUI設計とハーネスを維持し、複数画面の新規・大幅変更で可視化を追加します。
+
 [English](../en/codex-ux-stack/usage.md) | **日本語**
 
 [概要](README.md) · [導入手順](installation.md) · [検証範囲](validation.md) · [docs一覧](../README.md)

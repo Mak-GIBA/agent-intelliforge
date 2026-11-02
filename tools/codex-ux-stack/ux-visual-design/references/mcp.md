@@ -50,4 +50,3 @@ Google StitchはUI案の生成・比較、tldrawは双方向キャンバス、Pe
 標準登録はしません。拡張時は `scripts/design_mcp.py` のprovider・許可ホストと
 `sources.json.visual`、実行時の分類・対象制約、対応するライフサイクルテストを追加します。
 接続・認証・機能・書き込み権限を分け、既存の外部設定を再利用する原則を保ちます。
-

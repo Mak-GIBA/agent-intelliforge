@@ -1,5 +1,11 @@
 # Codex UX Stack
 
+Version1.4.0 adds **ux-visual-design** alongside the existing OOUI and UX-GAN workflow.
+It creates editable flows/wireframes, reconciles human edits into a local UX contract,
+and checks implementation through browser-owned evidence. Whimsical and Figma Remote MCP
+are explicitly selected options; Mermaid, SVG and HTML work without them.
+See [visual design and collaboration](visual-design.md).
+
 **English** | [日本語](../../codex-ux-stack/README.md)
 
 [Documentation](../README.md) · [Installation](installation.md) · [Usage](usage.md) · [Validation (Japanese)](../../codex-ux-stack/validation.md)
