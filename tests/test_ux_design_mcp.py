@@ -2,6 +2,11 @@ from pathlib import Path
 import copy
 import importlib.util
 import unittest
+import json
+import os
+import tempfile
+import threading
+from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('ux_design_mcp_test',ROOT/'tools/codex-ux-stack/ux-visual-design/scripts/design_mcp.py')
@@ -12,7 +17,7 @@ class Client:
         self.servers=servers or {};self.calls=[];self.auth=auth;self.tools=tools or {}
     def rpc(self,method,params):
         self.calls.append((method,copy.deepcopy(params)))
-        if method=='config/read':return {'config':{'mcp_servers':self.servers},'version':'v1'}
+        if method=='config/read':return {'config':{'mcp_servers':self.servers},'layers':[{'name':{'type':'user','file':'fixture/config.toml'},'version':'v1'}]}
         if method=='config/value/write':
             name=params['keyPath'].split('.')[-1];self.servers[name]=params['value'];return {'version':'v2'}
         if method=='mcpServerStatus/list':return {'data':[{'name':params['serverName'],'authStatus':self.auth,'tools':self.tools,'resources':[],'resourceTemplates':[]}], 'nextCursor':None}
@@ -53,5 +58,48 @@ class DesignMCPTests(unittest.TestCase):
         result=m.DesignMCP(c).diagnose('figma')
         self.assertEqual(result['authentication'],'required');self.assertEqual(result['write_permission'],'not_tested')
         self.assertFalse(result['ready']);self.assertEqual(result['provider'],'figma')
+
+    def test_configuration_auth_refresh_does_not_change_ownership_fingerprint(self):
+        config={'url':'https://mcp.figma.com/mcp','authStatus':'notLoggedIn'}
+        other={**config,'authStatus':'oAuth','runtimeStatus':{'status':'connected'}}
+        self.assertEqual(m.fingerprint(config),m.fingerprint(other))
+
+
+@unittest.skipUnless(os.environ.get('UX_NATIVE_MCP_TESTS')=='1','Opt-in real Codex host with a local fixture; no provider OAuth')
+class NativeCodexMCPTests(unittest.TestCase):
+    def test_real_host_registers_lists_and_reads_local_mcp_without_model_or_user_settings(self):
+        calls=[]
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self,*args):pass
+            def do_GET(self):self.send_response(405);self.end_headers()
+            def do_DELETE(self):self.send_response(204);self.end_headers()
+            def do_POST(self):
+                request=json.loads(self.rfile.read(int(self.headers.get('Content-Length',0))))
+                calls.append(request['method'])
+                if 'id' not in request:self.send_response(202);self.end_headers();return
+                method=request['method']
+                if method=='initialize':result={'protocolVersion':request['params']['protocolVersion'],'capabilities':{'tools':{}},'serverInfo':{'name':'local-design-fixture','version':'1'}}
+                elif method=='tools/list':result={'tools':[{'name':'fetch','description':'Read the named test design','inputSchema':{'type':'object','properties':{'file_id':{'type':'string'}},'required':['file_id']},'annotations':{'readOnlyHint':True}}]}
+                elif method=='tools/call':result={'content':[{'type':'text','text':'A human changed the test title'}],'structuredContent':{'file_id':'fixture123','title':'Updated title'}}
+                else:result={}
+                data=json.dumps({'jsonrpc':'2.0','id':request['id'],'result':result}).encode()
+                self.send_response(200);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
+        server=ThreadingHTTPServer(('127.0.0.1',0),Handler);thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        old=m.PROVIDERS['figma'];m.PROVIDERS['figma']=f'http://127.0.0.1:{server.server_port}/mcp'
+        try:
+            with tempfile.TemporaryDirectory(prefix='ux-native-design-') as td:
+                root=Path(td);config=root/'config.toml';config.write_text('# Preserve this user comment\nmodel = "gpt-6.1-sol"\n')
+                with m.AppServer(root,30) as client:
+                    service=m.DesignMCP(client);registration=service.register('figma')
+                    self.assertTrue(registration['owned']);self.assertIn('# Preserve this user comment',config.read_text())
+                    self.assertEqual(service.register('figma')['status'],'existing')
+                    diagnosis=service.diagnose('figma');self.assertTrue(diagnosis['capabilities']['read']['available'],diagnosis)
+                    result=service.call('figma','fetch',{'file_id':'fixture123'},{'file_id':'fixture123','url':'https://www.figma.com/design/fixture123/Fixture'})
+                    self.assertEqual(result['result']['structuredContent']['title'],'Updated title')
+                    self.assertEqual(service.remove(registration)['status'],'removed')
+                self.assertIn('tools/list',calls);self.assertIn('tools/call',calls)
+                self.assertNotIn('mcp_servers',config.read_text())
+        finally:
+            m.PROVIDERS['figma']=old;server.shutdown();server.server_close();thread.join(timeout=5)
 
 if __name__=='__main__':unittest.main()
