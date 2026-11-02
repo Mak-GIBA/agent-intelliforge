@@ -69,6 +69,17 @@ document.getElementById('wrong').onclick=open.onclick;back.onclick=()=>location.
         result=self.check('S-detail',transition='T-open')
         self.assertFalse(next(c for c in result['checks'] if c['id']=='T-open')['passed'],result)
 
+    def test_keyboard_activation_of_the_declared_button_counts_as_its_action(self):
+        self.tool('ux_navigate',url=self.url+'/');self.check('S-list')
+        for _ in range(3):self.tool('ux_press',key='Tab')
+        self.tool('ux_press',key='Enter');result=self.check('S-detail',transition='T-open')
+        self.assertTrue(next(c for c in result['checks'] if c['id']=='T-open')['passed'],result)
+
+    def test_desktop_action_cannot_be_relabelled_as_a_mobile_transition(self):
+        self.tool('ux_navigate',url=self.url+'/');self.check('S-list');self.tool('ux_click',selector='#open')
+        self.tool('ux_resize',width=390,height=844);result=self.check('S-detail',transition='T-open')
+        self.assertFalse(next(c for c in result['checks'] if c['id']=='T-open')['passed'],result)
+
 @unittest.skipUnless(os.getenv('UX_GAN_RUNTIME'),'Requires installed real Chromium runtime')
 class ScopedContractBrowserTests(unittest.TestCase):
     setUp=browser.BrowserTests.setUp;tearDown=browser.BrowserTests.tearDown
@@ -112,5 +123,21 @@ document.getElementById(detail?'back':'open').onclick=()=>location.hash=detail?'
         self.assertTrue(next(c for c in result['checks'] if c['id']=='T-back__retain_query')['passed'],result)
         self.tool('ux_click',selector='#open');self.check('S-detail',transition='T-open')
         report=runtime.observations(self.frozen,self.base,['desktop']);self.assertTrue(report['ready'],report)
+
+@unittest.skipUnless(os.getenv('UX_GAN_RUNTIME'),'Requires installed real Chromium runtime')
+class FailedActionBrowserTests(unittest.TestCase):
+    setUp=browser.BrowserTests.setUp;tearDown=browser.BrowserTests.tearDown
+    rpc=browser.BrowserTests.rpc;tool=browser.BrowserTests.tool;check=ContractBrowserTests.check
+
+    def configure_contract(self):
+        p=ContractBrowserTests.configure_contract(self);c=json.loads(p.read_text())
+        c['actions'].append({'id':'A-key','screen_id':'S-list','label':'キー操作','kind':'press','key':'NotARealKey','locator':{'selector':'#query'}})
+        c['journeys'][0]['actions'].append('A-key');c['transitions'].append({'id':'T-key','action_id':'A-key','from':{'screen_id':'S-list','state':'normal'},'condition':'キー操作が完了した','to':{'screen_id':'S-list','state':'normal'},'on_error':None,'retained_fields':[]})
+        source=self.base/'design.json';source.write_text(json.dumps(c));self.frozen=runtime.freeze(source,self.base,self.base/'run');return p
+
+    def test_a_failed_browser_action_never_satisfies_an_unchanged_screen_transition(self):
+        self.tool('ux_navigate',url=self.url+'/');self.tool('ux_press',key='Tab');self.check('S-list')
+        failed=self.rpc('tools/call',{'name':'ux_press','arguments':{'key':'NotARealKey'}});self.assertTrue(failed.get('isError'))
+        result=self.check('S-list',transition='T-key');self.assertFalse(next(c for c in result['checks'] if c['id']=='T-key')['passed'],result)
 
 if __name__=='__main__':unittest.main()
