@@ -4,7 +4,8 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const {chromium}=require(path.join(process.env.UX_GAN_RUNTIME,'node_modules/playwright'));
 async function run(job,caseName) {
-  const app=path.join(job,'app'),out=path.join(job,'screens');fs.mkdirSync(out,{recursive:true});
+  const corrected=process.argv.includes('--corrected-async');
+  const app=path.join(job,'app'),out=path.join(job,corrected?'screens-corrected':'screens');fs.mkdirSync(out,{recursive:true});
   const server=http.createServer((req,res)=>{
     const relative=decodeURIComponent(new URL(req.url,'http://localhost').pathname);const file=path.resolve(app,'.'+relative);
     if(!file.startsWith(path.resolve(app)+path.sep)&&file!==path.resolve(app)){res.writeHead(403).end();return;}
@@ -46,13 +47,18 @@ async function run(job,caseName) {
         await check('confirm-to-payment',async()=>{await p.locator('#continue-details').click();await p.locator('#continue-confirm').click();return p.url().endsWith('#payment');});await shot('payment');
         await check('payment-back',async()=>{await p.locator('#back-payment').click();return p.url().endsWith('#confirm')&&(await p.locator('#summary').innerText()).includes('山田花子');});
         await check('payment-error',async()=>{await p.locator('#continue-confirm').click();await p.evaluate(()=>window.__UX_TEST.failNext=true);await p.locator('#pay').click();return p.url().endsWith('#payment')&&(await p.locator('#error').innerText()).trim().length>0;});await shot('failure');
-        await check('retry-completes',async()=>{await p.locator('#retry').click();await p.waitForTimeout(350);return p.url().endsWith('#complete')&&(await p.locator('#receipt').innerText()).includes('山田花子');});await shot('completed');
-        await check('cancel-preserves-draft',async()=>{await p.goto(url+'/#details');await p.locator('#full-name').fill('再開する下書き');await p.locator('#email').fill('draft@example.test');p.once('dialog',d=>d.accept());await p.locator('#cancel-application').click();return p.url().endsWith('#details')&&await p.locator('#full-name').inputValue()==='再開する下書き';});
+        await check('retry-completes',async()=>{await p.locator('#retry').click();if(corrected)await p.waitForURL('**/#complete',{timeout:5000});else await p.waitForTimeout(350);return p.url().endsWith('#complete')&&(await p.locator('#receipt').innerText()).includes('山田花子');});await shot('completed');
+        await check('cancel-preserves-draft',async()=>{
+          const fresh=corrected?await b.newContext({viewport:{width,height}}):null,active=fresh?await fresh.newPage():p;
+          try{await active.goto(url+'/#details');await active.locator('#full-name').fill('再開する下書き');await active.locator('#email').fill('draft@example.test');active.once('dialog',d=>d.accept());await active.locator('#cancel-application').click();return active.url().endsWith('#details')&&await active.locator('#full-name').inputValue()==='再開する下書き';}
+          finally{if(fresh)await fresh.close();}
+        });
       }
       await check('no-browser-errors',()=>errors.length===0);await context.close();
     }
   } finally {await b.close();await new Promise(resolve=>server.close(resolve));}
-  const result={case:caseName,checks,images,passed:checks.filter(c=>c.passed).length,failed:checks.filter(c=>!c.passed).length,source:'actual Chromium; fixed synthetic task; not human usability testing'};
-  fs.writeFileSync(path.join(job,'operations.json'),JSON.stringify(result,null,2)+'\n',{mode:0o600});console.log(JSON.stringify({job,passed:result.passed,failed:result.failed}));
+  const result={case:caseName,revision:corrected?2:1,checks,images,passed:checks.filter(c=>c.passed).length,failed:checks.filter(c=>!c.passed).length,source:'actual Chromium; fixed synthetic task; not human usability testing'};
+  fs.writeFileSync(path.join(job,corrected?'operations-corrected.json':'operations.json'),JSON.stringify(result,null,2)+'\n',{mode:0o600});console.log(JSON.stringify({job,revision:result.revision,passed:result.passed,failed:result.failed}));
+  if(process.argv.includes('--require-pass')&&result.failed)process.exitCode=1;
 }
 run(path.resolve(process.argv[2]),process.argv[3]).catch(e=>{console.error(e);process.exit(1)});

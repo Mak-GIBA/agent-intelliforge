@@ -144,14 +144,14 @@ class Benchmark:
             if (job/'result.json').exists():continue
             case,trial=key.rsplit('-',1);job.mkdir(parents=True,exist_ok=True);facts={};attachments=[]
             for anonymous,label in pair.items():
-                generation=self.out/'generation'/f'{label}-{case}-{trial}';op=json.loads((generation/'operations.json').read_text())
+                generation=self.out/'generation'/f'{label}-{case}-{trial}';corrected=generation/'operations-corrected.json';op=json.loads((corrected if corrected.exists() else generation/'operations.json').read_text())
                 facts[anonymous]={'checks':[{k:c[k] for k in ('id','viewport','passed')} for c in op['checks']],
                     'generation_status':json.loads((generation/'result.json').read_text())['status']}
                 wanted=['desktop-initial','tablet-initial','mobile-initial','desktop-failure','mobile-completed','mobile-focus']
                 if case=='application':wanted+=['mobile-confirm','mobile-payment']
                 if case=='landing':wanted+=['mobile-signup']
                 for name in wanted:
-                    src=generation/'screens'/(name+'.png')
+                    src=generation/('screens-corrected' if corrected.exists() else 'screens')/(name+'.png')
                     if not src.exists():continue
                     dst=job/(anonymous+'-'+name+'.png');shutil.copyfile(src,dst);attachments.append(dst)
             scores={'type':'object','properties':{name:{'type':'integer','minimum':1,'maximum':5} for name in self.conditions['rubric']},'required':self.conditions['rubric'],'additionalProperties':False}
