@@ -87,4 +87,30 @@ class ScopedContractBrowserTests(unittest.TestCase):
         self.tool('ux_click',selector='#open');result=self.check('S-detail',transition='T-open')
         self.assertTrue(next(c for c in result['checks'] if c['id']=='T-open')['passed'],result)
 
+@unittest.skipUnless(os.getenv('UX_GAN_RUNTIME'),'Requires installed real Chromium runtime')
+class UnmountedInputBrowserTests(unittest.TestCase):
+    setUp=browser.BrowserTests.setUp;tearDown=browser.BrowserTests.tearDown
+    rpc=browser.BrowserTests.rpc;tool=browser.BrowserTests.tool;check=ContractBrowserTests.check
+
+    def configure_contract(self):
+        p=ContractBrowserTests.configure_contract(self);c=json.loads(p.read_text())
+        c['requirements'][0]['acceptance']=[a for a in c['requirements'][0]['acceptance'] if a['id']!='AC-query']
+        c['transitions'][0]['retained_fields']=['query'];c['transitions'][1]['retained_fields']=['query','note']
+        source=self.base/'design.json';source.write_text(json.dumps(c));self.frozen=runtime.freeze(source,self.base,self.base/'run')
+        (self.base/'index.html').write_text('''<!doctype html><html lang="ja"><meta charset="utf-8"><title>入力保持</title><main id="app"></main>
+<script>const values={query:'',note:''};function render(){const detail=location.hash==='#detail';document.getElementById('app').innerHTML=detail?
+'<section id="detail"><label>メモ<textarea id="note"></textarea></label><button id="back">文書一覧へ戻る</button></section>':
+'<section id="list"><label>検索<input id="query"></label><button id="open">文書を開く</button></section>';
+const field=document.getElementById(detail?'note':'query');field.value=values[detail?'note':'query'];field.oninput=()=>values[detail?'note':'query']=field.value;
+document.getElementById(detail?'back':'open').onclick=()=>location.hash=detail?'':'detail';}addEventListener('hashchange',render);render();</script></html>''')
+        return p
+
+    def test_edits_after_source_checkpoint_survive_unmount_and_return(self):
+        self.tool('ux_navigate',url=self.url+'/');self.check('S-list')
+        self.tool('ux_fill',selector='#query',value='契約');self.tool('ux_click',selector='#open');self.check('S-detail',transition='T-open')
+        self.tool('ux_fill',selector='#note',value='確認メモ');self.tool('ux_click',selector='#back');result=self.check('S-list',transition='T-back')
+        self.assertTrue(next(c for c in result['checks'] if c['id']=='T-back__retain_query')['passed'],result)
+        self.tool('ux_click',selector='#open');self.check('S-detail',transition='T-open')
+        report=runtime.observations(self.frozen,self.base,['desktop']);self.assertTrue(report['ready'],report)
+
 if __name__=='__main__':unittest.main()
