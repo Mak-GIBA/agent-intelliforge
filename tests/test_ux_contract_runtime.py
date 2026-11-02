@@ -32,7 +32,7 @@ class ContractRuntimeTests(unittest.TestCase):
     def test_missing_receipts_cannot_be_replaced_by_an_empty_or_successful_model_report(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,state=self.fixture(root);report=runtime.observations(state,root/'role',['desktop'])
-            self.assertFalse(report['ready']);self.assertEqual(report['verified'],0);self.assertEqual(len(report['missing']),4)
+            self.assertFalse(report['ready']);self.assertEqual(report['verified'],0);self.assertEqual(len(report['missing']),len(state['required_checks']))
 
     def test_planner_cannot_rename_or_drop_required_screens_and_journeys(self):
         with tempfile.TemporaryDirectory() as td:

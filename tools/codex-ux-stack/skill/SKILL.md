@@ -43,6 +43,16 @@ or no matching notes does not block a run.
    bash <skill-dir>/scripts/gan-harness.sh run --project <app-dir> --url <app-url> --test-command '<required check>'
    ```
 
+   When a local UX contract exists, add `--ux-contract docs/ux/contract.json`.
+   Use `--journey <existing Journey ID>` only to select an explicitly scoped subset.
+   The host freezes that design, preserves Journey/Screen IDs, and requires screenshot-bound
+   `ux_check_contract` observations for declared states, actions, transitions and retained fields
+   at every selected viewport. Missing/failed checks block `run` from passing; `audit` remains
+   a review with explicit conformance limits. Human design edits invalidate the snapshot;
+   reconcile them with ux-visual-design before starting a new run. The bundled browser is
+   selected for these assertions, and the reason is recorded. Without a contract the existing
+   full/focused behavior is preserved. Do not create a whole design contract for a minor CSS edit.
+
    If the harness must own the preview process, add `--start-command '<repo start command>'`. Repeat `--test-command` for required checks. Use test data and the app's isolated test environment for create/edit/delete operations. Public send, publish, charge and production-data actions need authorization from the user's request.
 5. Keep the process running until it completes, updating the user from its phase messages. Inspect its status and exit code; an interrupted, blocked or incomplete run is not a pass. Resume with `resume <run-id> --project <app-dir>` after resolving the cause.
 6. Open the report and representative before/after images. Report screen/flow counts, severity counts, changes, remaining issues and limits, with links. Say that this is AI evaluation from the novice perspective; do not claim human usability testing.

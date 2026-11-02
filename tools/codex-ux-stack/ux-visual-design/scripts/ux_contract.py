@@ -54,6 +54,18 @@ def validate(contract, project=None):
         if not isinstance(route,str) or not route.startswith('/') or route.startswith('//') or '\\' in route:errors.append(key+': route must be a local absolute path')
         states=s.get('states')
         if not isinstance(states,list) or not states or any(not isinstance(x,str) or not ID.fullmatch(x) for x in states):errors.append(key+': nonempty state ids required')
+        layout=s.get('layout',{})
+        if not isinstance(layout,dict):errors.append(key+': invalid layout')
+        else:
+            for dimension in ('x','y','width','height'):
+                value=layout.get(dimension,1)
+                if type(value) not in (int,float) or not -4096<=value<=8192:errors.append(key+': invalid layout dimension')
+            if 'fill' in layout and not re.fullmatch(r'#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?',str(layout['fill'])):errors.append(key+': invalid layout color')
+        fields=s.get('fields',[])
+        if not isinstance(fields,list):errors.append(key+': fields must be an array')
+        else:
+            for field in fields:
+                if not isinstance(field,dict) or not ID.fullmatch(str(field.get('id',''))) or not isinstance(field.get('label'),str) or field.get('type','text') not in ('text','search','email','number','textarea','select','checkbox'):errors.append(key+': invalid field')
         component=s.get('component')
         path=component.get('path') if isinstance(component,dict) else None
         if not isinstance(path,str) or not path or Path(path).is_absolute() or re.search(r'(^|[/\\])\.\.([/\\]|$)|:|\\',path):errors.append(key+': unsafe component path')
@@ -155,8 +167,10 @@ def reconcile(base, local, remote):
         conflicts.append({'path':'/'.join(path),'local':None if l is missing else l,'remote':None if r is missing else r})
         return copy.deepcopy(l) if l is not missing else missing
     out=merge(base,local,remote,[])
-    out['revision']=max(c['revision'] for c in (base,local,remote))+1
-    if out.get('approval',{}).get('status')=='approved' and digest(out)!=digest(local):
+    meaningful=lambda value:{k:v for k,v in value.items() if k!='revision'}
+    changed=meaningful(out)!=meaningful(local)
+    out['revision']=max(c['revision'] for c in (base,local,remote))+int(changed)
+    if out.get('approval',{}).get('status')=='approved' and changed:
         out['approval']={'status':'needs_review','source':'design changed after approval'}
     invalid=validate(out)
     conflicts.extend({'path':'contract','error':error} for error in invalid)
@@ -171,6 +185,8 @@ def required_checks(contract,journey_ids=None):
     actions={a for j in contract['journeys'] if j['id'] in selected for a in j['actions']}
     checks=[a['id'] for r in contract['requirements'] if r['required'] and r['journey_id'] in selected for a in r['acceptance']]
     checks += [t['id'] for t in contract['transitions'] if t['action_id'] in actions and t.get('required',True)]
+    checks += [t['id']+'__on_error' for t in contract['transitions'] if t['action_id'] in actions and t.get('required',True) and t.get('on_error')]
+    checks += [branch+'__retain_'+field for t in contract['transitions'] if t['action_id'] in actions and t.get('required',True) for branch in ([t['id'],t['id']+'__on_error'] if t.get('on_error') else [t['id']]) for field in t['retained_fields']]
     return checks
 
 
@@ -182,14 +198,17 @@ def _preview(contract):
 <main><article id="screen"></article><p id="notice" role="status"></p><aside>外部デザインの読み込みは行いません。設計変更は契約または編集可能なSVG／Mermaidへ反映し、差分を確認してください。</aside></main>
 <script type="application/json" id="ux-contract">'''+data+'''</script><script>
 const c=JSON.parse(document.querySelector('#ux-contract').textContent), values={},host=document.querySelector('#screen');
-let current=c.screens[0].id;
+let current=c.screens[0].id,currentState=c.screens[0].states[0];
 function text(tag,value,parent){const el=document.createElement(tag);el.textContent=value;parent.append(el);return el}
-function render(){const s=c.screens.find(x=>x.id===current);host.replaceChildren();host.dataset.screenId=s.id;text('h2',s.title,host);text('p',s.purpose,host);text('small',s.route,host);
-const stateLabel=text('label','確認する状態',host),state=document.createElement('select');state.setAttribute('aria-label','確認する状態');s.states.forEach(v=>{const o=new Option(v,v);state.add(o)});stateLabel.append(state);
-const fields=new Set(c.transitions.flatMap(t=>t.retained_fields||[]));for(const field of fields){const label=text('label',field,host),input=document.createElement('input');input.dataset.field=field;input.value=values[field]||'';input.oninput=()=>values[field]=input.value;label.append(input)}
-const group=text('div','',host);group.className='actions';for(const a of c.actions.filter(x=>x.screen_id===s.id)){const b=text('button',a.label,group);b.dataset.actionId=a.id;b.onclick=()=>{const choices=c.transitions.filter(t=>t.action_id===a.id);const t=choices.find(t=>t.from.state===state.value)||choices[0];if(!t){document.querySelector('#notice').textContent='この操作の遷移は未定義です。';return}current=t.to.screen_id;render();document.querySelector('#notice').textContent=t.condition;};}
+function move(to,message){current=to.screen_id;currentState=to.state;render();document.querySelector('#notice').textContent=message;}
+function render(){const s=c.screens.find(x=>x.id===current);host.replaceChildren();host.dataset.screenId=s.id;host.dataset.state=currentState;text('h2',s.title,host);text('p',s.purpose,host);text('small',s.route+' / '+currentState,host);
+if(currentState!=='normal'){const message=text('p',(s.state_messages||{})[currentState]||('確認中の状態: '+currentState),host);message.setAttribute('role',currentState==='failure'?'alert':'status');}
+const stateLabel=text('label','確認する状態',host),state=document.createElement('select');state.setAttribute('aria-label','確認する状態');s.states.forEach(v=>{state.add(new Option(v,v))});state.value=currentState;state.onchange=()=>{currentState=state.value;render()};stateLabel.append(state);
+const declared=s.fields||c.actions.filter(a=>a.screen_id===s.id&&['fill','select'].includes(a.kind)).map(a=>({id:a.field_id||a.id,label:a.label,type:a.kind==='select'?'select':'text',options:a.options||[]}));
+for(const field of declared){const label=text('label',field.label,host),input=document.createElement(field.type==='textarea'?'textarea':field.type==='select'?'select':'input');input.id='field-'+field.id;input.dataset.field=field.id;if(input.tagName==='INPUT')input.type=field.type||'text';if(field.type==='select')for(const value of field.options||[])input.add(new Option(value,value));if(field.type==='checkbox')input.checked=Boolean(values[field.id]);else input.value=values[field.id]||'';input.oninput=()=>values[field.id]=field.type==='checkbox'?input.checked:input.value;label.append(input)}
+const group=text('div','',host);group.className='actions';for(const a of c.actions.filter(x=>x.screen_id===s.id&&x.kind!=='fill'&&x.kind!=='select')){const options=c.transitions.filter(t=>t.action_id===a.id&&t.from.state===currentState);const wrap=text('div','',group);let branch;if(options.length>1){branch=document.createElement('select');branch.setAttribute('aria-label',a.label+'の条件');options.forEach(t=>branch.add(new Option(t.condition,t.id)));wrap.append(branch)}const b=text('button',a.label,wrap);b.dataset.actionId=a.id;b.disabled=!options.length;b.onclick=()=>{const t=options.find(t=>t.id===branch?.value)||options[0];if(t)move(t.to,t.condition);};for(const t of options.filter(t=>t.on_error)){const error=text('button',a.label+'のエラーを確認',wrap);error.dataset.errorFor=t.id;error.onclick=()=>move(t.on_error,'エラー時の経路: '+t.condition);}}
 }
-for(const s of c.screens){const b=text('button',s.title,document.querySelector('#screens'));b.onclick=()=>{current=s.id;render()}}
+for(const s of c.screens){const b=text('button',s.title,document.querySelector('#screens'));b.dataset.screenTarget=s.id;b.onclick=()=>move({screen_id:s.id,state:s.states[0]},'画面を選択');}
 render();</script></html>'''
 
 def render_bundle(contract, destination):
@@ -198,8 +217,13 @@ def render_bundle(contract, destination):
     encoded=base64.b64encode(canonical(contract)).decode()
     quote=lambda value:html.escape(str(value),quote=True)
     flow=['flowchart LR','%% ux-base '+encoded]
-    for s in contract['screens']:flow.append('  '+s['id']+'["'+quote(s['title'])+'"]')
-    for t in contract['transitions']:flow.append('  '+t['from']['screen_id']+' -->|"'+t['id']+': '+quote(t['condition'])+'"| '+t['to']['screen_id'])
+    for s in contract['screens']:
+        flow.append('  '+s['id']+'["'+quote(s['title'])+'"]')
+        for state in s['states']:flow.append('  '+s['id']+'__'+state+'["'+quote(s['title']+' / '+state)+'"]')
+    for t in contract['transitions']:
+        source=t['from']['screen_id']+'__'+t['from']['state'];target=t['to']['screen_id']+'__'+t['to']['state']
+        flow.append('  '+source+' -->|"'+t['id']+': '+quote(t['condition'])+'"| '+target)
+        if t.get('on_error'):flow.append('  '+source+' -->|"'+t['id']+'__on_error: on_error"| '+t['on_error']['screen_id']+'__'+t['on_error']['state'])
     svg=['<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-label="編集可能なワイヤーフレーム">',
          '<metadata id="ux-base">'+encoded+'</metadata>']
     for i,s in enumerate(contract['screens']):
@@ -207,9 +231,13 @@ def render_bundle(contract, destination):
         svg += [f'<g data-screen-id="{s["id"]}" transform="translate({x} {y})">',
                 f'<rect data-frame="true" width="{w}" height="{h}" rx="10" fill="{quote(layout.get("fill","#ffffff"))}" stroke="#94a3b8"/>',
                 '<text data-field="title" x="20" y="38" font-family="sans-serif" font-size="22">'+quote(s['title'])+'</text>',
-                '<text x="20" y="68" font-family="sans-serif" font-size="14">'+quote(s['purpose'])+'</text>']
+                '<text x="20" y="68" font-family="sans-serif" font-size="14">'+quote(s['purpose'])+'</text>',
+                '<text x="20" y="92" font-family="sans-serif" font-size="13">'+quote(' / '.join(s['states']))+'</text>']
+        for n,field in enumerate(s.get('fields',[])):
+            fy=116+n*62
+            svg += [f'<text x="20" y="{fy}" font-family="sans-serif" font-size="13">'+quote(field['label'])+'</text>',f'<rect x="20" y="{fy+8}" width="{max(80,w-40)}" height="30" fill="#f8fafc" stroke="#cbd5e1"/>']
         for n,a in enumerate(a for a in contract['actions'] if a['screen_id']==s['id']):
-            svg += [f'<text data-action-id="{a["id"]}" x="20" y="{115+n*48}" font-family="sans-serif" font-size="16">'+quote(a['label'])+'</text>']
+            svg += [f'<text data-action-id="{a["id"]}" x="20" y="{135+len(s.get("fields",[]))*62+n*40}" font-family="sans-serif" font-size="16">'+quote(a['label'])+'</text>']
         svg.append('</g>')
     svg.append('</svg>')
     outputs={'flow.mmd':'\n'.join(flow)+'\n','wireframes.svg':'\n'.join(svg)+'\n','wireframes.html':_preview(contract)}
@@ -232,6 +260,7 @@ def import_design(contract, source):
         root=ET.fromstring(text);metadata=next((e.text for e in root.iter() if e.get('id')=='ux-base'),None)
         if not metadata:raise ContractError('Missing design baseline')
         base=json.loads(base64.b64decode(metadata,validate=True));remote=copy.deepcopy(base);screens={s['id']:s for s in remote['screens']};actions={a['id']:a for a in remote['actions']};seen=set()
+        defaults={s['id']:{'x':24+(i%3)*390,'y':24+(i//3)*460,'width':350,'height':410,'fill':'#ffffff'} for i,s in enumerate(base['screens'])}
         for e in root.iter():
             if e.tag.rsplit('}',1)[-1] in ('script','foreignObject') or any(k.lower().startswith('on') for k in e.attrib):raise ContractError('Executable SVG content refused')
             sid=e.get('data-screen-id')
@@ -240,33 +269,49 @@ def import_design(contract, source):
             seen.add(sid);s=screens[sid]
             transform=re.fullmatch(r'translate\(\s*([-+\d.]+)[ ,]+([-+\d.]+)\s*\)',e.get('transform',''))
             if not transform:raise ContractError('Unsupported transform; retain IDs and translate(x y)')
-            s.setdefault('layout',{}).update(x=float(transform[1]),y=float(transform[2]))
+            layout=dict(s.get('layout',{}));incoming={'x':float(transform[1]),'y':float(transform[2])}
             for child in e:
                 if child.get('data-field')=='title':s['title']=''.join(child.itertext())
                 if child.get('data-frame'):
-                    for key in ('width','height'):s['layout'][key]=float(child.get(key))
-                    s['layout']['fill']=child.get('fill','#ffffff')
+                    for key in ('width','height'):incoming[key]=float(child.get(key))
+                    incoming['fill']=child.get('fill','#ffffff')
                 aid=child.get('data-action-id')
                 if aid:
                     if aid not in actions or actions[aid]['screen_id']!=sid:raise ContractError('Unknown action binding')
                     actions[aid]['label']=''.join(child.itertext())
+            for key,value in incoming.items():
+                if key in layout or value!=defaults[sid][key]:layout[key]=value
+            if layout:s['layout']=layout
         if seen!=set(screens):raise ContractError('Missing screen bindings')
     elif source.suffix=='.mmd':
         match=re.search(r'^%% ux-base (.+)$',text,re.M)
         if not match:raise ContractError('Missing design baseline')
         base=json.loads(base64.b64decode(match[1],validate=True));remote=copy.deepcopy(base)
-        screens={s['id']:s for s in remote['screens']};transitions={t['id']:t for t in remote['transitions']};seen=set()
+        screens={s['id']:s for s in remote['screens']};transitions={t['id']:t for t in remote['transitions']};seen=set();error_sources={}
+        state_nodes={s['id']+'__'+state:{'screen_id':s['id'],'state':state} for s in remote['screens'] for state in s['states']}
         for line in text.splitlines():
             node=re.fullmatch(r'\s*([A-Za-z][\w-]*)\["(.*)"\]\s*',line)
             edge=re.fullmatch(r'\s*([A-Za-z][\w-]*) -->\|"([A-Za-z][\w-]*): (.*)"\| ([A-Za-z][\w-]*)\s*',line)
             if node:
+                if node[1] in state_nodes:continue
                 if node[1] not in screens:raise ContractError('Unknown screen binding')
                 screens[node[1]]['title']=html.unescape(node[2]);seen.add(node[1])
             elif edge:
-                if edge[2] not in transitions or edge[1] not in screens or edge[4] not in screens:raise ContractError('Unknown transition binding')
-                t=transitions[edge[2]];t['from']['screen_id']=edge[1];t['to']['screen_id']=edge[4];t['condition']=html.unescape(edge[3]);seen.add(edge[2])
+                is_error=edge[2].endswith('__on_error');tid=edge[2].removesuffix('__on_error') if is_error else edge[2]
+                if tid not in transitions:raise ContractError('Unknown transition binding')
+                from_state=state_nodes.get(edge[1]);to_state=state_nodes.get(edge[4])
+                if not from_state or not to_state:raise ContractError('Unknown transition state binding')
+                t=transitions[tid]
+                if edge[2] in seen:raise ContractError('Duplicate transition binding')
+                seen.add(edge[2])
+                if is_error:
+                    if not t.get('on_error'):raise ContractError('New error edge requires a contract edit')
+                    t['on_error']=copy.deepcopy(to_state);error_sources[tid]=from_state
+                else:t['from']=copy.deepcopy(from_state);t['to']=copy.deepcopy(to_state);t['condition']=html.unescape(edge[3])
             elif line.strip() and not line.startswith(('flowchart','%%')):raise ContractError('Unmapped Mermaid syntax; review before importing')
-        if seen!=set(screens)|set(transitions):raise ContractError('Missing design bindings')
+        expected=set(screens)|set(transitions)|{t['id']+'__on_error' for t in base['transitions'] if t.get('on_error')}
+        if seen!=expected:raise ContractError('Missing design bindings; delete or add paths explicitly in the contract')
+        if any(source!=transitions[tid]['from'] for tid,source in error_sources.items()):raise ContractError('Error edge source must match its transition source')
     elif source.suffix=='.json':
         value=read(source);base=value['base'];remote=value['contract']
     else:raise ContractError('Supported exchange: .svg, .mmd or {base,contract} JSON')

@@ -5,6 +5,7 @@ import importlib.util
 import json
 from pathlib import Path
 import shutil
+import struct
 
 
 class ContractBlocked(ValueError):pass
@@ -65,6 +66,9 @@ def observations(spec,role_dir,viewports):
         path=Path(frame.get('path','')).absolute()
         if path.is_symlink() or not path.resolve().is_relative_to(root) or not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest()!=frame.get('sha256'):
             invalid.append('invalid_frame');continue
+        data=path.read_bytes()
+        if len(data)<24 or data[:8]!=b'\x89PNG\r\n\x1a\n' or struct.unpack('>II',data[16:24])!=size:
+            invalid.append('invalid_frame_dimensions');continue
         if frame.get('viewport')!=viewport or frame.get('url')!=entry.get('url') or frame.get('source')!='live':invalid.append('frame_metadata_mismatch');continue
         for item in entry.get('checks',[]):
             if item.get('id') in spec['required_checks']:verified[(item['id'],name)]={'passed':item.get('passed') is True,'frame_id':frame['id'],'observed':item.get('observed')}
