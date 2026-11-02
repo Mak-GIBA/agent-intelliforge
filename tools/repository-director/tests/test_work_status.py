@@ -18,6 +18,9 @@ repository = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(repo
 class WorkStatusTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+        config = Path(self.temp.name) / 'gitconfig'; config.write_text('')
+        environment = patch.dict(os.environ, {'GIT_CONFIG_GLOBAL': str(config), 'GIT_CONFIG_NOSYSTEM': '1'})
+        environment.start(); self.addCleanup(environment.stop)
         self.root = Path(self.temp.name) / '日本語 project'; self.root.mkdir()
         self.git('init', '-q', '-b', 'main')
         self.git('config', 'user.name', 'Fixture')

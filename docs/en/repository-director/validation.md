@@ -64,6 +64,7 @@ The repository suite passed 589 tests with 16 skips and no failures/errors; stan
 The 13 added cases cover pending changes, renames, Unicode/newline filenames, divergent histories,
 linked worktrees, gitlinks, detached/unborn HEAD, failed reads and refs moving during inspection.
 Before/after snapshots verified unchanged working files, index and refs, including the filter case.
+Git fixtures use a private empty global config and ignore system config; scenario-specific filters remain local.
 A reproduced clean-filter callback during status led to callback suppression and explicit uncertainty,
 followed by related regression checks. The Skill stays at 89 lines with fewer bytes; the existing
 workflow reference grows from 66 to 76 lines. No additional model trial of task separation, conflict
