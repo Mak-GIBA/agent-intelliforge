@@ -47,6 +47,7 @@ class ContractObserver {
     const fields={};
     for(const id of new Set(this.contract.transitions.flatMap(t=>t.retained_fields))) {
       const observed=await this.value(this.field(page,id));fields[id]=observed.available?observed:(this.values[id]||observed);
+      if(observed.available)this.values[id]=observed;
     }
     this.operation={kind,actionIds,beforeUrl:page.url(),from:this.checkpoint,fields};
   }

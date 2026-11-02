@@ -138,9 +138,10 @@ class Installer:
                 self.manifest.setdefault('design_mcp_references',{})[provider]={'name':result['name'],'owned':False,'status':result['status']}
             self.manifest['design_mcp_pending'].pop(provider,None);write_json(self.manifest_path,self.manifest)
             self.record(name,result['status'],message='Registration only; OAuth and target permissions are diagnosed separately')
-        except (module.MCPError,OSError,ValueError) as error:
+        except (InstallError,module.MCPError,OSError,ValueError) as error:
             self.manifest['design_mcp_pending'][provider]['status']='incomplete'
             write_json(self.manifest_path,self.manifest)
+            if isinstance(error,InstallError):raise
             raise InstallError('Design MCP setup incomplete: '+getattr(error,'kind','configuration_or_transport')) from None
 
     def run(self, argv, timeout=300):
