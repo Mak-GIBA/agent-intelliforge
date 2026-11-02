@@ -49,6 +49,7 @@ class LocalWorkflow:
              "await p.locator('[data-action-id=\"A-next\"]').click();if(await p.locator('#screen').getAttribute('data-screen-id')!=='S-payment')throw Error('wrong destination');await p.locator('[data-action-id=\"A-back\"]').click();if(await p.locator('#screen').getAttribute('data-screen-id')!=='S-confirm')throw Error('wrong return');")+
             "}finally{await b.close();}})().catch(e=>{console.error(e.message);process.exit(1)});\n")
         test=shlex.join(['node',str(check)]);home=self.bench.home(job/'codex-home');(job/'test-home').mkdir()
+        settings=home/'config.toml';settings.write_text(settings.read_text().replace('model_reasoning_effort="max"','model_reasoning_effort='+json.dumps(self.rules['reasoning_effort'])))
         brief=('検索語を入力して文書へ移動し、メモの下書きを入力して一覧へ戻り、再び文書を開いて下書きを保持する。' if document else '申込内容の確認から模擬決済へ進み、確認へ戻る。')
         brief+=' この2画面の試作の必須操作に表示上の回帰がある。実画面で再現し、最小の修正後に独立して再確認する。フロントエンド試作のため、実API・保存サーバー・本決済の欠如を不具合にしない。契約とテストは変更しない。デスクトップの宣言範囲だけを確認し、全体の合格とは扱わない。'
         argv=[sys.executable,'-B',str(kit/'skill/scripts/harness.py'),'run','--project',str(app),'--url',url,'--profile','focused','--focus',brief,'--viewport','desktop','--max-iterations','1','--phase-timeout',str(self.rules['phase_seconds']),'--model',self.rules['model'],'--browser','local-playwright','--ux-contract','docs/ux/design-contract.json','--test-command',test,'--brief',brief]
