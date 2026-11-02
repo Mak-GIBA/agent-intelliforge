@@ -1,0 +1,16 @@
+{
+  "purpose": "Supplemental real-model harness validation; separate from the fixed old/new UX comparison",
+  "source_commit": "5dc3ee2",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "max",
+  "cases": ["document_return", "application_confirmation"],
+  "fixture": "Two-screen local interactive wireframe; a required control is hidden by one CSS rule",
+  "profile": "focused",
+  "viewports": ["desktop"],
+  "phase_seconds": 300,
+  "max_iterations": 1,
+  "trials": 1,
+  "budget": "Shared original 240-minute cumulative budget; no extra allowance",
+  "reason": "Original three-viewport generated-app reviews can stop at their fixed phase cap. Verify the actual repair and independent re-review mechanism at a narrower declared scope without retrying or relabelling those runs.",
+  "limits": "Synthetic frontend prototype and desktop scope only. No human usability, general quality advantage, real SaaS operation or whole-app approval claim."
+}
