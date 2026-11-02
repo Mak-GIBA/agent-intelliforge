@@ -800,6 +800,9 @@ You are not authorized to call an issue resolved; a separate reviewer will verif
             'Use ux_check_contract(screen_id,state) after reaching each required state, and '
             'ux_check_contract(screen_id,state,transition_id) immediately after each required transition action. '
             'Contract checks are browser observations, not model assertions. Exercise error, retention, cancel, retry and back paths. '
+            'After resizing, verify the source state again before exercising that viewport transition. '
+            'For a negative/no-op input, use state-only checks unless that exact condition has its own declared transition; '
+            'do not label an intentionally blocked action as the normal successful transition. '
             'Keep domain state names in contract checks and notes; use the existing audit state categories in coverage. '
             'If checks fail, record an issue; if the design changes, stop for reconciliation.')
         instructions[role] += (' Compare any frozen design_references with current live screens: hierarchy, spacing, tokens, component/state consistency and responsive intent. '
@@ -825,6 +828,16 @@ You are not authorized to call an issue resolved; a separate reviewer will verif
     instructions[role] += ("\nCopy evidence path, actual URL (including redirects), source, viewport and ID from browser-generated frame metadata/receipt; do not substitute the originally requested URL or infer dimensions from appearance. "
                            "Use ux_inspect's recent_frames when metadata is needed after viewing the actual images. "
                            "Reuse supplied already-read Memory and writing checks instead of restarting them. Short labels must remain readable without awkward wrapping.")
+    if role != 'fixer':
+        instructions[role] += (' This is a planning/review-only role, even when the overall user brief requests fixes. '
+            'Application source, contracts, styles and repository files are read-only for you. '
+            'Do not edit or repair them, including temporary CSS/DOM workarounds that conceal a defect. '
+            'Report findings and required operations; only the separate fixer may change application code. '
+            'The supplied browser may write its own screenshots/receipts in the designated role directory.')
+    instructions[role] += (' Historical/attached baseline images are comparison context only. '
+        'Never emit their archived paths or old frame IDs in the current evidence array or current operation steps. '
+        'Capture fresh images in this role directory and use their browser frame IDs for every current finding, coverage item and resolved after-image. '
+        'Keep earlier issue IDs and root causes; the host retains historical before-images separately.')
     if role != "references":
         instructions[role] += " For applicable target-app forms/dialogs, operate Tab/Enter/Escape, visible focus, validation and focus restoration; state not-applicable cases."
     base = BASE_PROMPT

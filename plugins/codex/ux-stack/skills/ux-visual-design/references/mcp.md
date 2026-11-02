@@ -44,7 +44,13 @@ JSONは`tool`、`arguments`、`target: {file_id,url}`を持つ。書き込みは
 Mermaid、SVG、ローカルプレビューを生成し、認証以外の作業を続ける。
 モックやローカルMCP fixtureの成功を、Whimsical/Figmaの実操作成功と記載しない。
 Stitch・tldraw・Penpotは拡張候補であり、標準設定へ自動追加しない。
-# 拡張候補
+## 書き込み結果の確認
+
+ツール呼び出しの受付と、対象の編集完了は分ける。ヘルパーの `call_accepted` だけで
+書き込み権限やデザイン反映を確認済みにしない。対象を読み直し、版・ノード・内容の差分を照合する。
+OAuthや共有トークンを含むURL・要求ファイルをGitへ残さず、認証はネイティブホストに保持する。
+
+## 拡張候補
 
 Google StitchはUI案の生成・比較、tldrawは双方向キャンバス、PenpotはOSS・セルフホスト環境の候補です。
 標準登録はしません。拡張時は `scripts/design_mcp.py` のprovider・許可ホストと

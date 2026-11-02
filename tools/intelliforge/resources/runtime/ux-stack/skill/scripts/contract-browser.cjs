@@ -27,14 +27,16 @@ class ContractObserver {
     return {available:true,value:['checkbox','radio'].includes(type)?await control.isChecked():await control.inputValue()};
   }
   async before(page,name,args) {
-    if(name==='ux_navigate'){this.checkpoint=null;this.operation=null;return;}
+    if(name==='ux_navigate'||name==='ux_resize'){this.checkpoint=null;this.operation=null;return;}
     if(!['ux_click','ux_fill','ux_select','ux_press','ux_back'].includes(name))return;
     const kind={ux_click:'click',ux_fill:'fill',ux_select:'select',ux_press:'press',ux_back:'press'}[name];
+    const activation=name==='ux_press'&&['Enter','Space','Spacebar',' '].includes(args.key);
     let element;
     if(args.selector)element=page.locator(args.selector);
     else if(name==='ux_press')element=page.locator(':focus');
     const actionIds=[];
-    for(const action of this.contract.actions.filter(a=>a.kind===kind)) {
+    for(const action of this.contract.actions.filter(a=>a.kind===kind||activation&&a.kind==='click')) {
+      if(action.kind==='press'&&action.key&&action.key!==args.key)continue;
       const candidate=locator(page,action.locator);
       if(await candidate.count()!==1)continue;
       if(element && await element.count()===1) {
@@ -49,7 +51,13 @@ class ContractObserver {
       const observed=await this.value(this.field(page,id));fields[id]=observed.available?observed:(this.values[id]||observed);
       if(observed.available)this.values[id]=observed;
     }
-    this.operation={kind,actionIds,beforeUrl:page.url(),from:this.checkpoint,fields};
+    this.operation={tool:name,kind,actionIds,beforeUrl:page.url(),from:this.checkpoint,fields,succeeded:false,error:false};
+  }
+  complete(name) {
+    if(this.operation&&!this.operation.error&&(this.operation.tool===name||name==='ux_dialog'))this.operation.succeeded=true;
+  }
+  failed(name) {
+    if(this.operation&&(this.operation.tool===name||name==='ux_dialog')){this.operation.error=true;this.operation.succeeded=false;}
   }
   async check(page,args) {
     const screen=this.contract.screens.find(s=>s.id===args.screen_id);
@@ -89,10 +97,10 @@ class ContractObserver {
       if(!transition || (error&&!transition.on_error))throw Error('Unknown contract transition');
       const destination=error?transition.on_error:transition.to,op=this.operation;
       const fromScreen=this.contract.screens.find(s=>s.id===transition.from.screen_id);
-      const passed=Boolean(stateVerified&&destination.screen_id===screen.id&&destination.state===args.state&&op?.from?.verified&&
+      const passed=Boolean(stateVerified&&destination.screen_id===screen.id&&destination.state===args.state&&op?.succeeded&&op?.from?.verified&&
         op.from.screen_id===transition.from.screen_id&&op.from.state===transition.from.state&&routeMatches(op.beforeUrl,fromScreen.route)&&
         op.actionIds.includes(transition.action_id));
-      checks.push({id:args.transition_id,passed,observed:{from:op?.from||null,action:op?.actionIds||[],destination:{screen_id:screen.id,state:args.state},route:matched}});
+      checks.push({id:args.transition_id,passed,observed:{from:op?.from||null,action:op?.actionIds||[],operation_succeeded:op?.succeeded===true,destination:{screen_id:screen.id,state:args.state},route:matched}});
       for(const field of transition.retained_fields) {
         const id=args.transition_id+'__retain_'+field,before=op?.fields[field],after=await this.value(this.field(page,field));
         if(!passed||!before?.available)checks.push({id,passed:false,observed:'Retention origin unverified'});

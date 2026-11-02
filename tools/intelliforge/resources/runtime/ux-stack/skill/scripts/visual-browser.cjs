@@ -112,11 +112,12 @@ async function call(name,a) {
   try { await Promise.race([operation,dialogAppears]); }
   finally {dialogWake=undefined;}
   if(dialog) {
-    pendingAction=operation.catch(e=>{errors.push({type:'dialog_action',text:e.message});});
+    pendingAction=operation.catch(e=>{if(contract)contract.failed(name);errors.push({type:'dialog_action',text:e.message});});
     receipt({kind:'action',tool:name,args:a,before:frames.map(x=>x.meta.id),dialog:dialog.message(),captured_at:new Date().toISOString()});
     return {content:[{type:'text',text:JSON.stringify({pending_dialog:dialog.message(),before:frames.map(x=>x.meta)})},...frames.map(x=>x.image)]};
   }
   if(name!=='ux_wait') await page.waitForTimeout(200);
+  if(contract)contract.complete(name);
   frames.push(await frame(name==='ux_capture'?'current':'after '+name));
   const state={url:page.url(),title:await page.title(),frames:frames.map(x=>x.meta),console:errors.slice(-10)};
   receipt({kind:'action',tool:name,args:a,frames:state.frames.map(x=>x.id),url:state.url,captured_at:new Date().toISOString()});
@@ -143,7 +144,7 @@ async function main() {
         case 'tools/list': result={tools}; break;
         case 'tools/call':
           try {result=await call(req.params.name,req.params.arguments||{});}
-          catch(e) {result={isError:true,content:[{type:'text',text:e.message}]};}
+          catch(e) {if(contract)contract.failed(req.params.name);result={isError:true,content:[{type:'text',text:e.message}]};}
           break;
         default: process.stdout.write(JSON.stringify({jsonrpc:'2.0',id:req.id,error:{code:-32601,message:'Method not found'}})+'\n'); return;
       }

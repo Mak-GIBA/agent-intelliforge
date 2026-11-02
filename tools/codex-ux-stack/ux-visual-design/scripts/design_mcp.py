@@ -261,7 +261,10 @@ class DesignMCP:
             if any(word in message for word in ('401','oauth','authentication required','not logged')):raise MCPError('authentication_required')
             if any(word in message for word in ('403','permission','forbidden','access denied')):raise MCPError('permission_denied')
             raise MCPError('provider_tool_failed')
-        return {'provider':provider,'tool':tool,'file_id':file_id,'result':result,'permission_verified':'read' if read_only else 'write'}
+        return {'provider':provider,'tool':tool,'file_id':file_id,'result':result,
+                'permission_verified':'read' if read_only else 'not_verified',
+                'operation_status':'read_succeeded' if read_only else 'call_accepted',
+                'write_effect':'not_applicable' if read_only else 'not_verified; reread the target and compare revision/content'}
 
 
 def main(argv=None):
