@@ -130,10 +130,55 @@ class Benchmark:
             for future in concurrent.futures.as_completed(futures):
                 r=future.result();print(json.dumps({k:r[k] for k in ['label','case','trial','status','elapsed_seconds'] if k in r}),flush=True)
 
+    def ratings(self):
+        mapping_path=self.out/'blind-map.json'
+        if mapping_path.exists():mapping=json.loads(mapping_path.read_text())
+        else:
+            mapping={}
+            for case in self.conditions['cases']:
+                first=['baseline','candidate'];secrets.SystemRandom().shuffle(first)
+                for trial in range(1,self.conditions['trials']+1):mapping[f'{case}-{trial}']=dict(zip(['A','B'],first if trial==1 else list(reversed(first))))
+            write(mapping_path,mapping)
+        for key,pair in mapping.items():
+            job=self.out/'ratings'/key
+            if (job/'result.json').exists():continue
+            case,trial=key.rsplit('-',1);job.mkdir(parents=True,exist_ok=True);facts={};attachments=[]
+            for anonymous,label in pair.items():
+                generation=self.out/'generation'/f'{label}-{case}-{trial}';op=json.loads((generation/'operations.json').read_text())
+                facts[anonymous]={'checks':[{k:c[k] for k in ('id','viewport','passed')} for c in op['checks']],
+                    'generation_status':json.loads((generation/'result.json').read_text())['status']}
+                wanted=['desktop-initial','tablet-initial','mobile-initial','desktop-failure','mobile-completed','mobile-focus']
+                if case=='application':wanted+=['mobile-confirm','mobile-payment']
+                if case=='landing':wanted+=['mobile-signup']
+                for name in wanted:
+                    src=generation/'screens'/(name+'.png')
+                    if not src.exists():continue
+                    dst=job/(anonymous+'-'+name+'.png');shutil.copyfile(src,dst);attachments.append(dst)
+            scores={'type':'object','properties':{name:{'type':'integer','minimum':1,'maximum':5} for name in self.conditions['rubric']},'required':self.conditions['rubric'],'additionalProperties':False}
+            item={'type':'object','properties':{'scores':scores,'observations':{'type':'array','items':{'type':'string'}},'limitations':{'type':'array','items':{'type':'string'}}},'required':['scores','observations','limitations'],'additionalProperties':False}
+            schema={'type':'object','properties':{'A':item,'B':item,'preference':{'type':'string','enum':['A','B','tie','unverified']},'reason':{'type':'string'}},'required':['A','B','preference','reason'],'additionalProperties':False}
+            write(job/'schema.json',schema)
+            prompt=('You are an independent UX evaluator. Compare anonymous A/B screenshots for the same synthetic brief. '
+                    'Do not inspect source code, other folders or the blind mapping. Use the attached screenshots and fixed operation facts only. '
+                    'Judge concrete hierarchy, legibility, priority, finding information, responsive wrapping/density, state feedback and cognitive effort. '
+                    'Do not reward decoration or penalize a function solely because it is not visible in the initial image. '
+                    'Distinguish screenshot observations from operation facts; no human usability testing or general superiority claims. '
+                    'Rate each rubric dimension1-5 using anchors; name the image/state supporting key observations and mention uncertainty. '
+                    'You have3minutes. Return the required JSON.\nBRIEF:\n'+self.conditions['inputs'][case]+'\nRUBRIC:\n'+json.dumps(self.conditions['rating_anchors'])+
+                    '\nIMAGE ORDER:\n'+json.dumps([p.name for p in attachments])+'\nOPERATION FACTS:\n'+json.dumps(facts,ensure_ascii=False))
+            (job/'prompt.txt').write_text(prompt)
+            argv=['codex','exec','--ephemeral','--json','--sandbox','read-only','--skip-git-repo-check','--model',self.conditions['model'],
+                  '-C',str(job),'--output-schema',str(job/'schema.json'),'--output-last-message',str(job/'rating.json'),'-c','model_reasoning_effort="max"']
+            for image in attachments:argv+=['--image',str(image)]
+            argv+=['--',prompt]
+            result=self.call(argv,job,self.home(job/'codex-home'),job/'events.jsonl',self.conditions['rating_seconds']);write(job/'result.json',result)
+            print(json.dumps({'rating':key,**result}),flush=True)
+
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['prepare','generate']);p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=2);args=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['prepare','generate','ratings']);p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=2);args=p.parse_args()
     bench=Benchmark(args.output)
     if args.command=='prepare':bench.prepare()
-    else:bench.generate(max(1,min(args.workers,2)))
+    elif args.command=='generate':bench.generate(max(1,min(args.workers,2)))
+    else:bench.ratings()
 
 if __name__=='__main__':main()
