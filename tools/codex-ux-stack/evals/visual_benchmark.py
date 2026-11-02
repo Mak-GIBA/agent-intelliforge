@@ -131,7 +131,7 @@ class Benchmark:
             for future in concurrent.futures.as_completed(futures):
                 r=future.result();print(json.dumps({k:r[k] for k in ['label','case','trial','status','elapsed_seconds'] if k in r}),flush=True)
 
-    def ratings(self):
+    def ratings(self,settled=False):
         mapping_path=self.out/'blind-map.json'
         if mapping_path.exists():mapping=json.loads(mapping_path.read_text())
         else:
@@ -141,18 +141,18 @@ class Benchmark:
                 for trial in range(1,self.conditions['trials']+1):mapping[f'{case}-{trial}']=dict(zip(['A','B'],first if trial==1 else list(reversed(first))))
             write(mapping_path,mapping)
         for key,pair in mapping.items():
-            job=self.out/'ratings'/key
+            job=self.out/('ratings-settled' if settled else 'ratings')/key
             if (job/'result.json').exists():continue
             case,trial=key.rsplit('-',1);job.mkdir(parents=True,exist_ok=True);facts={};attachments=[]
             for anonymous,label in pair.items():
-                generation=self.out/'generation'/f'{label}-{case}-{trial}';corrected=generation/'operations-corrected.json';op=json.loads((corrected if corrected.exists() else generation/'operations.json').read_text())
+                generation=self.out/'generation'/f'{label}-{case}-{trial}';corrected=generation/('operations-settled.json' if settled else 'operations-corrected.json');op=json.loads((corrected if corrected.exists() else generation/'operations.json').read_text())
                 facts[anonymous]={'checks':[{k:c[k] for k in ('id','viewport','passed')} for c in op['checks']],
                     'generation_status':json.loads((generation/'result.json').read_text())['status']}
                 wanted=['desktop-initial','tablet-initial','mobile-initial','desktop-failure','mobile-completed','mobile-focus']
                 if case=='application':wanted+=['mobile-confirm','mobile-payment']
                 if case=='landing':wanted+=['mobile-signup']
                 for name in wanted:
-                    src=generation/('screens-corrected' if corrected.exists() else 'screens')/(name+'.png')
+                    src=generation/('screens-settled' if settled else 'screens-corrected' if corrected.exists() else 'screens')/(name+'.png')
                     if not src.exists():continue
                     dst=job/(anonymous+'-'+name+'.png');shutil.copyfile(src,dst);attachments.append(dst)
             scores={'type':'object','properties':{name:{'type':'integer','minimum':1,'maximum':5} for name in self.conditions['rubric']},'required':self.conditions['rubric'],'additionalProperties':False}
@@ -176,10 +176,10 @@ class Benchmark:
             print(json.dumps({'rating':key,**result}),flush=True)
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['prepare','generate','ratings']);p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=2);args=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['prepare','generate','ratings']);p.add_argument('--output',type=Path,required=True);p.add_argument('--workers',type=int,default=2);p.add_argument('--settled',action='store_true',help='Separate independent rating after the recorded async observation correction');args=p.parse_args()
     bench=Benchmark(args.output)
     if args.command=='prepare':bench.prepare()
     elif args.command=='generate':bench.generate(max(1,min(args.workers,2)))
-    else:bench.ratings()
+    else:bench.ratings(args.settled)
 
 if __name__=='__main__':main()
