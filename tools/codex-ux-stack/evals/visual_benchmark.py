@@ -163,6 +163,8 @@ class Benchmark:
                     'Do not inspect source code, other folders or the blind mapping. Use the attached screenshots and fixed operation facts only. '
                     'Judge concrete hierarchy, legibility, priority, finding information, responsive wrapping/density, state feedback and cognitive effort. '
                     'Do not reward decoration or penalize a function solely because it is not visible in the initial image. '
+                    'Fixed operations use requested hook IDs. A notification-hook mismatch is not proof of data loss: '
+                    'if the image shows feedback elsewhere, state that difference and retain uncertainty. '
                     'Distinguish screenshot observations from operation facts; no human usability testing or general superiority claims. '
                     'Rate each rubric dimension1-5 using anchors; name the image/state supporting key observations and mention uncertainty. '
                     'You have3minutes. Return the required JSON.\nBRIEF:\n'+self.conditions['inputs'][case]+'\nRUBRIC:\n'+json.dumps(self.conditions['rating_anchors'])+
