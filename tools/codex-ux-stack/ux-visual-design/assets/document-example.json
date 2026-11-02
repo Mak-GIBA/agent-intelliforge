@@ -30,6 +30,7 @@
       "purpose": "文書を開いて一覧へ戻る",
       "actions": [
         "A-open",
+        "A-retry",
         "A-back"
       ],
       "required": true
@@ -54,7 +55,17 @@
         "y": 32,
         "width": 340,
         "height": 420
-      }
+      },
+      "fields": [
+        {
+          "id": "query",
+          "label": "文書を検索",
+          "type": "search",
+          "locator": {
+            "selector": "#query"
+          }
+        }
+      ]
     },
     {
       "id": "S-detail",
@@ -74,6 +85,19 @@
         "y": 32,
         "width": 340,
         "height": 420
+      },
+      "fields": [
+        {
+          "id": "note",
+          "label": "文書のメモ",
+          "type": "textarea",
+          "locator": {
+            "selector": "#note"
+          }
+        }
+      ],
+      "state_messages": {
+        "failure": "文書を読み込めませんでした。メモを保持して再試行できます。"
       }
     }
   ],
@@ -95,6 +119,15 @@
       "locator": {
         "selector": "#back"
       }
+    },
+    {
+      "id": "A-retry",
+      "screen_id": "S-detail",
+      "label": "再試行",
+      "kind": "click",
+      "locator": {
+        "selector": "#retry"
+      }
     }
   ],
   "transitions": [
@@ -110,10 +143,12 @@
         "screen_id": "S-detail",
         "state": "normal"
       },
-      "on_error": null,
+      "on_error": {
+        "screen_id": "S-detail",
+        "state": "failure"
+      },
       "retained_fields": [
-        "query",
-        "note"
+        "query"
       ]
     },
     {
@@ -131,6 +166,26 @@
       "on_error": null,
       "retained_fields": [
         "query",
+        "note"
+      ]
+    },
+    {
+      "id": "T-retry",
+      "action_id": "A-retry",
+      "from": {
+        "screen_id": "S-detail",
+        "state": "failure"
+      },
+      "condition": "文書を再取得できた",
+      "to": {
+        "screen_id": "S-detail",
+        "state": "normal"
+      },
+      "on_error": {
+        "screen_id": "S-detail",
+        "state": "failure"
+      },
+      "retained_fields": [
         "note"
       ]
     }
@@ -159,6 +214,16 @@
           "type": "visible",
           "locator": {
             "selector": "#detail"
+          },
+          "expected": true
+        },
+        {
+          "id": "AC-error",
+          "screen_id": "S-detail",
+          "state": "failure",
+          "type": "visible",
+          "locator": {
+            "selector": "#error"
           },
           "expected": true
         }

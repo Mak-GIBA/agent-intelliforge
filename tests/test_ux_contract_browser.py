@@ -62,4 +62,29 @@ document.getElementById('wrong').onclick=open.onclick;back.onclick=()=>location.
         wrong=self.check('S-detail',transition='T-open');self.assertFalse(next(c for c in wrong['checks'] if c['id']=='T-open')['passed'])
         report=runtime.observations(self.frozen,self.base,['desktop']);self.assertFalse(report['ready']);self.assertTrue(report['failed'])
 
+    def test_manual_navigation_cannot_repair_a_wrong_button_transition_receipt(self):
+        source=self.base/'index.html';source.write_text(source.read_text().replace("open.onclick=()=>location.hash='detail'","open.onclick=()=>location.hash='wrong'"))
+        self.tool('ux_navigate',url=self.url+'/');self.check('S-list');self.tool('ux_click',selector='#open')
+        self.tool('ux_navigate',url=self.url+'/#detail')
+        result=self.check('S-detail',transition='T-open')
+        self.assertFalse(next(c for c in result['checks'] if c['id']=='T-open')['passed'],result)
+
+@unittest.skipUnless(os.getenv('UX_GAN_RUNTIME'),'Requires installed real Chromium runtime')
+class ScopedContractBrowserTests(unittest.TestCase):
+    setUp=browser.BrowserTests.setUp;tearDown=browser.BrowserTests.tearDown
+    rpc=browser.BrowserTests.rpc;tool=browser.BrowserTests.tool;check=ContractBrowserTests.check
+
+    def configure_contract(self):
+        p=ContractBrowserTests.configure_contract(self);self.contract_journeys=['J-doc']
+        c=json.loads(p.read_text());c['journeys'].append({'id':'J-other','purpose':'Other workflow','actions':['A-open'],'required':True})
+        c['requirements'].append({'id':'R-other','journey_id':'J-other','required':True,'acceptance':[
+            {'id':'AC-other','screen_id':'S-list','state':'normal','type':'value','locator':{'selector':'#query'},'expected':'Different scope'}]})
+        source=self.base/'design.json';source.write_text(json.dumps(c));self.frozen=runtime.freeze(source,self.base,self.base/'run',['J-doc']);return p
+
+    def test_selected_journey_excludes_other_required_assertions(self):
+        self.tool('ux_navigate',url=self.url+'/');first=self.check('S-list')
+        self.assertNotIn('AC-other',[c['id'] for c in first['checks']]);self.assertTrue(all(c['passed'] for c in first['checks']))
+        self.tool('ux_click',selector='#open');result=self.check('S-detail',transition='T-open')
+        self.assertTrue(next(c for c in result['checks'] if c['id']=='T-open')['passed'],result)
+
 if __name__=='__main__':unittest.main()

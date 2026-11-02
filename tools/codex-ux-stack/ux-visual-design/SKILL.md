@@ -42,6 +42,8 @@ python3 <skill-dir>/scripts/design_mcp.py doctor --providers whimsical,figma
 ```
 
 `import`は既定で提案だけを返す。依頼範囲内の変更を反映する場合は`--apply`を付ける。
+`source_regeneration` が `preserved_unmapped_edits` の場合、注釈・スタイル等の未対応編集は元ファイルへ残る。
+その出力を上書きせず、別の出力先を使うか、残す編集を明示的に整理する。無変更のapplyは契約の原文も書き換えない。
 共有済みの成果物や別の利用者の編集を、再生成で消さない。
 設計だけの段階では`validate`の`--project`を省略する。実装済みの対応ファイルも確認するときに付ける。
 自動出力は構造のプレビューである。入力部品、情報の優先順位、各状態の表示を補い、主要画面を作り込む。

@@ -15,6 +15,12 @@
 | artifacts | provider、外部URL・file_id、UX IDと外部node IDのbindings、確認済みスナップショット |
 | approval | not_requested / presented / approved / needs_review / delegatedとその根拠 |
 
+承認済みの外観を照合する場合は、artifactに `revision` と
+`snapshot: {path: "docs/ux/approved.png", sha256: "<PNGのSHA-256>"}` を追加する。
+pathはプロジェクト内の相対パス。ハーネスは画像と契約の両方を固定して独立レビューへ渡す。
+approvedなのに参照画像がない場合は、外観の整合を未検証としてrunを合格にしない。
+参照画像の存在は外観が一致した証拠ではなく、実画面との具体的な比較は別に必要となる。
+
 受け入れ条件は固有ID、画面、状態、検査種別、locator、expectedを持つ。
 種別はvisible、text、value、checked、focused、accessible_name、url。
 実行するJavaScriptやシェルを埋め込まない。エラーと再試行、戻ると入力保持など、
@@ -39,7 +45,7 @@ selectの候補は`options`へ置く。`state_messages`で状態の表示を指�
 不一致や一致を断定しない。契約の整合性、実装の存在、実操作、見た目、認知負荷、人間の承認は別の確認である。
 # ブラウザーとの照合
 
-`ux-gan-harness ... --ux-contract docs/ux/contract.json` は実装ファイルも確認して契約を固定する。
+`ux-gan-harness ... --ux-contract docs/ux/design-contract.json` は実装ファイルも確認して契約を固定する。
 各画面・状態に到達したら `ux_check_contract(screen_id,state)`、宣言した操作の直後には
 `transition_id` も指定する。正常経路だけでなく `T-id__on_error` も必須になる。
 ホストは操作元・操作対象・遷移先・ルート・状態の受け入れ条件をブラウザー証拠と照合する。

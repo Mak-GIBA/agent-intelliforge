@@ -802,6 +802,9 @@ You are not authorized to call an issue resolved; a separate reviewer will verif
             'Contract checks are browser observations, not model assertions. Exercise error, retention, cancel, retry and back paths. '
             'Keep domain state names in contract checks and notes; use the existing audit state categories in coverage. '
             'If checks fail, record an issue; if the design changes, stop for reconciliation.')
+        instructions[role] += (' Compare any frozen design_references with current live screens: hierarchy, spacing, tokens, component/state consistency and responsive intent. '
+            'Record the reference ID/revision and concrete deviations in existing findings. Never claim visual design alignment from JSON checks alone. '
+            'Missing/inaccessible references for an approved design or an unperformed comparison must remain an unverified issue; do not infer approval.')
     if role == "reviewer":
         data["previous_audit"] = state.get("audit")
         data["baseline_simplicity"] = state.get("baseline_simplicity")
@@ -877,6 +880,7 @@ def run_role(role, schema, state, run_dir, iteration):
             }
             if state.get('ux_contract'):
                 bridge['env']['UX_GAN_CONTRACT'] = state['ux_contract']['snapshot']
+                bridge['env']['UX_GAN_JOURNEYS'] = json.dumps(state['ux_contract']['journeys'])
             for key in ("TMPDIR", "TMP", "TEMP", "XDG_CACHE_HOME", "UV_CACHE_DIR", "npm_config_cache"):
                 bridge["env"][key] = env[key]
             bridge["env"].update(browser_launch_environment())
@@ -898,6 +902,9 @@ def run_role(role, schema, state, run_dir, iteration):
                         if e["source"] == "live"][:4]
             for p in attached:
                 argv += ["--image", p]
+        if role in ('fixer','reviewer') and state.get('ux_contract'):
+            for reference in state['ux_contract'].get('design_references',[])[:4]:
+                argv += ['--image',reference['snapshot']];attached.append(reference['snapshot'])
         # Pass prompt through an argv element; never interpolate it into shell code.
         argv += ["--", prompt]
         atomic_json(actual_dir / "invocation.json",

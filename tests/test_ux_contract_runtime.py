@@ -3,6 +3,9 @@ import importlib.util
 import json
 import tempfile
 import unittest
+import hashlib
+from unittest.mock import patch
+from test_ux_gan_harness import png
 from test_ux_visual_contract import example
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -12,6 +15,22 @@ hspec=importlib.util.spec_from_file_location('ux_harness_contract_test',ROOT/'to
 h=importlib.util.module_from_spec(hspec);hspec.loader.exec_module(h)
 
 class ContractRuntimeTests(unittest.TestCase):
+    def test_concurrent_edit_during_freeze_cannot_change_approval_behind_the_snapshot(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);p,_=self.fixture(root);engine=runtime.helper();original=engine.require
+            def require(value,project=None):
+                changed=json.loads(p.read_text());changed['approval']={'status':'approved','source':'concurrent edit'};p.write_text(json.dumps(changed))
+                return original(value,project)
+            with patch.object(runtime,'helper',return_value=engine),patch.object(engine,'require',side_effect=require),self.assertRaises(runtime.ContractBlocked):runtime.freeze(p,root,root/'run')
+    def test_approved_design_needs_a_frozen_reference_and_detects_its_changes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);p,state=self.fixture(root);c=json.loads(p.read_text());c['approval']={'status':'approved','source':'test user approval'}
+            p.write_text(json.dumps(c));state=runtime.freeze(p,root,root/'run')
+            self.assertEqual(runtime.observations(state,root/'role',['desktop'])['design_reference_status'],'missing')
+            image=root/'approved.png';image.write_bytes(png());c['artifacts']=[{'id':'D-main','provider':'local','url':'approved.png','file_id':'local','bindings':{'S-list':'list'},'snapshot':{'path':'approved.png','sha256':hashlib.sha256(image.read_bytes()).hexdigest()}}]
+            p.write_text(json.dumps(c));state=runtime.freeze(p,root,root/'run');self.assertEqual(runtime.context(state)['design_references'][0]['id'],'D-main')
+            image.write_bytes(image.read_bytes()+b'human edit')
+            with self.assertRaises(runtime.ContractBlocked):runtime.assert_current(state)
     def test_harness_gate_does_not_accept_model_success_without_contract_receipts(self):
         audit={'issues':[],'friction':[],'simplicity':{'regressed':False},'second_pass_complete':True,
                'coverage':[{'flow_id':'J-doc','viewport':'desktop','state':'normal','result':'passed','perspective':p} for p in ['first_time','mistake']]}

@@ -39,11 +39,12 @@ def validate(contract, project=None):
             if key in all_ids:errors.append('duplicate id: '+key)
             all_ids.add(key);indexes[group][key]=item
     screens=indexes['screens'];actions=indexes['actions'];journeys=indexes['journeys']
+    def lookup(mapping,key):return mapping.get(key) if isinstance(key,str) else None
     def screen_state(value,location):
         if not isinstance(value,dict):errors.append(location+': expected screen/state');return
-        screen=screens.get(value.get('screen_id'))
+        screen=lookup(screens,value.get('screen_id'))
         if not screen:errors.append(location+': missing screen '+str(value.get('screen_id')))
-        elif value.get('state') not in screen.get('states',[]):errors.append(location+': unknown state')
+        elif not isinstance(screen.get('states'),list) or value.get('state') not in screen['states']:errors.append(location+': unknown state')
     def locator(value,location):
         if not isinstance(value,dict) or not ((isinstance(value.get('selector'),str) and value['selector'].strip()) or
               (isinstance(value.get('role'),str) and isinstance(value.get('name'),str))):errors.append(location+': selector or role/name required')
@@ -64,8 +65,14 @@ def validate(contract, project=None):
         fields=s.get('fields',[])
         if not isinstance(fields,list):errors.append(key+': fields must be an array')
         else:
+            field_ids=set()
             for field in fields:
                 if not isinstance(field,dict) or not ID.fullmatch(str(field.get('id',''))) or not isinstance(field.get('label'),str) or field.get('type','text') not in ('text','search','email','number','textarea','select','checkbox'):errors.append(key+': invalid field')
+                elif field['id'] in field_ids:errors.append(key+': duplicate field')
+                else:
+                    field_ids.add(field['id'])
+                    if 'locator' in field:locator(field['locator'],key+'.'+field['id'])
+                    if field.get('type')=='select' and (not isinstance(field.get('options'),list) or any(not isinstance(v,str) for v in field['options'])):errors.append(key+': select options must be strings')
         component=s.get('component')
         path=component.get('path') if isinstance(component,dict) else None
         if not isinstance(path,str) or not path or Path(path).is_absolute() or re.search(r'(^|[/\\])\.\.([/\\]|$)|:|\\',path):errors.append(key+': unsafe component path')
@@ -73,7 +80,7 @@ def validate(contract, project=None):
             root=Path(project).resolve();target=root/path
             if not target.is_file() or not target.resolve().is_relative_to(root) or any(x.is_symlink() for x in [target,*target.parents] if x!=root and root in x.parents):errors.append(key+': missing or linked component '+path)
     for key,a in actions.items():
-        if a.get('screen_id') not in screens:errors.append(key+': missing screen '+str(a.get('screen_id')))
+        if not lookup(screens,a.get('screen_id')):errors.append(key+': missing screen '+str(a.get('screen_id')))
         if a.get('kind') not in ('click','fill','select','press'):errors.append(key+': unsupported action kind')
         if not isinstance(a.get('label'),str) or not a.get('label','').strip():errors.append(key+': label required')
         locator(a.get('locator'),key)
@@ -82,18 +89,22 @@ def validate(contract, project=None):
         if not isinstance(j.get('actions'),list) or not j.get('actions'):errors.append(key+': actions required')
         else:
             for aid in j['actions']:
-                if aid not in actions:errors.append(key+': missing action '+str(aid))
+                if not lookup(actions,aid):errors.append(key+': missing action '+str(aid))
         if type(j.get('required')) is not bool:errors.append(key+': required must be boolean')
     for key,t in indexes['transitions'].items():
         aid=t.get('action_id')
-        if aid not in actions:errors.append(key+': missing action '+str(aid))
+        action=lookup(actions,aid)
+        if not action:errors.append(key+': missing action '+str(aid))
         for field in ('from','to'):screen_state(t.get(field),key+'.'+field)
         if t.get('on_error') is not None:screen_state(t['on_error'],key+'.on_error')
-        if aid in actions and isinstance(t.get('from'),dict) and actions[aid].get('screen_id')!=t['from'].get('screen_id'):errors.append(key+': action/from screen mismatch')
+        if action and isinstance(t.get('from'),dict) and action.get('screen_id')!=t['from'].get('screen_id'):errors.append(key+': action/from screen mismatch')
         if not isinstance(t.get('condition'),str) or not t.get('condition','').strip():errors.append(key+': condition required')
-        if not isinstance(t.get('retained_fields'),list) or any(not isinstance(x,str) for x in t.get('retained_fields',[])):errors.append(key+': retained_fields must be strings')
+        retained=t.get('retained_fields')
+        if not isinstance(retained,list) or any(not isinstance(x,str) or not ID.fullmatch(x) for x in retained):errors.append(key+': retained_fields must be field ids')
+        if 'required' in t and type(t['required']) is not bool:errors.append(key+': required must be boolean')
+        if key.endswith('__on_error'):errors.append(key+': reserved error-branch suffix')
     for key,r in indexes['requirements'].items():
-        if r.get('journey_id') not in journeys:errors.append(key+': missing journey')
+        if not lookup(journeys,r.get('journey_id')):errors.append(key+': missing journey')
         if type(r.get('required')) is not bool:errors.append(key+': required must be boolean')
         checks=r.get('acceptance')
         if not isinstance(checks,list) or not checks:errors.append(key+': acceptance required');continue
@@ -105,9 +116,14 @@ def validate(contract, project=None):
             if a.get('type') not in ASSERTIONS:errors.append(str(aid)+': unsupported assertion')
             if a.get('type')!='url':locator(a.get('locator'),str(aid))
             if 'expected' not in a or not isinstance(a.get('expected'),(str,bool,int,float)):errors.append(str(aid)+': scalar expected value required')
+            elif a.get('type') in ('visible','checked','focused') and type(a['expected']) is not bool:errors.append(str(aid)+': boolean expected value required')
+            elif a.get('type') in ('text','value','accessible_name','url') and not isinstance(a['expected'],str):errors.append(str(aid)+': string expected value required')
     for key,a in indexes['artifacts'].items():
         if a.get('provider') not in ('local','whimsical','figma'):errors.append(key+': unknown provider')
         if not isinstance(a.get('url'),str) or not isinstance(a.get('file_id'),str):errors.append(key+': artifact URL/file_id required')
+        if 'snapshot' in a:
+            snapshot=a['snapshot'];path=snapshot.get('path') if isinstance(snapshot,dict) else None
+            if not isinstance(path,str) or not path or Path(path).is_absolute() or '..' in Path(path).parts or re.search(r':|\\',path) or not re.fullmatch(r'[0-9a-f]{64}',str(snapshot.get('sha256',''))):errors.append(key+': snapshot needs a safe relative path and SHA-256')
         bindings=a.get('bindings')
         if not isinstance(bindings,dict):errors.append(key+': bindings required')
         else:
@@ -115,6 +131,12 @@ def validate(contract, project=None):
                 if uxid not in all_ids or not isinstance(node,str) or not node:errors.append(key+': unknown or invalid binding '+uxid)
     approval=contract.get('approval',{})
     if not isinstance(approval,dict) or approval.get('status') not in ('not_requested','presented','approved','needs_review','delegated'):errors.append('approval.status: explicit status required')
+    elif not isinstance(approval.get('source'),str) or not approval['source'].strip():errors.append('approval.source: evidence or delegation context required')
+    if not errors:
+        generated=[s['id']+'__'+state for s in screens.values() for state in s['states']]
+        generated += [t['id']+'__on_error' for t in indexes['transitions'].values() if t.get('on_error')]
+        generated += [branch+'__retain_'+field for t in indexes['transitions'].values() for branch in ([t['id'],t['id']+'__on_error'] if t.get('on_error') else [t['id']]) for field in t['retained_fields']]
+        if len(generated)!=len(set(generated)) or set(generated)&all_ids:errors.append('Generated state/error bindings collide; choose unambiguous IDs')
     return errors
 
 
@@ -246,10 +268,21 @@ def render_bundle(contract, destination):
     for name in outputs:
         p=destination/name
         if p.is_symlink() or p.exists() and digest(p.read_bytes())!=previous.get('files',{}).get(name):raise ContractError('Edited/unmanaged design output preserved: '+name)
-    destination.mkdir(parents=True,exist_ok=True)
-    for name,text in outputs.items():(destination/name).write_text(text,encoding='utf-8')
     manifest={'owner':OWNER,'contract_sha256':digest(contract),'files':{n:digest(t.encode()) for n,t in outputs.items()}}
-    write(marker,manifest);return manifest
+    outputs['design-manifest.json']=json.dumps(manifest,ensure_ascii=False,indent=2)+'\n'
+    destination.mkdir(parents=True,exist_ok=True);committed=[]
+    with tempfile.TemporaryDirectory(prefix='.ux-design-',dir=destination.parent) as temporary:
+        stage=Path(temporary);old={name:(destination/name).read_bytes() if (destination/name).exists() else None for name in outputs}
+        for name,text in outputs.items():(stage/name).write_text(text,encoding='utf-8')
+        try:
+            for name in outputs:os.replace(stage/name,destination/name);committed.append(name)
+        except BaseException:
+            for name in reversed(committed):
+                if old[name] is None:(destination/name).unlink(missing_ok=True)
+                else:
+                    backup=stage/('restore-'+name);backup.write_bytes(old[name]);os.replace(backup,destination/name)
+            raise
+    return manifest
 
 def import_design(contract, source):
     require(contract);source=Path(source)
@@ -259,7 +292,7 @@ def import_design(contract, source):
         if '<!DOCTYPE' in text.upper() or '<!ENTITY' in text.upper():raise ContractError('XML declarations refused')
         root=ET.fromstring(text);metadata=next((e.text for e in root.iter() if e.get('id')=='ux-base'),None)
         if not metadata:raise ContractError('Missing design baseline')
-        base=json.loads(base64.b64decode(metadata,validate=True));remote=copy.deepcopy(base);screens={s['id']:s for s in remote['screens']};actions={a['id']:a for a in remote['actions']};seen=set()
+        base=require(json.loads(base64.b64decode(metadata,validate=True)));remote=copy.deepcopy(base);screens={s['id']:s for s in remote['screens']};actions={a['id']:a for a in remote['actions']};seen=set();seen_actions=set()
         defaults={s['id']:{'x':24+(i%3)*390,'y':24+(i//3)*460,'width':350,'height':410,'fill':'#ffffff'} for i,s in enumerate(base['screens'])}
         for e in root.iter():
             if e.tag.rsplit('}',1)[-1] in ('script','foreignObject') or any(k.lower().startswith('on') for k in e.attrib):raise ContractError('Executable SVG content refused')
@@ -269,31 +302,38 @@ def import_design(contract, source):
             seen.add(sid);s=screens[sid]
             transform=re.fullmatch(r'translate\(\s*([-+\d.]+)[ ,]+([-+\d.]+)\s*\)',e.get('transform',''))
             if not transform:raise ContractError('Unsupported transform; retain IDs and translate(x y)')
-            layout=dict(s.get('layout',{}));incoming={'x':float(transform[1]),'y':float(transform[2])}
+            layout=dict(s.get('layout',{}));incoming={'x':float(transform[1]),'y':float(transform[2])};titles=frames=0
             for child in e:
-                if child.get('data-field')=='title':s['title']=''.join(child.itertext())
+                if child.get('data-field')=='title':s['title']=''.join(child.itertext());titles+=1
                 if child.get('data-frame'):
+                    frames+=1
                     for key in ('width','height'):incoming[key]=float(child.get(key))
                     incoming['fill']=child.get('fill','#ffffff')
                 aid=child.get('data-action-id')
                 if aid:
-                    if aid not in actions or actions[aid]['screen_id']!=sid:raise ContractError('Unknown action binding')
+                    if aid not in actions or actions[aid]['screen_id']!=sid or aid in seen_actions:raise ContractError('Unknown/duplicate action binding')
+                    seen_actions.add(aid)
                     actions[aid]['label']=''.join(child.itertext())
             for key,value in incoming.items():
                 if key in layout or value!=defaults[sid][key]:layout[key]=value
             if layout:s['layout']=layout
-        if seen!=set(screens):raise ContractError('Missing screen bindings')
+            if titles!=1 or frames!=1:raise ContractError('Missing/duplicate screen title or frame')
+        if seen!=set(screens) or seen_actions!=set(actions):raise ContractError('Missing screen/action bindings')
     elif source.suffix=='.mmd':
         match=re.search(r'^%% ux-base (.+)$',text,re.M)
         if not match:raise ContractError('Missing design baseline')
-        base=json.loads(base64.b64decode(match[1],validate=True));remote=copy.deepcopy(base)
+        base=require(json.loads(base64.b64decode(match[1],validate=True)));remote=copy.deepcopy(base)
         screens={s['id']:s for s in remote['screens']};transitions={t['id']:t for t in remote['transitions']};seen=set();error_sources={}
         state_nodes={s['id']+'__'+state:{'screen_id':s['id'],'state':state} for s in remote['screens'] for state in s['states']}
         for line in text.splitlines():
             node=re.fullmatch(r'\s*([A-Za-z][\w-]*)\["(.*)"\]\s*',line)
             edge=re.fullmatch(r'\s*([A-Za-z][\w-]*) -->\|"([A-Za-z][\w-]*): (.*)"\| ([A-Za-z][\w-]*)\s*',line)
             if node:
-                if node[1] in state_nodes:continue
+                if node[1] in seen:raise ContractError('Duplicate node binding')
+                if node[1] in state_nodes:
+                    value=state_nodes[node[1]];original=next(s for s in base['screens'] if s['id']==value['screen_id'])
+                    if html.unescape(node[2])!=original['title']+' / '+value['state']:raise ContractError('State labels are derived; edit the canonical state and retain bindings')
+                    seen.add(node[1]);continue
                 if node[1] not in screens:raise ContractError('Unknown screen binding')
                 screens[node[1]]['title']=html.unescape(node[2]);seen.add(node[1])
             elif edge:
@@ -309,36 +349,80 @@ def import_design(contract, source):
                     t['on_error']=copy.deepcopy(to_state);error_sources[tid]=from_state
                 else:t['from']=copy.deepcopy(from_state);t['to']=copy.deepcopy(to_state);t['condition']=html.unescape(edge[3])
             elif line.strip() and not line.startswith(('flowchart','%%')):raise ContractError('Unmapped Mermaid syntax; review before importing')
-        expected=set(screens)|set(transitions)|{t['id']+'__on_error' for t in base['transitions'] if t.get('on_error')}
+        expected=set(screens)|set(state_nodes)|set(transitions)|{t['id']+'__on_error' for t in base['transitions'] if t.get('on_error')}
         if seen!=expected:raise ContractError('Missing design bindings; delete or add paths explicitly in the contract')
         if any(source!=transitions[tid]['from'] for tid,source in error_sources.items()):raise ContractError('Error edge source must match its transition source')
     elif source.suffix=='.json':
         value=read(source);base=value['base'];remote=value['contract']
     else:raise ContractError('Supported exchange: .svg, .mmd or {base,contract} JSON')
+    marker=source.parent/'design-manifest.json'
+    if source.suffix in ('.svg','.mmd') and marker.is_file():
+        manifest=read(marker)
+        if manifest.get('owner')==OWNER and manifest.get('contract_sha256')!=digest(base):raise ContractError('Embedded baseline changed; recover the original before reconciling')
     result=reconcile(base,contract,remote)
     if result['conflicts']:raise ContractError('Design conflicts require review: '+', '.join(c['path'] for c in result['conflicts']))
     return result['contract']
 
 
+def can_regenerate(contract,source):
+    """Only acknowledge source edits fully represented by the canonical model.
+
+    Extra annotations/styles remain protected in their original file. Importing
+    supported fields must never license removal of an unrelated human edit.
+    """
+    source=Path(source)
+    if source.suffix not in ('.svg','.mmd'):return False
+    with tempfile.TemporaryDirectory(prefix='ux-roundtrip-') as td:
+        render_bundle(contract,td);expected=(Path(td)/('wireframes.svg' if source.suffix=='.svg' else 'flow.mmd')).read_text()
+    actual=source.read_text(encoding='utf-8')
+    if source.suffix=='.mmd':
+        states={s['id']+'__'+state for s in contract['screens'] for state in s['states']}
+        def normalize(text):
+            lines=[]
+            for line in text.splitlines():
+                if line.startswith('%% ux-base '):continue
+                node=re.fullmatch(r'\s*([A-Za-z][\w-]*)\["(.*)"\]\s*',line)
+                lines.append(node[1] if node and node[1] in states else line.strip())
+            return sorted(line for line in lines if line)
+        return normalize(actual)==normalize(expected)
+    def normalize(text):
+        root=ET.fromstring(text,parser=ET.XMLParser(target=ET.TreeBuilder(insert_comments=True)))
+        def node(element):
+            attrs=dict(element.attrib)
+            for key in ('x','y','width','height','rx','font-size'):
+                if key in attrs:
+                    try:attrs[key]=str(float(attrs[key]))
+                    except ValueError:pass
+            if 'transform' in attrs:
+                match=re.fullmatch(r'translate\(\s*([-+\d.]+)[ ,]+([-+\d.]+)\s*\)',attrs['transform'])
+                if match:attrs['transform']='translate('+str(float(match[1]))+' '+str(float(match[2]))+')'
+            content='' if element.get('id')=='ux-base' else element.text or ''
+            return (str(element.tag),sorted(attrs.items()),content if content.strip() else '',[node(child) for child in element])
+        return node(root)
+    return normalize(actual)==normalize(expected)
+
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__);commands=parser.add_subparsers(dest='command',required=True)
-    for name in ('init','validate','export','import','diff'):
+    for name in ('validate','export','import','diff'):
         p=commands.add_parser(name);p.add_argument('--contract',type=Path,required=True);p.add_argument('--project',type=Path)
         if name in ('export','import'):p.add_argument('--design',type=Path,required=True)
         if name in ('import','diff'):p.add_argument('--incoming',type=Path) if name=='diff' else p.add_argument('--apply',action='store_true')
     a=parser.parse_args(argv);contract=read(a.contract);require(contract,a.project)
     if a.command=='validate':result={'valid':True,'sha256':digest(contract),'required_checks':required_checks(contract)}
-    elif a.command=='init':result={'valid':True,'sha256':digest(contract),'note':'Write the UX model explicitly; unknown business requirements remain unknown.'}
     elif a.command=='export':result=render_bundle(contract,a.design)
     elif a.command=='import':
-        imported=import_design(contract,a.design);result={'status':'ready','contract':imported,'applied':a.apply}
+        imported=import_design(contract,a.design);regenerable=can_regenerate(imported,a.design)
+        result={'status':'ready','contract':imported,'applied':a.apply,'contract_changed':imported!=contract,
+                'source_regeneration':'safe' if regenerable else 'preserved_unmapped_edits; export to another directory or reconcile explicitly'}
         if a.apply:
-            write(a.contract,imported)
+            if imported!=contract:write(a.contract,imported)
             marker=a.design.parent/'design-manifest.json'
             if marker.is_file():
                 manifest=read(marker)
-                if manifest.get('owner')==OWNER and a.design.name in manifest.get('files',{}):
-                    manifest['files'][a.design.name]=digest(a.design.read_bytes());write(marker,manifest)
+                if regenerable and manifest.get('owner')==OWNER and a.design.name in manifest.get('files',{}):
+                    value=digest(a.design.read_bytes())
+                    if manifest['files'][a.design.name]!=value:manifest['files'][a.design.name]=value;write(marker,manifest)
     else:
         if not a.incoming:parser.error('diff requires --incoming')
         incoming=read(a.incoming);result=reconcile(incoming['base'],contract,incoming['contract'])

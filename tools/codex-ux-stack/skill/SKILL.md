@@ -43,7 +43,7 @@ or no matching notes does not block a run.
    bash <skill-dir>/scripts/gan-harness.sh run --project <app-dir> --url <app-url> --test-command '<required check>'
    ```
 
-   When a local UX contract exists, add `--ux-contract docs/ux/contract.json`.
+   When a local UX contract exists, add `--ux-contract docs/ux/design-contract.json`.
    Use `--journey <existing Journey ID>` only to select an explicitly scoped subset.
    The host freezes that design, preserves Journey/Screen IDs, and requires screenshot-bound
    `ux_check_contract` observations for declared states, actions, transitions and retained fields

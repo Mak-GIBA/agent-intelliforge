@@ -4,8 +4,8 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
-import shutil
 import struct
+import os
 
 
 class ContractBlocked(ValueError):pass
@@ -22,12 +22,29 @@ def helper():
 def freeze(path,project,run_dir,journeys=None):
     project=Path(project).resolve();source=Path(path).absolute()
     if not source.resolve().is_relative_to(project) or any(p.is_symlink() for p in (source,*source.parents)):raise ContractBlocked('Contract must be an unlinked file in the project')
-    engine=helper();contract=engine.require(engine.read(source),project)
+    raw=source.read_bytes()
+    contract_sha=hashlib.sha256(raw).hexdigest()
+    if len(raw)>2_000_000:raise ContractBlocked('Oversized UX contract')
+    engine=helper();contract=engine.require(json.loads(raw.decode('utf-8')),project)
     required=engine.required_checks(contract,journeys)
     if not required:raise ContractBlocked('Selected UX contract has no required checks')
-    snapshot=Path(run_dir)/'ux-contract.json';shutil.copyfile(source,snapshot);snapshot.chmod(0o600)
-    return {'source':str(source),'snapshot':str(snapshot),'sha256':hashlib.sha256(snapshot.read_bytes()).hexdigest(),
-            'journeys':journeys or [j['id'] for j in contract['journeys'] if j['required']],'required_checks':required}
+    snapshot=Path(run_dir)/'ux-contract.json'
+    with snapshot.open('wb') as stream:os.chmod(snapshot,0o600);stream.write(raw)
+    references=[]
+    for artifact in contract['artifacts']:
+        spec=artifact.get('snapshot')
+        if not spec:continue
+        original=project/spec['path']
+        if original.is_symlink() or not original.resolve().is_relative_to(project) or any(p.is_symlink() for p in (original,*original.parents)) or not original.is_file():raise ContractBlocked('Missing or linked design reference')
+        raw=original.read_bytes()
+        if len(raw)>20_000_000 or len(raw)<24 or raw[:8]!=b'\x89PNG\r\n\x1a\n' or hashlib.sha256(raw).hexdigest()!=spec['sha256']:raise ContractBlocked('Design reference hash or PNG mismatch')
+        target=Path(run_dir)/'design-references'/(artifact['id']+'.png');target.parent.mkdir(exist_ok=True)
+        with target.open('wb') as stream:os.chmod(target,0o600);stream.write(raw)
+        references.append({'id':artifact['id'],'source':str(original),'snapshot':str(target),'sha256':spec['sha256'],'url':artifact['url'],'revision':artifact.get('revision','not_recorded')})
+    result={'source':str(source),'snapshot':str(snapshot),'sha256':contract_sha,
+            'journeys':journeys or [j['id'] for j in contract['journeys'] if j['required']],'required_checks':required,
+            'design_references':references,'design_reference_required':contract['approval']['status']=='approved'}
+    assert_current(result);return result
 
 
 def assert_current(spec):
@@ -35,11 +52,16 @@ def assert_current(spec):
     for key in ('source','snapshot'):
         p=Path(spec[key])
         if p.is_symlink() or not p.is_file() or hashlib.sha256(p.read_bytes()).hexdigest()!=spec['sha256']:raise ContractBlocked('UX design changed; preserve the run and reconcile before starting a new audit')
+    for reference in spec.get('design_references',[]):
+        for key in ('source','snapshot'):
+            p=Path(reference[key])
+            if p.is_symlink() or not p.is_file() or hashlib.sha256(p.read_bytes()).hexdigest()!=reference['sha256']:raise ContractBlocked('Approved design reference changed; reconcile before starting a new audit')
 
 
 def context(spec):
     assert_current(spec)
-    return {'contract':json.loads(Path(spec['snapshot']).read_text(encoding='utf-8')),'sha256':spec['sha256'],'journeys':spec['journeys'],'required_checks':spec['required_checks']}
+    return {'contract':json.loads(Path(spec['snapshot']).read_text(encoding='utf-8')),'sha256':spec['sha256'],'journeys':spec['journeys'],'required_checks':spec['required_checks'],
+            'design_references':spec.get('design_references',[]),'design_reference_required':spec.get('design_reference_required',False)}
 
 
 def validate_plan(plan,spec):
@@ -78,5 +100,6 @@ def observations(spec,role_dir,viewports):
             value=verified.get((check,name))
             if value is None:missing.append({'id':check,'viewport':name})
             elif not value['passed']:failed.append({'id':check,'viewport':name,**value})
-    return {'ready':not (missing or failed or invalid),'sha256':spec['sha256'],'required':len(spec['required_checks'])*len(viewports),
+    design_ready=not spec.get('design_reference_required') or bool(spec.get('design_references'))
+    return {'ready':not (missing or failed or invalid) and design_ready,'sha256':spec['sha256'],'required':len(spec['required_checks'])*len(viewports),'design_reference_status':'ready' if spec.get('design_references') else 'missing' if spec.get('design_reference_required') else 'not_requested',
             'verified':len(verified),'missing':missing,'failed':failed,'invalid':invalid,'source':'browser receipts; not model self-report'}

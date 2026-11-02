@@ -15,7 +15,7 @@ const target = new URL(process.env.UX_GAN_TARGET || 'http://localhost');
 const smoke = process.argv.includes('--smoke');
 let browser, context, page, index = 0;
 const recentFrames = [];
-const contract = process.env.UX_GAN_CONTRACT ? new (require('./contract-browser.cjs').ContractObserver)(process.env.UX_GAN_CONTRACT) : null;
+const contract = process.env.UX_GAN_CONTRACT ? new (require('./contract-browser.cjs').ContractObserver)(process.env.UX_GAN_CONTRACT,process.env.UX_GAN_JOURNEYS?JSON.parse(process.env.UX_GAN_JOURNEYS):undefined) : null;
 const tools = [
   ['ux_navigate', 'Open a URL and return its actual screenshot. Do this before reading UI source.', {url:{type:'string'}}],
   ['ux_capture', 'Look at the current rendered screen as an image; get a recorded screenshot.', {}],

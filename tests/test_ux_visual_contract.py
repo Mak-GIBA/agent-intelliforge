@@ -7,6 +7,9 @@ import tempfile
 import unittest
 import os
 import subprocess
+import contextlib
+import io
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT/'tools/codex-ux-stack/ux-visual-design/scripts/ux_contract.py'
@@ -41,6 +44,37 @@ def example():
 
 
 class UXContractTests(unittest.TestCase):
+    def test_noop_apply_preserves_source_bytes_and_unmapped_annotations(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);c=example();source=root/'contract.json';source.write_text(json.dumps(c,ensure_ascii=False,indent=4)+'\n\n');before=source.read_bytes();ux.render_bundle(c,root/'design')
+            with contextlib.redirect_stdout(io.StringIO()):ux.main(['import','--contract',str(source),'--design',str(root/'design/flow.mmd'),'--apply'])
+            self.assertEqual(source.read_bytes(),before)
+            svg=root/'design/wireframes.svg';svg.write_text(svg.read_text().replace('</svg>','<text x="0" y="880">Reviewer annotation</text></svg>'));edited=svg.read_bytes()
+            with contextlib.redirect_stdout(io.StringIO()):ux.main(['import','--contract',str(source),'--design',str(svg),'--apply'])
+            with self.assertRaises(ux.ContractError):ux.render_bundle(c,root/'design')
+            self.assertEqual(svg.read_bytes(),edited);self.assertEqual(source.read_bytes(),before)
+    def test_deleting_bound_actions_or_states_requires_explicit_reconciliation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);ux.render_bundle(example(),root)
+            for file,token in [('wireframes.svg','data-action-id="A-back"'),('flow.mmd','S-detail__failure[')]:
+                p=root/file;p.write_text('\n'.join(line for line in p.read_text().splitlines() if token not in line)+'\n')
+                with self.assertRaises(ux.ContractError):ux.import_design(example(),p)
+    def test_failed_bundle_write_restores_previous_outputs(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);c=example();ux.render_bundle(c,root);before={p.name:p.read_bytes() for p in root.iterdir()}
+            original=ux.os.replace;calls=[]
+            def replace(src,dest):
+                calls.append(str(dest))
+                if len(calls)==2:raise OSError('simulated full disk')
+                return original(src,dest)
+            c['screens'][0]['title']='変更'
+            with patch.object(ux.os,'replace',side_effect=replace),self.assertRaises(OSError):ux.render_bundle(c,root)
+            self.assertEqual({p.name:p.read_bytes() for p in root.iterdir()},before)
+
+    def test_malformed_graph_references_are_validation_errors(self):
+        for mutation in [lambda c:c['screens'][0].update(states=None),lambda c:c['transitions'][0].update(action_id=[]),
+                         lambda c:c['journeys'][0].update(actions=[{}]),lambda c:c['requirements'][0].update(journey_id=[])]:
+            c=example();mutation(c);self.assertTrue(ux.validate(c))
     def test_unchanged_editable_sources_do_not_change_the_contract(self):
         for without_layout in (False, True):
             c=example()

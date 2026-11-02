@@ -213,7 +213,9 @@
           "items": {
             "type": "string",
             "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
-          }
+          },
+          "minItems": 1,
+          "uniqueItems": true
         },
         "component": {
           "type": "object",
@@ -233,6 +235,51 @@
         },
         "layout": {
           "type": "object"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,63}$"
+              },
+              "label": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "text",
+                  "search",
+                  "email",
+                  "number",
+                  "textarea",
+                  "select",
+                  "checkbox"
+                ]
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "locator": {
+                "$ref": "#/$defs/locator"
+              }
+            },
+            "required": [
+              "id",
+              "label"
+            ]
+          }
+        },
+        "state_messages": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "required": [
@@ -440,6 +487,26 @@
         "snapshot_sha256": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "snapshot": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "sha256"
+          ]
         }
       },
       "required": [

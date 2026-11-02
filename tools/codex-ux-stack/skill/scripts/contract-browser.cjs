@@ -11,10 +11,11 @@ function routeMatches(url, route) {
   return new RegExp('^'+pattern+'$').test(actual.pathname) && actual.search===expected.search && actual.hash===expected.hash;
 }
 class ContractObserver {
-  constructor(file) {
+  constructor(file,journeys) {
     const raw = fs.readFileSync(file);
     this.sha = crypto.createHash('sha256').update(raw).digest('hex');
     this.contract = JSON.parse(raw); this.checkpoint = null; this.operation = null;this.pending=new Map();this.values={};
+    this.journeys=new Set(journeys||this.contract.journeys.filter(j=>j.required).map(j=>j.id));
   }
   field(page,id) {
     const declared=this.contract.screens.flatMap(s=>s.fields||[]).find(f=>f.id===id);
@@ -26,6 +27,7 @@ class ContractObserver {
     return {available:true,value:['checkbox','radio'].includes(type)?await control.isChecked():await control.inputValue()};
   }
   async before(page,name,args) {
+    if(name==='ux_navigate'){this.checkpoint=null;this.operation=null;return;}
     if(!['ux_click','ux_fill','ux_select','ux_press','ux_back'].includes(name))return;
     const kind={ux_click:'click',ux_fill:'fill',ux_select:'select',ux_press:'press',ux_back:'press'}[name];
     let element;
@@ -52,7 +54,7 @@ class ContractObserver {
     const screen=this.contract.screens.find(s=>s.id===args.screen_id);
     if(!screen || !screen.states.includes(args.state))throw Error('Unknown contract screen/state');
     const checks=[],matched=routeMatches(page.url(),screen.route);
-    const assertions=this.contract.requirements.flatMap(r=>r.acceptance).filter(a=>a.screen_id===screen.id&&a.state===args.state);
+    const assertions=this.contract.requirements.filter(r=>r.required&&this.journeys.has(r.journey_id)).flatMap(r=>r.acceptance).filter(a=>a.screen_id===screen.id&&a.state===args.state);
     for(const a of assertions) {
       let observed,passed=false;
       try {
