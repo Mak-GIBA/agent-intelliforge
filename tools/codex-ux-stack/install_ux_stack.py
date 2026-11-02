@@ -7,6 +7,7 @@ import datetime as dt
 import fcntl
 import hashlib
 import io
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -19,7 +20,7 @@ import urllib.request
 import uuid
 
 ROOT = Path(__file__).resolve().parent
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 PLUGINS = ["product-design@openai-curated-remote", "build-web-apps@openai-curated-remote"]
 
 
@@ -86,6 +87,61 @@ class Installer:
         self.failed = False
         self.sources = json.loads((ROOT / "sources.json").read_text())
         self.runtime = self.state_root / "runtime"
+
+    def visual_module(self):
+        if hasattr(self,'_visual_module'):return self._visual_module
+        path=ROOT/'ux-visual-design/scripts/design_mcp.py'
+        spec=importlib.util.spec_from_file_location('_ux_design_mcp',path)
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        self._visual_module=module
+        return module
+
+    @contextlib.contextmanager
+    def design_service(self):
+        module=self.visual_module()
+        with module.AppServer(self.codex_home,30) as client:
+            yield module.DesignMCP(client)
+
+    def install_visual(self):
+        dest=self.locate_skill('ux-visual-design')
+        if not self.needs_tree('ux-visual-design',dest):return
+        source=ROOT/'ux-visual-design'
+        for relative in ('SKILL.md','assets/contract.schema.json','scripts/ux_contract.py','scripts/design_mcp.py'):
+            if not (source/relative).is_file():raise InstallError('Missing visual design resource: '+relative)
+        if self.args.dry_run:
+            self.record('ux-visual-design','planned',message='Bundled visual UX skill -> '+str(dest));return
+        dest.parent.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix='.ux-visual-',dir=dest.parent) as temporary:
+            stage=Path(temporary)/'ux-visual-design'
+            shutil.copytree(source,stage,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+            self.replace_tree('ux-visual-design',stage,dest)
+
+    def install_design_mcp(self,provider):
+        name='design-mcp-'+provider;owned=self.owned(name);module=self.visual_module()
+        if self.args.update:
+            existing=next((s for s in self.mcp_list() if s.get('name')==owned['name']),None)
+            if not existing or not existing.get('enabled',True):
+                self.record(name,'skip',message='Removed/disabled design MCP preserved');return
+        if self.args.dry_run:
+            self.record(name,'planned',message='Inspect/reuse selected Remote MCP; no registration or OAuth');return
+        self.manifest.setdefault('design_mcp_pending',{})[provider]={'status':'checking','url':module.PROVIDERS[provider]}
+        write_json(self.manifest_path,self.manifest)
+        try:
+            with self.design_service() as service:
+                if owned:
+                    servers,_=service.configuration();current=servers.get(owned['name'])
+                    if current and module.fingerprint(current)!=owned.get('sha256'):raise InstallError('Edited design MCP configuration preserved')
+                result=service.register(provider)
+            if result['owned']:
+                self.save_component(name,{'provider':provider,'name':result['name'],'sha256':result['sha256'],'version':VERSION})
+            elif not owned:
+                self.manifest.setdefault('design_mcp_references',{})[provider]={'name':result['name'],'owned':False,'status':result['status']}
+            self.manifest['design_mcp_pending'].pop(provider,None);write_json(self.manifest_path,self.manifest)
+            self.record(name,result['status'],message='Registration only; OAuth and target permissions are diagnosed separately')
+        except (module.MCPError,OSError,ValueError) as error:
+            self.manifest['design_mcp_pending'][provider]['status']='incomplete'
+            write_json(self.manifest_path,self.manifest)
+            raise InstallError('Design MCP setup incomplete: '+getattr(error,'kind','configuration_or_transport')) from None
 
     def run(self, argv, timeout=300):
         try:
@@ -350,6 +406,7 @@ class Installer:
                     stage = Path(tmp) / "ux-gan-harness"
                     shutil.copytree(ROOT / "skill", stage,
                                     ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.pyo"))
+                    shutil.copy2(ROOT/'ux-visual-design/scripts/ux_contract.py',stage/'scripts/ux_contract.py')
                     references = stage / "references/design"
                     references.mkdir(parents=True)
                     for name in spec["references"]:
@@ -424,7 +481,7 @@ class Installer:
             results.append({"name": ref, "ok": ok})
         mcp = any(p.get("name") == "playwright" and p.get("enabled", True) for p in self.mcp_list())
         results.append({"name": "playwright-mcp", "ok": mcp})
-        for name in ("web-design-guidelines", "ooui-design", "ux-gan-harness"):
+        for name in ("web-design-guidelines", "ooui-design", "ux-gan-harness", "ux-visual-design"):
             results.append({"name": name + "-skill",
                             "ok": (self.locate_skill(name) / "SKILL.md").is_file()})
         for skill, subdir in (("ooui-design", "references"), ("ux-gan-harness", "references/design")):
@@ -454,7 +511,23 @@ class Installer:
         recommendation = {"name": "yomiyasu", "available": yomiyasu,
                           "message": "日本語UI文言と設計・レビュー・改善レポートの推敲に利用を推奨します。" if yomiyasu else
                           "日本語UI文言とレポートにはyomiyasuの利用を推奨します。別配布のinstall_kotonoha.sh --applyで導入できます。"}
-        print(json.dumps({"version": VERSION, "ready": all(r["ok"] for r in results),
+        design=[]
+        selected=list(dict.fromkeys(self.args.visual_tools+[c['provider'] for n,c in self.manifest['components'].items() if n.startswith('design-mcp-')]))
+        if self.args.check_design_mcp:
+            module=self.visual_module()
+            try:
+                with self.design_service() as service:design=[service.diagnose(p) for p in selected or ['whimsical','figma']]
+            except (module.MCPError,OSError,ValueError) as error:
+                design=[{'provider':p,'ready':False,'connection':getattr(error,'kind','configuration_or_transport'),'authentication':'not_tested','write_permission':'not_tested'} for p in selected or ['whimsical','figma']]
+        else:
+            module=self.visual_module();servers=self.mcp_list()
+            for provider in selected or ['whimsical','figma']:
+                matches=[s for s in servers if module.endpoint(s)==module.PROVIDERS[provider]]
+                design.append({'provider':provider,'registered':bool(matches),'name':matches[0].get('name') if len(matches)==1 else None,
+                    'connection':'disabled' if len(matches)==1 and not matches[0].get('enabled',True) else 'not_probed' if matches else 'not_configured',
+                    'authentication':'not_tested','write_permission':'not_tested','ready':None})
+        print(json.dumps({"version": VERSION, "ready": all(r["ok"] for r in results), "core_ready":all(r['ok'] for r in results),
+                          "design_mcp":design,"design_mcp_ready":all(p['ready'] for p in design) if self.args.check_design_mcp else None,
                           "checks": results, "recommendations": [recommendation]}, ensure_ascii=False, indent=2))
         return 0 if all(r["ok"] for r in results) else 1
 
@@ -484,6 +557,14 @@ class Installer:
                         self.record(name, "planned", message="Remove plugin installed by this installer")
                         continue
                     self.run(["codex", "plugin", "remove", owned["plugin_ref"], "--json"])
+                elif name.startswith('design-mcp-'):
+                    module=self.visual_module()
+                    try:
+                        if self.args.dry_run:
+                            self.record(name,'planned',message='Remove owned unchanged design MCP');continue
+                        with self.design_service() as service:result=service.remove(owned)
+                        self.record(name,result['status'])
+                    except module.MCPError as error:raise InstallError('Design MCP preserved: '+error.kind) from None
                 elif name == "playwright-mcp":
                     exists = any(s.get("name") == owned["name"] for s in self.mcp_list())
                     if exists:
@@ -510,15 +591,17 @@ class Installer:
             # Reuse ownership/hash/backup checks; never install a missing component.
             self.args.force = True
         tasks = [(ref, lambda ref=ref: self.install_plugin(ref)) for ref in PLUGINS]
-        tasks += [("ooui-design", self.install_design),
+        tasks += [("ooui-design", self.install_design),('ux-visual-design',self.install_visual),
                   ("web-design-guidelines", lambda: self.install_remote_skill("web-design-guidelines", "guidelines")),
                   ("browser-runtime", self.install_runtime), ("ux-gan-harness", self.install_harness),
                   ("playwright-mcp", self.install_mcp)]
         if self.args.deep or self.args.update and self.owned("ux-critique"):
             tasks.append(("ux-critique", lambda: self.install_remote_skill("ux-critique", "critique")))
+        providers=list(dict.fromkeys(self.args.visual_tools+[c['provider'] for n,c in self.manifest['components'].items() if n.startswith('design-mcp-')]))
+        for provider in providers:tasks.append(('design-mcp-'+provider,lambda p=provider:self.install_design_mcp(p)))
         runtime_failed = False
         for name, task in tasks:
-            if self.args.update and not self.owned(name):
+            if self.args.update and name!='ux-visual-design' and not self.owned(name):
                 continue
             if name in ("ux-gan-harness", "playwright-mcp") and runtime_failed:
                 self.record(name, "failed", message="Browser runtime failed; not registering broken paths")
@@ -575,7 +658,13 @@ def parse(argv=None):
     p.add_argument("--skills-root")
     p.add_argument("--bin-dir")
     p.add_argument("--no-browser-download", action="store_true", help="Skip Chromium download; readiness remains separately verified")
-    return p.parse_args(argv)
+    p.add_argument('--visual-tools',default='',help='Opt in to whimsical,figma Remote MCP registration')
+    p.add_argument('--check-design-mcp',action='store_true',help='With --doctor, inspect connection/auth/tools without a model or remote writes')
+    args=p.parse_args(argv)
+    args.visual_tools=list(dict.fromkeys(args.visual_tools.split(','))) if args.visual_tools else []
+    if any(x not in ('whimsical','figma') for x in args.visual_tools):p.error('--visual-tools must be whimsical,figma')
+    if args.check_design_mcp and not args.doctor:p.error('--check-design-mcp requires --doctor')
+    return args
 
 
 def main(argv=None):

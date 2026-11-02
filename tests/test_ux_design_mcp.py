@@ -24,6 +24,34 @@ class Client:
         raise AssertionError(method)
 
 class DesignMCPTests(unittest.TestCase):
+    def test_published_provider_registry_matches_runtime_endpoints(self):
+        metadata=json.loads((ROOT/'tools/codex-ux-stack/sources.json').read_text())
+        self.assertEqual(metadata['visual']['providers'],m.PROVIDERS)
+    def test_new_tool_names_are_detected_from_advertised_capabilities(self):
+        tools={'build_canvas_v2':{'name':'build_canvas_v2','description':'Create a wireframe diagram','inputSchema':{'type':'object'}}}
+        result=m.capability_matrix(tools,'whimsical');self.assertTrue(result['diagram']['available']);self.assertTrue(result['wireframe']['available'])
+
+    def test_read_and_write_calls_are_scoped_and_require_explicit_apply(self):
+        tools={'fetch':{'name':'fetch','inputSchema':{'required':['file_id']},'annotations':{'readOnlyHint':True}},
+               'edit':{'name':'edit','inputSchema':{'required':['file_id']},'annotations':{'readOnlyHint':False}}}
+        client=Client({'figma':{'url':m.PROVIDERS['figma']}},tools=tools);client.thread_for=lambda name,servers:'thread'
+        original=client.rpc
+        def rpc(method,params):return {'content':[{'type':'text','text':'fixture'}]} if method=='mcpServer/tool/call' else original(method,params)
+        client.rpc=rpc;service=m.DesignMCP(client);target={'file_id':'file1','url':'https://www.figma.com/design/file1/test'}
+        self.assertEqual(service.call('figma','fetch',{'file_id':'file1'},target)['permission_verified'],'read')
+        with self.assertRaisesRegex(m.MCPError,'explicit_apply'):service.call('figma','edit',{'file_id':'file1'},target)
+        self.assertEqual(service.call('figma','edit',{'file_id':'file1'},target,True)['permission_verified'],'write')
+        with self.assertRaisesRegex(m.MCPError,'target_mismatch'):service.call('figma','edit',{'file_id':'file1','nested':{'file_id':'other'}},target,True)
+        with self.assertRaisesRegex(m.MCPError,'use_host_skill'):service.call('figma','edit',{'file_id':'file1','nested':{'script':'unscoped code'}},target,True)
+
+    def test_catalog_pagination_and_cycles_are_bounded(self):
+        client=Client({'figma':{'url':m.PROVIDERS['figma']}});client.thread_for=lambda name,servers:'thread';original=client.rpc
+        def rpc(method,params):
+            if method!='mcpServerStatus/list':return original(method,params)
+            return {'data':[{'name':'figma','tools':{'second' if params.get('cursor') else 'first':{}}}], 'nextCursor':None if params.get('cursor') else 'next'}
+        client.rpc=rpc;self.assertEqual(set(m.DesignMCP(client).tools('figma')[2]),{'first','second'})
+        client.rpc=lambda method,params:original(method,params) if method!='mcpServerStatus/list' else {'data':[],'nextCursor':'repeat'}
+        with self.assertRaisesRegex(m.MCPError,'incomplete_catalog'):m.DesignMCP(client).tools('figma')
     def test_selection_deduplicates_existing_url_without_adopting_manual_configuration(self):
         c=Client({'custom-figma':{'url':'https://mcp.figma.com/mcp','enabled':True,'tool_timeout_sec':99}})
         result=m.DesignMCP(c).register('figma')

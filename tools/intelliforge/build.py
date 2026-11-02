@@ -123,6 +123,9 @@ def render_skill(data: bytes, kit: dict, agent: str, name: str) -> bytes:
         text = text.replace('the installed Bash harness', 'the installed harness').replace('the Bash entry point', 'the portable entry point')
         text = text.replace('the actual Bash script', 'the actual harness').replace('the real [gan-harness.sh](scripts/gan-harness.sh)', f'`{invocation}`')
         text = text.replace('existing Codex model/auth settings', 'existing selected-agent model/auth settings')
+    if kit['id']=='ux-stack':
+        for helper in ('ux_contract.py','design_mcp.py'):
+            text=text.replace('python3 <skill-dir>/scripts/'+helper,f'intelliforge kit-run ux-stack --agent {agent} --tool {helper} --')
     if kit["id"] == "ecc":
         text = text.replace("python3 {{MANAGER}}", f"intelliforge kit-run ecc --agent {agent} --")
     if kit['id'] == 'repository-director':
@@ -185,6 +188,11 @@ def build_outputs(assembled: Path) -> dict[str, bytes]:
                     data['agents/openai.yaml'] = ('policy:\n  allow_implicit_invocation: '+str(True).lower()+'\n').encode()
                 for path, raw in data.items():
                     if path == "SKILL.md": raw = render_skill(raw, kit, agent, name)
+                    elif kit['id']=='ux-stack' and path.endswith('.md'):
+                        text=raw.decode('utf-8')
+                        for helper in ('ux_contract.py','design_mcp.py'):
+                            text=text.replace('python3 <skill-dir>/scripts/'+helper,f'intelliforge kit-run ux-stack --agent {agent} --tool {helper} --')
+                        raw=text.encode('utf-8')
                     elif kit['id']=='repository-director' and path.endswith('.md'):
                         text=raw.decode('utf-8')
                         for helper in ('repository.py','forge_inspect.py','github_inspect.py'):

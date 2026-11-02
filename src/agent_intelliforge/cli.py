@@ -81,9 +81,14 @@ def show_plan(value: dict, as_json: bool) -> None:
     print(value["unresolved"])
 
 
-def legacy_action(root: Path, kits: list[dict], action: str, migrate_legacy=False) -> int:
+def legacy_action(root: Path, kits: list[dict], action: str, migrate_legacy=False, visual_tools=None, check_design_mcp=False) -> int:
     if not shutil.which("bash"):
         raise ForgeError("The existing installer requires Bash; native Windows uses the portable path.")
+    if visual_tools or check_design_mcp:
+        flags=[] if action=='install' else kits[0]['legacy']['actions'][action]
+        if visual_tools:flags=[*flags,'--visual-tools',','.join(visual_tools)]
+        if check_design_mcp:flags=[*flags,'--check-design-mcp']
+        return subprocess.call(['bash',str(root/kits[0]['legacy']['script']),*flags])
     if action == "install":
         if migrate_legacy:
             return subprocess.call(['bash',str(root/'install_repository_director.sh'),'--migrate-legacy','--apply'])
@@ -128,6 +133,8 @@ def main(argv=None) -> int:
             command.add_argument("--upstream-only", action="store_true", help="kotonoha upstream check only")
             command.add_argument("--mode", choices=("auto", "explicit"))
             command.add_argument('--migrate-legacy',action='store_true',help='Explicitly retire owned github-pm/speckit entries when installing repository-director')
+        if action in ('install','update'):command.add_argument('--visual-tools',help='Opt-in UX design Remote MCP: whimsical,figma (Codex only)')
+        if action=='doctor':command.add_argument('--check-design-mcp',action='store_true',help='Diagnose optional UX design MCP without external writes')
         if action == "locate":
             command.add_argument("--upstream", action="store_true")
         if action == 'doctor': command.add_argument('--isolation-smoke', action='store_true', help='probe a temporary read-only boundary; no model calls')
@@ -160,6 +167,13 @@ def main(argv=None) -> int:
                     print(f"{kit['id']:<16} {kit['name']} — edit {kit['definition']}")
             return 0
         plan = inspect_plan(kits, args.agent, args.plugin, state)
+        visual=[p.strip() for p in (getattr(args,'visual_tools',None) or '').split(',') if p.strip()]
+        if getattr(args,'visual_tools',None) is not None and not visual:raise ForgeError('--visual-tools requires whimsical and/or figma')
+        if visual or getattr(args,'check_design_mcp',False):
+            if [kit['id'] for kit in kits]!=['ux-stack'] or args.agent!='codex':raise ForgeError('Design MCP options require --only ux-stack --agent codex')
+            if any(p not in ('whimsical','figma') for p in visual):raise ForgeError('--visual-tools supports whimsical,figma')
+            for operation in plan['operations']:operation['visual_tools']=list(dict.fromkeys(visual));operation['check_design_mcp']=getattr(args,'check_design_mcp',False)
+        args.visual_tools=list(dict.fromkeys(visual))
         if getattr(args,'migrate_legacy',False):
             if args.action not in ('install','update') or [kit['id'] for kit in kits]!=['repository-director']:
                 raise ForgeError('--migrate-legacy requires install/update --only repository-director')
@@ -193,7 +207,7 @@ def main(argv=None) -> int:
                 if args.upstream_only: command.append("--upstream-only")
                 if args.mode: command += ["--mode", args.mode]
                 return subprocess.call(command)
-            return legacy_action(root, kits, args.action, getattr(args,'migrate_legacy',False))
+            return legacy_action(root, kits, args.action, getattr(args,'migrate_legacy',False),args.visual_tools,getattr(args,'check_design_mcp',False))
         from .runtime import portable_action
         return portable_action(root, kits, plan, args, state)
     except (ForgeError, OSError, ValueError, subprocess.SubprocessError) as error:

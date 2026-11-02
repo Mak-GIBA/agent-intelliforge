@@ -114,6 +114,15 @@ def capability_matrix(tools, provider):
         names=[name for name in aliases if name in valid]
         if feature=='wireframe':
             names=[n for n in names if n not in ('create_file','create','add_board_content') or 'wireframe' in json.dumps(valid[n],ensure_ascii=False).lower()]
+        # Additional provider names remain discoverable. These are advertised
+        # capabilities, never permission or successful execution claims.
+        terms={'read':r'\b(read|fetch|get)\b.*\b(design|file|board|component)\b','diagram':r'\b(flowchart|diagram|user.flow)\b',
+               'wireframe':r'\bwireframe\b','edit':r'\b(edit|update|modify)\b.*\b(canvas|board|design|shape|node)\b',
+               'layout':r'\b(auto.layout|layout|rearrange)\b','design_write':r'\b(create|write|edit)\b.*\b(design|canvas)\b',
+               'design_to_code':r'\bdesign.to.code\b','code_to_design':r'\bcode.to.design\b'}
+        for name,tool in valid.items():
+            text=(name.replace('_',' ')+' '+str(tool.get('description',''))).lower()
+            if name not in names and re.search(terms[feature],text) and (feature=='read' or tool.get('annotations',{}).get('readOnlyHint') is not True):names.append(name)
         result[feature]={'available':bool(names),'tools':names,'verification':'advertised; target permission not tested'}
     return result
 
@@ -171,7 +180,8 @@ class DesignMCP:
                 seen.add(cursor);params['cursor']=cursor
             else:raise MCPError('incomplete_catalog')
             result['authentication']='required' if auth=='notLoggedIn' else 'authenticated' if auth in ('oAuth','bearerToken') else 'unsupported' if auth=='unsupported' else 'unknown'
-            result['connection']='authentication_required' if auth=='notLoggedIn' else 'catalog_failed' if tools_error else 'connected' if tools or status else 'not_verified'
+            result['runtime_status']=status
+            result['connection']='authentication_required' if auth=='notLoggedIn' else 'catalog_failed' if tools_error else 'connected' if tools else 'not_verified'
             result['capabilities']=capability_matrix(tools,provider)
             result['ready']=result['connection']=='connected' and any(c['available'] for c in result['capabilities'].values())
             return result
@@ -185,7 +195,8 @@ class DesignMCP:
         # Official remove only deletes this server registration; no logout/token deletion.
         env={**os.environ}
         if hasattr(self.client,'home'):env['CODEX_HOME']=str(self.client.home)
-        r=subprocess.run(['codex','mcp','remove',name],capture_output=True,text=True,env=env,timeout=30)
+        try:r=subprocess.run(['codex','mcp','remove',name],capture_output=True,text=True,env=env,timeout=30)
+        except (OSError,subprocess.TimeoutExpired):raise MCPError('remove_failed') from None
         if r.returncode:raise MCPError('remove_failed')
         after,_=self.configuration()
         if name in after:raise MCPError('remove_unverified')
@@ -195,10 +206,22 @@ class DesignMCP:
         servers,_=self.configuration();name,config=self.selection(provider,servers)
         if not config or not config.get('enabled',True):raise MCPError('provider_unavailable')
         thread=self.client.thread_for(name,servers)
-        response=self.client.rpc('mcpServerStatus/list',{'serverName':name,'threadId':thread,'detail':'toolsAndAuthOnly'})
-        item=next((x for x in response.get('data',[]) if x.get('name')==name),None)
-        if not item or item.get('toolsError') or response.get('nextCursor'):raise MCPError('incomplete_catalog')
-        return name,thread,item.get('tools') or {}
+        params={'serverName':name,'threadId':thread,'detail':'toolsAndAuthOnly','limit':100};tools={};seen=set();found=False
+        for _ in range(20):
+            response=self.client.rpc('mcpServerStatus/list',params)
+            for item in response.get('data',[]):
+                if item.get('name')!=name:continue
+                found=True
+                if item.get('authStatus')=='notLoggedIn':raise MCPError('authentication_required')
+                if item.get('toolsError'):raise MCPError('catalog_failed')
+                tools.update(item.get('tools') or {})
+            cursor=response.get('nextCursor')
+            if not cursor:break
+            if cursor in seen:raise MCPError('incomplete_catalog')
+            seen.add(cursor);params['cursor']=cursor
+        else:raise MCPError('incomplete_catalog')
+        if not found:raise MCPError('incomplete_catalog')
+        return name,thread,tools
 
     def call(self,provider,tool,arguments,target,apply=False):
         """Only a declared file target; schema discovery never grants write access."""
@@ -209,13 +232,23 @@ class DesignMCP:
         allowed=('figma.com','www.figma.com') if provider=='figma' else ('whimsical.com','www.whimsical.com')
         if parsed.scheme!='https' or parsed.hostname not in allowed or parsed.username or parsed.password or file_id not in parsed.path:raise MCPError('invalid_target')
         if not isinstance(arguments,dict):raise MCPError('invalid_arguments')
-        bindings=[v for k,v in arguments.items() if k in ('fileKey','file_id','fileId','fileUrl','url','boardId','board_id')]
+        def targets(value):
+            if isinstance(value,dict):
+                for key,item in value.items():
+                    if key in ('fileKey','file_id','fileId','fileUrl','url','boardId','board_id'):yield item
+                    else:yield from targets(item)
+            elif isinstance(value,list):
+                for item in value:yield from targets(item)
+        bindings=list(targets(arguments))
         if not bindings or any(str(v) not in (file_id,url) for v in bindings):raise MCPError('target_mismatch')
         read_only=tools[tool].get('annotations',{}).get('readOnlyHint') is True
         if not read_only and not apply:raise MCPError('explicit_apply_required')
         # Arbitrary code may access more nodes than its envelope suggests. Use
         # the host's Figma skill for code-based canvas work, then import a snapshot.
-        if any(k in arguments for k in ('code','javascript','script')):raise MCPError('use_host_skill_for_code_tools')
+        def code(value):
+            if isinstance(value,dict):return any(k in ('code','javascript','script') or code(v) for k,v in value.items())
+            return any(code(v) for v in value) if isinstance(value,list) else False
+        if code(arguments):raise MCPError('use_host_skill_for_code_tools')
         schema=tools[tool].get('inputSchema',{})
         if any(k not in arguments for k in schema.get('required',[])):raise MCPError('missing_tool_argument')
         result=self.client.rpc('mcpServer/tool/call',{'threadId':thread,'server':name,'tool':tool,'arguments':arguments})
