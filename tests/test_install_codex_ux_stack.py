@@ -155,6 +155,58 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue((self.home/'.agents/skills/ux-visual-design/SKILL.md').is_file())
         self.assertTrue((self.home/'.agents/skills/ux-visual-design/assets/contract.schema.json').is_file())
 
+    def test_common_entry_is_installed_diagnosed_and_removed_with_the_kit(self):
+        self.assertEqual(self.invoke(),0)
+        entry=self.home/'.agents/skills/ux'
+        self.assertTrue((entry/'SKILL.md').is_file())
+        self.assertIn('ux',self.manifest()['components'])
+        code,value=self.status();self.assertEqual(code,0)
+        self.assertTrue(next(c['ok'] for c in value['checks'] if c['name']=='ux-skill'))
+        self.assertEqual(self.invoke('--uninstall'),0)
+        self.assertFalse(entry.exists())
+
+    def test_old_managed_update_adds_entry_without_adding_missing_services(self):
+        self.assertEqual(self.invoke(),0)
+        entry=self.home/'.agents/skills/ux'
+        if entry.exists():shutil.rmtree(entry)
+        path=self.home/'.codex/ux-stack/manifest.json';state=self.manifest()
+        state['components'].pop('ux',None);state['version']='1.4.0'
+        for name in [*mod.PLUGINS,'playwright-mcp']:state['components'].pop(name,None)
+        path.write_text(json.dumps(state));before=self.mock_state()
+        with patch.object(mod.Installer,'install_plugin',side_effect=AssertionError('new plugin')),patch.object(mod.Installer,'install_mcp',side_effect=AssertionError('new MCP')):
+            self.assertEqual(self.invoke('--update'),0)
+        self.assertTrue((entry/'SKILL.md').is_file())
+        self.assertEqual(self.mock_state(),before)
+
+    def test_scoped_entry_install_uses_no_external_tools_and_keeps_other_components(self):
+        self.assertEqual(self.invoke(),0)
+        entry=self.home/'.agents/skills/ux'
+        if entry.exists():shutil.rmtree(entry)
+        path=self.home/'.codex/ux-stack/manifest.json';state=self.manifest();state['components'].pop('ux',None)
+        path.write_text(json.dumps(state));before=self.manifest()['components']
+        args=mod.parse(['--update']);installer=mod.Installer(args)
+        with patch.object(mod.subprocess,'run',side_effect=AssertionError('external command')):
+            installer.install_entry()
+        self.assertTrue((entry/'SKILL.md').is_file())
+        after=self.manifest()['components'];after.pop('ux')
+        self.assertEqual(before,after)
+        old=mod.tree_hash(entry)
+        installer.install_entry()
+        self.assertEqual(old,mod.tree_hash(entry))
+
+    def test_custom_or_edited_entry_is_preserved(self):
+        entry=self.home/'.agents/skills/ux';entry.mkdir(parents=True)
+        (entry/'SKILL.md').write_text('User owned UX entry')
+        installer=mod.Installer(mod.parse([]))
+        with self.assertRaises(mod.InstallError):installer.install_entry()
+        self.assertEqual((entry/'SKILL.md').read_text(),'User owned UX entry')
+        shutil.rmtree(entry)
+        installer.install_entry()
+        (entry/'SKILL.md').write_text('User edited UX entry')
+        installer.args.force=True
+        with self.assertRaises(mod.InstallError):installer.install_entry()
+        self.assertEqual((entry/'SKILL.md').read_text(),'User edited UX entry')
+
     def test_update_adds_new_core_skill_without_registering_design_services(self):
         self.assertEqual(self.invoke(),0)
         visual=self.home/'.agents/skills/ux-visual-design'
@@ -265,7 +317,8 @@ class InstallerTests(unittest.TestCase):
         r=subprocess.run(["bash",str(self.home/".local/bin/ux-gan-harness"),"--version"],
                          cwd=self.base,capture_output=True,text=True)
         self.assertEqual(r.returncode,0,r.stderr)
-        self.assertEqual(r.stdout.strip(),mod.VERSION)
+        # The kit can add an entry without changing the existing harness/guidance.
+        self.assertEqual(r.stdout.strip(),json.loads((SOURCE/'sources.json').read_text())['design']['version'])
 
     def test_standard_design_and_harness_use_same_references_without_optional_skills(self):
         self.assertEqual(self.invoke(),0)
@@ -364,7 +417,7 @@ class InstallerTests(unittest.TestCase):
         before = installed.design_guidance()
         shutil.rmtree(self.home/".agents/skills/ooui-design")
         self.assertEqual(installed.design_guidance(),before)
-        self.assertEqual(before["version"],mod.VERSION)
+        self.assertEqual(before["version"],json.loads((SOURCE/'sources.json').read_text())['design']['version'])
         for ref in before["references"]:
             self.assertTrue(Path(ref["path"]).is_relative_to(harness))
             self.assertEqual(ref["sha256"],mod.sha(Path(ref["path"])))
@@ -514,7 +567,7 @@ class InstallerTests(unittest.TestCase):
                          cwd=self.base,capture_output=True,text=True)
         self.assertEqual(r.returncode,0,r.stderr)
         expected = {Path("install_ux_stack.py"),Path("sources.json")}
-        expected.update(p.relative_to(SOURCE) for folder in ("skill","browser","ooui-design","ux-visual-design")
+        expected.update(p.relative_to(SOURCE) for folder in ("skill","browser","ooui-design","ux-visual-design","ux")
                         for p in (SOURCE/folder).rglob("*")
                         if p.is_file() and "__pycache__" not in p.parts and "node_modules" not in p.parts)
         actual = {p.relative_to(dest) for p in dest.rglob("*") if p.is_file()}

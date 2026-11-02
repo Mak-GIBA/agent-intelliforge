@@ -11,7 +11,7 @@ bash install_codex_ux_stack.sh --update
 ux-gan-harness doctor --project /path/to/app --check-mcp
 ```
 
-`--update` updates managed components and adds the new bundled Core Skill, `ux-visual-design`.
+`--update` updates managed components and adds the bundled common entry `ux` and, if missing, `ux-visual-design`.
 It does not add missing Plugins, external MCP servers or optional Skills, or restore removed/disabled servers.
 Previous versions are backed up; manual edits and unmanaged same-name resources remain protected.
 No arguments still installs; `--force` can add missing components.
@@ -58,12 +58,13 @@ Existing Skills are checked in the specified location, Codex Skills, and `~/.age
 
 | Asset | Version/source | New destination |
 |---|---|---|
-| ooui-design/references | Bundled 1.4.0 OOUI/cognitive guidance | `~/.agents/skills/ooui-design/` |
-| ux-visual-design | Bundled 1.4.0 Skill, contracts, editable output and MCP helper | `~/.agents/skills/ux-visual-design/` |
+| ux | Common entry for consultation, review, redesign and implementation | `~/.agents/skills/ux/` |
+| ooui-design/references | Bundled OOUI/cognitive guidance | `~/.agents/skills/ooui-design/` |
+| ux-visual-design | Bundled Skill, contracts, editable output and MCP helper | `~/.agents/skills/ux-visual-design/` |
 | Product Design / Build Web Apps | Codex-managed `openai-curated-remote`; actual versions recorded | Codex Plugin environment |
 | web-design-guidelines | `vercel-labs/agent-skills`, `063bee94c3f4df8453406c830b0a7df0f2860278` | `~/.agents/skills/web-design-guidelines/` |
 | ux-critique | `Thecsiz/ux-critique`, `3da293cafb639195bf71797590081d4ffb0045ba` | `~/.agents/skills/ux-critique/` |
-| Harness/Skill/shared guidance | Bundled 1.4.0 | `~/.agents/skills/ux-gan-harness/` |
+| Harness/Skill/shared guidance | Bundled runtime and references | `~/.agents/skills/ux-gan-harness/` |
 | Browser runtime | Playwright 1.63.0 / MCP 0.0.83, embedded lockfile | `CODEX_HOME/ux-stack/runtime/` |
 | Launcher | Calls bundled Bash harness | `~/.local/bin/ux-gan-harness` |
 | State/backups | Hashes, versions, outcomes, previous files | `CODEX_HOME/ux-stack/` |
@@ -86,7 +87,7 @@ bash install_codex_ux_stack.sh --deep --force
 
 Use `--update` to update existing managed components only. No arguments adds missing ooui-design but retains an existing unchanged harness. Diagnosis checks new references and reports old harness assets as unready. Unmanaged/edited same-name Skills remain protected.
 
-Per-component output is `INSTALLED`, `SKIP`, or `FAILED`. Failure returns exit 1 / `INCOMPLETE`; earlier components remain and can be retried. There is no global Plugin/MCP rollback. Failed file replacement restores its immediately previous assets. `COMPLETE` means install operations ended, not model/app/browser success. Restart Codex if `$ooui-design` / `$ux-gan-harness` is absent; an absolute launcher path works outside PATH.
+Per-component output is `INSTALLED`, `SKIP`, or `FAILED`. Failure returns exit 1 / `INCOMPLETE`; earlier components remain and can be retried. There is no global Plugin/MCP rollback. Failed file replacement restores its immediately previous assets. `COMPLETE` means install operations ended, not model/app/browser success. Normally use `$ux`; restart Codex if it is absent. Specialist calls remain available; an absolute launcher path works outside PATH.
 
 ## Optional design MCP
 

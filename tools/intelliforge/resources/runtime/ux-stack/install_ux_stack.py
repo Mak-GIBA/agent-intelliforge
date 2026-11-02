@@ -20,7 +20,7 @@ import urllib.request
 import uuid
 
 ROOT = Path(__file__).resolve().parent
-VERSION = "1.4.0"
+VERSION = "1.5.0"
 PLUGINS = ["product-design@openai-curated-remote", "build-web-apps@openai-curated-remote"]
 
 
@@ -115,6 +115,23 @@ class Installer:
             stage=Path(temporary)/'ux-visual-design'
             shutil.copytree(source,stage,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
             self.replace_tree('ux-visual-design',stage,dest)
+
+    def install_entry(self):
+        """Install just the bundled entry, using the same ownership/backup checks."""
+        dest=self.locate_skill('ux')
+        if (dest.exists() or dest.is_symlink()) and not self.owned('ux'):
+            raise InstallError('ux: existing unmanaged Skill preserved; choose its intended owner before installing')
+        if not self.needs_tree('ux',dest):return
+        source=ROOT/'ux'
+        for relative in ('SKILL.md','agents/openai.yaml'):
+            if not (source/relative).is_file():raise InstallError('Missing UX entry resource: '+relative)
+        if self.args.dry_run:
+            self.record('ux','planned',message='Common UX entry -> '+str(dest));return
+        dest.parent.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix='.ux-entry-',dir=dest.parent) as temporary:
+            stage=Path(temporary)/'ux'
+            shutil.copytree(source,stage,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
+            self.replace_tree('ux',stage,dest)
 
     def install_design_mcp(self,provider):
         name='design-mcp-'+provider;owned=self.owned(name);module=self.visual_module()
@@ -488,7 +505,7 @@ class Installer:
         except InstallError:servers=[];mcp_error=True
         mcp = any(p.get("name") == "playwright" and p.get("enabled", True) for p in servers)
         results.append({"name": "playwright-mcp", "ok": mcp, **({'diagnostic':'listing_unavailable'} if mcp_error else {})})
-        for name in ("web-design-guidelines", "ooui-design", "ux-gan-harness", "ux-visual-design"):
+        for name in ("ux", "web-design-guidelines", "ooui-design", "ux-gan-harness", "ux-visual-design"):
             results.append({"name": name + "-skill",
                             "ok": (self.locate_skill(name) / "SKILL.md").is_file()})
         for skill, subdir in (("ooui-design", "references"), ("ux-gan-harness", "references/design")):
@@ -599,10 +616,10 @@ class Installer:
         if self.args.update:
             if not self.manifest_path.is_file() or not self.manifest["components"]:
                 raise InstallError("--update requires an existing managed UX Stack installation")
-            # Reuse ownership/hash/backup checks; never install a missing component.
+            # Add bundled local core entries, while preserving missing optional integrations.
             self.args.force = True
         tasks = [(ref, lambda ref=ref: self.install_plugin(ref)) for ref in PLUGINS]
-        tasks += [("ooui-design", self.install_design),('ux-visual-design',self.install_visual),
+        tasks += [('ux',self.install_entry),("ooui-design", self.install_design),('ux-visual-design',self.install_visual),
                   ("web-design-guidelines", lambda: self.install_remote_skill("web-design-guidelines", "guidelines")),
                   ("browser-runtime", self.install_runtime), ("ux-gan-harness", self.install_harness),
                   ("playwright-mcp", self.install_mcp)]
@@ -612,7 +629,7 @@ class Installer:
         for provider in providers:tasks.append(('design-mcp-'+provider,lambda p=provider:self.install_design_mcp(p)))
         runtime_failed = False
         for name, task in tasks:
-            if self.args.update and name!='ux-visual-design' and not self.owned(name):
+            if self.args.update and name not in ('ux','ux-visual-design') and not self.owned(name):
                 continue
             if self.args.dry_run and (name in PLUGINS or name=='playwright-mcp' or name.startswith('design-mcp-')):
                 self.record(name,'planned',message='Inspect/reuse selected native registration when applied; no host process started');continue
@@ -646,8 +663,8 @@ class Installer:
             "No changes made" if self.args.dry_run else
             "Installation operations completed. Use --doctor to check actual browser readiness.")
         if not self.args.dry_run:
-            say("USE", "$ooui-design で対象・画面・操作を設計し、既存のデザイン・実装スキルへ渡してください。")
-            say("REVIEW", "$ux-gan-harness で実画面と操作を再確認できます。実在するgan-harness.shを実行してください。")
+            say("USE", "$ux に相談・設計・実装・レビュー・改善を依頼してください。目的と反映範囲から必要な手順を選びます。")
+            say("SPECIALIST", "専門Skillの $ooui-design / $ux-visual-design / $ux-gan-harness も直接使えます。")
             say("COPY", "日本語UI文言とレポートにはyomiyasuの利用を推奨します。未導入なら別配布のinstall_kotonoha.sh --applyを利用できます。")
             say("MEMORY", "設計・レビューでは、利用可能なBasic Memoryから関連する過去の指摘を検索して参照します。")
             say("CLI", str(self.bin_dir / "ux-gan-harness") + " doctor")
