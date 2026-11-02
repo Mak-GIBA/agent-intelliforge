@@ -69,6 +69,12 @@ for name in ["playwright","@playwright/mcp"]:
 
 
 class InstallerTests(unittest.TestCase):
+    def test_vendor_listing_failure_reports_core_health_without_losing_json(self):
+        self.assertEqual(self.invoke(),0)
+        with patch.object(mod.Installer,'plugin_list',side_effect=mod.InstallError('listing unavailable')):
+            code,value=self.status()
+        self.assertEqual(code,1);self.assertFalse(value['ready']);self.assertTrue(value['core_ready'])
+        self.assertTrue(any(c.get('diagnostic')=='listing_unavailable' for c in value['checks']))
     @contextlib.contextmanager
     def design_backend(self,fail=False,auth='oAuth'):
         # Native host transport is tested separately. This fixture only exercises

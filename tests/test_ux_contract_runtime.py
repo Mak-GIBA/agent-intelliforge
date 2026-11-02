@@ -4,6 +4,7 @@ import json
 import tempfile
 import unittest
 import hashlib
+import subprocess
 from unittest.mock import patch
 from test_ux_gan_harness import png
 from test_ux_visual_contract import example
@@ -15,6 +16,10 @@ hspec=importlib.util.spec_from_file_location('ux_harness_contract_test',ROOT/'to
 h=importlib.util.module_from_spec(hspec);hspec.loader.exec_module(h)
 
 class ContractRuntimeTests(unittest.TestCase):
+    def test_unavailable_vendor_listing_keeps_local_browser_fallback(self):
+        with patch.object(h,'command',return_value=subprocess.CompletedProcess(['codex'],1,'','unavailable')):
+            backend,reason=h.select_backend({'browser':'auto'})
+        self.assertEqual(backend,'local-playwright');self.assertIn('inspection',reason.lower())
     def test_concurrent_edit_during_freeze_cannot_change_approval_behind_the_snapshot(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);p,_=self.fixture(root);engine=runtime.helper();original=engine.require
