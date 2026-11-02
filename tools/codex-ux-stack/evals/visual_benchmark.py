@@ -132,6 +132,14 @@ class Benchmark:
                 r=future.result();print(json.dumps({k:r[k] for k in ['label','case','trial','status','elapsed_seconds'] if k in r}),flush=True)
 
     def ratings(self,settled=False,stable=False):
+        if settled or stable:
+            variant='stable' if stable else 'settled'
+            for case in self.conditions['cases']:
+                for trial in range(1,self.conditions['trials']+1):
+                    for label in ('baseline','candidate'):
+                        observed=self.out/'generation'/f'{label}-{case}-{trial}'/f'operations-{variant}.json'
+                        if not observed.is_file():raise ValueError('Missing requested observations: '+str(observed))
+                        if json.loads(observed.read_text()).get('revision')!=(4 if stable else 3):raise ValueError('Wrong observation revision: '+str(observed))
         mapping_path=self.out/'blind-map.json'
         if mapping_path.exists():mapping=json.loads(mapping_path.read_text())
         else:
