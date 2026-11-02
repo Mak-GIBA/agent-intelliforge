@@ -39,11 +39,13 @@ class DesignMCPTests(unittest.TestCase):
         def rpc(method,params):return {'content':[{'type':'text','text':'fixture'}]} if method=='mcpServer/tool/call' else original(method,params)
         client.rpc=rpc;service=m.DesignMCP(client);target={'file_id':'file1','url':'https://www.figma.com/design/file1/test'}
         self.assertEqual(service.call('figma','fetch',{'file_id':'file1'},target)['permission_verified'],'read')
+        self.assertEqual(service.call('figma','fetch',{'file_id':'file1','profileId':'a-person'},target)['permission_verified'],'read')
         with self.assertRaisesRegex(m.MCPError,'invalid_target'):service.call('figma','fetch',{'file_id':'file1'},{'file_id':'file1','url':'https://www.figma.com/design/file1-other/test'})
         with self.assertRaisesRegex(m.MCPError,'explicit_apply'):service.call('figma','edit',{'file_id':'file1'},target)
         accepted=service.call('figma','edit',{'file_id':'file1'},target,True)
         self.assertEqual(accepted['permission_verified'],'not_verified');self.assertEqual(accepted['operation_status'],'call_accepted')
         with self.assertRaisesRegex(m.MCPError,'target_mismatch'):service.call('figma','edit',{'file_id':'file1','nested':{'file_id':'other'}},target,True)
+        with self.assertRaisesRegex(m.MCPError,'target_mismatch'):service.call('figma','edit',{'file_id':'file1','nested':{'destinationFileId':'other'}},target,True)
         with self.assertRaisesRegex(m.MCPError,'use_host_skill'):service.call('figma','edit',{'file_id':'file1','nested':{'script':'unscoped code'}},target,True)
         client.rpc=lambda method,params: {'isError':True,'content':[{'type':'text','text':'403 permission denied; PRIVATE-DETAIL'}]} if method=='mcpServer/tool/call' else rpc(method,params)
         with self.assertRaisesRegex(m.MCPError,'^permission_denied$'):service.call('figma','edit',{'file_id':'file1'},target,True)

@@ -237,7 +237,8 @@ class DesignMCP:
         def targets(value):
             if isinstance(value,dict):
                 for key,item in value.items():
-                    if key in ('fileKey','file_id','fileId','fileUrl','url','boardId','board_id'):yield item
+                    normalized=re.sub(r'(?<=[a-z0-9])(?=[A-Z])','_',key).lower()
+                    if normalized=='url' or re.search(r'(?:^|_)(?:file|board)_?(?:id|key|url)s?$',normalized):yield item
                     else:yield from targets(item)
             elif isinstance(value,list):
                 for item in value:yield from targets(item)
