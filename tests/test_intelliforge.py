@@ -23,6 +23,15 @@ from agent_intelliforge.catalog import ForgeError, definitions, safe_relative, s
 
 
 class DistributionTests(unittest.TestCase):
+    def test_design_mcp_options_are_codex_ux_only_and_preview_is_read_only(self):
+        with tempfile.TemporaryDirectory() as td, contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
+            state=Path(td)/'state'
+            with patch.object(subprocess,'run',side_effect=AssertionError('preview invoked process')),patch.object(subprocess,'call',side_effect=AssertionError('preview invoked process')):
+                self.assertEqual(cli.main(['install','--only','ux-stack','--agent','codex','--plugin','--state-dir',str(state),'--visual-tools','whimsical,figma','--dry-run']),0)
+                self.assertEqual(cli.main(['install','--only','ux-stack','--agent','claude','--visual-tools','figma']),2)
+                self.assertEqual(cli.main(['install','--only','kotonoha','--visual-tools','figma']),2)
+            self.assertFalse(state.exists())
+
     def test_workgraph_dependency_preparation_uses_an_unoccupied_venv_path(self):
         with tempfile.TemporaryDirectory() as temporary:
             home = Path(temporary) / 'kit'
