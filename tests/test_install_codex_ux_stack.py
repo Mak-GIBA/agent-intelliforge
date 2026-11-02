@@ -69,6 +69,26 @@ for name in ["playwright","@playwright/mcp"]:
 
 
 class InstallerTests(unittest.TestCase):
+    def test_visual_skill_is_part_of_standard_core(self):
+        self.assertEqual(self.invoke(),0)
+        self.assertTrue((self.home/'.agents/skills/ux-visual-design/SKILL.md').is_file())
+        self.assertTrue((self.home/'.agents/skills/ux-visual-design/assets/contract.schema.json').is_file())
+
+    def test_update_adds_new_core_skill_without_registering_design_services(self):
+        self.assertEqual(self.invoke(),0)
+        visual=self.home/'.agents/skills/ux-visual-design'
+        if visual.exists():shutil.rmtree(visual)
+        path=self.home/'.codex/ux-stack/manifest.json';state=json.loads(path.read_text())
+        state['components'].pop('ux-visual-design',None);state['version']='1.3.0';path.write_text(json.dumps(state))
+        self.assertEqual(self.invoke('--update'),0)
+        self.assertTrue((visual/'SKILL.md').is_file())
+        self.assertFalse(any(p['name'] in ('figma','whimsical') for p in self.mock_state()['servers']))
+
+    def test_design_mcp_selection_dry_run_does_not_call_mutating_backend(self):
+        before=set(self.home.rglob('*'))
+        self.assertEqual(self.invoke('--dry-run','--visual-tools','whimsical,figma'),0)
+        self.assertEqual(set(self.home.rglob('*')),before)
+
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory()
         self.base=Path(self.tmp.name)
