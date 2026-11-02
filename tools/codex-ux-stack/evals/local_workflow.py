@@ -23,7 +23,7 @@ RULES=Path(__file__).with_name('local-workflow-contract.json')
 class LocalWorkflow:
     def __init__(self,out):self.bench=Benchmark(out);self.rules=json.loads(RULES.read_text())
     def job(self,name):
-        job=self.bench.out/'local-workflow'/name;result=job/'result.json'
+        job=self.bench.out/self.rules.get('output_subdir','local-workflow')/name;result=job/'result.json'
         if result.exists():return json.loads(result.read_text())
         job.mkdir(parents=True,exist_ok=True);app=job/'app';app.mkdir();source=job/'source';source.mkdir()
         archive=subprocess.run(['git','archive',self.rules['source_commit'],'tools/codex-ux-stack'],cwd=ROOT,capture_output=True,check=True).stdout
@@ -53,6 +53,7 @@ class LocalWorkflow:
         brief=('検索語を入力して文書へ移動し、メモの下書きを入力して一覧へ戻り、再び文書を開いて下書きを保持する。' if document else '申込内容の確認から模擬決済へ進み、確認へ戻る。')
         brief+=' この2画面の試作の必須操作に表示上の回帰がある。実画面で再現し、最小の修正後に独立して再確認する。フロントエンド試作のため、実API・保存サーバー・本決済の欠如を不具合にしない。契約とテストは変更しない。デスクトップの宣言範囲だけを確認し、全体の合格とは扱わない。'
         argv=[sys.executable,'-B',str(kit/'skill/scripts/harness.py'),'run','--project',str(app),'--url',url,'--profile','focused','--focus',brief,'--viewport','desktop','--max-iterations','1','--phase-timeout',str(self.rules['phase_seconds']),'--model',self.rules['model'],'--browser','local-playwright','--ux-contract','docs/ux/design-contract.json','--test-command',test,'--brief',brief]
+        if self.rules.get('role_sandbox'):argv+=['--role-sandbox',self.rules['role_sandbox']]
         wrapper=job/'launch.py';wrapper.write_text('import os,subprocess,sys\nos.environ["HOME"]='+repr(str(job/'test-home'))+'\nos.environ["PLAYWRIGHT_BROWSERS_PATH"]='+repr(os.environ.get('PLAYWRIGHT_BROWSERS_PATH') or str(Path.home()/'.cache/ms-playwright'))+'\nsys.exit(subprocess.call(sys.argv[1:]))\n')
         write(job/'fixture.json',{'protocol':self.rules,'html_sha256':hashlib.sha256(html.encode()).hexdigest(),'contract_sha256':engine.digest(c)})
         try:r=self.bench.call([sys.executable,str(wrapper),*argv],app,home,job/'harness.log',self.rules['phase_seconds']*4+80,child=False)

@@ -1,0 +1,19 @@
+{
+  "purpose": "Corrective local mechanism validation; preserve all original comparison and workflow failures",
+  "source_commit": "331b307",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "medium",
+  "profile": "focused",
+  "viewports": ["desktop"],
+  "phase_seconds": 300,
+  "max_iterations": 1,
+  "role_sandbox": "read-only",
+  "output_subdir": "local-readonly",
+  "fresh_case": "document_return",
+  "resume_case": "application_confirmation",
+  "fresh_reason": "The original non-fixer edited source; retain that failed run and start from the clean seeded fixture.",
+  "resume_reason": "The original fixer completed iteration one and its functional test passed, but its independent reviewer used an archived image path. Resume only the pending review using fresh evidence, with no extra fixer iteration.",
+  "changes": "Read-only non-fixer sandbox, explicit current-role evidence instructions, actual keyboard activation receipts, no success receipts for failed actions or another viewport.",
+  "budget": "Share the original 240-minute cumulative budget, including all unsuccessful calls. No model trial after a recovery failure.",
+  "limits": "Different supplemental scope and reasoning from the old/new comparison. A prototype mechanism check is not human usability, general superiority, approved design or authenticated design MCP verification."
+}
