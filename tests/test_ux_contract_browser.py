@@ -5,7 +5,7 @@ import os
 import unittest
 from pathlib import Path
 import test_ux_gan_browser as browser
-from test_ux_visual_contract import example
+from test_ux_visual_contract import example, ux
 from test_ux_contract_runtime import runtime
 
 @unittest.skipUnless(os.getenv('UX_GAN_RUNTIME'),'Requires installed real Chromium runtime')
@@ -139,5 +139,28 @@ class FailedActionBrowserTests(unittest.TestCase):
         self.tool('ux_navigate',url=self.url+'/');self.tool('ux_press',key='Tab');self.check('S-list')
         failed=self.rpc('tools/call',{'name':'ux_press','arguments':{'key':'NotARealKey'}});self.assertTrue(failed.get('isError'))
         result=self.check('S-list',transition='T-key');self.assertFalse(next(c for c in result['checks'] if c['id']=='T-key')['passed'],result)
+
+@unittest.skipUnless(os.getenv('UX_GAN_RUNTIME'),'Requires installed real Chromium runtime')
+class PreviewClickBrowserTests(unittest.TestCase):
+    setUp=browser.BrowserTests.setUp;tearDown=browser.BrowserTests.tearDown
+    rpc=browser.BrowserTests.rpc;tool=browser.BrowserTests.tool
+
+    def configure_contract(self):
+        c=example()
+        for s in c['screens']:s.update(title='画面',purpose='操作の確認',route='/')
+        for r in c['requirements']:
+            for a in r['acceptance']:
+                a.update(type='visible',expected=True,locator={'selector':'#screen[data-screen-id="'+a['screen_id']+'"]'})
+        (self.base/'index.html').write_text(ux._preview(c))
+        p=self.base/'design.json';p.write_text(json.dumps(c));return p
+
+    def test_double_click_cannot_activate_the_new_screens_reverse_action(self):
+        self.tool('ux_navigate',url=self.url+'/')
+        self.tool('ux_click',selector='[data-action-id="A-open"]',double=True)
+        info=json.loads(self.tool('ux_check_contract',screen_id='S-detail',state='normal')['content'][0]['text'])
+        self.assertTrue(all(check['passed'] for check in info['checks']),info)
+        self.tool('ux_click',selector='[data-action-id="A-back"]')
+        info=json.loads(self.tool('ux_check_contract',screen_id='S-list',state='normal')['content'][0]['text'])
+        self.assertTrue(all(check['passed'] for check in info['checks']),info)
 
 if __name__=='__main__':unittest.main()
