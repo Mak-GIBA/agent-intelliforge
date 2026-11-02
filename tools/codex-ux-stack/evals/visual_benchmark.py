@@ -33,13 +33,14 @@ class Benchmark:
         self.budget=self.out/'budget.json'
         if not self.budget.exists():write(self.budget,{'used_seconds':0,'reserved_seconds':0,'calls':[]})
 
-    def call(self,argv,workspace,home,output,limit):
+    def call(self,argv,workspace,home,output,limit,child=True):
         with self.lock:
             budget=json.loads(self.budget.read_text());remaining=self.conditions['model_budget_seconds']-budget['used_seconds']-budget['reserved_seconds']
             limit=min(limit,int(remaining))
             if limit<=0:return {'status':'budget_exhausted','elapsed_seconds':0}
             budget['reserved_seconds']+=limit;write(self.budget,budget)
-        env={**os.environ,'CODEX_HOME':str(home),'PYTHONDONTWRITEBYTECODE':'1','UX_GAN_CHILD':'1'}
+        env={**os.environ,'CODEX_HOME':str(home),'PYTHONDONTWRITEBYTECODE':'1'}
+        if child:env['UX_GAN_CHILD']='1'
         start=time.monotonic();status='completed';proc=None
         try:
             # All inputs are argv elements. No shell interpolation or credential logging.

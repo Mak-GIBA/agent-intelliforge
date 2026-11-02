@@ -38,8 +38,12 @@ def contract(case):
 
 class Repair:
     def __init__(self,out):self.bench=Benchmark(out);self.rules=json.loads(RULES.read_text())
-    def job(self,label,case):
-        job=self.bench.out/'repair'/f'{label}-{case}';result=job/'result.json'
+    def job(self,label,case,retry_setup=False):
+        original=self.bench.out/'repair'/f'{label}-{case}'
+        if retry_setup:
+            failed=json.loads((original/'result.json').read_text())
+            if failed['elapsed_seconds']>=1 or list((original/'app/artifacts/ux-gan').glob('*/state.json')) or 'Recursive harness execution refused' not in (original/'harness.log').read_text():raise ValueError('Only the evidenced pre-model setup failure may be retried')
+        job=self.bench.out/'repair'/(f'{label}-{case}-setup-corrected' if retry_setup else f'{label}-{case}');result=job/'result.json'
         if result.exists():return json.loads(result.read_text())
         job.mkdir(parents=True,exist_ok=True);app=job/'app'
         shutil.copytree(self.bench.out/'generation'/f'{label}-{case}-1'/'app',app,ignore=shutil.ignore_patterns('.git','artifacts','ui-ux-review*'))
@@ -67,20 +71,20 @@ class Repair:
         # HOME is invocation-local in the wrapper. The pinned browser cache is
         # only read; no installation or personal configuration mutation occurs.
         wrapper=job/'launch.py';wrapper.write_text('import os,subprocess,sys\nos.environ["HOME"]='+repr(str(job/'test-home'))+'\nos.environ["PLAYWRIGHT_BROWSERS_PATH"]='+repr(old_browser or str(Path(old_home or str(Path.home()))/'.cache/ms-playwright'))+'\nsys.exit(subprocess.call(sys.argv[1:]))\n')
-        try:r=self.bench.call([sys.executable,str(wrapper),*command],app,home,job/'harness.log',self.rules['phase_seconds']*4+120)
+        try:r=self.bench.call([sys.executable,str(wrapper),*command],app,home,job/'harness.log',self.rules['phase_seconds']*4+120,child=False)
         finally:server.shutdown();server.server_close()
         states=list((app/'artifacts/ux-gan').glob('*/state.json'))
         if states:
             state=json.loads(states[0].read_text());r.update(harness_status=state['status'],reason=state['reason'],iteration=state['iteration'],run_id=state['run_id'],contract_report=state.get('ux_contract_report'))
         r.update(label=label,case=case,scope=regression['focus'],source_commit=self.rules[label+'_commit']);write(result,r)
         print(json.dumps(r,ensure_ascii=False),flush=True);return r
-    def run(self):
+    def run(self,retry_setup=False):
         # Budget writes must not race another evaluator process. The supervisor
         # starts this phase only after all generation and rating calls finish.
         write(self.bench.out/'repair-conditions.json',self.rules)
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
-            futures=[pool.submit(self.job,label,case) for case in self.rules['cases'] for label in ['baseline','candidate']]
+            futures=[pool.submit(self.job,label,case,retry_setup) for case in self.rules['cases'] for label in ['baseline','candidate']]
             for future in concurrent.futures.as_completed(futures):future.result()
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True);args=parser.parse_args();Repair(args.output).run()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--retry-setup',action='store_true',help='Retry only the preserved, evidenced failure before any model call');args=parser.parse_args();Repair(args.output).run(args.retry_setup)
