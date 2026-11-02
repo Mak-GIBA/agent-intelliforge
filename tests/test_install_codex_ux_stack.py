@@ -144,6 +144,12 @@ class InstallerTests(unittest.TestCase):
         before=path.read_bytes()
         with self.design_backend():self.assertEqual(self.invoke('--uninstall'),1)
         self.assertEqual(path.read_bytes(),before);self.assertIn('design-mcp-figma',self.manifest()['components'])
+
+    def test_edited_design_update_records_incomplete_instead_of_still_checking(self):
+        with self.design_backend():self.assertEqual(self.invoke('--visual-tools','figma'),0)
+        path=self.home/'.codex/design-fixture.json';value=json.loads(path.read_text());value['figma']['tool_timeout_sec']=180;path.write_text(json.dumps(value));before=path.read_bytes()
+        with self.design_backend():self.assertEqual(self.invoke('--update'),1)
+        self.assertEqual(path.read_bytes(),before);self.assertEqual(self.manifest()['design_mcp_pending']['figma']['status'],'incomplete')
     def test_visual_skill_is_part_of_standard_core(self):
         self.assertEqual(self.invoke(),0)
         self.assertTrue((self.home/'.agents/skills/ux-visual-design/SKILL.md').is_file())
