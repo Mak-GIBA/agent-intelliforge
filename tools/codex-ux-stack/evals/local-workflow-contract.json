@@ -1,12 +1,17 @@
 {
   "purpose": "Supplemental real-model harness validation; separate from the fixed old/new UX comparison",
-  "source_commit": "5dc3ee2",
+  "source_commit": "b42892d2c0bafe63d61256572b61c098bf40f73c",
   "model": "gpt-6.1-sol",
   "reasoning_effort": "medium",
-  "cases": ["document_return", "application_confirmation"],
+  "cases": [
+    "document_return",
+    "application_confirmation"
+  ],
   "fixture": "Two-screen local interactive wireframe; a required control is hidden by one CSS rule",
   "profile": "focused",
-  "viewports": ["desktop"],
+  "viewports": [
+    "desktop"
+  ],
   "phase_seconds": 300,
   "max_iterations": 1,
   "trials": 1,
