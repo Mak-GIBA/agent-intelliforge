@@ -30,7 +30,7 @@ def png(width=1440, height=900):
 
 
 FAKE_CODEX = r'''#!/usr/bin/env python3
-import os,sys,json,hashlib,struct,zlib
+import os,sys,json,hashlib,struct,zlib,subprocess,time
 from pathlib import Path
 args=sys.argv[1:]
 if args[:2]==["exec","--help"]:
@@ -62,7 +62,7 @@ def png(w,h):
  def chunk(t,d):return struct.pack(">I",len(d))+t+d+struct.pack(">I",zlib.crc32(t+d)&0xffffffff)
  return b"\x89PNG\r\n\x1a\n"+chunk(b"IHDR",struct.pack(">IIBBBBB",w,h,8,2,0,0,0))+chunk(b"IDAT",zlib.compress((b"\0"+b"\xff\xff\xff"*w)*h))+chunk(b"IEND",b"")
 def frame(id,w=1440,hh=900,source="live",url=None):
- p=directory/(id+".png");p.write_bytes(png(w,hh))
+ p=directory/(id+".png");p.write_bytes(png(w,hh)+(b'local-backend' if case=='checkpoint_browser_after_save' and data['browser_backend']=='local-playwright' else b''))
  url=url or data["url"]
  meta={"kind":"frame","id":id,"path":str(p),"url":url,"source":source,"viewport":{"width":w,"height":hh},"sha256":hashlib.sha256(p.read_bytes()).hexdigest(),"captured_at":"2026-10-04T00:00:00Z"}
  with (directory/"browser-receipts.jsonl").open("a") as f:f.write(json.dumps(meta)+"\n")
@@ -71,6 +71,8 @@ def frame(id,w=1440,hh=900,source="live",url=None):
 common={"reason":"","browser_backend":data["browser_backend"],"fallback_reason":data["fallback_reason"],"evidence":evidence}
 if case=="invalid_json":
  output.write_text("not json");sys.exit(0)
+if case=='null_json':
+ output.write_text('null');sys.exit(0)
 if role=="planner":
  for id,w,hh in [("d",1440,900),("t",768,1024),("m",390,844)]:frame(id,w,hh)
  result={**common,"status":"ready","first_impression":{k:"Initial visual observation" for k in ["purpose","next_action","primary_cta","unknown_terms","hesitations"]},
@@ -117,12 +119,207 @@ else:
  if case=="source_during_review":(project/"app.html").write_text("unexpected reviewer edit")
 if case=="missing_image":
  for e in evidence:Path(e["path"]).unlink()
+if case.startswith('checkpoint_') and role=='reviewer' and data.get('checkpoint'):
+ draft=output.parent/'draft.json'
+ continuation=data.get('continuation')
+ if continuation:result=continuation['result']
+ draft_result=json.loads(json.dumps(result))
+ if case in ('checkpoint_bypass','checkpoint_readonly_resume'):draft_result['issues'].append({**draft_result['issues'][0],'id':'Issue 99','severity':'High'})
+ draft.write_text(json.dumps(draft_result,ensure_ascii=False))
+ reporting=continuation is not None and case not in ('checkpoint_repeat',)
+ command=[sys.executable,data['checkpoint']['helper'],'save','--directory',str(output.parent),'--input','draft.json',
+          '--stage','reporting' if reporting else 'observing']
+ if not reporting:command+=['--remaining','まとめと残項目の確認']
+ subprocess.run(command,check=True,stdout=subprocess.DEVNULL)
+ if case=='checkpoint_readonly_resume':
+  output.write_text(json.dumps({'status':'blocked','reason':'manual setup needed'}));sys.exit(0)
+ if case=='checkpoint_rejected' and continuation is None:
+  print(json.dumps({'type':'item.completed','item':{'type':'agent_message','text':'draft saved'}}),flush=True)
+  time.sleep(.3)
+  bad=json.loads(json.dumps(result));bad['coverage'][0]['viewport']='mobile';draft.write_text(json.dumps(bad))
+  subprocess.run([sys.executable,data['checkpoint']['helper'],'save','--directory',str(output.parent),
+                  '--input','draft.json','--stage','reporting'],check=True,stdout=subprocess.DEVNULL)
+  output.write_text(json.dumps({'status':'complete','reason':''}));sys.exit(0)
+ if case=='checkpoint_bypass':
+  output.write_text(json.dumps(result));print(json.dumps({'type':'turn.completed'}));sys.exit(0)
+ if case=='checkpoint_auth':
+  print(json.dumps({'type':'turn.failed','error':{'message':'401 authentication required; stream disconnected connection to model'}}));sys.exit(1)
+ if case=='checkpoint_approval':
+  print(json.dumps({'type':'turn.failed','error':{'message':'tool requires approval; stream disconnected connection to model'}}));sys.exit(1)
+ if case=='checkpoint_deadline':time.sleep(3)
+ if case=='checkpoint_corrupt':Path(result['evidence'][0]['path']).write_text('corrupt')
+ if not reporting:
+  if case=='checkpoint_idle':
+   while True:print(json.dumps({'heartbeat':'still alive'}),flush=True);time.sleep(.05)
+  print(json.dumps({'type':'turn.failed','error':{'message':'stream disconnected connection to model'}}));sys.exit(1)
+ result={'status':'complete','reason':''}
+if data.get('checkpoint') and set(result)!={'status','reason'}:
+ draft=output.parent/'draft.json';draft.write_text(json.dumps(result,ensure_ascii=False))
+ subprocess.run([sys.executable,data['checkpoint']['helper'],'save','--directory',str(output.parent),
+                 '--input','draft.json','--stage','reporting'],check=True,stdout=subprocess.DEVNULL)
+ result={'status':'complete','reason':''}
+ if case=='checkpoint_browser_after_save' and role=='planner' and data['browser_backend']!='local-playwright':
+  result={'status':'blocked','reason':'Browser MCP connection unavailable'}
 output.write_text(json.dumps(result,ensure_ascii=False))
 print(json.dumps({"type":"turn.completed","usage":{"input_tokens":10,"output_tokens":10}}))
 '''
 
 
 class HarnessTests(unittest.TestCase):
+    def test_new_runs_have_no_fixed_role_deadline_and_keep_iteration_limit(self):
+        args = h.parser().parse_args(['audit', '--url', 'http://localhost:3000'])
+        self.assertEqual(args.phase_timeout, 0)
+        self.assertEqual(args.idle_timeout, 900)
+        self.assertEqual(args.max_iterations, 5)
+
+    def test_zero_deadline_allows_a_process_to_finish(self):
+        code = h.stream_process([sys.executable, '-c', 'import time; time.sleep(.05); print("done")'],
+                                self.project, dict(os.environ), self.base/'process.jsonl', 0)
+        self.assertEqual(code, 0)
+
+    def test_resume_pending_review_counts_non_improvement_at_iteration_limit(self):
+        os.environ['UX_FAKE_CASE'] = 'pending_review'
+        self.assertEqual(self.invoke('run', '--max-iterations', '1'), 1)
+        state, folder = self.state()
+        state.update(best_metric=1, plateau=1)
+        h.atomic_json(folder/'state.json', state)
+        os.environ['UX_FAKE_CASE'] = 'plateau'
+        self.assertEqual(self.invoke('resume', state['run_id']), 2)
+        result, _ = self.state()
+        self.assertEqual(result['iteration'], 1)
+        self.assertEqual(result['plateau'], 2)
+        self.assertEqual(result['status'], 'stalled')
+
+    def test_connection_recovers_verified_checkpoint_in_same_role_directory(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_connection'
+        self.assertEqual(self.invoke('audit', '--profile', 'focused', '--focus', '保存'), 0)
+        state, folder = self.state()
+        record = state['role_progress']['000-reviewer']
+        self.assertEqual(record['recoveries'], 1)
+        self.assertEqual(record['invocations'], 2)
+        role = folder/record['directory']
+        self.assertTrue((role/'events.jsonl').is_file())
+        self.assertTrue((role/'events-attempt-2.jsonl').is_file())
+        self.assertEqual(json.loads((role/'result.json').read_text())['status'], 'reviewed')
+        prompt = (role/'prompt-attempt-2.txt').read_text()
+        data = json.loads(prompt.split('\nINPUT:\n', 1)[1])
+        self.assertTrue(data['continuation']['result']['coverage'])
+        self.assertEqual(data['continuation']['remaining'], ['まとめと残項目の確認'])
+
+    def test_recovery_limit_and_partial_report_survive_resume(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_repeat'
+        self.assertEqual(self.invoke('audit'), 1)
+        state, folder = self.state()
+        record = state['role_progress']['000-reviewer']
+        self.assertEqual(record['recoveries'], 2)
+        self.assertEqual(record['invocations'], 3)
+        self.assertTrue(record['exhausted'])
+        self.assertIn('まとめと残項目', (folder/'partial-review.md').read_text())
+        self.assertFalse((self.project/'docs/ui-ux-review.md').exists())
+        self.assertEqual(self.invoke('resume', state['run_id']), 1)
+        self.assertEqual(self.state()[0]['role_progress']['000-reviewer']['invocations'], 3)
+
+    def test_idle_heartbeats_do_not_extend_progress_and_checkpoint_recovers(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_idle'
+        self.assertEqual(self.invoke('audit', '--idle-timeout', '1'), 0)
+        self.assertEqual(self.state()[0]['role_progress']['000-reviewer']['recoveries'], 1)
+
+    def test_auth_and_approval_override_disconnect_and_never_retry(self):
+        for case in ('checkpoint_auth', 'checkpoint_approval'):
+            with self.subTest(case=case):
+                os.environ['UX_FAKE_CASE'] = case
+                previous = set((self.project/'artifacts/ux-gan').glob('*/state.json'))
+                self.assertEqual(self.invoke('audit'), 1)
+                states = set((self.project/'artifacts/ux-gan').glob('*/state.json')) - previous
+                self.assertEqual(len(states), 1)
+                state = json.loads(states.pop().read_text())
+                self.assertEqual(state['role_progress']['000-reviewer']['recoveries'], 0)
+
+    def test_explicit_deadline_keeps_checkpoint_without_retry(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_deadline'
+        self.assertEqual(self.invoke('audit', '--phase-timeout', '1'), 1)
+        state, folder = self.state()
+        self.assertEqual(state['role_progress']['000-reviewer']['recoveries'], 0)
+        self.assertIn('Phase timeout', state['reason'])
+        self.assertTrue((folder/'partial-review.md').is_file())
+
+    def test_corrupt_checkpoint_evidence_never_recovers_or_passes(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_corrupt'
+        self.assertEqual(self.invoke('audit'), 1)
+        state, _ = self.state()
+        self.assertEqual(state['role_progress']['000-reviewer']['recoveries'], 0)
+        self.assertFalse((self.project/'docs/ui-ux-review.md').exists())
+
+    def test_zero_role_limit_does_not_remove_required_test_limit(self):
+        state = {'iteration': 0, 'config': {'phase_timeout': 0, 'project': str(self.project), 'test_commands': ['true']},
+                 'expected_source': h.fingerprint(self.project)}
+        with patch.object(h, 'stream_process', return_value=0) as process:
+            self.assertTrue(h.run_tests(state, self.base)[0]['passed'])
+        self.assertEqual(process.call_args.args[-1], 1800)
+
+    def test_null_completion_is_blocked_and_leaves_a_partial_report(self):
+        os.environ['UX_FAKE_CASE'] = 'null_json'
+        self.assertEqual(self.invoke('audit'), 1)
+        state, folder = self.state()
+        self.assertEqual(state['status'], 'blocked')
+        self.assertTrue((folder/'partial-review.md').is_file())
+
+    def test_manual_resume_without_checkpoint_also_exhausts_recovery_budget(self):
+        os.environ['UX_FAKE_CASE'] = 'null_json'
+        self.assertEqual(self.invoke('audit'), 1)
+        state, _ = self.state()
+        for _ in range(3):
+            self.assertEqual(self.invoke('resume', state['run_id']), 1)
+        state, _ = self.state()
+        record = state['role_progress']['000-planner']
+        self.assertEqual(record['recoveries'], 2)
+        self.assertEqual(record['invocations'], 3)
+        self.assertTrue(record['exhausted'])
+
+    def test_narrowing_sandbox_cannot_bypass_checkpoint_findings(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_readonly_resume'
+        self.assertEqual(self.invoke('audit'), 1)
+        state, folder = self.state()
+        self.assertEqual(self.invoke('resume', state['run_id'], '--role-sandbox', 'read-only'), 1)
+        state, _ = self.state()
+        self.assertIn('dropped earlier', state['reason'])
+        self.assertIn('Issue 99', (folder/'partial-review.md').read_text())
+        self.assertFalse((self.project/'docs/ui-ux-review.md').exists())
+
+    def test_full_result_cannot_bypass_an_unfinished_checkpoint(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_bypass'
+        self.assertEqual(self.invoke('audit'), 1)
+        state, folder = self.state()
+        self.assertEqual(state['status'], 'blocked')
+        self.assertIn('Issue 99', (folder/'partial-review.md').read_text())
+        self.assertFalse((self.project/'docs/ui-ux-review.md').exists())
+
+    def test_browser_fallback_uses_a_new_evidence_hash_namespace(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_browser_after_save'
+        with patch.object(h, 'select_backend', return_value=('playwright-mcp', '')):
+            self.assertEqual(self.invoke('audit'), 0)
+        state, folder = self.state()
+        record = state['role_progress']['000-planner']
+        self.assertEqual(state['backend'], 'local-playwright')
+        self.assertEqual(record['recoveries'], 0)
+        self.assertEqual(record['invocations'], 2)
+        self.assertNotEqual(record['evidence_hashes']['d'], h.digest(folder/'000-planner/screenshots/d.png'))
+
+    def test_manual_resume_keeps_rejected_draft_and_consumes_recovery_budget(self):
+        os.environ['UX_FAKE_CASE'] = 'checkpoint_rejected'
+        self.assertEqual(self.invoke('audit'), 1)
+        state, folder = self.state()
+        self.assertIn('viewport', state['reason'])
+        self.assertEqual(self.invoke('resume', state['run_id']), 0)
+        result, _ = self.state()
+        record = result['role_progress']['000-reviewer']
+        self.assertEqual(record['recoveries'], 1)
+        role = folder/record['directory']
+        data = json.loads((role/'prompt-attempt-2.txt').read_text().split('\nINPUT:\n', 1)[1])
+        self.assertIn('viewport', data['rejected_checkpoint']['reason'])
+        self.assertTrue(Path(data['rejected_checkpoint']['path']).is_relative_to(role))
+        self.assertIsNone(json.loads((folder/'status.json').read_text())['partial_report'])
+
     def test_focused_run_skips_unrequested_references_and_declares_scope(self):
         self.assertEqual(self.invoke("run", "--profile", "focused", "--focus", "投稿の保存"), 0)
         state, folder = self.state()

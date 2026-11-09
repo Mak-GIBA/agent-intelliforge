@@ -99,11 +99,18 @@ Reuse an existing server and stop only previews the harness started. Use disposa
 | `--review PATH` | Existing review; default latest for app |
 | `--reference-url URL` | Official comparison URL; repeatable |
 | `--max-iterations N` | Default 5 |
-| `--phase-timeout SECONDS` | Default 1800 per Codex execution/check |
+| `--phase-timeout SECONDS` | Evaluation wall deadline; default 0 (none). Explicit positive limits are honored |
+| `--idle-timeout SECONDS` | Default 900 without verified evaluation progress |
 | `--browser auto` | Browser Plugin → Playwright MCP → logged failure/local fallback |
 | `--browser local-playwright` | Explicit local adapter |
 | `--model MODEL` | Override configured model for this run |
 | `--brief TEXT` | Audience/main-task context |
+
+Wait for completion using progress/recovery messages instead of adding a short deadline. Observations are checkpointed with host validation feedback, allowing the role to correct recording mismatches before final output. Idle evaluation roles and recognized model disconnects may resume at most twice in the same run. Repeated images, operations or wording do not extend idle time. Authentication, approval, explicit deadlines, user interruption and interrupted fixer edits never auto-retry.
+
+The existing maximum still counts fixer → reviewer cycles (default five), with two non-improving reviews stopping as stalled. Resume retains consumed iteration/recovery counts. Startup/browser limits remain; fixers and required check commands retain a default 1800-second limit.
+
+Resume preserves saved settings. `resume RUN_ID --phase-timeout 0 --idle-timeout 900` explicitly changes future execution limits with an audit trail. Interrupted runs retain `partial-review.md` with verified observations, remaining work and the stop reason. Partial results are not a pass or a completed whole-app review.
 
 Screenshots/operations establish findings; code supports diagnosis/fixes. Group findings by root cause and fix at most 3 groups per iteration. Independent evaluation checks Critical/High resolution, required flows at Desktop 1440×900, Tablet 768×1024, Mobile 390×844, applicable error/cancel states, four user perspectives, required tests/evidence/references, and no new major problem or clutter.
 

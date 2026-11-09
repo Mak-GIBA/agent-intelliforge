@@ -54,7 +54,7 @@ or no matching notes does not block a run.
    full/focused behavior is preserved. Do not create a whole design contract for a minor CSS edit.
 
    If the harness must own the preview process, add `--start-command '<repo start command>'`. Repeat `--test-command` for required checks. Use test data and the app's isolated test environment for create/edit/delete operations. Public send, publish, charge and production-data actions need authorization from the user's request.
-5. Keep the process running until it completes, updating the user from its phase messages. Inspect its status and exit code; an interrupted, blocked or incomplete run is not a pass. Resume with `resume <run-id> --project <app-dir>` after resolving the cause.
+5. Follow progress/recovery messages until completion. Do not add a short `--phase-timeout` unless the user requests a deadline, or replace unfinished work with a narrower new run. Inspect status and exit code; interrupted, blocked or incomplete is not a pass. After resolving a cause, use `resume <run-id> --project <app-dir>`; saved iteration/recovery counts remain in force. See the runtime guide for limits and partial results.
 6. Open the report and representative before/after images. Report screen/flow counts, severity counts, changes, remaining issues and limits, with links. Say that this is AI evaluation from the novice perspective; do not claim human usability testing.
 
 The harness uses existing Codex model/auth settings and independent planner/reviewer/fixer executions. `UX_GAN_CHILD=1` marks a child execution: in that case follow the supplied role and **never start another harness**.
