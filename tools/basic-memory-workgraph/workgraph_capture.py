@@ -105,6 +105,14 @@ class Capture:
             fd=os.open(ignored,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
             with os.fdopen(fd,'w') as stream:stream.write('*\n')
         state=recall.object_file(path) if path.exists() else {'receipts':{}}
+        if receipt.get('status')=='updated':
+            # A verified update supersedes earlier expectations for this note only.
+            latest={(ref['project'],ref['identifier']):ref['fingerprint'] for ref in receipt.get('references',[])}
+            for previous in state['receipts'].values():
+                if previous.get('status') not in ('saved','updated','duplicate'):continue
+                for ref in previous.get('references',[]):
+                    key=(ref['project'],ref['identifier'])
+                    if key in latest:ref['fingerprint']=latest[key]
         state['receipts'][receipt['candidate']]=receipt
         recall.atomic(path,state)
     def candidate(self,data):

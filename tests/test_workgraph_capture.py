@@ -70,6 +70,31 @@ class CaptureTests(unittest.TestCase):
         prepared=self.service.prepare(data)
         decisions=[{'id':prepared['matches'][0]['id'],'decision':'update','reason':'Same procedure, new limit'}]
         self.assertEqual(self.apply(data,decisions)['status'],'updated');self.assertEqual(self.backend.writes,2)
+        self.assertEqual(self.service.finish(self.ticket,self.token,'complete','implementation')['status'],'updated')
+    def update_fixture(self,observation):
+        data=candidate();data.update(action='update',target='validations/synthetic-fixture',change_evidence='New bounded observation.')
+        data['note']+='- [limit] '+observation+'\n'
+        prepared=self.service.prepare(data)
+        decisions=[{'id':row['id'],'decision':'update' if row['identifier']==data['target'] else 'distinct','reason':'Same note with new evidence' if row['identifier']==data['target'] else 'Different procedure'} for row in prepared['matches']]
+        return self.apply(data,decisions)
+    def test_multiple_updates_and_revisiting_an_earlier_candidate_can_finish(self):
+        self.apply(candidate())
+        for observation in ('First checked limit.','A revised checked limit.','First checked limit.'):
+            self.assertEqual(self.update_fixture(observation)['status'],'updated')
+        self.assertEqual(self.service.finish(self.ticket,self.token,'complete','implementation')['status'],'updated')
+    def test_external_edit_after_verified_update_still_prevents_completion(self):
+        self.apply(candidate());self.update_fixture('Checked limit.')
+        self.backend.notes['validations/synthetic-fixture']['content']+='external change'
+        self.assertEqual(self.service.finish(self.ticket,self.token,'complete','implementation')['status'],'failed')
+    def test_updating_one_note_does_not_hide_another_notes_external_edit(self):
+        self.apply(candidate());other=candidate();other['note']=other['note'].replace('Synthetic fixture','Other procedure')
+        self.apply(other);self.update_fixture('Checked limit.')
+        self.backend.notes['validations/other-procedure']['content']+='external change'
+        self.assertEqual(self.service.finish(self.ticket,self.token,'complete','implementation')['status'],'failed')
+    def test_failed_update_remains_failed_at_finish(self):
+        self.apply(candidate());self.backend.corrupt=True
+        self.assertEqual(self.update_fixture('Checked limit.')['status'],'failed')
+        self.assertEqual(self.service.finish(self.ticket,self.token,'complete','implementation')['status'],'failed')
     def test_concurrent_source_or_configuration_change_rejects_stale_review(self):
         data=candidate();prepared=self.service.prepare(data)
         self.config['skillMode']='off';self.write_config()
