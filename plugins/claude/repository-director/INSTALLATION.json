@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "repository-director",
   "name": "Repository Director",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "legacy": {
     "script": "install_repository_director.sh",
     "actions": {

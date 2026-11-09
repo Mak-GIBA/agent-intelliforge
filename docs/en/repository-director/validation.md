@@ -4,6 +4,16 @@
 
 [Overview](README.md) · [Installation](installation.md) · [Usage](usage.md)
 
+## 1.4.0: separate reviewer and visual explanations
+
+The 45 kit, 52 integration and 5 mock Git/PR/MR checks passed, as did Skill validation. The entry body fell from 1,820 to 1,707 o200k_base tokens; details remain in existing references.
+
+An independent agent assessed four synthetic cases: a PR-only agreement, an implementation contradicting the request despite green CI, a changed head after review, and unavailable delegation. It preserved authorization, returned required fixes, rechecked new heads and refused implementer self-merge. This was a decision exercise, not live host operations, and separate agents sharing an account were distinguished from human approval.
+
+Another agent documented a synthetic CLI in three docs plus README/AGENTS, using one built-in generated illustration in both purpose and overview. The image was displayed and checked against prose/code; annotated files and Mermaid calls were compared with source. Two existing tests and CLI checks passed. Seven source/dependency/input files retained their SHA-256 hashes; document inspection reported no errors or warnings.
+
+This is one small CLI example, not a reader-comprehension study or general quality guarantee. Mermaid rendering, the installed console entry and unavailable image generation were not exercised. Initial checks created automatically removed files in the standard temporary area; later checks used a project-local temporary area. Reference projects and real user data were not changed or reused.
+
 ## Reference structure
 
 LISTBOX's actual AGENTS, README, document index and six functional, screen, API, data, architecture/operations and testing specifications were read.

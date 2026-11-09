@@ -18,7 +18,7 @@ import sys
 import tempfile
 from urllib.parse import unquote, urlsplit
 
-VERSION = '1.3.0'
+VERSION = '1.4.0'
 BEGIN = '<!-- repository-director:begin -->'
 END = '<!-- repository-director:end -->'
 DRAFT = '<!-- repository-director:draft -->'

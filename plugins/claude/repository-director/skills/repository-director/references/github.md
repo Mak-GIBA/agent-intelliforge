@@ -134,7 +134,7 @@ gh pr review "$PR_NUMBER" -R "$REPO" --comment --body-file "$BODY_FILE"
 ```
 
 Use draft status when requested or when the agreed workflow permits an incomplete handoff with a clear reason.
-Merge is separate from PR creation: require an explicit request and recheck current head/diff/checks/review conditions.
+Merge requires an explicit request or an established agreement for this scope. Follow `workflow.md`: a separate reviewer agent checks the actual head/diff/checks/review conditions and performs the merge with the expected head SHA.
 Approval and request-changes reviews are distinct actions; do not select
 one merely because a review was requested. Re-read the actual body/comment/review after publication and
 return its URL. On timeout, inspect existing results before retrying. Do not claim issue closure from PR

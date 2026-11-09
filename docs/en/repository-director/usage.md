@@ -15,7 +15,10 @@ Inspect the overall structure and requested scope, then trace functionality, per
 Default to three docs: purpose.md for business goals/background and main features, architecture.md for file responsibilities,
 entrypoints and major call/data flows, and development.md for execution/testing/change/operations procedures.
 README introduces the repository and how to install/use it, linking to these docs. Reuse existing specifications, names and indexes.
-Use annotated file trees and Mermaid diagrams tied to actual files/functions. Keep investigation scope, creation history and
+Introduce purpose, concepts and the overview with generated illustrations; use annotated trees and Mermaid for exact files/functions,
+real screenshots for UI instructions and data-derived plots for measurements. Save figures in the project, close to their explanation,
+with captions and alt text. Reuse suitable existing images; report unavailable image generation in the conversation.
+Keep investigation scope, creation history and
 work reports out of the body; retain necessary uncertainty next to the affected behavior. Distinguish observed implementation,
 agreed requirements and proposals. Test files do not prove test execution.
 A documentation-only request does not change source, dependency definitions, lockfiles or databases.
@@ -28,13 +31,13 @@ For delegated policy decisions, say so explicitly. Development defaults include 
 Ask for goals, requirements, architecture and verification for new work. During implementation, read the relevant documents, make the requested changes and checks, and update affected documentation.
 Use research when technical uncertainty matters, rather than for every change. Small changes do not regenerate the document set.
 
-## Delegate work through a PR/MR
+## Delegate work through review and merge
 
 Ask in plain language: “Use a task branch, implement and test the change, commit, push and open a PR.
-I will decide when to merge. Respect our existing team rules.”
+A separate agent should review and merge it when the agreed checks and approvals are satisfied. Respect our existing team rules.”
 The agent first discovers the existing policy, base branch and templates, then agrees the target,
 operations and conditions in a short proposal. The suggested default is branch → implement/test →
-commit → push → create/update PR/MR → human merge decision.
+commit → push → create/update PR/MR → separate agent review → that reviewer performs the merge.
 
 Record the agreement in the existing policy and link it from AGENTS. Git workflow setup alone does
 not generate a full set of specification drafts. Reuse the scoped agreement and the existing task
@@ -46,8 +49,11 @@ verification does not mean ready for review; use a Draft only for a useful, agre
 handoff. If disconnected, finish the possible local work, prepare the description and report what
 was not pushed or published. Inspect existing results before retrying uncertain operations.
 
-Merge requires a separate explicit request and fresh checks of the target, diff, required tests and
-reviews. The default does not include releases or branch-protection changes.
+Merge requires an explicit request or an established agreement for this scope; a PR-only agreement stays PR-only.
+A reviewer agent distinct from the implementer checks the actual diff, source, documents, verification, CI and approvals,
+returns required fixes, and rechecks the new head before personally merging with the expected SHA.
+If delegation or required approvals/checks are unavailable, report the gap and hand off instead of self-merging.
+Agents sharing an account do not replace human or platform approval. Releases and branch-protection changes need their own authorization.
 
 At start/resumption, inspect related branches/PRs, pending changes, dependencies and integration order.
 Reuse continuing work; isolate independent tasks with a separate branch/worktree. Verify against the latest
