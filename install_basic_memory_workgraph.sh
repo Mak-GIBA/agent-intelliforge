@@ -25,6 +25,7 @@ set -euo pipefail
 #   BM_AUTO_MODE=always  # 毎ターン
 #   BM_AUTO_MODE=off     # 自動保存しない
 #   BM_CORRECTION_MODE=scoped # 文脈付き修正指示の保存（既定off）
+#   BM_DECISION_MODE=scoped # 案件内の判断経緯を保存（既定off）
 #   BM_CASE_MODE=reusable # 結果のある有用な具体事例（既定off）
 #   BM_CASE_MODE=progressive # 未完了の改善シーケンスと採用推定も段階的に保存
 #   BM_SKILL_MODE=auto    # 検証済みSkillの登録（既定review）
@@ -62,7 +63,7 @@ case "${1:-}" in
     echo "Usage: bash install_basic_memory_workgraph.sh [--configure-only | --update [--dry-run]]"
     echo "--update: 登録済みの保存先を検出し、設定・hooks・CLI・スキーマを更新。必要なら検索用PyYAMLを準備します。コード取得やBasic Memory本体の更新は行いません。"
     echo "--configure-only: 設定とフックだけを更新。既存の保存先とモードを維持。"
-    echo "MEMORY_PROJECT / BM_AUTO_MODE / BM_CORRECTION_MODE / BM_CASE_MODE / BM_SKILL_MODE で設定を指定します。"
+    echo "MEMORY_PROJECT / BM_AUTO_MODE / BM_CORRECTION_MODE / BM_DECISION_MODE / BM_CASE_MODE / BM_SKILL_MODE で設定を指定します。"
     echo "BM_RECALL_CLI には、使用するBasic Memory実行ファイルのパスを指定できます。"
     echo "BM_RECALL_PYTHON で検索用Pythonを指定できます。通常の導入・更新時は必要なら専用venvにPyYAMLを準備します。"
     exit 0

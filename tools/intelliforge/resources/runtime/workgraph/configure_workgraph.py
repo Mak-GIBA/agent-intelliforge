@@ -55,7 +55,7 @@ def write_file(path, content, stamp):
         temporary.unlink(missing_ok=True)
 
 
-def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None, recall_cli=None):
+def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None, recall_cli=None, decision_mode=None):
     policy = (SOURCE / "memory-policy.md").read_text(encoding="utf-8").strip()
     hook_source = (SOURCE / "hooks/basic_memory_workgraph.py").read_text(encoding="utf-8")
     if not policy:
@@ -79,6 +79,7 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
     for key, override, default, allowed in (
         ("caseMode", case_mode, "off", ("off", "reusable", "progressive")),
         ("correctionMode", correction_mode, "off", ("off", "scoped")),
+        ("decisionMode", decision_mode, "off", ("off", "scoped")),
         ("skillMode", skill_mode, "review", ("off", "review", "auto")),
     ):
         value = override if override is not None else auto_config.get(key, default)
@@ -147,7 +148,7 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
         if source.is_file():
             changes.append((auto_dir / "templates" / source.relative_to(SOURCE / "templates"),
                             source.read_text(encoding="utf-8")))
-    for name in ("workgraph_tools.py", "workgraph_sequence.py", "workgraph_github.py", "workgraph_recall.py", "recall_runtime.py", "requirements-export.txt"):
+    for name in ("workgraph_tools.py", "workgraph_sequence.py", "workgraph_github.py", "workgraph_recall.py", "workgraph_capture.py", "recall_runtime.py", "requirements-export.txt"):
         changes.append((auto_dir / name, (SOURCE / name).read_text(encoding="utf-8")))
     # This entrypoint applies only to explicit memory sharing requests. It never
     # grants sharing permission or schedules uploads from automatic save hooks.
@@ -186,14 +187,14 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
             )
             changes.append((legacy, wrapper))
     message = (f"Configured {codex_dir}: project={selected_project}, mode={selected_mode}, "
-               f"correction={auto_config['correctionMode']}, case={auto_config['caseMode']}, skill={auto_config['skillMode']}, checkpointOnCompact=false")
+               f"correction={auto_config['correctionMode']}, decision={auto_config['decisionMode']}, case={auto_config['caseMode']}, skill={auto_config['skillMode']}, checkpointOnCompact=false")
     if runtime is None:
         message += "\nRecall runtime unavailable: run bash install_basic_memory_workgraph.sh --update to prepare PyYAML."
     return changes, message
 
 
-def configure(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None, recall_cli=None):
-    changes, message = prepare_configuration(codex_dir, project, mode, case_mode, skill_mode, correction_mode, recall_cli)
+def configure(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None, recall_cli=None, decision_mode=None):
+    changes, message = prepare_configuration(codex_dir, project, mode, case_mode, skill_mode, correction_mode, recall_cli, decision_mode)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S-%f")
     originals = {path: (path.read_bytes(), path.stat().st_mode & 0o777) if path.exists() else None for path, _ in changes}
     touched = []
@@ -219,11 +220,12 @@ def main():
     parser.add_argument("--case-mode", default=os.environ.get("BM_CASE_MODE"))
     parser.add_argument("--skill-mode", default=os.environ.get("BM_SKILL_MODE"))
     parser.add_argument("--correction-mode", default=os.environ.get("BM_CORRECTION_MODE"))
+    parser.add_argument("--decision-mode", default=os.environ.get("BM_DECISION_MODE"))
     parser.add_argument("--recall-cli", type=Path, default=os.environ.get("BM_RECALL_CLI"), help="Compatible installed Basic Memory executable; never installs or migrates its database")
     args = parser.parse_args()
     try:
         configure(args.codex_dir.expanduser().resolve(), args.project, args.mode,
-                  args.case_mode, args.skill_mode, args.correction_mode, args.recall_cli)
+                  args.case_mode, args.skill_mode, args.correction_mode, args.recall_cli, args.decision_mode)
     except (OSError, ValueError, TypeError, AttributeError, subprocess.TimeoutExpired) as exc:
         parser.exit(1, f"Configuration failed: {exc}\n")
 

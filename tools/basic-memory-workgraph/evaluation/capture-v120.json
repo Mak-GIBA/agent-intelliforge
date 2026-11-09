@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-06",
+  "workgraph_version": "1.2.0",
+  "basic_memory_cli": "0.24.1",
+  "isolation": "Synthetic registered project/config/database; existing user notes were not part of the experiment.",
+  "initial_batch": {
+    "status": "incomplete",
+    "cases": [
+      {
+        "id": "correction",
+        "model_outcome": "capture",
+        "capture": "saved",
+        "finish": "saved",
+        "new_notes": 1,
+        "changed_notes": 0
+      },
+      {
+        "id": "lesson",
+        "model_outcome": "capture",
+        "capture": "saved",
+        "finish": "saved",
+        "new_notes": 1,
+        "changed_notes": 0
+      },
+      {
+        "id": "decision",
+        "model_outcome": "capture",
+        "status": "failed"
+      },
+      {
+        "id": "case",
+        "model_outcome": "capture",
+        "capture": "saved",
+        "finish": "saved",
+        "new_notes": 1,
+        "changed_notes": 0
+      },
+      {
+        "id": "duplicate",
+        "model_outcome": "duplicate",
+        "capture": "duplicate",
+        "finish": "duplicate",
+        "new_notes": 0,
+        "changed_notes": 0
+      },
+      {
+        "id": "ordinary",
+        "model_outcome": "out_of_scope",
+        "finish": "out_of_scope",
+        "new_notes": 0,
+        "changed_notes": 0
+      }
+    ],
+    "notes": 4,
+    "elapsed_seconds": 147.4,
+    "limit_seconds": 300,
+    "retries": 0,
+    "limits": "One synthetic model batch; driver performs actual CLI writes and readbacks. Does not prove future capture rates, semantic truth, acceptance or the agent independently following the CLI workflow.",
+    "model_invocations": 1
+  },
+  "post_fix_machine_replay": {
+    "status": "passed",
+    "cases": [
+      {
+        "id": "correction",
+        "model_outcome": "capture",
+        "capture": "saved",
+        "finish": "saved",
+        "new_notes": 1,
+        "changed_notes": 0
+      },
+      {
+        "id": "lesson",
+        "model_outcome": "capture",
+        "capture": "saved",
+        "finish": "saved",
+        "new_notes": 1,
+        "changed_notes": 0
+      },
+      {
+        "id": "decision",
+        "model_outcome": "capture",
+        "capture": "saved",
+        "finish": "saved",
+        "new_notes": 1,
+        "changed_notes": 0
+      },
+      {
+        "id": "case",
+        "model_outcome": "capture",
+        "capture": "saved",
+        "finish": "saved",
+        "new_notes": 1,
+        "changed_notes": 0
+      },
+      {
+        "id": "duplicate",
+        "model_outcome": "duplicate",
+        "capture": "duplicate",
+        "finish": "duplicate",
+        "new_notes": 0,
+        "changed_notes": 0
+      },
+      {
+        "id": "ordinary",
+        "model_outcome": "out_of_scope",
+        "finish": "out_of_scope",
+        "new_notes": 0,
+        "changed_notes": 0
+      }
+    ],
+    "notes": 5,
+    "elapsed_seconds": 17.8,
+    "limit_seconds": 300,
+    "retries": 0,
+    "model_invocations": 0,
+    "replayed_model_output": true,
+    "limits": "One synthetic model batch; driver performs actual CLI writes and readbacks. Does not prove future capture rates, semantic truth, acceptance or the agent independently following the CLI workflow."
+  },
+  "finding": "Byte-identical Decision evidence fields rejected valid paraphrases; the fix validates complete field structure and leaves semantic comparison to the agent.",
+  "limits": "One real model invocation, no model retry. CLI write/readback tested through the driver, not independent agent tool-use compliance. Local retrieval checked; embedding-index health and future capture rate not established."
+}

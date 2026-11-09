@@ -90,6 +90,25 @@ def python_in(directory):
     return directory / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
 
 
+def workgraph_cli():
+    """Reuse an installed CLI; do not install/upgrade Core or inspect its database."""
+    candidates=[]
+    native=Path(os.environ.get('CODEX_HOME',Path.home()/'.codex'))/'basic-memory-workgraph/config.json'
+    if native.is_file():
+        try:candidates.append(json.loads(native.read_text()).get('recallCli'))
+        except (ValueError,OSError):pass
+    candidates.extend([ [path] for name in ('basic-memory','bm') if (path:=shutil.which(name)) ])
+    for command in candidates:
+        if (not isinstance(command,list) or len(command)!=1 or not isinstance(command[0],str)
+                or not Path(command[0]).is_absolute() or not Path(command[0]).is_file()):continue
+        try:
+            result=subprocess.run([*command,'--version'],capture_output=True,text=True,timeout=5)
+            match=re.search(r'Basic Memory version:\s*([0-9]+\.[0-9]+\.[0-9]+)',result.stdout)
+            if result.returncode==0 and match:return {'recallCli':command,'recallVersion':'Basic Memory version: '+match[1]}
+        except (OSError,subprocess.TimeoutExpired):pass
+    return {}
+
+
 def environment(home, agent, state):
     value = {**os.environ, 'INTELLIFORGE_AGENT': agent, 'INTELLIFORGE_STATE_DIR': str(state),
              'INTELLIFORGE_KIT_HOME': str(home), 'PYTHONDONTWRITEBYTECODE': '1',
@@ -181,7 +200,13 @@ def prepare_dependencies(kit, agent, home, bundle, config, state):
             if name == 'memory-policy.md' or name.startswith('templates/')})
         path = policy / 'config.json'; check_path(path)
         if not path.exists():
-            atomic_write(path, b'{"mode":"smart","caseMode":"progressive","skillMode":"review","correctionMode":"scoped"}\n')
+            atomic_write(path, b'{"mode":"smart","caseMode":"progressive","skillMode":"review","correctionMode":"scoped","decisionMode":"off"}\n')
+        policy_config=json.loads(path.read_text())
+        if not policy_config.get('recallCli'):
+            binding=workgraph_cli()
+            if binding:
+                policy_config.update(binding)
+                atomic_write(path,(json.dumps(policy_config,ensure_ascii=False)+'\n').encode())
         config['policy'] = str(policy)
         # Only host-manager commands register the upstream plugin/MCP.
         # Existing Basic Memory projects, schemas and sharing permissions are not replaced.
@@ -467,7 +492,7 @@ def kit_run(identity, agent, arguments, state):
             raise ForgeError('--tool must be a Python helper filename')
         matches = [p for p in bundle.rglob(options.tool) if 'tests' not in p.parts and p.is_file()]
         if len(matches) != 1: raise ForgeError('Helper not found or ambiguous: ' + options.tool)
-        allowed = {'workgraph': {'workgraph_tools.py','workgraph_github.py','workgraph_recall.py','install_schemas.py'},
+        allowed = {'workgraph': {'workgraph_tools.py','workgraph_github.py','workgraph_recall.py','workgraph_capture.py','install_schemas.py'},
                    'office': {'office.py'}, 'kotonoha': {'check.py','writing_lint.py'},
                    'repository-director': {'repository.py','forge_inspect.py','github_inspect.py'}, 'ux-stack': {'harness.py','ux_contract.py','design_mcp.py'}}
         if identity in allowed and options.tool not in allowed[identity]:
@@ -503,7 +528,7 @@ def hook_run(agent, arguments, state):
         settings_value = module.read_object(policy / 'config.json')
         policy_text = (policy / 'assets/memory-policy.md').read_text(encoding='utf-8').strip()
         # Validate the same supported modes by calling the original with the assets view.
-        for key, allowed, default in [('mode', ('smart','always','off'), 'smart'), ('caseMode', ('off','reusable','progressive'), 'off'), ('skillMode', ('off','review','auto'), 'review'), ('correctionMode', ('off','scoped'), 'off')]:
+        for key, allowed, default in [('mode', ('smart','always','off'), 'smart'), ('caseMode', ('off','reusable','progressive'), 'off'), ('skillMode', ('off','review','auto'), 'review'), ('correctionMode', ('off','scoped'), 'off'), ('decisionMode', ('off','scoped'), 'off')]:
             settings_value[key] = settings_value.get(key, default)
             if settings_value[key] not in allowed: raise ValueError('Invalid mode')
         if not policy_text: raise ValueError('Missing policy')
@@ -514,6 +539,10 @@ def hook_run(agent, arguments, state):
     import shlex
     module.RECALL_COMMAND = shlex.join(['intelliforge','kit-run','workgraph','--agent',agent,
                                        '--tool','workgraph_recall.py','--',
+                                       '--codex-dir',str(codex_dir),'--policy-root',str(policy)])
+    module.CAPTURE_SOURCE = home / 'bundle/workgraph_capture.py'
+    module.CAPTURE_COMMAND = shlex.join(['intelliforge','kit-run','workgraph','--agent',agent,
+                                       '--tool','workgraph_capture.py','--',
                                        '--codex-dir',str(codex_dir),'--policy-root',str(policy)])
     def recall_service(workdir=None):
         helper = load(module.RECALL_SOURCE, '_intelliforge_recall')

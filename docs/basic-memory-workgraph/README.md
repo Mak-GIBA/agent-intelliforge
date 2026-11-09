@@ -20,6 +20,7 @@ Codexが試行・つまずき・検証済みの対処を振り返り、別の作
 | `codex@basic-memory` plugin | Basic Memory | CodexからBasic Memoryを使う連携機能とSkillを提供 |
 | Workgraphの方針・スキーマ・Graph索引 | このリポジトリ | Rule、Workflow、Validation、Correction、Case等の保存基準と形式を定義 |
 | Workgraphの追加hooks | このリポジトリ | 作業前の知識検索と、作業後の保存価値の評価をCodexへ促す |
+| `workgraph_capture.py` | このリポジトリ | 保存候補の重複確認、CLIによる条件付き保存、読み戻し、終了時の結果確認 |
 | `workgraph_tools.py` / `workgraph_sequence.py` | このリポジトリ | 共有、インポート、JSONL出力、記憶の構造点検、Skill登録とCaseの整合性検証 |
 | `workgraph_github.py`と共有手順 | このリポジトリ | privateリポジトリへのPR作成と、マージ後の取り込み・更新 |
 

@@ -47,13 +47,13 @@ Default, Case/registration-enabled, and automation-off settings also met the red
 
 ### Read in Plan; evaluate writes in implementation mode
 
-The start hook supplies seed retrieval results, application-check instructions, and a session/turn-specific arming command. Codex arms persistence only after confirming implementation mode and write availability. Plan/read-only and Stop continuations must not arm. Application checks can request one reminder for unresolved conditions; capture evaluation is separate and requires an armed turn.
+The start hook supplies seed retrieval, application checks and a turn-specific finish command. In actual implementation mode, Codex reviews capture candidates, uses prepare/apply for guarded writes and readback, then finishes. Completed/duplicate/out-of-scope/no-candidate outcomes need no extra evaluation; pending/failed can request one Stop evaluation. Legacy arm remains compatible. Plan/read-only and Stop continuations must not arm; application checks independently allow one reminder.
 
 Plan can recall Memory. A short Stop gating process still runs, but not an extra capture turn. Missing/stale tokens, another turn, invalid setup, or `auto=off` suppress evaluation; turns begun before update have no token.
 
 Codex 0.157.1's `permission_mode` reflects approval settings, not collaboration mode ([implementation](https://github.com/openai/codex/blob/rust-v0.157.1/codex-rs/core/src/hook_runtime.rs#L1031)). Arming therefore depends on Codex checking mode; omission skips evaluation. Explicit `permission_mode=plan` is also refused. Policy forbids writing after a later switch to Plan, even if armed. This is not direct host-mode verification or an MCP-wide write enforcement boundary.
 
-State contains only a random control token, candidate/armed flags, and format version, not conversation content. Tokens are consumed at Stop to prevent duplicate/concurrent evaluation. Raw transcripts are not read.
+State holds a control token, candidate/finish flags, format version and workspace fingerprint, never conversation bodies. Capture receipts contain references/fingerprints only. Finish closes completed work; pending work permits one Stop continuation. Private diagnostics retain at most 64 records/14 days; old entries are removed on the next write. Raw transcripts are not read.
 
 ### Note locations
 

@@ -20,6 +20,16 @@ The sequence is search → read scope/exceptions → adopt, exclude, or defer �
 
 Implementation records live temporarily in the task directory's private, Git-ignored `.workgraph-recall/`. Source fingerprints, artifact hashes, and mapping checks detect changes or missing evidence; they do not establish semantic correctness. Codex must inspect the actual content. Successful checks remove the task record. Stop requests at most one reminder, then unresolved conditions must be reported as unverified. Plan/read-only creates no application records or graph notes, and usage diaries are never captured. See the [application guide](../../../tools/basic-memory-workgraph/templates/RECALL.md) and [runtime setup](installation.md#recall-runtime).
 
+### Preserve project decisions
+
+Enable `BM_DECISION_MODE=scoped bash install_basic_memory_workgraph.sh --configure-only` (default off). Meaningful project choices go to `codex/decisions/` with actor, context, alternatives, rationale, consequences, evidence and revisit conditions. Separate proposals, decisions, verification and acceptance. Project scope needs no cross-project generalization; routine TODOs and completion reports remain excluded. Repository identity prevents automatic adoption in another project; existing notes need no migration. See [Decisions](../../../tools/basic-memory-workgraph/templates/DECISIONS.md).
+
+### Verify capture
+
+`workgraph_capture.py prepare` searches same-concept notes. Codex reviews every match before `apply` performs a guarded create/update and readback through the configured Core CLI. An error can follow a committed write, so no blind retry is made. Before finalizing, `finish` records saved, updated, duplicate, no candidate, out of scope, pending or failed. Only pending/failed requests one Stop evaluation. `status` reports private enum-only diagnostics, capped at 64 records/14 days; temporary receipts in `.workgraph-capture/` are Git-ignored. Plan/read-only allows retrieval only. See [Capture procedure](../../../tools/basic-memory-workgraph/templates/CAPTURE_SAVE.md).
+
+The same recall ticket can refine query terms while retaining adopted conditions; changed sources alone lose their selections. Keep the task directory and project scope unchanged.
+
 ### Learn from the agent's own workflow
 
 Review attempted method → obstacle → changed method → verification → next use. Verified workarounds can qualify without a user correction. If the remedy is verified but the cause is unknown, retain that distinction. Lessons meeting all five criteria become conditional Rules, Workflows, or Validations. Do not save failure-only records, untested remedies, generic advice, private reasoning transcripts, or raw logs. Update existing knowledge only for material new evidence or conditions; no Case or automatic Skill setting is needed for ordinary reusable lessons.
@@ -192,6 +202,7 @@ BM_AUTO_MODE=smart bash install_basic_memory_workgraph.sh --configure-only
 |---|---|
 | `BM_AUTO_MODE` | `smart` (default): evaluate candidates after confirming implementation mode; `always`: evaluate each implementation turn with the same admission criteria; `off`: disable automatic capture/review/registration |
 | `BM_CORRECTION_MODE` | `off` (default): explicit only; `scoped`: observed corrections with context and limits, including unknown outcomes |
+| `BM_DECISION_MODE` | `off` (default): explicit only; `scoped`: meaningful project decisions with actor, rationale, alternatives and revisit conditions |
 | `BM_CASE_MODE` | `off` (default): explicit only; `reusable`: useful cases with results; `progressive`: useful corrections, downstream/reuse requests, non-obvious verified successes, and later adoption/reversal evidence |
 | `BM_SKILL_MODE` | `off`: no automatic review; `review` (default): assess packaging; `auto`: register after review and validation |
 
@@ -205,6 +216,7 @@ New installations use the following; updates preserve existing values:
 {
   "mode": "smart",
   "correctionMode": "off",
+  "decisionMode": "off",
   "caseMode": "off",
   "skillMode": "review"
 }

@@ -22,7 +22,7 @@ except ImportError:
 
 
 MAX_BYTES = 8 * 1024 * 1024
-NOTE_FOLDERS = {"rules", "workflows", "validations", "cases", "corrections", "artifacts", "projects"}
+NOTE_FOLDERS = {"rules", "workflows", "validations", "cases", "corrections", "artifacts", "projects", "codex/decisions"}
 REVIEW_KEYS = {"privacy_review", "review_sha256"}
 SHARED_KEYS = {"title", "type", "tags", "schema", "sharing_scope", "training_use",
                "capture_kind", "case_format_version", "integrity_status"}
@@ -106,7 +106,7 @@ def relative_path(value):
     if (not value or path.is_absolute() or any(p in ("", ".", "..") for p in value.split("/"))
             or any(ord(c) < 32 for c in value) or ":" in value):
         raise Invalid("Unsafe relative path")
-    if len(path.parts) < 2 or path.parts[0] not in NOTE_FOLDERS or path.suffix != ".md":
+    if len(path.parts) < 2 or not any(value.startswith(folder+'/') for folder in NOTE_FOLDERS) or path.suffix != ".md":
         raise Invalid("Only Markdown notes in known note folders are supported")
     return Path(*path.parts)
 
