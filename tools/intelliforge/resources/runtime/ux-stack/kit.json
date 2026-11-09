@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "ux-stack",
   "name": "UX Stack",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "legacy": {
     "script": "install_codex_ux_stack.sh",
     "actions": {
@@ -93,7 +93,7 @@
   "editable_sources": [
     "tools/codex-ux-stack"
   ],
-  "compatibility": "Legacy behavior unchanged. Plugin/portable installs are a separate opt-in path.",
+  "compatibility": "Existing audit/run/resume commands and final report schemas remain supported. Plugin/portable installs are a separate opt-in path.",
   "package_version": "0.2.0",
   "version_kind": "local kit version; upstream versions are resolved and recorded separately"
 }

@@ -32,8 +32,9 @@ sys.path.insert(0, str(HERE))
 from role_runtime import (browser_failure, child_environment, event_errors, failure_kind,
                           override_sandbox, role_sandbox)
 import contract_runtime
+import role_checkpoint
 
-VERSION = "1.4.0"
+VERSION = "1.6.0"
 VIEWPORTS = {"desktop": (1440, 900), "tablet": (768, 1024), "mobile": (390, 844)}
 PERSPECTIVES = ["first_time", "mistake", "hurried", "skips_explanation"]
 STATES = ["normal", "empty", "invalid_input", "cancel", "back", "double_click",
@@ -47,6 +48,14 @@ class Blocked(Exception):
 
 
 class Cancelled(Exception):
+    pass
+
+
+class IdleTimeout(Blocked):
+    pass
+
+
+class PhaseTimeout(Blocked):
     pass
 
 
@@ -367,6 +376,7 @@ FIX_SCHEMA = obj({
     "changes": arr(obj({"issue_ids": arr(S), "description": S, "simplicity_reason": S})),
     "tests": arr(obj({"command": S, "passed": B, "output_summary": S})),
 })
+COMPLETION_SCHEMA = obj({'status': enum(['complete', 'blocked']), 'reason': S})
 
 
 def validate_schema(value, schema, location="$"):
@@ -419,7 +429,9 @@ def png_dimensions(path):
     return size
 
 
-def validated_evidence(result, role_dir, backend, project, run_id):
+def validated_evidence(result, role_dir, backend, project, run_id, archive=True):
+    if role_dir.is_symlink() or (role_dir / 'screenshots').is_symlink():
+        raise Blocked('Linked role/screenshot directory refused')
     seen = set()
     receipts = {}
     for file in (role_dir / "screenshots").rglob("browser-receipts.jsonl"):
@@ -451,9 +463,11 @@ def validated_evidence(result, role_dir, backend, project, run_id):
                           if not frame or frame.get(key) != expected]
             if mismatches:
                 raise Blocked(f"Screenshot lacks a matching browser-generated receipt: {e['id']} ({', '.join(mismatches)}). Use the actual frame URL/source/hash from ux_inspect.recent_frames, including redirects; replay instead of editing saved results.")
-        dest = project / "docs/ui-ux-review-assets" / run_id / role_dir.name / p.relative_to(role_dir / "screenshots")
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(p, dest)
+        dest = p
+        if archive:
+            dest = project / "docs/ui-ux-review-assets" / run_id / role_dir.name / p.relative_to(role_dir / "screenshots")
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(p, dest)
         archived[e["id"]] = {**e, "path": str(dest), "sha256": digest(dest),
                               "captured_at": receipts.get(p, {}).get("captured_at", now())}
     return archived
@@ -622,11 +636,11 @@ def terminate(proc):
             proc.wait()
 
 
-def stream_process(argv, cwd, env, log_path, timeout):
+def stream_process(argv, cwd, env, log_path, timeout, idle_timeout=0, progress=None):
     """Bounded process with progress heartbeats, private redacted event logs."""
     proc = subprocess.Popen(argv, cwd=cwd, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT, start_new_session=True)
-    start = heartbeat = time.monotonic()
+    start = heartbeat = last_progress = time.monotonic()
     selector = selectors.DefaultSelector()
     selector.register(proc.stdout, selectors.EVENT_READ)
     buffer = b""
@@ -647,18 +661,27 @@ def stream_process(argv, cwd, env, log_path, timeout):
                             out.write(json.dumps(scrub(json.loads(txt)), ensure_ascii=False) + "\n")
                         except ValueError:
                             out.write(json.dumps({"stderr": scrub(txt)}, ensure_ascii=False) + "\n")
+                    out.flush()
                 elapsed = time.monotonic() - start
+                if progress and progress():
+                    last_progress = time.monotonic()
                 if time.monotonic() - heartbeat >= 20:
                     log(f"実行中: {log_path.parent.name} ({int(elapsed)}s)")
                     heartbeat = time.monotonic()
-                if elapsed > timeout:
-                    raise Blocked(f"Phase timeout ({timeout}s): {log_path.parent.name}")
+                if timeout and elapsed > timeout:
+                    raise PhaseTimeout(f"Phase timeout ({timeout}s): {log_path.parent.name}")
                 if proc.poll() is not None and not selector.get_map():
                     break
+                if idle_timeout and time.monotonic() - last_progress > idle_timeout:
+                    raise IdleTimeout(f"No verified progress ({idle_timeout}s): {log_path.parent.name}")
             if buffer:
                 out.write(json.dumps({"stderr": scrub(buffer.decode(errors="replace"))}) + "\n")
+                buffer = b''
         return proc.returncode
     finally:
+        if buffer:
+            with log_path.open('a', encoding='utf-8') as tail:
+                tail.write(json.dumps({'stderr': scrub(buffer.decode(errors='replace'))}) + '\n')
         selector.close()
         terminate(proc)
         proc.stdout.close()
@@ -723,7 +746,7 @@ Do not quota-limit findings: cover the app, then revisit the top and main flows.
 """
 
 
-def role_prompt(role, state, role_dir):
+def role_prompt(role, state, role_dir, checkpoint=False, continuation=None, rejected=None, uncheckpointed=False):
     scope = review_scope(state["config"])
     data = {"project": state["config"]["project"], "url": state["config"]["url"],
             "screenshots_directory": str(role_dir / "screenshots"),
@@ -838,8 +861,54 @@ You are not authorized to call an issue resolved; a separate reviewer will verif
         'Never emit their archived paths or old frame IDs in the current evidence array or current operation steps. '
         'Capture fresh images in this role directory and use their browser frame IDs for every current finding, coverage item and resolved after-image. '
         'Keep earlier issue IDs and root causes; the host retains historical before-images separately.')
-    if role != "references":
+    if role in ("reviewer", "fixer"):
         instructions[role] += " For applicable target-app forms/dialogs, operate Tab/Enter/Escape, visible focus, validation and focus restoration; state not-applicable cases."
+    if checkpoint:
+        data['checkpoint'] = {'helper': str(HERE / 'role_checkpoint.py'),
+                              'directory': str(role_dir), 'schema': str(role_dir / 'schema.json'),
+                              'draft': str(role_dir / 'draft.json')}
+        data['continuation'] = continuation
+        data['rejected_checkpoint'] = rejected
+        data['resume_without_checkpoint'] = uncheckpointed
+        instructions[role] += """
+Save observations incrementally, not only at the end. Read checkpoint.schema for the
+original result fields. Write a JSON object to checkpoint.draft; during observation it
+may omit unfinished top-level fields, but provided values must follow that schema.
+Never invent placeholders or evidence. After each completed flow/viewport (planner:
+first impression and discovered flow; references: each candidate), save the accumulated
+draft atomically by running:
+python3 <checkpoint.helper> save --directory <checkpoint.directory> --input draft.json
+  --stage observing --remaining '<specific remaining work>'
+Repeat --remaining when needed. Save actual evidence metadata and performed coverage
+together, before exploring another case. Do not rewrite browser receipts or host files.
+Once observation is done, finish ALL original result fields in draft.json and save with
+--stage reporting and no --remaining. Then return only {"status":"complete","reason":""}.
+The helper waits for host validation and reports a rejected draft as a command error.
+Correct the named fields from actual receipts/images before finishing; a saved draft
+without host acceptance is not completion. Do not edit the host acknowledgement files.
+The host publishes the original result/report after validation; do not re-emit the large
+draft in the final message. If blocked, save valid partial observations and return
+{"status":"blocked","reason":"specific cause"} without claiming completion.
+When continuation is supplied, preserve its observations, IDs and remaining work.
+For observing continuation, first inspect a fresh current screen: browser state may
+have reset. Do not repeat completed create/send/delete operations; unknown outcomes
+remain unverified. Reporting continuation only reads saved observations/images and
+finishes the draft; do not restart browser exploration or reduce the requested scope.
+If rejected_checkpoint is supplied, read that saved candidate and the exact validation
+reason before doing anything else. It is unverified context, not a completed review.
+Repair the draft using the actual saved images/receipts; keep every finding and all
+valid observations. Current-role saved images remain current for this unchanged source
+and scope. Replay an operation only when its proof is missing or its outcome is unknown.
+Do not repeat all browser work just to repair metadata, and never weaken checks to pass.
+If resume_without_checkpoint is true, inspect the prior role's screenshots and browser
+receipts before acting. Do not repeat create/send/delete operations with unknown outcomes;
+return blocked when they cannot be reconstructed safely. This retry still consumes budget.
+"""
+    if not checkpoint and role != 'fixer' and continuation:
+        data['continuation'] = continuation
+        instructions[role] += ('\nResume the supplied current-role observations and remaining work, retaining their finding IDs and evidence. '
+                               'Return the original full result schema. Your explicit read-only sandbox is unchanged; '
+                               'the host will check that no saved findings or evidence identities were dropped.')
     base = BASE_PROMPT
     if scope["profile"] == "focused":
         base = base.replace("cover the app, then revisit the top and main flows", "cover the declared focus, then revisit that task")
@@ -847,32 +916,216 @@ You are not authorized to call an issue resolved; a separate reviewer will verif
             instructions[role] += "\nFocused planner: map the requested scope from an initial screenshot and necessary navigation only; leave the operation/state matrix to the reviewer instead of executing it twice. Do not promote unrelated flows to required."
         if role == "reviewer":
             instructions[role] += "\nReview the required scoped flows. A missing/broken app control is a reviewed issue with failed coverage, not an environment block: record the screenshot and return findings without repeatedly working around it. Optional unrelated flows remain outside scope."
+    if role == 'reviewer':
+        instructions[role] += ('\nSet the target viewport before starting a coverage operation. A resize returns a before-image at the OLD viewport; '
+                               'do not count resizing as an application flow or use that old-width image in target-width coverage. '
+                               'Start its before/after sequence only after resizing, using actual frame metadata.')
     return base + "\nROLE: " + role + "\n" + instructions[role] + "\n\nINPUT:\n" + json.dumps(data, ensure_ascii=False)
 
 
+def checkpoint_progress(role, schema, state, run_dir, directory, record, context):
+    def evidence_check(result):
+        try:
+            assert_source(state['expected_source'], Path(state['config']['project']))
+            contract_runtime.assert_current(state.get('ux_contract'))
+            evidence = validated_evidence(result, directory, state['backend'],
+                                          Path(state['config']['project']), state['run_id'], archive=False)
+            if role == 'reviewer' and state.get('plan'):
+                screen_ids = {x['id'] for x in state['plan']['screens']}
+                flow_ids = {x['id'] for x in state['plan']['flows']}
+                for item in result.get('issues', []):
+                    if item['screen_id'] not in screen_ids or item['flow_id'] not in flow_ids:
+                        raise Blocked('Checkpoint issue refers to an unknown screen/flow')
+                    images = [evidence.get(key) for key in item['evidence_ids']]
+                    if not images or any(not image or image['source'] != 'live' for image in images):
+                        raise Blocked('Checkpoint issue lacks live evidence')
+                    if not any(image['screen_id'] == item['screen_id'] and image['flow_id'] == item['flow_id'] for image in images):
+                        raise Blocked('Checkpoint issue evidence has a different screen/flow')
+                for item in result.get('coverage', []):
+                    if item['flow_id'] not in flow_ids:
+                        raise Blocked('Checkpoint coverage refers to an unknown flow')
+                    if item['result'] != 'not_tested' and not item['steps']:
+                        raise Blocked('Checkpoint executed coverage has no operations')
+                    for step in item['steps']:
+                        for key in ('before_evidence_id', 'after_evidence_id'):
+                            picture = evidence.get(step[key])
+                            if not picture or picture['source'] != 'live':
+                                raise Blocked('Checkpoint operation lacks matching live viewport evidence')
+                            if tuple(picture['viewport'][k] for k in ('width', 'height')) != VIEWPORTS[item['viewport']]:
+                                raise Blocked(f"Checkpoint viewport mismatch: {step[key]} / expected {item['viewport']} / actual {picture['viewport']}. Resize before beginning application coverage; its old-width before-image cannot prove target-width coverage.")
+            if set(result) == set(schema['required']):
+                if role == 'planner':
+                    validate_plan(result, evidence)
+                elif role == 'reviewer':
+                    validate_audit(result, evidence, state['plan'], state.get('audit'))
+                elif role == 'references':
+                    reference_valid(result, evidence)
+            return evidence
+        except Blocked as error:
+            raise ValueError(str(error)) from error
+
+    def validate(value, spec, location='$'):
+        try:
+            validate_schema(value, spec, location)
+        except Blocked as error:
+            raise ValueError(str(error)) from error
+
+    def receipt_check(frame):
+        path = Path(frame['path'])
+        return (not path.is_symlink() and path.resolve().is_relative_to((directory / 'screenshots').resolve())
+                and path.is_file() and path.stat().st_size < 25_000_000
+                and frame['sha256'] == digest(path)
+                and png_dimensions(path) == tuple(frame['viewport'][k] for k in ('width', 'height')))
+
+    return role_checkpoint.Progress(directory, context, schema, validate, evidence_check, receipt_check, record)
+
+
+def retryable_failure(role, error, text):
+    if role == 'fixer' or isinstance(error, (PhaseTimeout, Cancelled, KeyboardInterrupt)):
+        return False
+    # Authentication/approval take precedence even in a mixed disconnect message.
+    denied = re.search(r'requires approval|approval policy|unauthenticated|unauthorized|authentication|invalid.api.key|login.required|\b40[13]\b', text, re.I)
+    return not denied and (isinstance(error, IdleTimeout) or failure_kind(text) == 'model_connection')
+
+
+def try_browser_fallback(state, role, tag, kind, reason):
+    if (role == 'fixer' or not browser_failure(kind) or state['backend'] == 'local-playwright'
+            or re.search(r'requires approval|approval policy|authentication|\b40[13]\b', reason, re.I)):
+        return False
+    state['failed_native_backend'] = state['backend']
+    state['backend'] = 'local-playwright'
+    state['fallback_reason'] += '; ' + reason
+    state['history'].append({'phase': tag, 'result': 'blocked', 'reason': reason, 'fallback': 'local-playwright'})
+    log('ブラウザー経路が失敗。記録してローカルPlaywrightへ切替: ' + reason[:180])
+    browser_smoke()
+    return True
+
+
+def effective_limits(state):
+    limits = state.get('execution_limits', state['config'])
+    return limits.get('phase_timeout', 1800), limits.get('idle_timeout', 900)
+
+
+def override_limits(state, phase_timeout, idle_timeout):
+    if phase_timeout is None and idle_timeout is None:
+        return
+    before = dict(zip(('phase_timeout', 'idle_timeout'), effective_limits(state)))
+    after = {**before, **({'phase_timeout': phase_timeout} if phase_timeout is not None else {}),
+             **({'idle_timeout': idle_timeout} if idle_timeout is not None else {})}
+    if before != after:
+        state.setdefault('limit_history', []).append({'previous': before, 'current': after, 'changed_at': now()})
+        state['execution_limits'] = after
+
+
 def run_role(role, schema, state, run_dir, iteration):
+    tag = f'{iteration:03d}-{role}'
+    record = state.setdefault('role_progress', {}).setdefault(tag, {'recoveries': 0})
+    if record.get('exhausted'):
+        raise Blocked(f'{tag}: automatic recovery limit already exhausted; evidence preserved')
+    if state.get('resuming') and role != 'fixer' and record.get('invocations'):
+        if record['recoveries'] >= 2:
+            record['exhausted'] = True
+            raise Blocked(f'{tag}: recovery limit (2) reached; evidence preserved')
+        if record.get('checkpoint_sha256'):
+            verify_recovery_checkpoint(role, schema, state, run_dir, record)
+        record['recoveries'] += 1
+        state['history'].append({'phase': tag, 'result': 'resuming', 'attempt': record['recoveries']})
+    while True:
+        try:
+            return run_role_once(role, schema, state, run_dir, iteration, record)
+        except Blocked as error:
+            text = str(error)
+            directory = run_dir / record.get('directory', tag)
+            events = directory / record.get('events', 'events.jsonl')
+            if events.is_file():
+                text += '\n' + event_errors(events)
+            if not retryable_failure(role, error, text):
+                raise
+            assert_source(state['expected_source'], Path(state['config']['project']))
+            contract_runtime.assert_current(state.get('ux_contract'))
+            if record['recoveries'] >= 2:
+                record['exhausted'] = True
+                persist(state, run_dir)
+                raise Blocked(f'{tag}: automatic recovery limit (2) reached; {error}') from error
+            if not record.get('checkpoint_sha256'):
+                raise Blocked(f'{tag}: no verified checkpoint for safe recovery; {error}') from error
+            verify_recovery_checkpoint(role, schema, state, run_dir, record)
+            record['recoveries'] += 1
+            state['history'].append({'phase': tag, 'result': 'recovering',
+                                     'attempt': record['recoveries'], 'reason': scrub(str(error))})
+            persist(state, run_dir)
+            log(f'{tag}: 保存済み結果から再開 ({record["recoveries"]}/2)')
+
+
+def verify_recovery_checkpoint(role, schema, state, run_dir, record):
+    directory = run_dir / record['directory']
+    if directory.is_symlink() or directory.resolve().parent != run_dir.resolve():
+        raise Blocked('Invalid saved role directory')
+    context = role_checkpoint.read_json(directory / 'checkpoint-context.json')
+    watch = checkpoint_progress(role, schema, state, run_dir, directory, record, context)
+    watch.verify_latest()
+
+
+def run_role_once(role, schema, state, run_dir, iteration, record):
     contract_runtime.assert_current(state.get('ux_contract'))
     tag = f"{iteration:03d}-{role}"
     role_dir = run_dir / tag
-    attempt = 0
     while True:
-        attempt += 1
-        actual_dir = role_dir if attempt == 1 else run_dir / (tag + "-fallback")
-        if actual_dir.exists():
-            actual_dir = run_dir / (actual_dir.name + "-" + uuid.uuid4().hex[:8])
+        if record.get('directory') and record.get('browser') == state['backend']:
+            actual_dir = run_dir / record['directory']
+            if actual_dir.is_symlink() or actual_dir.resolve().parent != run_dir.resolve():
+                raise Blocked('Invalid saved role directory')
+        else:
+            actual_dir = role_dir if not record.get('directory') else run_dir / (tag + '-fallback')
+            if actual_dir.exists():
+                actual_dir = run_dir / (actual_dir.name + '-' + uuid.uuid4().hex[:8])
+            if record.get('checkpoint_sha256'):
+                record.setdefault('previous_contexts', []).append({key: record[key] for key in
+                    ('directory', 'browser', 'checkpoint_sha256', 'evidence_hashes')})
+            record.update(directory=actual_dir.name, browser=state['backend'], seen=[])
+            record.pop('checkpoint_sha256', None)
+            record['evidence_hashes'] = {}
         actual_dir.mkdir(parents=True, exist_ok=True)
         (actual_dir / "screenshots").mkdir(exist_ok=True)
         schema_path = actual_dir / "schema.json"
-        output_path = actual_dir / "result.json"
-        atomic_json(schema_path, schema)
-        prompt = role_prompt(role, state, actual_dir)
-        (actual_dir / "prompt.txt").write_text(prompt, encoding="utf-8")
         mode = role_sandbox(state, role)
+        checkpoint = role != 'fixer' and mode == 'workspace-write'
+        record['invocations'] = record.get('invocations', 0) + 1
+        suffix = '' if record['invocations'] == 1 else '-attempt-' + str(record['invocations'])
+        output_path = actual_dir / ('completion' + suffix + '.json')
+        events_path = actual_dir / ('events' + suffix + '.jsonl')
+        record['events'] = events_path.name
+        atomic_json(schema_path, schema)
+        context = {'run_id': state['run_id'], 'role': role, 'iteration': iteration,
+                   'source': role_checkpoint.checksum(state['expected_source']),
+                   'scope': role_checkpoint.checksum({'review_scope': review_scope(state['config']),
+                                                      'brief': state['config']['brief'],
+                                                      'references': state['config']['reference_urls'],
+                                                      'contract': state.get('ux_contract', {}).get('sha256')}),
+                   'browser': state['backend']}
+        context_path = actual_dir / 'checkpoint-context.json'
+        if context_path.exists() and role_checkpoint.read_json(context_path) != context:
+            raise Blocked('Saved checkpoint context does not match this role/source/scope')
+        atomic_json(context_path, context)
+        watch = checkpoint_progress(role, schema, state, run_dir, actual_dir, record, context) if role != 'fixer' else None
+        if watch:
+            watch.poll()
+        continuation = watch.latest if watch else None
+        rejected = None
+        if checkpoint and watch.invalid and (actual_dir / 'checkpoint.json').is_file():
+            rejected_path = actual_dir / ('rejected-checkpoint' + suffix + '.json')
+            atomic_json(rejected_path, role_checkpoint.read_json(actual_dir / 'checkpoint.json'))
+            rejected = {'path': str(rejected_path), 'reason': watch.invalid}
+        prompt = role_prompt(role, state, actual_dir, checkpoint, continuation, rejected,
+                             record['invocations'] > 1 and continuation is None)
+        (actual_dir / ('prompt' + suffix + '.txt')).write_text(prompt, encoding='utf-8')
+        completion_schema = actual_dir / 'completion-schema.json'
+        atomic_json(completion_schema, COMPLETION_SCHEMA if checkpoint else schema)
         env = child_environment(actual_dir, "UX_GAN_CHILD")
         env.update(browser_launch_environment())
         argv = ["codex", "exec", "-C", state["config"]["project"],
                 "--sandbox", mode, "--add-dir", str(actual_dir),
-                "--json", "--ephemeral", "--output-schema", str(schema_path),
+                "--json", "--ephemeral", "--output-schema", str(completion_schema),
                 "--output-last-message", str(output_path), "-c", 'web_search="live"',
                 "-c", "sandbox_workspace_write.network_access=true"]
         if not state["expected_source"]["head"]:
@@ -920,57 +1173,74 @@ def run_role(role, schema, state, run_dir, iteration):
                 argv += ['--image',reference['snapshot']];attached.append(reference['snapshot'])
         # Pass prompt through an argv element; never interpolate it into shell code.
         argv += ["--", prompt]
-        atomic_json(actual_dir / "invocation.json",
+        atomic_json(actual_dir / ('invocation' + suffix + '.json'),
                     {"role": role, "browser": state["backend"], "attached_images": attached,
                      "sandbox": mode, "network_access": True,
                      "runtime_directory": str(actual_dir / ".runtime"),
                      "started_at": now()})
         log(f"{tag}: {state['backend']} / {state['config'].get('model') or 'Codex設定のモデル'}")
-        code = stream_process(argv, state["config"]["project"], env,
-                              actual_dir / "events.jsonl", state["config"]["phase_timeout"])
+        persist(state, run_dir)
+        checkpoint_saved = record.get('checkpoint_sha256')
+        def progress():
+            nonlocal checkpoint_saved
+            changed = watch.poll()
+            if changed or record.get('checkpoint_sha256') != checkpoint_saved:
+                persist(state, run_dir)
+                checkpoint_saved = record.get('checkpoint_sha256')
+            return changed
+        code = stream_process(argv, state["config"]["project"], env, events_path,
+                              effective_limits(state)[0] if role != 'fixer' else (effective_limits(state)[0] or 1800),
+                              idle_timeout=effective_limits(state)[1] if role != 'fixer' else 0,
+                              progress=progress if watch else None)
+        if watch:
+            progress()
         contract_runtime.assert_current(state.get('ux_contract'))
         if role != "fixer":
             assert_source(state["expected_source"], Path(state["config"]["project"]))
         if not output_path.is_file():
-            text = event_errors(actual_dir / "events.jsonl")
+            text = event_errors(events_path)
             kind = failure_kind(text)
             atomic_json(actual_dir / "diagnostic.json", {"kind": kind, "exit_code": code,
                         "backend": state["backend"], "sandbox": mode, "message": scrub(text[-1000:])})
-            if role != "fixer" and browser_failure(kind) and state["backend"] != "local-playwright":
-                state["failed_native_backend"] = state["backend"]
-                state["backend"] = "local-playwright"
-                reason = f"{kind}: native browser failed before structured output"
-                state["fallback_reason"] += "; " + reason
-                state["history"].append({"phase": tag, "result": "blocked", "reason": reason,
-                                         "fallback": "local-playwright"})
-                browser_smoke()
+            if watch and watch.invalid:
+                raise Blocked(f'{tag}: invalid checkpoint: ' + watch.invalid)
+            if try_browser_fallback(state, role, tag, kind, f'{kind}: native browser failed before structured output'):
                 continue
             raise Blocked(f"{tag}: Codex produced no structured output (exit {code}, {kind}); see {actual_dir / 'diagnostic.json'}")
         try:
             result = json.loads(output_path.read_text(encoding="utf-8"))
         except ValueError as e:
             raise Blocked(f"{tag}: malformed JSON") from e
+        if checkpoint:
+            validate_schema(result, COMPLETION_SCHEMA)
+            if result['status'] == 'blocked':
+                kind = failure_kind(result['reason'])
+                atomic_json(actual_dir / 'diagnostic.json', {'kind': kind, 'exit_code': code,
+                                                            'backend': state['backend'], 'sandbox': mode})
+                if try_browser_fallback(state, role, tag, kind, result['reason']):
+                    continue
+                raise Blocked(f'{tag}: ' + result['reason'])
+            if watch.invalid:
+                raise Blocked(f'{tag}: invalid checkpoint: ' + watch.invalid)
+            finished = watch.verify_latest()
+            if finished['stage'] != 'reporting' or finished['remaining']:
+                raise Blocked(f'{tag}: completion lacks a valid finished checkpoint')
+            result = finished['result']
         validate_schema(result, schema)
+        atomic_json(actual_dir / 'result.json', result)
         if result["status"] == "blocked":
             atomic_json(actual_dir / "diagnostic.json", {"kind": failure_kind(result["reason"]),
                         "exit_code": code, "backend": state["backend"], "sandbox": mode})
-        if (role != "fixer" and result["status"] == "blocked"
-                and browser_failure(failure_kind(result["reason"]))
-                and state["backend"] != "local-playwright"):
-            # Explicit recorded fallback, not an undocumented switch to code-only.
-            reason = result["reason"]
-            state["failed_native_backend"] = state["backend"]
-            state["backend"] = "local-playwright"
-            state["fallback_reason"] += "; " + reason
-            state["history"].append({"phase": tag, "result": "blocked", "reason": reason,
-                                     "fallback": "local-playwright"})
-            log("ブラウザー経路が失敗。記録してローカルPlaywrightへ切替: " + reason[:180])
-            browser_smoke()
+        if result['status'] == 'blocked' and try_browser_fallback(state, role, tag, failure_kind(result['reason']), result['reason']):
             continue
         if code:
             raise Blocked(f"{tag}: Codex exited {code}; see its event log")
         if result["status"] == "blocked":
             raise Blocked(f"{tag}: " + result["reason"])
+        if not checkpoint and watch and watch.latest:
+            watch.accept({'version': 1, 'context': context, 'stage': 'reporting',
+                          'remaining': [], 'result': result})
+            watch.verify_latest()
         if role == "fixer":
             return result, {}, actual_dir
         if result["browser_backend"] != state["backend"]:
@@ -1011,7 +1281,7 @@ def run_tests(state, run_dir):
         log("検証: " + cmd)
         code = stream_process(["bash", "-c", cmd], state["config"]["project"], dict(os.environ),
                               run_dir / f"tests-{state['iteration']:03d}-{n}.jsonl",
-                              state["config"]["phase_timeout"])
+                              effective_limits(state)[0] or 1800)
         tests.append({"command": cmd, "passed": code == 0, "output_summary": f"exit {code}"})
     assert_source(state["expected_source"], Path(state["config"]["project"]))
     return tests
@@ -1242,7 +1512,77 @@ def persist(state, run_dir):
         "counts": counts(state["audit"]) if state.get("audit") else {},
         "screens": observed_counts(state)[0],
         "flows": observed_counts(state)[1],
+        "partial_report": 'partial-review.md' if state['status'] in ('blocked', 'cancelled') and (run_dir / 'partial-review.md').is_file() else None,
     })
+
+
+def publish_partial(state, run_dir):
+    """Keep interrupted observations without overwriting the project's last review."""
+    lines = ['# UI/UX review — partial observations', '',
+             f"実行ID: {state['run_id']} / 状態: {state['status']}", '',
+             '評価は完了していません。以下は保存・照合できた途中結果で、合格を示しません。', '',
+             '終了理由: ' + scrub(state.get('reason', '未確認')), '']
+    records = []
+    for tag, record in state.get('role_progress', {}).items():
+        records += [(tag + ' / ' + previous['browser'], previous) for previous in record.get('previous_contexts', [])]
+        records.append((tag, record))
+    for tag, record in records:
+        directory = run_dir / record.get('directory', tag)
+        if directory.is_symlink() or directory.resolve().parent != run_dir.resolve():
+            continue
+        path = directory / 'validated-checkpoint.json'
+        if not record.get('checkpoint_sha256') or not path.is_file():
+            continue
+        try:
+            value = role_checkpoint.read_json(path)
+            if role_checkpoint.checksum(value) != record['checkpoint_sha256']:
+                continue
+            if value['context']['source'] != role_checkpoint.checksum(state['expected_source']):
+                continue
+            result = value['result']
+            evidence = validated_evidence(result, directory, value['context']['browser'],
+                                          Path(state['config']['project']), state['run_id'], archive=False)
+            if any(record.get('evidence_hashes', {}).get(key) != picture['sha256'] for key, picture in evidence.items()):
+                continue
+            lines += ['## ' + tag, '', '工程: ' + value['stage'], '']
+            for item in result.get('issues', []):
+                lines.append(f"- {item['id']}: {item['title']} / {item['severity']} / {item['status']}")
+            for item in result.get('coverage', []):
+                lines.append(f"- {item['flow_id']} / {item['viewport']} / {item['state']} / {item['perspective']}: {item['result']}")
+            if result.get('first_impression'):
+                lines += ['初見の観察: ' + result['first_impression'].get('purpose', ''), '']
+            lines += ['', '残項目:', ''] + ['- ' + item for item in value['remaining']]
+            if not value['remaining']:
+                lines.append('- 最終出力・検証が未完了。残項目なしという保存値だけでは完了扱いにしません。')
+            for picture in list(evidence.values())[:4]:
+                relative = os.path.relpath(picture['path'], run_dir).replace(os.sep, '/')
+                lines += ['', '![' + picture['description'].replace(']', '') + '](' + urllib.parse.quote(relative) + ')']
+            lines.append('')
+        except (OSError, ValueError, KeyError, Blocked):
+            continue
+    path = run_dir / 'partial-review.md'
+    if path.is_symlink():
+        log('途中結果の出力先がリンクのため保持しました: ' + str(path))
+        return
+    path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    path.chmod(0o600)
+    log('途中結果: ' + str(path))
+
+
+def record_review(state, result, evidence):
+    """Both uninterrupted and resumed post-fix reviews consume the same plateau."""
+    state['audit'], state['evidence'], state['pending_review'] = result, evidence, False
+    reasons = gate(result, state['plan'], state['references'], state['tests'],
+                   state['config'], state.get('ux_contract_report'))
+    current = metric(result, reasons)
+    if current < state.get('best_metric', float('inf')):
+        state['best_metric'], state['plateau'] = current, 0
+    else:
+        state['plateau'] = state.get('plateau', 0) + 1
+    state['reason'] = '; '.join(reasons)
+    if reasons and state['plateau'] >= 2:
+        state['status'] = 'stalled'
+    return reasons
 
 
 def workflow(state, run_dir):
@@ -1286,7 +1626,9 @@ def workflow(state, run_dir):
     score = metric(state["audit"], reasons)
     state.setdefault("best_metric", score)
     state.setdefault("plateau", 0)
-    while reasons and state["iteration"] < state["config"]["max_iterations"]:
+    if reasons and state['plateau'] >= 2:
+        state['status'] = 'stalled'
+    while reasons and state["iteration"] < state["config"]["max_iterations"] and state['status'] != 'stalled':
         priorities = sorted([i for i in state["audit"]["issues"] if i["status"] != "resolved"],
                             key=lambda i: (SEVERITIES.index(i["severity"]), i["id"]))
         if not priorities:
@@ -1325,15 +1667,7 @@ def workflow(state, run_dir):
         old = state["audit"]
         result, evidence, _ = run_role("reviewer", AUDIT_SCHEMA, state, run_dir, state["iteration"])
         validate_audit(result, evidence, state["plan"], old)
-        state["audit"], state["evidence"] = result, evidence
-        state["pending_review"] = False
-        reasons = gate(result, state["plan"], state["references"], state["tests"], state["config"], state.get('ux_contract_report'))
-        current = metric(result, reasons)
-        if current < state["best_metric"]:
-            state["best_metric"], state["plateau"] = current, 0
-        else:
-            state["plateau"] += 1
-        state["reason"] = "; ".join(reasons)
+        reasons = record_review(state, result, evidence)
         publish(state, run_dir)
         persist(state, run_dir)
         if reasons and state["plateau"] >= 2:
@@ -1370,6 +1704,7 @@ def execution(args):
                 raise Blocked("Invalid run ID")
             run_dir = artifacts / args.run_id
             state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
+            state['resuming'] = True
             if Path(state["config"]["project"]) != project:
                 raise Blocked("Run belongs to a different project")
             if state.get("fix_in_progress"):
@@ -1380,6 +1715,8 @@ def execution(args):
                 log("Already complete: " + state["run_id"])
                 return 0
             override_sandbox(state, args.role_sandbox, now())
+            override_limits(state, args.phase_timeout, args.idle_timeout)
+            state['status'], state['reason'] = 'running', '保存済みの進捗から再開中。'
         else:
             parsed = urllib.parse.urlparse(args.url or "")
             if parsed.scheme not in ("http", "https") or not parsed.netloc:
@@ -1390,7 +1727,7 @@ def execution(args):
             config = {"project": str(project), "url": args.url, "mode": args.mode,
                       "start_command": args.start_command, "test_commands": args.test_command,
                       "reference_urls": args.reference_url, "max_iterations": args.max_iterations,
-                      "phase_timeout": args.phase_timeout, "model": args.model,
+                      "phase_timeout": args.phase_timeout, "idle_timeout": args.idle_timeout, "model": args.model,
                       "browser": args.browser, "brief": args.brief}
             config["role_sandbox"] = args.role_sandbox or "workspace-write"
             config.update(profile=args.profile, focus=args.focus,
@@ -1442,19 +1779,20 @@ def execution(args):
         if state.get("pending_review"):
             result, evidence, _ = run_role("reviewer", AUDIT_SCHEMA, state, run_dir, state["iteration"])
             validate_audit(result, evidence, state["plan"], state["audit"])
-            state["audit"], state["evidence"], state["pending_review"] = result, evidence, False
             state["tests"] = run_tests(state, run_dir)
+            record_review(state, result, evidence)
             persist(state, run_dir)
         return workflow(state, run_dir)
     except (Blocked, Cancelled, KeyboardInterrupt, OSError, ValueError) as e:
         status = "cancelled" if isinstance(e, (Cancelled, KeyboardInterrupt)) else "blocked"
         if state is not None and run_dir is not None:
-            state["status"], state["reason"] = status, str(e) or "Interrupted"
+            state["status"], state["reason"] = status, scrub(str(e)) or "Interrupted"
             # Do not publish stale baseline images after an unreviewed source fix.
             if state.get("audit") and not state.get("pending_review") and not state.get("fix_in_progress"):
                 with contextlib.suppress(Blocked):
                     assert_source(state["expected_source"], project)
                     publish(state, run_dir)
+            publish_partial(state, run_dir)
             persist(state, run_dir)
         log(status + ": " + (str(e) or "Interrupted"))
         return 130 if status == "cancelled" else 1
@@ -1482,6 +1820,8 @@ def parser():
             continue
         if mode == "resume":
             cmd.add_argument("run_id")
+            cmd.add_argument('--phase-timeout', type=int, default=None)
+            cmd.add_argument('--idle-timeout', type=int, default=None)
             continue
         cmd.add_argument("--url", required=True)
         cmd.add_argument('--ux-contract', help='Canonical local UX contract; required checks need browser receipts')
@@ -1494,7 +1834,10 @@ def parser():
         cmd.add_argument("--review")
         cmd.add_argument("--reference-url", action="append", default=[])
         cmd.add_argument("--max-iterations", type=int, default=5)
-        cmd.add_argument("--phase-timeout", type=int, default=1800)
+        cmd.add_argument("--phase-timeout", type=int, default=0,
+                         help='Evaluation deadline; 0 uses verified progress (fixers/checks retain a 1800s default)')
+        cmd.add_argument('--idle-timeout', type=int, default=900,
+                         help='Stop a read-only role after this many seconds without verified progress')
         cmd.add_argument("--model")
         cmd.add_argument("--browser", choices=["auto", "local-playwright"], default="auto")
         cmd.add_argument("--brief", default="初見ユーザーが迷わず使えるかを画像で検証する。画面を煩雑にせず主要操作を分かりやすくする。")
@@ -1509,8 +1852,11 @@ def main(argv=None):
             raise Blocked("Focused review requires --focus")
         if args.profile == "full" and (args.focus or args.viewport):
             raise Blocked("Use --profile focused for --focus/--viewport; full requirements remain unchanged")
-    if args.mode not in ("doctor", "resume") and (args.max_iterations < 1 or args.phase_timeout < 1):
-        raise Blocked("Iteration/time limits must be positive")
+    if args.mode not in ('doctor', 'resume') and args.max_iterations < 1:
+        raise Blocked('Iteration limit must be positive')
+    if args.mode != 'doctor' and ((args.phase_timeout is not None and args.phase_timeout < 0)
+                                 or (args.idle_timeout is not None and args.idle_timeout < 1)):
+        raise Blocked('Phase limit must be nonnegative and idle limit positive')
     def interrupt(_sig, _frame):
         raise Cancelled("Interrupted; existing edits/evidence preserved")
     signal.signal(signal.SIGTERM, interrupt)

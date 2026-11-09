@@ -145,7 +145,8 @@ ux-gan-harness audit --project /path/to/app --url http://localhost:3000 \
 | --review PATH | 既存レビュー。省略時は対象アプリの最新レビュー |
 | --reference-url URL | 比較候補の公式URL。複数指定可 |
 | --max-iterations N | 修正反復の上限。既定5回 |
-| --phase-timeout SECONDS | 各Codex実行・チェックの上限。既定1800秒 |
+| --phase-timeout SECONDS | 評価役の固定時間上限。既定0（固定上限なし）。正数を明示した場合は尊重する |
+| --idle-timeout SECONDS | 有効な進捗がない評価役を止めるまでの時間。既定900秒 |
 | --browser auto | Browser plugin → Playwright MCP →失敗を記録してローカル経路 |
 | --browser local-playwright | 専用のローカル経路を明示選択 |
 | --model MODEL | その実行だけCodex設定のモデルを上書き |
@@ -153,6 +154,12 @@ ux-gan-harness audit --project /path/to/app --url http://localhost:3000 \
 | --profile full\|focused | 既定full。focusedは対象限定の確認 |
 | --focus TEXT | focusedの対象画面・操作。必須、複数指定可 |
 | --viewport desktop\|tablet\|mobile | focusedで確認する画面幅。複数指定可 |
+
+通常は短い時間上限を付けず、進捗と回復状況を追ってレポート完成まで待ちます。観察は途中保存し、照合で見つかった記録の不一致を評価役が最終出力前に修正します。停滞・モデル接続切断からは同じ実行IDで最大2回再開します。同じ画像・操作・文言の反復だけでは待機時間を延長しません。認証・承認不足、明示した時間上限、利用者の中断、修正途中の処理は自動で再試行しません。
+
+最大回数は従来どおり修正と再レビューを1回と数え、既定5回です。2回連続で改善しなければ停滞として終了します。再開しても反復・回復の消費回数は戻りません。起動・ブラウザー操作の制限と、修正役・必須コマンドの既定1800秒は維持します。
+
+`resume`は保存済み設定を維持します。`resume RUN_ID --phase-timeout 0 --idle-timeout 900`で今後の時間設定を明示変更でき、変更は履歴へ残ります。最終結果のない停止でも、run内の`partial-review.md`から確認済みの観察・残項目・停止理由を追えます。途中結果を合格や全体の確認完了とは扱いません。
 
 画像と実操作から問題を記録し、コードは原因調査と修正に使います。
 指摘を共通の原因でまとめ、1回に最大3グループを修正します。
