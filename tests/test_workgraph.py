@@ -23,7 +23,7 @@ class WorkgraphTest(unittest.TestCase):
         self.codex = self.home / "custom codex ' $()"
         self.codex.mkdir()
         self.env = {key: value for key, value in os.environ.items()
-                    if key not in ("BM_AUTO_MODE", "BM_CASE_MODE", "BM_SKILL_MODE", "BM_CORRECTION_MODE", "MEMORY_PROJECT", "MEMORY_DIR")}
+                    if key not in ("BM_AUTO_MODE", "BM_CASE_MODE", "BM_SKILL_MODE", "BM_CORRECTION_MODE", "BM_DECISION_MODE", "MEMORY_PROJECT", "MEMORY_DIR")}
         self.env.update(HOME=str(self.home), CODEX_HOME=str(self.codex))
 
     def write_json(self, relative, value):
@@ -117,7 +117,7 @@ class WorkgraphTest(unittest.TestCase):
         runtime_config = self.read_json("basic-memory-workgraph/config.json")
         self.assertTrue(Path(runtime_config.pop('recallPython')).is_file())
         self.assertEqual(runtime_config,
-                         {"mode": "off", "other": 3, "caseMode": "off", "skillMode": "review", "correctionMode": "off", "compactContext": True})
+                         {"mode": "off", "other": 3, "caseMode": "off", "skillMode": "review", "correctionMode": "off", "decisionMode": "off", "compactContext": True})
         hooks = self.read_json("hooks.json")
         self.assertEqual(hooks["custom"], "keep")
         self.assertEqual(hooks["hooks"]["Stop"][0], {"matcher": "keep", "hooks": [sibling]})
@@ -352,7 +352,7 @@ class WorkgraphTest(unittest.TestCase):
         config = self.read_json("basic-memory-workgraph/config.json")
         self.assertTrue(Path(config.pop('recallPython')).is_file())
         self.assertEqual(config, {"mode": "smart", "caseMode": "off",
-                                  "skillMode": "review", "correctionMode": "scoped", "compactContext": True})
+                                  "skillMode": "review", "correctionMode": "scoped", "decisionMode": "off", "compactContext": True})
         context = self.hook("recall", {})["hookSpecificOutput"]["additionalContext"]
         self.assertIn("correction=scoped", context)
         self.assertIn("Before drafting", context)
@@ -399,7 +399,7 @@ class WorkgraphTest(unittest.TestCase):
             else:
                 state = json.loads(self.state_files()[0].read_text())
                 self.assertFalse(state["armed"])
-                self.assertEqual(set(state), {"version", "token", "armed", "candidate"})
+                self.assertEqual(set(state), {"version", "token", "armed", "candidate", "workdir"})
             self.assertEqual(self.hook("save", {**event, "last_assistant_message": "lesson"}), {})
             self.assertEqual(self.state_files(), [])
 
@@ -527,7 +527,7 @@ class WorkgraphTest(unittest.TestCase):
         event = {"session_id": "semantic", "turn_id": "one", "prompt": "結論を先頭へ"}
         context = self.hook("recall", event)["hookSpecificOutput"]["additionalContext"]
         self.assertFalse(json.loads(self.state_files()[0].read_text())["candidate"])
-        command = context.splitlines()[-1] + " --candidate"
+        command = context.splitlines()[-1] + " --outcome pending"
         result = subprocess.run(command, shell=True, env=self.env, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(self.hook("save", event)["decision"], "block")
@@ -535,6 +535,19 @@ class WorkgraphTest(unittest.TestCase):
         replay = subprocess.run(command, shell=True, env=self.env, capture_output=True, text=True)
         self.assertNotEqual(replay.returncode, 0)
         self.assertNotIn(shlex.split(command)[shlex.split(command).index("--token") + 1], replay.stderr)
+
+    def test_finish_no_candidate_closes_turn_without_extra_evaluation(self):
+        self.assertEqual(self.install(BM_DECISION_MODE='scoped').returncode,0)
+        self.assertEqual(self.install().returncode,0)
+        self.assertEqual(self.read_json('basic-memory-workgraph/config.json')['decisionMode'],'scoped')
+        event={'session_id':'finish','turn_id':'one','prompt':'Synthetic ordinary completion'}
+        context=self.hook('recall',event)['hookSpecificOutput']['additionalContext']
+        command=context.splitlines()[-1]+' --outcome no_candidate'
+        result=subprocess.run(command,shell=True,env=self.env,capture_output=True,text=True)
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        self.assertEqual(json.loads(result.stdout)['status'],'no_candidate')
+        self.assertEqual(self.hook('save',event),{})
+        self.assertEqual(self.state_files(),[])
 
     def test_adjustment_phrases_trigger_only_after_attestation(self):
         self.assertEqual(self.install(BM_CORRECTION_MODE="scoped").returncode, 0)

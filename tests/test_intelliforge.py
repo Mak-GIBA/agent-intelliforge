@@ -46,9 +46,18 @@ class DistributionTests(unittest.TestCase):
                     helper.provision = provision
                 return helper
             config = {}
-            with patch.object(runtime, 'load', side_effect=load):
+            with patch.object(runtime, 'load', side_effect=load),patch.object(runtime,'workgraph_cli',return_value={'recallCli':['/synthetic/bm'],'recallVersion':'Basic Memory version: 0.24.1'}):
                 runtime.prepare_dependencies({'id':'workgraph'}, 'codex', home, bundle, config, Path(temporary))
             self.assertEqual(config['python'], sys.executable)
+            self.assertEqual(json.loads((home/'policy/config.json').read_text())['recallCli'],['/synthetic/bm'])
+
+    def test_workgraph_cli_reuses_a_verified_native_binding_without_database_access(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary);native=root/'basic-memory-workgraph';native.mkdir();executable=root/'bm';executable.touch()
+            (native/'config.json').write_text(json.dumps({'recallCli':[str(executable)]}))
+            with patch.dict(os.environ,{'CODEX_HOME':str(root)}),patch.object(runtime.shutil,'which',return_value=None),patch.object(runtime.subprocess,'run',return_value=SimpleNamespace(returncode=0,stdout='Basic Memory version: 0.24.1')) as run:
+                self.assertEqual(runtime.workgraph_cli()['recallCli'],[str(executable)])
+            self.assertEqual(run.call_args.args[0],[str(executable),'--version'])
 
     def test_catalog_selection_is_fixed_and_complete(self):
         catalog = definitions(ROOT)
@@ -429,6 +438,11 @@ class HookTests(unittest.TestCase):
             run('select','--ticket',ticket,'--input',json.dumps([{'id':result['notes'][0]['id'],'decision':'excluded','reason':'different scope'}]),'--mode','implementation')
             self.assertEqual(run('check','--ticket',ticket,'--mode','implementation','--close')['status'],'verified')
             self.assertFalse((work/'.workgraph-recall'/(ticket+'.json')).exists())
+            finish=shlex.split(host_context.splitlines()[-1])
+            result=subprocess.run([sys.executable,'-B','-m','agent_intelliforge.cli',*finish[1:],'--outcome','no_candidate'],
+                                  cwd=work,env=env,capture_output=True,text=True)
+            self.assertEqual(result.returncode,0,result.stderr+result.stdout)
+            self.assertEqual(json.loads(result.stdout)['status'],'no_candidate')
 
     def test_claude_turn_token_plan_and_single_stop_gate(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -439,14 +453,15 @@ class HookTests(unittest.TestCase):
                 name:data for name,data in runtime.files(source).items() if name=='memory-policy.md' or name.startswith('templates/')})
             ownership.atomic_write(policy/'config.json',b'{"mode":"always"}')
             ownership.atomic_write(home/'settings.json',json.dumps({'owner':runtime.owner('workgraph','claude'),'policy':str(policy)}).encode())
+            isolated=state/'codex';isolated.mkdir();(isolated/'basic-memory.json').write_text('{"basicMemory":{"primaryProject":"fixture"}}')
             def hook(action,event):
                 out=io.StringIO()
-                with patch.object(sys,'stdin',io.StringIO(json.dumps(event))),contextlib.redirect_stdout(out):
+                with patch.dict(os.environ,{'CODEX_HOME':str(isolated),'BASIC_MEMORY_CONFIG_DIR':str(state/'registry')}),patch.object(sys,'stdin',io.StringIO(json.dumps(event))),contextlib.redirect_stdout(out):
                     self.assertEqual(runtime.hook_run('claude',[action],state),0)
                 return json.loads(out.getvalue()) if out.getvalue() else {}
-            event={'session_id':'test-session','prompt':'Private test material','permission_mode':'default'}
+            event={'session_id':'test-session','prompt':'Private test material','permission_mode':'default','cwd':str(state)}
             value=hook('recall',event);context=value['hookSpecificOutput']['additionalContext']
-            self.assertIn('intelliforge hook --agent claude arm',context)
+            self.assertIn('intelliforge kit-run workgraph --agent claude --tool workgraph_capture.py',context)
             import re
             ticket,token=re.search(r'--ticket ([a-f0-9]{64}) --token ([a-f0-9]{64})',context).groups()
             self.assertFalse(any('Private test material' in path.read_text(encoding='utf-8') for path in (policy/'state').glob('*.json')))

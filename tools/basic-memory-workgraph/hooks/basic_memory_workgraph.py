@@ -46,11 +46,13 @@ def runtime():
         "caseMode": config.get("caseMode", "off"),
         "skillMode": config.get("skillMode", "review"),
         "correctionMode": config.get("correctionMode", "off"),
+        "decisionMode": config.get("decisionMode", "off"),
     }
     for key, allowed in (("mode", ("smart", "always", "off")),
                          ("caseMode", ("off", "reusable", "progressive")),
                          ("skillMode", ("off", "review", "auto")),
-                         ("correctionMode", ("off", "scoped"))):
+                         ("correctionMode", ("off", "scoped")),
+                         ("decisionMode", ("off", "scoped"))):
         if settings[key] not in allowed:
             raise ValueError("Invalid mode")
     policy = (ROOT / "memory-policy.md").read_text(encoding="utf-8").strip()
@@ -137,6 +139,17 @@ def recall_service(workdir=None):
     return module.Recall(ROOT.parent,workdir=workdir)
 
 
+def note_unevaluated(ticket):
+    """Only after implementation attestation; enum-only diagnostics, never graph writes."""
+    import importlib.util
+    source=globals().get('CAPTURE_SOURCE',ROOT/'workgraph_capture.py')
+    if not source.is_file():return
+    spec=importlib.util.spec_from_file_location('workgraph_capture_hook',source)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    service=module.Capture(ROOT.parent);service.root=ROOT
+    with service.lock():service.diagnose(ticket,'not_evaluated',set())
+
+
 def recall_view(result):
     """Hook-only projection. Preserve source bodies and applicability metadata verbatim."""
     view = {"status": result["status"]}
@@ -159,17 +172,17 @@ def retrieved_context(event, state):
         python = sys.executable
     command = globals().get("RECALL_COMMAND") or shlex.join([python, str(helper), "--codex-dir", str(ROOT.parent)])
     instructions = (
-        "Before drafting, prepare sanitized purpose/audience/output/constraints; read scope/exceptions. "
-        "Select adopted/excluded/deferred; adopted needs condition/action/verification and checked artifacts. "
-        "Review semantic truth; never invent checks. No graph notes/diaries. See templates/RECALL.md.\n"
+        "Before drafting prepare purpose/audience/output/constraints; read scope/exceptions. "
+        "Select adopted/excluded/deferred; adopted needs condition/action/verification + artifacts. "
+        "Check semantic truth; see RECALL.md.\n"
         "Helper: " + command + "\nTask: " + ticket + "\n"
-        "Run Helper + a command below, replacing TASK literally (no persistent shell variables):\n"
+        "Append to Helper; replace TASK (no persistent variables):\n"
         "prepare --ticket TASK --query '<terms>' --cwd '<directory>' [--mode implementation]\n"
         "select --ticket TASK --input '<JSON>' --mode implementation\n"
         "check --ticket TASK --input '<JSON>' --mode implementation --close\n"
-        "prepare defaults to plan; use implementation only in actual implementation mode. "
-        "JSON array or file: selection {id,decision,reason,condition,action,verification} (last 3 for adopted); "
-        "evidence {id,path:relative artifact,sha256:actual hash,result:verified}.\n"
+        "Default plan; implementation only when writes allowed. JSON array/file: "
+        "selection {id,decision,reason,condition,action,verification} (last 3 adopted); "
+        "evidence {id,path:relative,sha256:actual hash,result:verified}.\n"
     )
     if event.get("permission_mode") == "plan" or event.get("stop_hook_active") is True:
         instructions = "Read-only memory context. No task-state writes, selection records, persistence arming or graph writes in Plan/read-only.\n"
@@ -216,10 +229,9 @@ def evaluate(event, action):
         saved = take_state(state)
     settings = (
         f"Basic Memory: auto={mode}, correction={config['correctionMode']}, "
-        f"case={config['caseMode']}, skill={config['skillMode']}. "
+        f"decision={config['decisionMode']}, case={config['caseMode']}, skill={config['skillMode']}. "
         f"Reference directory: {ROOT / 'templates'}. "
-        "Before relevant operations read: CORRECTIONS.md (Corrections), CAPTURE.md (Cases), "
-        "AUDIT.md (integrity), SKILL_REVIEW.md (Skills)."
+        "Guides: CORRECTIONS.md (Corrections), CAPTURE.md, AUDIT.md, SKILL_REVIEW.md."
     )
 
     # Codex 0.157.1 maps approval policy to default/bypassPermissions; neither
@@ -232,14 +244,18 @@ def evaluate(event, action):
                 with state_lock():
                     token = secrets.token_hex(32)
                     write_state(state, {"version": 1, "token": token, "armed": False,
-                                        "candidate": candidate(event.get("prompt"))})
-                command = shlex.join([sys.executable, str(Path(__file__).resolve()), "arm",
+                                        "candidate": candidate(event.get("prompt")),
+                                        "workdir": hashlib.sha256(json.dumps(str(Path(event.get('cwd') or os.getcwd()).absolute()),ensure_ascii=False,sort_keys=True).encode()).hexdigest()})
+                helper = globals().get('CAPTURE_SOURCE', ROOT / 'workgraph_capture.py')
+                python = read_object(ROOT / 'config.json').get('recallPython',sys.executable)
+                prefix = globals().get('CAPTURE_COMMAND') or shlex.join([python,str(helper),'--codex-dir',str(ROOT.parent)])
+                command = prefix + ' ' + shlex.join(['--cwd',str(Path(event.get('cwd') or os.getcwd()).absolute()),'finish',
                                       "--ticket", state.stem, "--token", token,
                                       "--mode", "implementation"])
                 activation = (
-                    "Before final, arm only in actual implementation mode with writes allowed; never in Plan/read-only or Stop continuations. "
-                    "Add --candidate for semantic signals per policy. Keep token private.\n"
-                    + command
+                    "Implementation only, before final: evaluate capture; use prepare/apply per CAPTURE_SAVE.md, "
+                    "then finish once (--outcome complete/no_candidate/out_of_scope/pending/failed). "
+                    "Only pending/failed requests one Stop evaluation. Plan: no writes/finish. Keep token private.\n" + command
                 )
             except (OSError, ValueError):
                 pass  # Recall is still available without writable hook state.
@@ -248,7 +264,7 @@ def evaluate(event, action):
         automatic = (
             "Automatic persistence is off. Only explicit user save requests may write."
             if mode == "off" else
-            "Stop requests at most one evaluation after implementation-mode attestation."
+            ""
         )
         return {"hookSpecificOutput": {
             "hookEventName": "UserPromptSubmit",
@@ -259,11 +275,19 @@ def evaluate(event, action):
                 + "\n" + automatic + "\n" + activation),
         }}
 
-    if (blocked or mode == "off" or saved.get("version") != 1
+    if not blocked and mode!='off' and saved.get('armed') and 'capture_pending' not in saved and state:
+        try:note_unevaluated(state.stem)
+        except (OSError,ValueError,ImportError):pass
+    if (blocked or mode == "off" or saved.get("finished") or saved.get('stop_evaluation') or saved.get("version") != 1
             or saved.get("armed") is not True or not isinstance(saved.get("token"), str)):
         return {}
     if mode == "smart" and not (saved.get("candidate") is True or candidate(event.get("last_assistant_message"))):
         return {}
+    if saved.get('capture_pending') and state:
+        # One continuation can finish a pending capture; it cannot arm another pass.
+        with state_lock():
+            saved.update(stop_evaluation=True,armed=False)
+            write_state(state,saved)
     return {
         "decision": "block",
         "reason": (

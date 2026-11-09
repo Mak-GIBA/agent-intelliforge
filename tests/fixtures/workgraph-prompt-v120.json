@@ -1,0 +1,127 @@
+{
+  "tokenizer": "tiktoken 0.14.0 / o200k_base; normalized paths and fixed synthetic control tokens; not billing tokens",
+  "before": {
+    "empty": {
+      "start": {
+        "characters": 2115,
+        "tokens": 500
+      },
+      "stop": {
+        "characters": 10313,
+        "tokens": 2020
+      }
+    },
+    "found": {
+      "start": {
+        "characters": 2735,
+        "tokens": 642
+      },
+      "stop": {
+        "characters": 10313,
+        "tokens": 2020
+      }
+    },
+    "unavailable": {
+      "start": {
+        "characters": 2116,
+        "tokens": 500
+      },
+      "stop": {
+        "characters": 10313,
+        "tokens": 2020
+      }
+    },
+    "needs_context": {
+      "start": {
+        "characters": 2118,
+        "tokens": 500
+      },
+      "stop": {
+        "characters": 10313,
+        "tokens": 2020
+      }
+    },
+    "plan": {
+      "start": {
+        "characters": 884,
+        "tokens": 188
+      },
+      "stop": {
+        "characters": 0,
+        "tokens": 0
+      }
+    },
+    "off": {
+      "start": {
+        "characters": 676,
+        "tokens": 146
+      },
+      "stop": {
+        "characters": 0,
+        "tokens": 0
+      }
+    }
+  },
+  "after": {
+    "empty": {
+      "start": {
+        "characters": 1979,
+        "tokens": 491
+      },
+      "stop": {
+        "characters": 9950,
+        "tokens": 1967
+      }
+    },
+    "found": {
+      "start": {
+        "characters": 2599,
+        "tokens": 634
+      },
+      "stop": {
+        "characters": 9950,
+        "tokens": 1967
+      }
+    },
+    "unavailable": {
+      "start": {
+        "characters": 1980,
+        "tokens": 491
+      },
+      "stop": {
+        "characters": 9950,
+        "tokens": 1967
+      }
+    },
+    "needs_context": {
+      "start": {
+        "characters": 1982,
+        "tokens": 491
+      },
+      "stop": {
+        "characters": 9950,
+        "tokens": 1967
+      }
+    },
+    "plan": {
+      "start": {
+        "characters": 769,
+        "tokens": 170
+      },
+      "stop": {
+        "characters": 0,
+        "tokens": 0
+      }
+    },
+    "off": {
+      "start": {
+        "characters": 636,
+        "tokens": 140
+      },
+      "stop": {
+        "characters": 0,
+        "tokens": 0
+      }
+    }
+  }
+}

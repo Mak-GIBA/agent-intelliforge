@@ -44,6 +44,18 @@ Plan/read-onlyでは検索と会話内の条件整理だけを行い、一時状
 今回の試行と対処から、次回の手戻りを減らす検証済みの学びがあれば、条件と根拠を添えてMemoryへ残して。
 ```
 
+### 案件の判断経緯を残したい
+
+`BM_DECISION_MODE=scoped bash install_basic_memory_workgraph.sh --configure-only`で有効にします（既定off）。他案件へ一般化できなくても、意味のある選択を`codex/decisions/`へ保存できます。判断者、背景、選択、代替案、理由、影響、見直す条件を残し、提案・決定・効果の検証を区別します。通常のTODOや完了報告は対象外です。
+
+リポジトリの識別子を付け、別案件の判断を現在の規則として自動採用しません。既存ノートの移行は不要です。[判断の保存形式](../../tools/basic-memory-workgraph/templates/DECISIONS.md)を参照してください。
+
+### 保存結果を確認したい
+
+実装モードでは、候補を確認し、`workgraph_capture.py prepare`で同じ概念の既存ノートを検索します。Codexが全候補の本文を比較してから`apply`で保存し、読み戻します。更新は内容の指紋とCore CLIのchecksumで競合を検出します。CLIのエラー後も保存済みの場合があるため、無条件には再実行しません。
+
+最終回答前の`finish`で保存・更新・重複・候補なし・対象外・未処理・失敗を区別します。未処理や失敗だけがStopで一度再確認されます。`status`は非公開の診断件数を返し、内容や会話は保存しません。診断は最大64件・14日、一時レシートは`.workgraph-capture/`に置きGit対象外です。Plan/read-onlyでは検索だけを行います。[保存ヘルパーの手順](../../tools/basic-memory-workgraph/templates/CAPTURE_SAVE.md)を参照してください。
+
 ### 過去の知識を使いたい
 
 Codexへの依頼例:
@@ -273,6 +285,7 @@ BM_AUTO_MODE=smart bash install_basic_memory_workgraph.sh --configure-only
 | | `off` | 修正指示を含む自動保存・Skillレビューと登録を停止 |
 | `BM_CORRECTION_MODE` | `off`（既定） | Correctionは明示保存依頼時のみ |
 | | `scoped` | 結果不明の修正指示も、文脈と適用範囲付きで保存 |
+| `BM_DECISION_MODE` | `off`（既定）/`scoped` | 明示保存のみ／案件内の判断を理由・代替案・見直す条件付きで保存 |
 | `BM_CASE_MODE` | `off`（既定） | 具体事例は明示保存依頼時のみ |
 | | `reusable` | 結果のある有用な具体事例を選別して保存 |
 | | `progressive` | 有用な修正・後続利用・再利用依頼・非自明な検証済み成果から保存し、採用・撤回の手掛かりも追加 |
@@ -292,6 +305,7 @@ cat "${CODEX_HOME:-$HOME/.codex}/basic-memory-workgraph/config.json"
 {
   "mode": "smart",
   "correctionMode": "off",
+  "decisionMode": "off",
   "caseMode": "off",
   "skillMode": "review"
 }

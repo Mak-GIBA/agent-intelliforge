@@ -37,7 +37,7 @@ def measure(source):
             event={'session_id':'fixture','turn_id':'fixture','prompt':'purpose','cwd':temporary}
             if case=='plan':event['permission_mode']='plan'
             def normalized(text):
-                return text.replace(shlex.quote(sys.executable),'<PYTHON>').replace(str(codex),'<CODEX_HOME>')
+                return text.replace(shlex.quote(sys.executable),'<PYTHON>').replace(str(codex),'<CODEX_HOME>').replace(temporary,'<CWD>')
             with patch.object(hook,'recall_service',return_value=Service()),patch.object(hook.secrets,'token_hex',return_value='c'*64):
                 context=hook.evaluate(event,'recall')['hookSpecificOutput']['additionalContext']
                 stop=''
@@ -55,13 +55,20 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--before',type=Path,required=True);parser.add_argument('--after',type=Path,required=True)
     parser.add_argument('--check',action='store_true',help='Require >=20%% reduction in ordinary start/Stop fixtures')
+    parser.add_argument('--no-regression',action='store_true',help='Require no token increase against the immediate baseline')
     args=parser.parse_args()
     before,after=measure(args.before),measure(args.after)
-    print(json.dumps({'tokenizer':'tiktoken 0.9.0 / o200k_base; normalized paths and fixed synthetic control tokens; not billing tokens',
+    import tiktoken
+    print(json.dumps({'tokenizer':'tiktoken '+tiktoken.__version__+' / o200k_base; normalized paths and fixed synthetic control tokens; not billing tokens',
                       'before':before,'after':after},indent=2))
     if args.check:
         for case in ('empty','found','unavailable','needs_context'):
             for phase in ('start','stop'):
                 if after[case][phase]['tokens']>before[case][phase]['tokens']*.8:
+                    raise SystemExit('Token budget regression: '+case+'/'+phase)
+    if args.no_regression:
+        for case in before:
+            for phase in ('start','stop'):
+                if after[case][phase]['tokens']>before[case][phase]['tokens']:
                     raise SystemExit('Token budget regression: '+case+'/'+phase)
 if __name__=='__main__':main()

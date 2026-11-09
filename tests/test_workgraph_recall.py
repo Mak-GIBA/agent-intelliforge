@@ -51,7 +51,34 @@ class RecallTests(unittest.TestCase):
         fingerprint=hashlib.sha256(artifact.read_bytes()).hexdigest();artifact.write_text('after')
         report=self.service.check(self.ticket,[{'id':'fixture:corrections/flow','path':'review.md','sha256':fingerprint,'result':'verified'}])
         self.assertEqual(report['status'],'pending')
-        with self.assertRaises(ValueError):self.service.prepare(self.ticket,'another purpose',self.work,'implementation')
+        other=self.work/'other';other.mkdir()
+        with self.assertRaises(ValueError):self.service.prepare(self.ticket,'another purpose',other,'implementation')
+
+    def test_refining_query_preserves_adoption_and_invalidates_only_changed_sources(self):
+        self.prepare();self.select()
+        self.service.prepare(self.ticket,'more precise editing',self.work,'implementation')
+        state=json.loads(self.service.path(self.ticket).read_text())
+        self.assertEqual(state['selections']['fixture:corrections/flow']['decision'],'adopted')
+        self.reader.notes['corrections/flow']['content']+='\nNew exception.'
+        self.service.prepare(self.ticket,'editing exception',self.work,'implementation')
+        self.assertNotIn('fixture:corrections/flow',json.loads(self.service.path(self.ticket).read_text())['selections'])
+
+    def test_refining_query_retains_prior_refs_for_application_checks(self):
+        self.prepare();self.select()
+        self.reader.notes['corrections/other']={'title':'Other context','content':'other','frontmatter':{'type':'correction'}}
+        self.reader.search=lambda *args:[{'permalink':'corrections/other'}]
+        self.service.prepare(self.ticket,'other context',self.work,'implementation')
+        state=json.loads(self.service.path(self.ticket).read_text())
+        self.assertEqual(len(state['refs']),2)
+        self.assertIn('fixture:corrections/flow',state['selections'])
+    def test_decision_from_another_repository_cannot_be_adopted(self):
+        self.reader.notes['corrections/flow']['frontmatter']={'type':'decision','scope':'project','repository':'repo:example.invalid/another/project'}
+        self.assertTrue(self.prepare()['notes'][0]['blocked'])
+        with self.assertRaises(ValueError):self.select()
+    def test_project_change_rejects_same_ticket(self):
+        self.prepare()
+        (self.codex/'basic-memory.json').write_text('{"basicMemory":{"primaryProject":"other"}}')
+        with self.assertRaises(ValueError):self.prepare()
 
     def test_search_failure_is_not_no_results(self):
         self.reader.fail=True

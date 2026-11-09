@@ -20,6 +20,8 @@ Run commands at the repository root; requests go in Codex.
 | Many pending lifecycle events | Events are not knowledge notes. `hook flush` archives event envelopes; it does not extract corrections or create notes |
 | Lesson not saved | Check mode, evidence, reuse value, duplicates; no value correctly means no capture |
 | Correction not saved | Check `correctionMode=scoped`, implementation mode, duplication, privacy |
+| Project decision not saved | Check `decisionMode=scoped`, meaningful choice, alternatives, evidence and revisit conditions; ordinary TODOs remain excluded |
+| Unsure whether capture succeeded | Use `workgraph_capture.py status`. A failed readback is not success; read before retrying a CLI error. Unattested turns may be Plan or interrupted, not necessarily missed memories |
 | No Stop evaluation | Normal in Plan; implementation still needs this turn armed. Start a new session after update |
 | No Cases | Default `caseMode=off`; use explicit requests, `reusable`, or `progressive` |
 | No Skill created | Default `skillMode=review`; `auto` still needs creator, validation, and added value |

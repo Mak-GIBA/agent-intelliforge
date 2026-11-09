@@ -21,7 +21,9 @@
 | イベントのpending件数が多い | 知識ノートの件数ではない。`hook flush`はイベント整理で、指摘の抽出・保存は行わない |
 | 教訓が保存されない | `mode`、検証根拠、再利用価値、既存Memoryとの重複を確認する。価値がなければ保存しないのが正常 |
 | 修正指示が保存されない | `correctionMode=scoped`、実装モード、重複や機密情報の有無を確認する |
-| 終了時の評価が出ない | Planでは正常。実装モードでも当該ターンの有効化が必要。更新後は新しいセッションを開始する |
+| 終了時の評価が出ない | Planやfinish済みでは正常。実装モードでpending/failedを申告した場合だけ一度再確認する。更新後は新しいセッションを開始する |
+| 案件の判断が残らない | `decisionMode=scoped`と、理由・代替案・影響・見直す条件を確認。TODOや完了報告は対象外 |
+| 保存できたか分からない | `workgraph_capture.py status`の結果別件数を確認。failedは成功扱いしない。CLIエラー後は読み戻し、重複作成を避ける。未申告ターンはPlan・中断の可能性もある |
 | 具体事例が増えない | 既定は `caseMode=off`。明示保存依頼、`reusable`、`progressive` を用途に応じて使う |
 | Skillが作成されない | 既定は `skillMode=review`。`auto` でもCreator・検証・追加価値が必要 |
 | `PyYAML` が必要と表示された | `bash install_basic_memory_workgraph.sh --update`で検索用環境を検出・準備する。Pythonを指定する場合は`BM_RECALL_PYTHON`を使う。[環境の詳細](installation.md#python-tools) |

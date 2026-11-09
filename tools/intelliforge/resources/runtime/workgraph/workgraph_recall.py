@@ -14,7 +14,7 @@ from agent_intelliforge import subprocess_bridge as subprocess
 import tempfile
 import time
 
-TYPES=('correction','rule','workflow','validation','case')
+TYPES=('correction','rule','workflow','validation','case','decision')
 MAX_BODY=6000
 SENSITIVE=re.compile(r'(?i)(?:bearer\s+\S+|(?:api[_-]?key|password|secret|token)\s*[:=]\s*[^\s]{6,}|https?://[^\s/]+:[^\s/]+@|\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})')
 
@@ -56,6 +56,23 @@ def atomic(path,value):
         json.dump(value,stream,ensure_ascii=False);temporary=Path(stream.name)
     try:temporary.replace(path)
     finally:temporary.unlink(missing_ok=True)
+
+
+def repository_scope(workdir):
+    """Stable repository identity without persisting credentials or local paths."""
+    root=Path(workdir).absolute()
+    try:
+        result=subprocess.run(['git','-C',str(root),'rev-parse','--show-toplevel'],capture_output=True,text=True,timeout=3)
+        if result.returncode==0:
+            root=Path(result.stdout.strip())
+            result=subprocess.run(['git','-C',str(root),'remote','get-url','origin'],capture_output=True,text=True,timeout=3)
+            remote=result.stdout.strip() if result.returncode==0 else ''
+            match=re.fullmatch(r'(?:https?://(?:[^/@]+@)?|ssh://(?:[^/@]+@)?|(?:[^/@]+@))([^/:]+)[:/](.+?)(?:\.git)?/?',remote)
+            if match:
+                value='repo:'+match[1].lower()+'/'+match[2].removesuffix('.git').rstrip('/')
+                return safe_text(value,300)
+    except (OSError,ValueError,subprocess.TimeoutExpired):pass
+    return 'local:'+digest(str(root))
 
 
 class CliReader:
@@ -158,6 +175,7 @@ class Recall:
         self.codex=safe_path(Path(codex_dir).expanduser().absolute());self.root=self.codex/'basic-memory-workgraph'
         self.reader=reader
         self.workdir=safe_path(Path(workdir or Path.cwd()).absolute())
+        self.task_scopes={}
     def config(self):return object_file(self.root/'config.json')
     def backend(self):return self.reader or RegisteredReader(self.config().get('recallCli'))
     @staticmethod
@@ -217,9 +235,11 @@ class Recall:
                 value=reader.read(ref['project'],ref['identifier'],deadline)
                 body=safe_text(value.get('content'),100_000)
                 metadata={key:value for key,value in (value.get('frontmatter') or {}).items()
-                          if key in ('type','schema','scope','exceptions','verification','acceptance','integrity_status')}
+                          if key in ('type','schema','scope','repository','status','exceptions','verification','acceptance','integrity_status')}
                 safe_text(json.dumps(metadata,ensure_ascii=False),3000)
-                blocked=metadata.get('integrity_status')=='needs_review' or len(body)>MAX_BODY
+                kind=str(metadata.get('type') or metadata.get('schema','')).lower()
+                wrong_scope=(kind=='decision' or metadata.get('scope')=='project') and metadata.get('repository')!=repository_scope(workdir)
+                blocked=metadata.get('integrity_status')=='needs_review' or len(body)>MAX_BODY or wrong_scope
                 ref.update(fingerprint=digest(value),blocked=blocked)
                 notes.append({**ref,'title':safe_text(value.get('title',''),300),
                               'content':body[:MAX_BODY],'metadata':metadata,
@@ -232,13 +252,30 @@ class Recall:
         if unavailable and not runtime_helper().current_report()['yaml']:
             result.update(error='missing_pyyaml', repair=runtime_helper().REPAIR)
         if mode=='implementation' and self.config().get('mode','smart')!='off':
-            signature=digest([query,str(workdir),projects])
+            signature=digest([str(workdir),projects])
+            hook=self.root/'state'/(ticket+'.json')
+            if hook.is_file():
+                expected=object_file(safe_path(hook)).get('workdir')
+                if expected and expected!=digest(str(workdir)):raise ValueError('Task directory differs from the current turn')
+            if self.task_scopes.get(ticket,signature)!=signature:raise ValueError('Task scope changed')
+            self.task_scopes[ticket]=signature
             with self.lock():
                 if path.exists():
                     old=object_file(path)
-                    if old.get('signature')!=signature:raise ValueError('Task ID already belongs to another task; use a new task ID')
+                    # v1 bound the query as well; migrate only with the same original query.
+                    expected=digest([query,str(workdir),projects]) if old.get('version')==1 else signature
+                    if old.get('signature')!=expected:raise ValueError('Task ID already belongs to another task scope; use a new task ID')
+                    merged={ref['id']:ref for ref in old['refs']};changed=False
+                    for ref in refs[:len(notes)]:
+                        if merged.get(ref['id'])!=ref:
+                            old['selections'].pop(ref['id'],None);changed=True
+                        merged[ref['id']]=ref
+                    if len(merged)>30:raise ValueError('Task source limit reached; close the task before broadening scope')
+                    old.update(version=2,signature=signature,refs=list(merged.values()),status=status)
+                    if changed or unavailable:old.pop('last_check',None)
+                    atomic(path,old)
                 else:
-                    atomic(path,{'version':1,'signature':signature,'status':status,'workdir':str(workdir),
+                    atomic(path,{'version':2,'signature':signature,'status':status,'workdir':str(workdir),
                                  'refs':[{k:v for k,v in ref.items()} for ref in refs[:len(notes)]],
                                  'selections':{},'reminded':False})
         return result
