@@ -2,7 +2,7 @@
 
 **English** | [日本語](../ecc-on-demand.md)
 
-ECC originals remain in Codex's native Plugin cache; only short entry Skills appear in the initial list. Requires Python 3.11 or later, Linux / WSL2, Codex, and its native ECC Plugin. If ECC is missing, use the [installer](codex-ecc/installation.md) to obtain originals and configure this integration together.
+ECC originals remain in Codex's native Plugin cache; only short entry Skills appear in the initial list. Requires Python 3.11 or later, Git, Linux / WSL2, Codex, and its native ECC Plugin. If ECC is missing, use the [installer](codex-ecc/installation.md) to obtain originals and configure this integration together.
 
 ## Apply and inspect
 
@@ -50,7 +50,7 @@ python3 tools/ecc-on-demand/ecc_on_demand.py resolve api-design --json
 
 `resolve` returns the body path, Skill directory, Plugin root, and version. Resolve relative references from their original location. Missing originals produce an error rather than a guessed fallback cache. Search is lightweight ranking over names, descriptions, explicit language, and nearest-project manifests, not full semantic understanding; use technical terms or exact names when needed.
 
-Installation and explicit updates get the authoritative catalog through native `skills/list`. Queries verify and read the saved inventory without starting Codex. Diagnosis compares that snapshot with the current native inventory. No conversation, model call, or SessionStart hook is started. Reading selected bodies still consumes context even if the initial list is smaller.
+Installation and explicit updates get the authoritative catalog through native `skills/list`. Healthy queries verify the saved inventory offline. Native catalog recovery is described below. No conversation or model call is started. Reading selected bodies still consumes context even if the initial list is smaller.
 
 ## Update and restore
 
@@ -91,4 +91,18 @@ Updates migrate owned four-entry installations to five entries while preserving 
 
 Both legacy and portable readers support `search 'testing' --language typescript --json`. Without the option, query language takes precedence over nearest-project manifests. Go/Golang, C++/CPP, and C#/CSharp are normalized; language-neutral guidance remains eligible. For monorepos, put `--cwd <target-directory>` before `search`. Exact-name `resolve tdd-workflow --json` remains available.
 
-The installer/update obtains the authoritative inventory through native `skills/list` and stores an owned `catalog.json` with original-document hashes. Normal `search`/`resolve` verify and read that snapshot without starting a nested Codex process. Changed or missing originals require an explicit refresh with `install_ecc.sh --apply`; diagnosis compares the snapshot with the native inventory. No cache-version guessing is used.
+## Native catalog recovery
+
+The owned `catalog.json` records document hashes and native revision information. Healthy `search` and `resolve` requests remain offline. Changed originals, changes in cache membership or native install metadata, and unknown names trigger at most one authoritative lookup within a shared 30-second budget, including lock waits. The reader verifies the official source, native revision and Git content, including command-derived generated documents. Equal version labels do not hide a revision change. Cache names alone never select an installation.
+
+Verified healthy originals remain available if another document is damaged or native lookup fails. Search fills its result limit from healthy candidates and reports exclusions or recovery failures in `warnings` and `warning_count`. If every matching candidate is unverifiable, it returns an error rather than an empty result. Existing result fields remain supported; errors also include a cause `code`, optional `target`, and `recovery` instructions. Manual edits, missing targets, symlinks and modified management files are not accepted as updates.
+
+```bash
+python3 tools/ecc-on-demand/ecc_on_demand.py refresh --dry-run --json
+python3 tools/ecc-on-demand/ecc_on_demand.py refresh --json
+python3 tools/ecc-on-demand/ecc_on_demand.py resolve tdd-workflow --no-refresh --json
+```
+
+`refresh` only reconciles owned metadata; it never installs or upgrades ECC, enables the plugin, or changes MCP settings. `--dry-run` verifies the authoritative inventory without saving it. `--no-refresh` restricts queries to the saved inventory and is required for Plan/read-only work. `doctor` audits all originals without refreshing, including its child entrypoint checks. Native Codex may fetch its own metadata while listing skills; these operations do not start a model conversation.
+
+Older snapshots remain readable and migrate after successful reconciliation. Update the management CLI and entry templates with `install_ecc.sh --apply` from the repository. Portable/plugin installations retain their immutable released upstream snapshot; they do not follow native caches, and `--no-refresh` is accepted without changing that policy.

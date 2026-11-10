@@ -37,3 +37,20 @@ class PortableEccTests(unittest.TestCase):
         self.assertEqual(self.run_reader('resolve','tdd-workflow','--json')['name'],'tdd-workflow')
         (self.root/'upstream/skills/tdd-workflow/SKILL.md').unlink()
         with self.assertRaises(ForgeError):self.run_reader('doctor','--json')
+
+    def test_read_only_option_preserves_frozen_reader(self):
+        self.assertEqual(self.run_reader('resolve','tdd-workflow','--no-refresh','--json')['name'],'tdd-workflow')
+        self.assertTrue(self.run_reader('search','testing','--language','typescript','--no-refresh','--json')['matches'])
+
+    def test_real_portable_ownership_rejects_changed_upstream(self):
+        from agent_intelliforge.ownership import replace_tree
+        data={p.relative_to(self.root/'upstream').as_posix():p.read_bytes()
+              for p in (self.root/'upstream').rglob('*') if p.is_file()}
+        import shutil
+        shutil.rmtree(self.root/'upstream')
+        replace_tree(self.root/'upstream',runtime.owner('ecc-upstream','codex'),data)
+        with mock.patch.object(runtime,'load',return_value=fixtures.ecc),contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(ecc_port.main(self.bundle,'codex',['resolve','tdd-workflow','--no-refresh']),0)
+            (self.root/'upstream/skills/python-patterns/SKILL.md').write_text('modified')
+            with self.assertRaises(ForgeError):
+                ecc_port.main(self.bundle,'codex',['resolve','tdd-workflow','--no-refresh'])
