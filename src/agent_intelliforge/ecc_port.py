@@ -45,6 +45,8 @@ def main(bundle, agent, arguments):
     for action in ('search', 'resolve', 'doctor'):
         command = commands.add_parser(action); command.add_argument('--json', action='store_true')
         if action != 'doctor': command.add_argument('query')
+        if action in ('search', 'resolve'):
+            command.add_argument('--no-refresh', action='store_true', help='Read the fixed portable snapshot; never refresh native state')
         if action == 'search':
             command.add_argument('--limit', type=int, choices=range(1,6), default=5)
             command.add_argument('--language')

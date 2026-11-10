@@ -17,7 +17,7 @@ enabled = true
 command = "keep-browser"
 '''
 FAKE_CODEX = r'''#!/usr/bin/env python3
-import json,os,pathlib,sys,tomllib
+import json,os,pathlib,sys,tomllib,subprocess
 home=pathlib.Path(os.environ['CODEX_HOME'])
 fixture=home/'fixture.json'
 state=json.loads(fixture.read_text())
@@ -35,6 +35,13 @@ def cache(version):
   (folder/'references').mkdir(parents=True,exist_ok=True)
   (folder/'SKILL.md').write_text('---\nname: '+name+'\ndescription: '+name+'\n---\nFixture body\n')
   (folder/'references/example.md').write_text('Relative reference')
+ if not (root/'.git').exists():
+  for arguments in [['init','-q'],['config','user.name','Fixture'],['config','user.email','fixture@example.invalid'],['remote','add','origin','https://github.com/affaan-m/ECC.git']]:
+   subprocess.run(['git','-C',str(root),*arguments],check=True,capture_output=True)
+ subprocess.run(['git','-C',str(root),'add','skills','.codex-plugin/plugin.json'],check=True,capture_output=True)
+ subprocess.run(['git','-C',str(root),'commit','-qm','Native fixture source','--allow-empty'],check=True,capture_output=True)
+ revision=subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()
+ (root/'.codex-marketplace-install.json').write_text(json.dumps({'source_type':'git','source':'https://github.com/affaan-m/ECC.git','revision':revision}))
 def enable():
  path=home/'config.toml'
  text=path.read_text()

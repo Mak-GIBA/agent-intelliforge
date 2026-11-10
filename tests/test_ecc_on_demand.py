@@ -32,7 +32,7 @@ class FakeCodex:
         self.failure = False
         self.calls = []
 
-    def skills(self, cwd, enable_ecc=False):
+    def skills(self, cwd, enable_ecc=False, *, deadline=None):
         self.calls.append(enable_ecc)
         config = self.home / "config.toml"
         enabled = ecc.config_value(config.read_text()) if config.exists() else None
@@ -58,6 +58,18 @@ class FakeCodex:
             raise ecc.ManagementError("fixture native update failed after re-enable")
 
 
+def native_git_fixture(root):
+    """Model native provenance rather than trusting synthetic unversioned files."""
+    commands=[['init','-q'],['config','user.name','Fixture'],['config','user.email','fixture@example.invalid'],
+              ['remote','add','origin','https://github.com/affaan-m/ECC.git'],['add','skills','.codex-plugin/plugin.json'],
+              ['commit','-qm','Native fixture source']]
+    for args in commands:
+        subprocess.run(['git','-C',str(root),*args],check=True,capture_output=True)
+    revision=subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()
+    (root/'.codex-marketplace-install.json').write_text(json.dumps({
+        'source_type':'git','source':'https://github.com/affaan-m/ECC.git','revision':revision}))
+
+
 class ManagerTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="ecc-on-demand-test-")
@@ -80,6 +92,7 @@ class ManagerTest(unittest.TestCase):
             path.write_text(f"---\nname: {name}\ndescription: {name}\n---\nOriginal body\n")
             self.originals.append({"name": "ecc:" + name, "description": name,
                                    "path": str(path), "enabled": True, "pluginId": "ecc@ecc"})
+        native_git_fixture(self.plugin)
         self.codex = FakeCodex(self.home, self.skills_root, self.originals)
         self.manager = ecc.Manager(self.home, self.skills_root, self.codex, self.root)
 

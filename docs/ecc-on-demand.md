@@ -3,7 +3,7 @@
 [English](en/ecc-on-demand.md) | **日本語**
 
 ECCの原本をCodex標準プラグインのキャッシュに残し、初期スキル一覧には短い入口だけを載せます。
-Python 3.11以降、Linux / WSL2、導入済みのCodexとネイティブECCプラグインが必要です。
+Linux / WSL2、Python 3.11以降、Git、導入済みのCodexとネイティブECCプラグインが必要です。
 
 ECC自体が未導入の場合は、[ECCのインストーラー](codex-ecc/installation.md)で原本の導入とこの設定をまとめて行えます。
 
@@ -99,9 +99,26 @@ python3 tools/ecc-on-demand/ecc_on_demand.py resolve api-design --json
 文意全体を理解する検索ではないため、候補が合わない場合は英語の技術名で検索するか、名前を指定してください。
 
 導入・更新時に、独立した`codex app-server`の`skills/list`で正式な原本の一覧を確認します。
-一覧と原本のハッシュを管理ディレクトリの`catalog.json`に保存します。通常の`search`・`resolve`は保存済み一覧と内容を検証して読み、内部でCodexを起動しません。
-原本が変更・削除された場合は停止し、リポジトリの`install_ecc.sh --apply`で一覧を更新します。キャッシュ内の別バージョンへ推測で切り替えません。
-診断では保存済み一覧と現在の正式な一覧を照合します。会話やモデル呼び出しは開始しません。
+一覧、原本のハッシュ、ネイティブの更新情報を管理ディレクトリの`catalog.json`に保存します。正常な`search`・`resolve`は保存済み一覧をオフラインで検証します。
+原本の差異、キャッシュ構成の変化、未登録の名前を検出した場合だけ、正式な一覧を最大1回、全体30秒の範囲で再確認します。
+公式の配布元、ネイティブのrevision、Gitの内容を照合し、同じ版番号でも確認できた更新を同期します。キャッシュの名前や新しさだけでは切り替えません。
+コマンドから生成された手順書も追跡済みのコマンド本文と照合し、手動改変を更新として追認しません。
+
+無関係な原本が破損していても、検証できた原本は参照できます。検索では正常な候補を最大件数まで補充し、除外や同期失敗を`warnings`・`warning_count`で示します。
+一致する候補がすべて検証不能な場合は、該当なしと区別したエラーを返します。対象原本の改変・欠損・symlinkや、管理ファイルの改変は拒否します。
+JSONの既存項目は維持し、エラーには原因コード`code`、対象`target`、復旧方法`recovery`を加えます。
+
+```bash
+python3 tools/ecc-on-demand/ecc_on_demand.py refresh --dry-run --json
+python3 tools/ecc-on-demand/ecc_on_demand.py refresh --json
+python3 tools/ecc-on-demand/ecc_on_demand.py resolve tdd-workflow --no-refresh --json
+```
+
+`refresh`は既に導入された管理一覧だけを同期し、ECC本体のインストール・アップグレード、MCPや有効設定の変更は行いません。
+`--dry-run`は正式一覧を確認して保存せず、`--no-refresh`は保存済み一覧だけを読みます。Plan・読み取り専用の作業では`--no-refresh`を使います。
+`doctor`は全原本の問題をまとめて診断し、子プロセスも含めて一覧を同期しません。会話やモデル呼び出しは開始しません。
+通常参照の自動同期に失敗した場合は、その理由と正常な原本の取得可否を分けて報告します。
+旧形式の一覧も読み込めます。管理CLIと入口自体の更新は、従来どおり新しいリポジトリから`install_ecc.sh --apply`で行います。
 初期一覧が減っても、選んだ本文を読む分のコンテキストは消費します。
 
 ## 更新と復元

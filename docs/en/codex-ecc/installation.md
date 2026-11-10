@@ -105,6 +105,7 @@ Unchanged managed MCP entries are removed; preexisting connections remain. Edite
 | No `ecc@ecc` in catalog | Inspect the original error and `codex plugin list --available --json`; do not substitute another Plugin |
 | Same-name Skill or manual edits | Preserve and reconcile your files before retrying |
 | Missing originals | Diagnose; for managed installations, try `--update --apply` |
+| Stale catalog after a native ECC update | Normal queries reconcile verified updates automatically. Use the [management CLI's `refresh`](../ecc-on-demand.md) to inspect or reconcile explicitly |
 
 See [management details](../ecc-on-demand.md) for search, disabled behavior, and restoration.
 

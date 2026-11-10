@@ -20,6 +20,7 @@ import sys
 import tempfile
 import time
 import tomllib
+from urllib.parse import urlparse
 
 OWNER = "basic-memory-workgraph/ecc-on-demand"
 PLUGIN = "ecc@ecc"
@@ -119,6 +120,223 @@ def add_mcps(text: str, owned: dict, selected=RECOMMENDED_MCPS) -> tuple[str, di
 
 class ManagementError(Exception):
     pass
+
+
+class CatalogError(ManagementError):
+    def __init__(self, code, message, *, target=None):
+        super().__init__(message)
+        self.code, self.target = code, target
+
+    def detail(self):
+        return {"code": self.code, "message": str(self),
+                **({"target": self.target} if self.target else {}),
+                "recovery": "Use refresh --dry-run, then refresh; use install_ecc.sh --apply for managed installation changes"}
+
+
+def official_source(source: dict) -> bool:
+    if source.get("sourceType") != "git":
+        return False
+    value = str(source.get("source", "")).strip()
+    if value.casefold() == "affaan-m/ecc":
+        return True
+    if value.startswith("git@github.com:"):
+        value = "https://github.com/" + value.split(":", 1)[1]
+    url = urlparse(value)
+    return (url.hostname == "github.com" and url.scheme in ("https", "ssh")
+            and url.path.rstrip("/").removesuffix(".git").casefold() == "/affaan-m/ecc")
+
+
+def source_bytes(path: Path, root: Path) -> bytes:
+    """Preserve lexical paths until every ancestor has passed the link check."""
+    if not path.is_absolute() or not root.is_absolute() or ".." in path.parts or ".." in root.parts:
+        raise CatalogError("source_unsafe", "ECC source paths must be absolute and bounded")
+    try:
+        path.relative_to(root)
+    except ValueError:
+        raise CatalogError("source_unsafe", "ECC original escapes its registered root") from None
+    if any(p.is_symlink() for p in (path, *path.parents)):
+        raise CatalogError("source_unsafe", "ECC original contains a symbolic link")
+    if not path.is_file():
+        raise CatalogError("source_missing", "ECC original is missing")
+    return path.read_bytes()
+
+
+def original_issue(row):
+    try:
+        data = source_bytes(Path(row["path"]), Path(row["plugin_root"]))
+        if row.get("verification_issue"):
+            return row["verification_issue"]
+        if digest(data) != row["sha256"]:
+            raise CatalogError("source_modified", "ECC original changed or missing; refresh its verified catalog")
+    except (OSError, CatalogError) as error:
+        return CatalogError(getattr(error, "code", "source_unreadable"), str(error), target=row["name"]).detail()
+    return None
+
+
+def source_observation(row):
+    """A retry trigger, never a trusted document checksum."""
+    try:
+        return digest(source_bytes(Path(row["path"]), Path(row["plugin_root"])))
+    except (OSError, CatalogError) as error:
+        return getattr(error, "code", "source_unreadable")
+
+
+def git_read(root, *arguments, deadline=None):
+    remaining = 10 if deadline is None else deadline - time.monotonic()
+    if remaining <= 0:
+        raise CatalogError("catalog_unavailable", "ECC catalog verification timed out")
+    try:
+        result = subprocess.run(["git", "-C", str(root), *arguments], capture_output=True,
+                                env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"}, timeout=remaining)
+    except (OSError, subprocess.TimeoutExpired):
+        raise CatalogError("source_unverified", "Cannot verify the native ECC Git revision") from None
+    if result.returncode:
+        raise CatalogError("source_unverified", "Cannot verify the native ECC Git revision")
+    return result.stdout
+
+
+def native_identity(root, *, deadline=None):
+    marker = source_bytes(root / ".codex-marketplace-install.json", root)
+    metadata = json.loads(marker)
+    if not official_source({"sourceType": metadata.get("source_type"), "source": metadata.get("source")}):
+        raise CatalogError("source_unverified", "Native ECC source is not the official repository")
+    revision = metadata.get("revision", "")
+    if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40,64}", revision):
+        raise CatalogError("source_unverified", "Native ECC revision is unavailable")
+    if git_read(root, "rev-parse", "HEAD", deadline=deadline).decode().strip() != revision:
+        raise CatalogError("source_unverified", "ECC Git HEAD differs from the native installation revision")
+    origin = git_read(root, "config", "--get", "remote.origin.url", deadline=deadline).decode().strip()
+    if not official_source({"sourceType": "git", "source": origin}):
+        raise CatalogError("source_unverified", "ECC Git origin differs from the official repository")
+    return {"revision": revision, "marker_sha256": digest(marker)}
+
+
+def git_tree(root, deadline=None):
+    result = {}
+    for entry in git_read(root, "ls-tree", "-rz", "HEAD", deadline=deadline).split(b"\0"):
+        if not entry:
+            continue
+        metadata, filename = entry.split(b"\t", 1)
+        mode, kind, oid = metadata.decode().split()
+        if kind == "blob" and mode in ("100644", "100755"):
+            result[filename.decode()] = oid
+    return result
+
+
+def matches_git(data, oid):
+    if not oid:
+        return False
+    constructor = hashlib.sha256 if len(oid) == 64 else hashlib.sha1
+    return constructor(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest() == oid
+
+
+def frontmatter(text, keys=("name", "description")):
+    """Scalar metadata needed for native command wrappers; reject unknown syntax."""
+    if not text.startswith("---\n"):
+        return {}, text.strip()
+    parts = text.split("\n---", 1)
+    if len(parts) != 2:
+        raise CatalogError("source_unverified", "Unrecognized ECC source frontmatter")
+    values = {}
+    for line in parts[0].splitlines()[1:]:
+        match = re.match(r"^(name|description):\s*(.*)$", line)
+        if not match or match[1] not in keys:
+            continue
+        value = match[2].strip()
+        if value.startswith('"'):
+            try:
+                value = json.loads(value)
+            except ValueError:
+                raise CatalogError("source_unverified", "Unrecognized command metadata") from None
+        elif value.startswith("'") and value.endswith("'"):
+            value = value[1:-1].replace("''", "'")
+        if not isinstance(value, str) or value in ("|", ">", "|-", ">-"):
+            raise CatalogError("source_unverified", "Unsupported command metadata format")
+        values[match[1]] = value
+    return values, parts[1].strip()
+
+
+def prove_original(row, tree):
+    root = Path(row["plugin_root"])
+    path = Path(row["path"])
+    raw = source_bytes(path, root)
+    relative = path.relative_to(root).as_posix()
+    metadata, _ = frontmatter(raw.decode("utf-8"), keys=("name",))
+    if metadata.get("name", path.parent.name) != row["name"]:
+        raise CatalogError("source_unverified", "Native ECC name differs from its document", target=row["name"])
+    if matches_git(raw, tree.get(relative)):
+        return digest(raw)
+    prefix = ".codex-plugin/migrated-command-skills/"
+    name = row["name"]
+    if relative == prefix + name + "/SKILL.md" and name.startswith("source-command-"):
+        command = name.removeprefix("source-command-")
+        if not re.fullmatch(r"[\w-]+", command):
+            raise CatalogError("source_unverified", "Unsupported migrated command name", target=name)
+        source = "commands/" + command + ".md"
+        original = source_bytes(root / source, root)
+        if matches_git(original, tree.get(source)):
+            fields, body = frontmatter(original.decode("utf-8"))
+            description = fields.get("description", "")
+            expected = ("---\nname: " + json.dumps(name, ensure_ascii=False)
+                        + "\ndescription: " + json.dumps(description, ensure_ascii=False) + "\n---\n\n# " + name
+                        + "\n\nUse this skill when the user asks to run the migrated source command `" + command
+                        + "`.\n\n## Command Template\n\n" + body + "\n")
+            if raw.decode("utf-8") == expected:
+                return digest(raw)
+    raise CatalogError("source_modified", "ECC original differs from its official Git content", target=row["name"])
+
+
+def cache_signature(roots):
+    """Changes trigger native lookup; directory names never choose a plugin."""
+    values = []
+    for parent in sorted({Path(root).parent for root in roots}, key=str):
+        if parent.is_symlink():
+            values.append([str(parent), "symlink"])
+            continue
+        for entry in sorted(parent.iterdir(), key=lambda p: p.name) if parent.is_dir() else []:
+            marker = entry / ".codex-marketplace-install.json"
+            try:
+                value = digest(source_bytes(marker, entry)) if marker.is_file() else None
+            except (OSError, CatalogError):
+                value = "unreadable"
+            values.append([str(entry), value])
+    return digest(json.dumps(values).encode())
+
+
+def make_snapshot(originals, *, deadline=None, allow_partial=False):
+    roots = {}
+    for row in originals:
+        root = Path(row["plugin_root"])
+        if str(root) in roots:
+            continue
+        try:
+            identity = native_identity(root, deadline=deadline)
+        except (CatalogError, OSError, ValueError):
+            raise CatalogError("source_unverified", "Cannot verify the native ECC installation") from None
+        tree = git_tree(root, deadline)
+        manifest = source_bytes(root / ".codex-plugin/plugin.json", root)
+        if not matches_git(manifest, tree.get(".codex-plugin/plugin.json")):
+            raise CatalogError("source_modified", "Native ECC manifest differs from its Git revision")
+        roots[str(root)] = {"identity": identity, "tree": tree}
+    skills = []
+    for row in originals:
+        proof = roots[row["plugin_root"]]
+        try:
+            checksum = prove_original(row, proof["tree"])
+            skills.append({**row, "sha256": checksum})
+        except (CatalogError, OSError, UnicodeError) as error:
+            if not allow_partial:
+                raise
+            issue = CatalogError(getattr(error, "code", "source_unverified"),
+                                 "ECC original could not be verified against its official revision", target=row["name"])
+            skills.append({**row, "sha256": None, "verification_issue": issue.detail(),
+                           "verification_observation": source_observation(row)})
+    for root, proof in roots.items():
+        if proof["identity"] and native_identity(Path(root), deadline=deadline) != proof["identity"]:
+            raise CatalogError("catalog_stale", "Native ECC changed while its catalog was being verified")
+    return {"owner": OWNER, "version": 2, "skills": skills,
+            "roots": {root: proof["identity"] for root, proof in roots.items()},
+            "cache_signature": cache_signature(roots)}
 
 
 def digest(data: bytes) -> str:
@@ -229,7 +447,8 @@ class Codex:
         self.binary, self.timeout = binary, timeout
         self.env = {**os.environ, "CODEX_HOME": str(home)}
 
-    def skills(self, cwd: Path, enable_ecc: bool = False) -> dict:
+    def skills(self, cwd: Path, enable_ecc: bool = False, *, deadline=None) -> dict:
+        deadline = min(deadline or float("inf"), time.monotonic() + self.timeout)
         command = [self.binary]
         if enable_ecc:
             # CLI override keys are unquoted; quoted dotted CLI keys don't work.
@@ -247,7 +466,6 @@ class Codex:
 
         def response(request_id):
             nonlocal buffer
-            deadline = time.monotonic() + self.timeout
             while time.monotonic() < deadline:
                 while b"\n" in buffer:
                     line, buffer = buffer.split(b"\n", 1)
@@ -282,7 +500,7 @@ class Codex:
             selector.close()
             process.terminate()
             try:
-                process.wait(timeout=3)
+                process.wait(timeout=max(0, min(3, deadline - time.monotonic())))
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait()
@@ -316,20 +534,28 @@ class Codex:
                 raise ManagementError(f"Native ECC update failed ({result.returncode}): {result.stderr.strip()}")
 
 
-def catalog(codex: Codex, cwd: Path) -> list[dict]:
-    row = codex.skills(cwd, enable_ecc=True)
+def catalog(codex: Codex, cwd: Path, *, deadline=None, allow_partial=False, diagnostics=None) -> list[dict]:
+    row = (codex.skills(cwd, enable_ecc=True) if deadline is None else
+           codex.skills(cwd, enable_ecc=True, deadline=deadline))
+    if row.get("errors"):
+        if not allow_partial:
+            raise CatalogError("catalog_unavailable", "Native ECC inventory contains skills/list errors")
+        if diagnostics is not None:
+            diagnostics.append(CatalogError("catalog_incomplete", "Native inventory reported loading errors; omitted originals remain unavailable").detail())
     skills = []
     for skill in row.get("skills", []):
         if skill.get("pluginId") != PLUGIN:
             continue
-        path = Path(skill["path"]).resolve()
+        path = Path(skill["path"]).absolute()
         root = next((parent for parent in path.parents
                      if (parent / ".codex-plugin/plugin.json").is_file()), None)
-        if not path.is_file() or root is None:
+        if root is None or (not allow_partial and not path.is_file()):
             raise ManagementError(f"ECC original is missing or has no native manifest: {path}")
         manifest = json.loads((root / ".codex-plugin/plugin.json").read_text())
         if manifest.get("name") != "ecc":
             raise ManagementError(f"Unexpected plugin manifest: {root}")
+        if not allow_partial:
+            source_bytes(path, root)
         skills.append({"name": skill["name"].removeprefix("ecc:"),
                        "description": skill.get("description", ""),
                        "path": str(path), "skill_dir": str(path.parent),
@@ -339,8 +565,10 @@ def catalog(codex: Codex, cwd: Path) -> list[dict]:
         raise ManagementError(f"Native ECC catalog unavailable; skills/list errors: {row.get('errors', [])}")
     required = {name for name in ENTRIES.values() if name}
     missing = required - {skill["name"] for skill in skills}
-    if missing:
+    if missing and not allow_partial:
         raise ManagementError(f"ECC originals missing: {', '.join(sorted(missing))}")
+    if len({s["name"] for s in skills}) != len(skills):
+        raise CatalogError("catalog_unavailable", "Native ECC inventory has duplicate names")
     return skills
 
 
@@ -437,10 +665,40 @@ class Manager:
         self.installed_script = self.directory / "ecc_on_demand.py"
 
     @contextmanager
-    def lock(self):
+    def lock(self, *, deadline=None):
         self.directory.mkdir(parents=True, exist_ok=True)
-        with (self.directory / ".lock").open("a") as stream:
-            fcntl.flock(stream, fcntl.LOCK_EX)
+        lockfile = self.directory / ".lock"
+        if lockfile.is_symlink():
+            raise ManagementError("ECC manager lock is a symbolic link")
+        with lockfile.open("a") as stream:
+            self.acquire_lock(stream, fcntl.LOCK_EX, deadline)
+            yield
+
+    @staticmethod
+    def acquire_lock(stream, kind, deadline):
+        if deadline is None:
+            fcntl.flock(stream, kind)
+            return
+        while True:
+            try:
+                fcntl.flock(stream, kind | fcntl.LOCK_NB)
+                return
+            except BlockingIOError:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise CatalogError("catalog_busy", "ECC catalog lock deadline reached; try refresh after the current operation")
+                time.sleep(min(.01, remaining))
+
+    @contextmanager
+    def read_lock(self, *, deadline=None):
+        path = self.directory / ".lock"
+        if path.is_symlink():
+            raise ManagementError("ECC manager lock is a symbolic link")
+        if not path.exists():
+            yield  # Legacy installations may predate the shared lock.
+            return
+        with path.open("rb") as stream:
+            self.acquire_lock(stream, fcntl.LOCK_SH, deadline)
             yield
 
     def state(self) -> dict | None:
@@ -467,24 +725,161 @@ class Manager:
         for filename, expected in state["files"].items():
             path = Path(filename)
             if path.is_symlink() or not path.is_file() or digest(path.read_bytes()) != expected:
-                raise ManagementError(f"Managed file missing or changed; preserving it: {path}")
+                raise CatalogError("managed_file_modified", f"Managed file missing or changed; preserving it: {path}")
+
+    def _load_snapshot(self, *, locked=False, deadline=None):
+        with nullcontext() if locked else self.read_lock(deadline=deadline or time.monotonic() + 30):
+            state = self.state()
+            if not state or not state.get("catalog_snapshot"):
+                raise CatalogError("catalog_missing", "Refresh ECC originals using install_ecc.sh --apply from the repository copy")
+            self.check_files(state)
+            value = json.loads((self.directory / "catalog.json").read_text())
+        if value.get("owner") != OWNER or value.get("version") not in (1, 2):
+            raise CatalogError("catalog_invalid", "Invalid ECC catalog snapshot; rerun install_ecc.sh --apply")
+        skills = value.get("skills")
+        if not isinstance(skills, list) or not skills:
+            raise CatalogError("catalog_invalid", "ECC catalog has no originals")
+        required = ("name", "description", "path", "skill_dir", "plugin_root")
+        for skill in skills:
+            blocked = (isinstance(skill, dict) and value["version"] == 2
+                       and isinstance(skill.get("verification_issue"), dict)
+                       and skill["verification_issue"].get("target") == skill.get("name")
+                       and isinstance(skill["verification_issue"].get("code"), str))
+            if (not isinstance(skill, dict) or any(not isinstance(skill.get(k), str) for k in required)
+                    or (not blocked and not re.fullmatch(r"[0-9a-f]{64}", str(skill.get("sha256", ""))))
+                    or (blocked and skill.get("sha256") is not None)
+                    or skill["skill_dir"] != str(Path(skill["path"]).parent)):
+                raise CatalogError("catalog_invalid", "Invalid ECC original record")
+        if (len({s["name"] for s in skills}) != len(skills)
+                or {name for name in ENTRIES.values() if name} - {s["name"] for s in skills}):
+            raise CatalogError("catalog_invalid", "ECC catalog snapshot is missing required originals or has duplicates")
+        return state, value
 
     def read_snapshot(self) -> list[dict]:
-        state = self.state()
-        if not state or not state.get("catalog_snapshot"):
-            raise ManagementError("Refresh ECC originals using install_ecc.sh --apply from the repository copy")
-        self.check_files(state)
-        value = json.loads((self.directory / "catalog.json").read_text())
-        if value.get("owner") != OWNER or value.get("version") != 1:
-            raise ManagementError("Invalid ECC catalog snapshot; rerun install_ecc.sh --apply")
-        skills = value["skills"]
-        for skill in skills:
-            path = Path(skill["path"])
-            if path.is_symlink() or not path.is_file() or digest(path.read_bytes()) != skill["sha256"]:
-                raise ManagementError("ECC original changed or missing; refresh with install_ecc.sh --apply: " + skill["name"])
-        if {name for name in ENTRIES.values() if name} - {row["name"] for row in skills}:
-            raise ManagementError("ECC catalog snapshot is missing required originals")
-        return [{key: val for key, val in row.items() if key != "sha256"} for row in skills]
+        """Full read-only audit, also retained for older callers."""
+        _, value = self._load_snapshot()
+        for row in value["skills"]:
+            issue = original_issue(row)
+            if issue:
+                raise CatalogError(issue["code"], issue["message"], target=row["name"])
+        return [{key: val for key, val in row.items() if key != "sha256"} for row in value["skills"]]
+
+    def refresh(self, *, dry_run=False, deadline=None):
+        """Reconcile owned metadata only; never install, enable or upgrade ECC."""
+        deadline = deadline or time.monotonic() + 30
+        _, baseline = self._load_snapshot(deadline=deadline)
+        try:
+            diagnostics = []
+            candidate = make_snapshot(catalog(self.codex, self.cwd, deadline=deadline, allow_partial=True,
+                                              diagnostics=diagnostics),
+                                      deadline=deadline, allow_partial=True)
+            present = {r["name"] for r in candidate["skills"]}
+            for old in baseline["skills"]:
+                if old["name"] not in present:
+                    candidate["skills"].append({**old, "sha256": None,
+                        "verification_issue": CatalogError("source_unregistered", "Native ECC no longer lists this original", target=old["name"]).detail(),
+                        "verification_observation": source_observation(old)})
+            if diagnostics:
+                candidate["inventory_issues"] = diagnostics
+        except (OSError, ValueError, ManagementError) as error:
+            if isinstance(error, CatalogError):
+                raise
+            raise CatalogError("catalog_unavailable", "Native ECC inventory could not be verified") from None
+        if dry_run:
+            warnings = [r["verification_issue"] for r in candidate["skills"] if r.get("verification_issue")]
+            warnings.extend(candidate.get("inventory_issues", []))
+            return {"status": "planned", "original_skills": len(candidate["skills"]), "changed_files": 0,
+                    "warnings": warnings, "warning_count": len(warnings)}
+        with self.lock(deadline=deadline):
+            state, current = self._load_snapshot(locked=True)
+            if current != baseline and current != candidate:
+                raise CatalogError("catalog_stale", "Another operation committed a newer ECC catalog")
+            if cache_signature(candidate["roots"]) != candidate["cache_signature"]:
+                raise CatalogError("catalog_stale", "Native ECC cache changed before catalog commit")
+            if any(original_issue(row) for row in candidate["skills"] if not row.get("verification_issue")):
+                raise CatalogError("catalog_stale", "ECC originals changed before catalog commit")
+            for root, identity in candidate["roots"].items():
+                if native_identity(Path(root), deadline=deadline) != identity:
+                    raise CatalogError("catalog_stale", "Native ECC changed before catalog commit")
+            blocked = [r["verification_issue"] for r in candidate["skills"] if r.get("verification_issue")]
+            blocked.extend(candidate.get("inventory_issues", []))
+            if candidate == current:
+                return {"status": "needs_attention" if blocked else "ready",
+                        "original_skills": len(candidate["skills"]), "changed_files": 0,
+                        **({"warnings": blocked, "warning_count": len(blocked)} if blocked else {})}
+            previous = {r["name"]: r for r in current["skills"]}
+            healthy_changed = any(not r.get("verification_issue") and r != previous.get(r["name"])
+                                  for r in candidate["skills"])
+            if blocked and not healthy_changed:
+                raise CatalogError(blocked[0]["code"], blocked[0]["message"], target=blocked[0].get("target"))
+            path = self.directory / "catalog.json"
+            new_catalog = (json.dumps(candidate, ensure_ascii=False, indent=2) + "\n").encode()
+            updated = {**state, "files": {**state["files"], str(path): digest(new_catalog)}}
+            new_state = (json.dumps(updated, indent=2) + "\n").encode()
+            originals = {p: (p.read_bytes(), p.stat().st_mode & 0o777) for p in (path, self.state_path)}
+            touched = []
+            try:
+                for p, data in ((path, new_catalog), (self.state_path, new_state)):
+                    touched.append(p)
+                    atomic_write(p, data, originals[p][1])
+            except BaseException:
+                for p in reversed(touched):
+                    atomic_write(p, *originals[p])
+                raise
+        return {"status": "needs_attention" if blocked else "ready", "original_skills": len(candidate["skills"]),
+                "changed_files": 2, **({"warnings": blocked, "warning_count": len(blocked)} if blocked else {})}
+
+    def _lookup_snapshot(self, *, refresh=True, name=None):
+        deadline = time.monotonic() + 30
+        _, value = self._load_snapshot(deadline=deadline)
+        issues = [issue for row in value["skills"] if (issue := original_issue(row))]
+        retry = any(original_issue(row) and (not row.get("verification_issue") or
+                    source_observation(row) != row.get("verification_observation")) for row in value["skills"])
+        roots = {row["plugin_root"] for row in value["skills"]}
+        changed = value.get("cache_signature") not in (None, cache_signature(roots))
+        unknown = name is not None and name not in {r["name"] for r in value["skills"]}
+        warnings = []
+        if refresh and (retry or changed or unknown):
+            try:
+                self.refresh(deadline=deadline)
+                _, value = self._load_snapshot(deadline=deadline)
+                issues = [issue for row in value["skills"] if (issue := original_issue(row))]
+            except (ManagementError, OSError, ValueError) as error:
+                _, value = self._load_snapshot(deadline=deadline)  # Reuse a concurrent verified commit.
+                issues = [issue for row in value["skills"] if (issue := original_issue(row))]
+                warnings.append(error.detail() if isinstance(error, CatalogError) else
+                                CatalogError("refresh_failed", "ECC catalog refresh failed; verified saved originals remain available").detail())
+        elif changed:
+            warnings.append(CatalogError("catalog_stale", "Native ECC cache changed; automatic refresh is disabled").detail())
+        return value["skills"], [*warnings, *value.get("inventory_issues", []), *issues]
+
+    def resolve(self, name, *, refresh=True):
+        name = name.removeprefix("ecc:")
+        skills, warnings = self._lookup_snapshot(refresh=refresh, name=name)
+        matches = [s for s in skills if s["name"] == name]
+        if len(matches) != 1:
+            if warnings:
+                raise CatalogError("catalog_unavailable", "Cannot establish whether the requested ECC original is available", target=name)
+            raise CatalogError("skill_not_found", "ECC skill not found; use search", target=name)
+        issue = original_issue(matches[0])
+        if issue:
+            raise CatalogError(issue["code"], issue["message"], target=name)
+        result = {k: v for k, v in matches[0].items() if k != "sha256"}
+        if warnings:
+            result.update(warnings=warnings[:5], warning_count=len(warnings))
+        return result
+
+    def search(self, query, *, language=None, limit=5, refresh=True):
+        skills, warnings = self._lookup_snapshot(refresh=refresh)
+        candidates = search_catalog(skills, query, self.cwd, len(skills), language=language)
+        matches = [{k: v for k, v in row.items() if k != "sha256"}
+                   for row in candidates if not original_issue(row)][:limit]
+        if candidates and not matches:
+            raise CatalogError("sources_unavailable", "Matching ECC originals could not be verified")
+        result = {"matches": matches}
+        if warnings:
+            result.update(warnings=warnings[:5], warning_count=len(warnings))
+        return result
 
     def payload(self) -> dict[Path, bytes]:
         source = Path(__file__).resolve()
@@ -542,8 +937,7 @@ class Manager:
         with nullcontext() if _locked else self.lock():
             state = self.preflight()
             files = self.payload()
-            snapshot = {"owner": OWNER, "version": 1, "skills": [
-                {**row, "sha256": digest(Path(row["path"]).read_bytes())} for row in originals]}
+            snapshot = make_snapshot(originals)
             files[self.directory / "catalog.json"] = (json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n").encode()
             original = self.config.read_bytes() if self.config.exists() else b""
             changed_text = edit_enabled(original.decode(), False)
@@ -634,6 +1028,21 @@ class Manager:
             originals = catalog(self.codex, self.cwd)
         except ManagementError as error:
             issues.append(str(error))
+        snapshot_issues = []
+        saved = None
+        if state:
+            try:
+                _, saved = self._load_snapshot()
+                snapshot_issues = [issue for r in saved["skills"] if (issue := original_issue(r))]
+                snapshot_issues.extend(saved.get("inventory_issues", []))
+                roots = {r["plugin_root"] for r in saved["skills"]}
+                if saved.get("cache_signature") not in (None, cache_signature(roots)):
+                    snapshot_issues.append(CatalogError("catalog_stale", "Native ECC cache changed; run refresh").detail())
+                if {(r["name"], r["path"]) for r in saved["skills"]} != {(r["name"], r["path"]) for r in originals}:
+                    snapshot_issues.append(CatalogError("catalog_stale", "Native ECC inventory changed; run refresh").detail())
+                issues.extend(f"{i.get('target', 'catalog')}: {i['message']}" for i in snapshot_issues)
+            except (ManagementError, OSError, ValueError) as error:
+                issues.append(str(error))
         entrypoint_verification = "not_checked"
         if state and not issues:
             if state["version"] != 2:
@@ -641,9 +1050,6 @@ class Manager:
             else:
                 commands = {}
                 try:
-                    snapshot = self.read_snapshot()
-                    if {(row["name"], row["path"]) for row in snapshot} != {(row["name"], row["path"]) for row in originals}:
-                        raise ManagementError("Native ECC inventory changed; refresh with install_ecc.sh --apply")
                     for name in ENTRIES:
                         text = (self.skills_root / name / "SKILL.md").read_text()
                         match = re.search(r"`([^`]+)`", text)
@@ -651,13 +1057,15 @@ class Manager:
                         expected = [state["python_executable"], "-B", str(self.installed_script)]
                         if command[:3] != expected:
                             raise ManagementError(f"Unexpected runtime binding: {name}; rerun install_ecc.sh --apply")
-                        commands[name] = command
+                        commands[name] = [*command, "--no-refresh"]
                     failures = self.codex.verify_entrypoints(commands, self.cwd)
                     issues.extend(failures)
                     entrypoint_verification = "failed" if failures else "originals_resolved_via_installed_commands"
                 except (OSError, ValueError, ManagementError) as error:
                     issues.append(str(error)); entrypoint_verification = "failed"
         return {"status": "ready" if not issues else "needs_attention", "issues": issues,
+                "catalog_issues": snapshot_issues,
+                "verified_saved_original_skills": sum(not original_issue(r) for r in saved["skills"]) if saved else 0,
                 "python_executable": state.get("python_executable") if state else None,
                 "entrypoint_verification": entrypoint_verification,
                 "mcps": mcp_report, "mcp_verification": "configuration_only; startup and credentials not tested",
@@ -755,7 +1163,7 @@ def main(argv=None) -> int:
     parser.add_argument("--codex", default=installed_defaults.get("codex_binary", "codex"))
     parser.add_argument("--cwd", type=Path, default=Path.cwd())
     subcommands = parser.add_subparsers(dest="command", required=True)
-    for name in ("apply", "doctor", "update", "restore", "search", "resolve"):
+    for name in ("apply", "doctor", "update", "restore", "search", "resolve", "refresh"):
         sub = subcommands.add_parser(name)
         sub.add_argument("--json", action="store_true")
         if name == "apply":
@@ -766,6 +1174,10 @@ def main(argv=None) -> int:
             sub.add_argument("--limit", type=int, choices=range(1, 6), default=5)
         if name == "resolve":
             sub.add_argument("name")
+        if name in ("search", "resolve"):
+            sub.add_argument("--no-refresh", action="store_true", help="保存済み一覧だけを読み、同期しない")
+        if name == "refresh":
+            sub.add_argument("--dry-run", action="store_true", help="正式一覧を検証し、保存せず差分を確認する")
     args = parser.parse_args(argv)
     try:
         home = args.codex_home.expanduser().resolve()
@@ -774,14 +1186,12 @@ def main(argv=None) -> int:
         codex = Codex(args.codex, home)
         manager = Manager(home, skills_root, codex, cwd)
         if args.command in ("search", "resolve"):
-            skills = manager.read_snapshot()
             if args.command == "search":
-                result = {"matches": search_catalog(skills, args.query, cwd, args.limit, language=args.language)}
+                result = manager.search(args.query, limit=args.limit, language=args.language, refresh=not args.no_refresh)
             else:
-                matches = [s for s in skills if s["name"] == args.name.removeprefix("ecc:")]
-                if len(matches) != 1:
-                    raise ManagementError(f"ECC skill not found or ambiguous: {args.name}; use search")
-                result = matches[0]
+                result = manager.resolve(args.name, refresh=not args.no_refresh)
+        elif args.command == "refresh":
+            result = manager.refresh(dry_run=args.dry_run)
         elif args.command == "apply":
             result = manager.apply(mcps=args.mcps)
         else:
@@ -795,9 +1205,13 @@ def main(argv=None) -> int:
                 print(f"{skill['name']}\t{skill['description']}\n  {skill['path']}")
         else:
             print(json.dumps(result, ensure_ascii=False, indent=2))
+        if not args.json and result.get("warnings"):
+            print(json.dumps({"status": "partial", "warnings": result["warnings"],
+                              "warning_count": result["warning_count"]}), file=sys.stderr)
         return 1 if result.get("status") == "needs_attention" else 0
     except (ManagementError, OSError, ValueError, KeyError) as error:
-        print(json.dumps({"status": "error", "error": str(error)}, ensure_ascii=False), file=sys.stderr)
+        print(json.dumps({"status": "error", "error": str(error),
+                          **(error.detail() if isinstance(error, CatalogError) else {})}, ensure_ascii=False), file=sys.stderr)
         return 1
 
 

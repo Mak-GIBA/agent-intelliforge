@@ -10,26 +10,12 @@ import shutil
 from agent_intelliforge import subprocess_bridge as subprocess
 import sys
 import time
-from urllib.parse import urlparse
 
 from ecc_on_demand import (OWNER, PLUGIN, ENTRIES, MCP_SERVERS, MCP_PRESETS, RECOMMENDED_MCPS, MCP_SELECTION_BASIS, Codex, Manager, ManagementError,
-                           atomic_write, config_value, digest, edit_enabled)
+                           atomic_write, config_value, digest, edit_enabled, official_source)
 
 SOURCE = "affaan-m/ECC"
 JOURNAL = "bootstrap.json"
-
-
-def official_source(source: dict) -> bool:
-    if source.get("sourceType") != "git":
-        return False
-    value = str(source.get("source", "")).strip()
-    if value.casefold() == SOURCE.casefold():
-        return True
-    if value.startswith("git@github.com:"):
-        value = "https://github.com/" + value.split(":", 1)[1]
-    url = urlparse(value)
-    return (url.hostname == "github.com" and url.scheme in ("https", "ssh")
-            and url.path.rstrip("/").removesuffix(".git").casefold() == "/affaan-m/ecc")
 
 
 class Installer:
