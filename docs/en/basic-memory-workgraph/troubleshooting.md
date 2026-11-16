@@ -14,6 +14,7 @@ Run commands at the repository root; requests go in Codex.
 |---|---|
 | New behavior unavailable | Start a new Codex session; inspect `/plugins` and `/hooks` |
 | Retrieval says `unavailable` | Not a no-match result. Check registered projects and PyYAML in the retrieval Python; for Cloud, check CLI version and connectivity |
+| `Hook failed: hook timed out after 30s` after submitting a prompt | The Workgraph hook bounds its Python execution to 20 seconds and state-lock acquisition to 1 second. Check the private `~/.codex/basic-memory-workgraph/hook-diagnostics.jsonl` for the last stage and outcome; see below |
 | Retrieval says `needs_context` | Add sanitized purpose, output, and constraint terms; “implement the plan” alone lacks context |
 | CLI cannot locate a DB revision | Check CLI/DB compatibility before rebuilding or deleting anything. [Bind a compatible runtime](installation.md#recall-runtime); local retrieval reads registered Markdown |
 | Stop asks for application verification | Compare adopted conditions with artifacts and run `check`; report unresolved conditions as unverified. Only one reminder is requested |
@@ -37,6 +38,14 @@ Run commands at the repository root; requests go in Codex.
 | Secret check rejects content | Anonymize and re-review; passing checks does not prove privacy |
 
 Sharing/training `--dry-run` performs checks without persistent writes, but normal input constraints still apply, including existing output destinations. Exit 0 is success, 1 input/processing error, 2 skipped items or import conflicts. Export writes eligible items and reports exclusion reasons in `skipped`.
+
+### Hook latency diagnostics
+
+On Linux, the Workgraph hook interrupts stalled runtime binding, reads, and external commands before Codex's 30-second timeout. A busy state lock returns `unavailable` after at most one second without consuming the pending state. Retrieval and repository checks share the remaining deadline. Timeouts are never reported as `no_results`, and a failed Stop check does not imply that knowledge was saved. Python startup and OS-level uninterruptible I/O remain outside this guarantee.
+
+The diagnostic JSONL file contains timestamps, process IDs, action/stage enums, outcomes, and elapsed milliseconds only. It records no prompts, note bodies, credentials, or command error output. It is private (`0600`), capped at 64 KiB, and reset when full; records from concurrent hooks can be grouped by process ID. `deadline_exceeded`, `lock_timeout`, and `unavailable` distinguish failures from a completed hook. Logging is best effort and does not wait for a log lock. Explicit Plan events create neither diagnostics nor new task state; existing deny-signal token invalidation remains in place. Before the event is parsed, runtime-binding failures are reported in the hook response rather than written to disk.
+
+If the 30-second message persists, check Python startup, the last recorded stage, and which hook `/hooks` identifies. Updated lifecycle hooks use `basic_memory_workgraph.py session-start` and `pre-compact`; seeing the original Plugin's `uv run ... session_start.py` means the update or new session has not taken effect. Review and trust new registrations in `/hooks`. The `native_lifecycle` stage calls the installed CLI directly. An unavailable result after 20 seconds means the native CLI remains slow; it does not establish successful context retrieval. A past timeout without diagnostics cannot establish whether it was lock contention, slow I/O, or another stalled operation.
 
 <a id="audit"></a>
 

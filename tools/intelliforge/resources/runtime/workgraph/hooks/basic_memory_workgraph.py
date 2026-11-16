@@ -11,11 +11,80 @@ from pathlib import Path
 import re
 import secrets
 import shlex
+import signal
 import sys
 import tempfile
+import time
+from agent_intelliforge import subprocess_bridge as subprocess
 
 
 ROOT = Path(__file__).resolve().parent.parent / "basic-memory-workgraph"
+HOOK_TIMEOUT_SECONDS = 20
+LOCK_TIMEOUT_SECONDS = 1
+DEADLINE = None
+STAGE = 'startup'
+READ_ONLY = False
+ACTION = 'recall'
+STARTED = 0
+OUTCOME = 'complete'
+
+
+class HookDeadlineExceeded(BaseException):
+    """Bypass inner fail-open handlers so only the hook boundary handles expiry."""
+
+
+class HookLockTimeout(TimeoutError):
+    pass
+
+
+def diagnostic(status):
+    """Bounded, private enums/timings only; never store events or backend errors."""
+    if READ_ONLY or not STARTED:
+        return
+    path = ROOT / 'hook-diagnostics.jsonl'
+    try:
+        fd = os.open(path, os.O_WRONLY | os.O_APPEND | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0) | getattr(os, 'O_NONBLOCK', 0), 0o600)
+        with os.fdopen(fd, 'a') as stream:
+            try:
+                fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                return
+            if hasattr(os, 'fchmod'):os.fchmod(stream.fileno(), 0o600)
+            else:path.chmod(0o600)
+            record = json.dumps({'time': round(time.time(), 3), 'pid': os.getpid(),
+                                 'action': ACTION, 'stage': STAGE, 'status': status,
+                                 'elapsed_ms': round((time.monotonic() - STARTED) * 1000)}) + '\n'
+            if os.fstat(stream.fileno()).st_size + len(record.encode()) > 65536:
+                stream.truncate(0)
+            stream.write(record)
+    except (OSError, ValueError):
+        pass  # Diagnostics must never prevent a hook response.
+
+
+def stage(name):
+    global STAGE, OUTCOME
+    if name in ('retrieval_unavailable', 'retrieval_timeout'):
+        OUTCOME = 'deadline_exceeded' if name == 'retrieval_timeout' else 'unavailable'
+        diagnostic(OUTCOME)
+        return
+    STAGE = name
+    diagnostic('started')
+
+
+def unavailable(action, reason):
+    if action in ('session-start', 'pre-compact'):
+        event = 'SessionStart' if action == 'session-start' else 'PreCompact'
+        message = 'Basic Memory lifecycle context unavailable (' + reason + '). Prompt-time memory retrieval remains enabled; do not infer a successful context read.'
+        if event == 'PreCompact':
+            return {'systemMessage': message}
+        return {'hookSpecificOutput': {'hookEventName': event, 'additionalContext': message}}
+    message = ('Basic Memory unavailable (' + reason + '). Retrieval did not complete; '
+               'do not report no matching notes. No successful memory capture is implied.')
+    if action == 'recall':
+        return {'hookSpecificOutput': {'hookEventName': 'UserPromptSubmit', 'additionalContext': message}}
+    return {'systemMessage': message}
+
+
 SIGNALS = re.compile(
     r"今後|次から|これからは|毎回|好み|覚えて|記憶して|教訓|再利用|再発防止|根本原因|"
     r"原因.{0,40}(?:確認|判明|特定)|"
@@ -72,14 +141,29 @@ def state_path(event):
 
 @contextmanager
 def state_lock():
+    stage('state_lock')
     directory = ROOT / "state"
     if directory.is_symlink():
         raise ValueError("Symlinked hook state")
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)
     fd = os.open(directory / ".lock", os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0), 0o600)
     with os.fdopen(fd, "r+") as handle:
-        fcntl.flock(handle, fcntl.LOCK_EX)
-        yield
+        deadline = time.monotonic() + LOCK_TIMEOUT_SECONDS
+        if DEADLINE is not None:
+            deadline = min(deadline, DEADLINE)
+        while True:
+            try:
+                fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise HookLockTimeout('state_lock') from None
+                time.sleep(min(.02, remaining))
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def write_state(path, data):
@@ -93,7 +177,7 @@ def write_state(path, data):
 
 
 def take_state(path):
-    if path is None:
+    if path is None or not path.exists():
         return {}
     with state_lock():
         try:
@@ -136,7 +220,10 @@ def recall_service(workdir=None):
     source = ROOT / "workgraph_recall.py"
     spec = importlib.util.spec_from_file_location("workgraph_recall_runtime", source)
     module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
-    return module.Recall(ROOT.parent,workdir=workdir)
+    service = module.Recall(ROOT.parent,workdir=workdir)
+    service.observer = stage
+    service.deadline = DEADLINE
+    return service
 
 
 def note_unevaluated(ticket):
@@ -163,6 +250,7 @@ def recall_view(result):
 
 
 def retrieved_context(event, state):
+    stage('retrieval')
     helper = globals().get("RECALL_SOURCE", ROOT / "workgraph_recall.py")
     if not helper.is_file(): return "Memory retrieval unavailable: recall helper is missing."
     ticket = state.stem if state else hashlib.sha256(json.dumps([event.get("session_id"), event.get("turn_id")]).encode()).hexdigest()
@@ -193,10 +281,12 @@ def retrieved_context(event, state):
         result = service.prepare(ticket, query[:180], Path(event.get("cwd") or os.getcwd()), "plan")
         return instructions + "Seed (refine inadequate terms; unavailable != no_results; needs_context needs terms):\n" + json.dumps(recall_view(result), ensure_ascii=False, separators=(",", ":"))
     except (OSError, ValueError, TypeError, AttributeError, ImportError):
+        stage('retrieval_unavailable')
         return instructions + "Memory retrieval unavailable; do not report no matching notes."
 
 
 def evaluate(event, action):
+    stage('configuration')
     state = state_path(event)
     # Consume even on configuration failure, explicit Plan, off, or continuation.
     # Application checks and persistence admission have independent state.
@@ -217,6 +307,7 @@ def evaluate(event, action):
     if action == "save":
         if state and mode != "off" and event.get("permission_mode") != "plan":
             try:
+                stage('application_check')
                 application = recall_service(event.get("cwd") or os.getcwd()).stop(state.stem)
                 if application.get("block"):
                     return {"decision": "block", "reason": application["message"] + " Read templates/RECALL.md; use workgraph_recall.py check. Do not arm another persistence token during this continuation."}
@@ -224,6 +315,8 @@ def evaluate(event, action):
                     # Never run another blocking cycle after the single reminder.
                     take_state(state)
                     return {"systemMessage": application["message"]}
+            except TimeoutError:
+                raise HookLockTimeout('application_lock') from None
             except (OSError, ValueError, TypeError, AttributeError):
                 pass
         saved = take_state(state)
@@ -257,6 +350,8 @@ def evaluate(event, action):
                     "then finish once (--outcome complete/no_candidate/out_of_scope/pending/failed). "
                     "Only pending/failed requests one Stop evaluation. Plan: no writes/finish. Keep token private.\n" + command
                 )
+            except HookLockTimeout:
+                raise
             except (OSError, ValueError):
                 pass  # Recall is still available without writable hook state.
         else:
@@ -299,8 +394,9 @@ def evaluate(event, action):
     }
 
 
-def main():
+def bind_runtime():
     # Old sessions may still launch a cached bare-python hook command.
+    stage('runtime_binding')
     try:
         import importlib.util
         source = ROOT / 'recall_runtime.py'
@@ -310,6 +406,12 @@ def main():
             helper.reexec_if_needed(read_object(ROOT / 'config.json'), force_binding=True)
     except (OSError, ValueError, ImportError):
         pass
+
+
+def _main(event):
+    if len(sys.argv) == 2 and sys.argv[1] in ('session-start', 'pre-compact'):
+        run_lifecycle(event, sys.argv[1])
+        return
     if len(sys.argv) > 1 and sys.argv[1] == "arm":
         parser = argparse.ArgumentParser(description="Attest implementation mode for this turn only")
         parser.add_argument("--ticket", required=True)
@@ -319,18 +421,129 @@ def main():
         args = parser.parse_args(sys.argv[2:])
         try:
             arm(args.ticket, args.token, args.mode, args.candidate)
-        except (OSError, ValueError, TypeError):
+        except (OSError, ValueError, TypeError, HookLockTimeout):
             parser.exit(1, "Cannot enable evaluation: missing/invalid current-turn token, policy, or automatic mode.\n")
         print('{"armed": true}')
         return
     try:
-        event = json.load(sys.stdin)
         if not isinstance(event, dict) or len(sys.argv) != 2 or sys.argv[1] not in ("recall", "save"):
             raise ValueError("Invalid hook input")
         result = evaluate(event, sys.argv[1])
+    except HookLockTimeout:
+        raise
     except (OSError, ValueError, TypeError):
         result = {}
     print(json.dumps(result, ensure_ascii=False))
+
+
+def main():
+    global DEADLINE, READ_ONLY, ACTION, STARTED, STAGE, OUTCOME
+    STARTED = time.monotonic()
+    ACTION = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] in ('recall', 'save', 'arm', 'session-start', 'pre-compact') else 'invalid'
+    STAGE = 'input'
+    OUTCOME = 'complete'
+    READ_ONLY = True  # Do not write diagnostics until an event has been parsed.
+    inherited = os.environ.get('_WORKGRAPH_HOOK_DEADLINE') if os.environ.get('_WORKGRAPH_RECALL_REEXEC') else None
+    try:
+        DEADLINE = min(STARTED + HOOK_TIMEOUT_SECONDS, float(inherited)) if inherited else STARTED + HOOK_TIMEOUT_SECONDS
+    except ValueError:
+        DEADLINE = STARTED + HOOK_TIMEOUT_SECONDS
+    posix_alarm = hasattr(signal, 'SIGALRM') and hasattr(signal, 'setitimer')
+    previous_handler = signal.getsignal(signal.SIGALRM) if posix_alarm else None
+    previous_timer = signal.getitimer(signal.ITIMER_REAL) if posix_alarm else (0, 0)
+    previous_deadline = os.environ.get('_WORKGRAPH_HOOK_DEADLINE')
+    def expired(*_):
+        raise HookDeadlineExceeded()
+    if posix_alarm:
+        signal.signal(signal.SIGALRM, expired)
+        signal.setitimer(signal.ITIMER_REAL, max(.001, DEADLINE - time.monotonic()))
+    os.environ['_WORKGRAPH_HOOK_DEADLINE'] = str(DEADLINE)
+    status = 'complete'
+    try:
+        # Re-exec before consuming the pipe: the replacement needs the same stdin.
+        bind_runtime()
+        event = {} if ACTION == 'arm' else json.load(sys.stdin)
+        if not isinstance(event, dict):
+            raise ValueError('Expected hook event')
+        READ_ONLY = event.get('permission_mode') == 'plan'
+        STAGE = 'input'
+        diagnostic('started')
+        _main(event)
+        status = OUTCOME
+    except (HookDeadlineExceeded, HookLockTimeout) as exc:
+        status = 'lock_timeout' if isinstance(exc, HookLockTimeout) else 'deadline_exceeded'
+        print(json.dumps(unavailable(ACTION, status + ' at ' + STAGE)))
+    except (OSError, ValueError, TypeError):
+        status = 'invalid_input'
+        print('{}')
+    finally:
+        # Give final logging a separate, small budget, including on a stalled disk.
+        if posix_alarm:signal.setitimer(signal.ITIMER_REAL, .1)
+        try:
+            diagnostic(status)
+        except HookDeadlineExceeded:
+            pass
+        finally:
+            if posix_alarm:
+                signal.setitimer(signal.ITIMER_REAL, 0)
+                signal.signal(signal.SIGALRM, previous_handler)
+            if previous_timer[0]:
+                signal.setitimer(signal.ITIMER_REAL, max(.001, previous_timer[0] - (time.monotonic() - STARTED)), previous_timer[1])
+            if previous_deadline is None:
+                os.environ.pop('_WORKGRAPH_HOOK_DEADLINE', None)
+            else:
+                os.environ['_WORKGRAPH_HOOK_DEADLINE'] = previous_deadline
+
+
+def run_lifecycle(event, action):
+    """Use the installed CLI, never uv resolution/compilation at hook time."""
+    global OUTCOME
+    if event.get('permission_mode') == 'plan':
+        OUTCOME = 'unavailable'
+        print(json.dumps(unavailable(action, 'read_only_native_capture_skipped')))
+        return
+    stage('lifecycle_configuration')
+    command = read_object(ROOT / 'config.json').get('recallCli')
+    if command is None:
+        import shutil
+        executable = shutil.which('bm') or shutil.which('basic-memory')
+        command = [str(Path(executable).absolute())] if executable else None
+    if not isinstance(command, list) or not command or any(not isinstance(value, str) for value in command) or not Path(command[0]).is_absolute():
+        OUTCOME = 'unavailable'
+        print(json.dumps(unavailable(action, 'missing_cli')))
+        return
+    stage('native_lifecycle')
+    process = None
+    completed = False
+    try:
+        process = subprocess.Popen([*command, 'hook', action, '--harness', 'codex'],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            text=True, start_new_session=True)
+        budget = max(.001, DEADLINE - time.monotonic()) if DEADLINE is not None else HOOK_TIMEOUT_SECONDS
+        output, _ = process.communicate(json.dumps(event), timeout=budget)
+        completed = True
+        if process.returncode != 0 or (action == 'session-start' and not output.strip()) or len(output) > 200_000:
+            OUTCOME = 'unavailable'
+            print(json.dumps(unavailable(action, 'native_error')))
+        else:
+            print(output, end='' if output.endswith('\n') else '\n')
+    except subprocess.TimeoutExpired:
+        raise HookDeadlineExceeded() from None
+    except OSError:
+        OUTCOME = 'unavailable'
+        print(json.dumps(unavailable(action, 'cli_unavailable')))
+    finally:
+        if process is not None and not completed:
+            # Kill the whole group: CLI helpers must not outlive a timed-out hook.
+            try:
+                if hasattr(os, 'killpg'):os.killpg(process.pid, signal.SIGKILL)
+                else:process.kill()
+            except ProcessLookupError:pass
+            try:process.communicate(timeout=1)
+            except subprocess.TimeoutExpired:
+                diagnostic('cleanup_pending')
+                for stream in (process.stdin, process.stdout, process.stderr):
+                    if stream is not None:stream.close()
 
 
 

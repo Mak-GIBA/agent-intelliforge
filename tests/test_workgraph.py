@@ -184,6 +184,11 @@ class WorkgraphTest(unittest.TestCase):
         self.assertEqual(self.read_json("basic-memory.json")["basicMemory"]["placementConventions"], POLICY)
         self.assertFalse(self.read_json("basic-memory.json")["basicMemory"]["checkpointOnCompact"])
         self.assertEqual(len(list((self.home / "knowledge/codex-memory/schemas").glob("*.md"))), 7)
+        installed = self.read_json('hooks.json')['hooks']
+        for event, action in (('SessionStart', 'session-start'), ('PreCompact', 'pre-compact')):
+            self.assertTrue(any(entry['command'].endswith(' ' + action)
+                for group in installed[event] for entry in group['hooks']))
+        self.assertTrue((self.codex / 'basic-memory-workgraph/managed-lifecycle.json').is_file())
 
     def test_short_preference_gets_policy_and_one_evaluation(self):
         self.assertEqual(self.install().returncode, 0)
