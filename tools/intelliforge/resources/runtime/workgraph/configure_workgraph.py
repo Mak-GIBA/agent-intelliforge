@@ -56,6 +56,10 @@ def write_file(path, content, stamp):
 
 
 def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, skill_mode=None, correction_mode=None, recall_cli=None, decision_mode=None):
+    spec = importlib.util.spec_from_file_location('workgraph_configuration_lifecycle',
+                                                SOURCE / 'lifecycle_hooks.py')
+    lifecycle_hooks = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lifecycle_hooks)
     policy = (SOURCE / "memory-policy.md").read_text(encoding="utf-8").strip()
     hook_source = (SOURCE / "hooks/basic_memory_workgraph.py").read_text(encoding="utf-8")
     if not policy:
@@ -132,10 +136,12 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
             entry["statusMessage"] = message
         hooks[event].append({"hooks": [entry]})
     hook_config.setdefault("description", "User hooks including Basic Memory Work Knowledge Graph")
+    lifecycle_changes = lifecycle_hooks.prepare(codex_dir, hooks,
+        shlex.quote(auto_config.get('recallPython', 'python3')) + ' ' + shlex.quote(str(hook_path)))
 
     # Validate and prepare all content before changing any existing file.
     dumps = lambda value: json.dumps(value, ensure_ascii=False, indent=2) + "\n"
-    changes = [
+    changes = lifecycle_changes + [
         (auto_dir / "memory-policy.md", policy + "\n"),
         (auto_dir / "config.json", dumps(auto_config)),
         (config_path, dumps(config)),
@@ -148,7 +154,7 @@ def prepare_configuration(codex_dir, project=None, mode=None, case_mode=None, sk
         if source.is_file():
             changes.append((auto_dir / "templates" / source.relative_to(SOURCE / "templates"),
                             source.read_text(encoding="utf-8")))
-    for name in ("workgraph_tools.py", "workgraph_sequence.py", "workgraph_github.py", "workgraph_recall.py", "workgraph_capture.py", "recall_runtime.py", "requirements-export.txt"):
+    for name in ("workgraph_tools.py", "workgraph_sequence.py", "workgraph_github.py", "workgraph_recall.py", "workgraph_capture.py", "recall_runtime.py", "lifecycle_hooks.py", "requirements-export.txt"):
         changes.append((auto_dir / name, (SOURCE / name).read_text(encoding="utf-8")))
     # This entrypoint applies only to explicit memory sharing requests. It never
     # grants sharing permission or schedules uploads from automatic save hooks.

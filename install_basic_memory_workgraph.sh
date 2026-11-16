@@ -196,7 +196,9 @@ SCHEMA_RESULT=0
 [[ "$SCHEMA_RESULT" -eq 0 || "$SCHEMA_RESULT" -eq 2 ]] || die "スキーマ更新に失敗しました。"
 
 # ------------------------------------------------------------
-# STEP 7: 共通ポリシー / Codex設定 / 追加Hook
+# STEP 7: 共通ポリシー / Codex設定 / 期限付きHook
+# SessionStart/PreCompactは導入済みCLIへ直接渡す。起動ごとのuv準備を避け、
+# 公式plugin側の重複hookだけを無効にする。解除時に元の状態へ戻せる。
 # ------------------------------------------------------------
 BM_RECALL_PYTHON="$RECALL_PYTHON" "$RECALL_PYTHON" "$WORKGRAPH_DIR/configure_workgraph.py" \
   --codex-dir "$CODEX_HOME_DIR" --project "$MEMORY_PROJECT" --mode "$BM_AUTO_MODE" \

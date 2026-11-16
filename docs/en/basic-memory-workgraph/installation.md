@@ -57,7 +57,7 @@ For an existing installation, use [update](#update). Ordinary installation with 
 
 ### Verify in Codex
 
-Start a new session and inspect `/plugins` for `codex@basic-memory`. In `/hooks`, check `basic_memory_workgraph.py recall` (UserPromptSubmit) and `basic_memory_workgraph.py save` (Stop), applying required trust settings. Restart Codex if needed. A Stop gating check alone does not announce active capture evaluation. Continue with [daily use](usage.md#daily).
+Start a new session and inspect `/plugins` for `codex@basic-memory`. In `/hooks`, check `basic_memory_workgraph.py recall` (UserPromptSubmit), `save` (Stop), `session-start` (SessionStart), and `pre-compact` (PreCompact), applying required trust settings. The equivalent native Plugin hooks are disabled to prevent duplicate execution; Skills and MCP remain available. Restart Codex if needed. A Stop gating check alone does not announce active capture evaluation. Continue with [daily use](usage.md#daily).
 
 <a id="python-tools"></a>
 
@@ -133,6 +133,8 @@ bash install_basic_memory_workgraph.sh --update
 ```
 
 The updater detects the existing destination from `primaryProject` and Basic Memory registration. It updates configuration, hooks, CLI, references, schemas, and graph index while retaining capture modes, other hooks, and normal notes. It does not upgrade Basic Memory or external Plugins. Open a new Codex session afterward.
+
+Initial installation, `--update`, and `--configure-only` configure the same bounded lifecycle hooks. They use the installed Basic Memory CLI directly, avoiding dependency resolution, synchronization, and full-environment bytecode compilation through `uv` during hook execution. Each invocation has a 20-second deadline; delayed or failed context reads are explicitly reported as unavailable, while prompt-time retrieval remains enabled. Only the corresponding Plugin enablement scalars in `config.toml` are changed. Original values are retained in `managed-lifecycle.json` for uninstall, and previously disabled hooks stay disabled. Python 3.11 or newer is recommended for configuration; Python 3.10 also needs the conditional `tomli` dependency in `requirements-export.txt`.
 
 ### Read update results
 

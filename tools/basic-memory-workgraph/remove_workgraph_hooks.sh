@@ -7,6 +7,22 @@ set -euo pipefail
 CODEX_HOME_DIR="${CODEX_HOME:-$HOME/.codex}"
 HOOKS_JSON="$CODEX_HOME_DIR/hooks.json"
 
+if [[ -f "$CODEX_HOME_DIR/basic-memory-workgraph/lifecycle_hooks.py" ]]; then
+  python3 - "$CODEX_HOME_DIR" <<'PY'
+import sys, shutil
+from datetime import datetime, timezone
+from pathlib import Path
+codex = Path(sys.argv[1])
+sys.path.insert(0, str(codex / 'basic-memory-workgraph'))
+from lifecycle_hooks import restore
+for path, content in restore(codex):
+    if path.read_text() != content:
+        stamp = datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S-%f')
+        shutil.copy2(path, path.with_name(path.name + '.bak.' + stamp))
+        path.write_text(content)
+PY
+fi
+
 if [[ -f "$HOOKS_JSON" ]]; then
   cp -a "$HOOKS_JSON" "$HOOKS_JSON.bak.$(date +%Y%m%d-%H%M%S)"
 
@@ -18,7 +34,7 @@ path = Path(sys.argv[1])
 data = json.loads(path.read_text(encoding="utf-8"))
 hooks = data.get("hooks", {})
 
-for event in ("UserPromptSubmit", "Stop"):
+for event in ("UserPromptSubmit", "Stop", "SessionStart", "PreCompact"):
     kept = []
     for group in hooks.get(event, []):
         remaining = [h for h in group.get("hooks", [])
