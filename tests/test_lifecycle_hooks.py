@@ -5,6 +5,7 @@ import io
 import json
 import os
 from pathlib import Path
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -74,12 +75,57 @@ class LifecycleInstallTests(unittest.TestCase):
         commands = [entry['command'] for group in hooks['SessionStart'] for entry in group['hooks']]
         self.assertFalse(any(command.endswith(' session-start') for command in commands))
 
+    def test_uninstall_uses_saved_runtime_when_system_python_has_no_toml(self):
+        self.configure()
+        binary = Path(self.tmp.name) / 'system-bin'
+        binary.mkdir()
+        shim = binary / 'without_toml.py'
+        shim.write_text(
+            'import builtins, sys\n'
+            'original = builtins.__import__\n'
+            'def limited(name, *args, **kwargs):\n'
+            ' if name in ("tomllib", "tomli"): raise ModuleNotFoundError(name)\n'
+            ' return original(name, *args, **kwargs)\n'
+            'builtins.__import__ = limited\n'
+            'sys.argv = sys.argv[1:]\n'
+            'exec(compile(sys.stdin.read(), "<system-python>", "exec"))\n')
+        launcher = binary / 'python3'
+        launcher.write_text('#!/bin/sh\nexec ' + shlex.quote(sys.executable) + ' ' + shlex.quote(str(shim)) + ' "$@"\n')
+        launcher.chmod(0o755)
+        env = {key: value for key, value in os.environ.items() if key not in ('BM_RECALL_PYTHON', 'PYTHON_BIN')}
+        env.update(CODEX_HOME=str(self.codex), PATH=str(binary) + os.pathsep + os.environ['PATH'])
+        removal = subprocess.run(['bash', str(SOURCE / 'remove_workgraph_hooks.sh')], env=env, capture_output=True, text=True)
+        self.assertEqual(removal.returncode, 0, removal.stderr)
+        self.assertTrue(tomllib.loads(self.settings.read_text())['hooks']['state'][NATIVE]['enabled'])
+        self.assertFalse((self.codex / 'basic-memory-workgraph').exists())
+        hooks = json.loads((self.codex / 'hooks.json').read_text())['hooks']
+        self.assertEqual(hooks['SessionStart'][0]['hooks'][0]['command'], 'other-startup')
+
     def test_invalid_toml_makes_no_installation_changes(self):
         self.settings.write_text('[broken')
         before = {p.relative_to(self.codex): p.read_bytes() for p in self.codex.rglob('*') if p.is_file()}
         with self.assertRaises(ValueError):
             self.configure()
         self.assertEqual(before, {p.relative_to(self.codex): p.read_bytes() for p in self.codex.rglob('*') if p.is_file()})
+
+    def test_missing_saved_runtime_preserves_installation_until_explicit_override(self):
+        self.configure()
+        config = self.codex / 'basic-memory-workgraph/config.json'
+        settings = json.loads(config.read_text())
+        settings['recallPython'] = str(Path(self.tmp.name) / 'missing-python')
+        config.write_text(json.dumps(settings))
+        before = {p.relative_to(self.codex): p.read_bytes() for p in self.codex.rglob('*') if p.is_file()}
+        env = {key: value for key, value in os.environ.items() if key not in ('BM_RECALL_PYTHON', 'PYTHON_BIN')}
+        env['CODEX_HOME'] = str(self.codex)
+        removal = subprocess.run(['bash', str(SOURCE / 'remove_workgraph_hooks.sh')], env=env, capture_output=True, text=True)
+        self.assertNotEqual(removal.returncode, 0)
+        self.assertIn('BM_RECALL_PYTHON', removal.stderr)
+        self.assertEqual(before, {p.relative_to(self.codex): p.read_bytes() for p in self.codex.rglob('*') if p.is_file()})
+        removal = subprocess.run(['bash', str(SOURCE / 'remove_workgraph_hooks.sh')],
+            env={**env, 'BM_RECALL_PYTHON': sys.executable}, capture_output=True, text=True)
+        self.assertEqual(removal.returncode, 0, removal.stderr)
+        self.assertTrue(tomllib.loads(self.settings.read_text())['hooks']['state'][NATIVE]['enabled'])
+        self.assertFalse((self.codex / 'basic-memory-workgraph').exists())
 
 
 class LifecycleRuntimeTests(unittest.TestCase):

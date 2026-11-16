@@ -154,7 +154,7 @@ class HookTimeoutTests(unittest.TestCase):
             return child
         def stalled(*_):
             subprocess.run([sys.executable, '-c', 'import time; time.sleep(10)'], capture_output=True)
-        with mock.patch.object(self.hook, 'HOOK_TIMEOUT_SECONDS', .08), mock.patch.object(self.hook, 'evaluate', side_effect=stalled), mock.patch('subprocess.Popen', side_effect=capture_child):
+        with mock.patch.object(self.hook, 'HOOK_TIMEOUT_SECONDS', 1), mock.patch.object(self.hook, 'bind_runtime'), mock.patch.object(self.hook, 'evaluate', side_effect=stalled), mock.patch('subprocess.Popen', side_effect=capture_child):
             result = self.invoke()
         self.assertIn('deadline_exceeded', result['hookSpecificOutput']['additionalContext'])
         self.assertIsNotNone(child.poll())

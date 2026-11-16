@@ -136,6 +136,8 @@ The updater detects the existing destination from `primaryProject` and Basic Mem
 
 Initial installation, `--update`, and `--configure-only` configure the same bounded lifecycle hooks. They use the installed Basic Memory CLI directly, avoiding dependency resolution, synchronization, and full-environment bytecode compilation through `uv` during hook execution. Each invocation has a 20-second deadline; delayed or failed context reads are explicitly reported as unavailable, while prompt-time retrieval remains enabled. Only the corresponding Plugin enablement scalars in `config.toml` are changed. Original values are retained in `managed-lifecycle.json` for uninstall, and previously disabled hooks stay disabled. Python 3.11 or newer is recommended for configuration; Python 3.10 also needs the conditional `tomli` dependency in `requirements-export.txt`.
 
+Uninstall also uses the saved retrieval Python. If that interpreter was moved or removed, select a Python with TOML support through `BM_RECALL_PYTHON` or `PYTHON_BIN`. An unavailable interpreter stops uninstall before changing any files.
+
 ### Read update results
 
 | JSON field | Meaning |

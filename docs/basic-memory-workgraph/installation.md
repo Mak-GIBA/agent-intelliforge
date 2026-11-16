@@ -190,6 +190,7 @@ bash install_basic_memory_workgraph.sh --update
 `config.toml`で対象pluginフックの有効状態だけを変更し、元の状態を`managed-lifecycle.json`へ記録します。
 変更前から無効だったフックは有効にしません。追加フックの解除時には元の有効状態へ戻します。
 設定を解析するPythonは3.11以降を推奨します。3.10では`requirements-export.txt`の`tomli`も必要です。
+解除時も設定済みの検索用Pythonを使います。そのPythonを移動・削除した場合は、TOMLを読めるPythonを`BM_RECALL_PYTHON`または`PYTHON_BIN`で指定してください。指定先が見つからない場合は、ファイルを変更せず終了します。
 
 ### 更新結果の読み方
 
